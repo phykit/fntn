@@ -38,8 +38,13 @@ No gate has been exercised against calibrated thresholds, so the absence of sign
 ## Running
 
 ```bash
-python -m pytest tests/ -q
+pip install -e ".[dev]"      # once: puts src/ on the path
+python -m pytest tests/ -q   # 128 tests
 ```
+
+Without the editable install the package sits at `src/fntn` and is invisible to
+`python -m`, which reports `No module named 'fntn'`. If you would rather not
+install, prefix every command with `PYTHONPATH=src`.
 
 The scanner needs one thing wired in from your side: an `AgentClient` with `complete(system, user, schema) -> dict`, calling the model at temperature zero. Everything else is deterministic and offline.
 

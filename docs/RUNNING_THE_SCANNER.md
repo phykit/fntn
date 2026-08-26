@@ -29,6 +29,16 @@ the two would share a price path. Declaring an in-universe corpus as
 `cross_market` costs nothing, looks like a configuration detail, and voids the
 guarantee silently, so the CLI refuses it.
 
+## Install, once
+
+```bash
+pip install -e ".[dev]"
+```
+
+The package sits at `src/fntn`. Without this it is invisible to `python -m`,
+which reports `No module named 'fntn'`. `PYTHONPATH=src` works instead if you
+prefer not to install.
+
 ## The order, which the CLI enforces
 
 ```bash

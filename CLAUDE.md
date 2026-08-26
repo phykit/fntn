@@ -95,8 +95,13 @@ tests/
 ## Working here
 
 ```bash
-python -m pytest tests/ -q          # 94 tests
+pip install -e ".[dev]"      # once: puts src/ on the path
+python -m pytest tests/ -q   # 128 tests
 ```
+
+Without the editable install the package sits at `src/fntn` and is invisible to
+`python -m`, which reports `No module named 'fntn'`. If you would rather not
+install, prefix every command with `PYTHONPATH=src`.
 
 **The headline test is `test_every_defined_code_is_emitted`.** A code defined but never emitted is an untested branch, which is the defect class no amount of re-reading finds. If you add a reason code, add the branch that emits it *and* the test that reaches it, in the same commit.
 

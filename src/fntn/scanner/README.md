@@ -82,6 +82,7 @@ Four things must be registered, and the layer is not falsifiable without them: *
 
 ## Tests
 
-```
-python -m pytest fntn/tests/test_scanner.py -q      # 77 tests
+```bash
+pip install -e ".[dev]"
+python -m pytest tests/ -q      # 128 tests
 ```
