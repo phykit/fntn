@@ -1,0 +1,899 @@
+"""Reason-code registry for the agent discovery scanner.
+
+Spec: From Narrative to Null v1.14 (proposed), §3.7, §8, §9.4.
+
+Every refusal anywhere in this package emits a code defined here and nowhere
+else.  §9.4's headline coverage ratio is *codes emitted against codes defined*:
+a code defined and never emitted is an untested branch, so the registry is the
+denominator of that ratio and is deliberately the only place a code may be
+introduced.
+
+Two ingestion surfaces, and the distinction matters:
+
+  * ``INTAKE`` -- turning an agent proposal into a §3.6.2 intake record.  This
+    is the surface the fail-fast rule was asked for: the moment a required
+    input is absent, the idea is abandoned and the next one starts.
+  * ``OBSERVATION`` -- items arriving from a stream a registered directive
+    names, running the §3.5 ingestion path.  Same fail-fast discipline, a
+    different ordered list, because a pointer has no asset and an item has no
+    ``event_class`` intention.
+
+Codes marked ``inherited=True`` already exist in the manuscript and are
+restated here so that this package emits the manuscript's code and never a
+synonym.  §9.5's linter checks that claim.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Dict, Iterable, List
+
+
+class Surface(str, Enum):
+    """Which ingestion surface a code belongs to."""
+
+    INTAKE = "intake"
+    OBSERVATION = "observation"
+    SCREEN = "screen"
+    DIRECTIVE = "directive"
+    REGISTRATION = "registration"
+    SEGMENT = "segment"
+
+
+@dataclass(frozen=True)
+class ReasonCode:
+    """One named refusal branch.
+
+    ``summary_template`` is the §8 rejection summary: two to three sentences of
+    plain language rendered from the record's own fields by ``str.format``.  It
+    is display-only by construction -- nothing in this package reads it back --
+    and it is *rendered, never judged*, because a model-written account of a
+    deterministic decision would be a probabilistic gloss on an exact fact.
+
+    ``resurrection`` is the machine-checkable predicate under which the idea
+    may be re-raised, restated as a sentence in the summary.  A refusal without
+    a resurrection predicate is a refusal the ledger cannot ever reverse, and
+    §8 does not permit one.
+    """
+
+    code: str
+    surface: Surface
+    description: str
+    summary_template: str
+    resurrection: str
+    inherited: bool = False
+    #: True where the refusal is a *refusal to score* (an input is missing or
+    #: unverified) rather than a measured failure.  §Σ.3 control surface 1: a
+    #: refusal is a state with a reason code, not an absence.
+    refuse_to_score: bool = False
+
+
+# ---------------------------------------------------------------------------
+# Surface A -- intake ingestion, in the order the runner applies them.
+# ---------------------------------------------------------------------------
+
+_INTAKE: List[ReasonCode] = [
+    ReasonCode(
+        code="source_inaccessible",
+        surface=Surface.INTAKE,
+        description=(
+            "The document the proposal rests on could not be retrieved at the "
+            "cited location."
+        ),
+        summary_template=(
+            "The proposal cited {source_ref}, which could not be retrieved on "
+            "{attempted_at} ({detail}). Nothing downstream may read a claim "
+            "whose document was never opened, so the idea was abandoned at the "
+            "first ingestion point. {resurrection}"
+        ),
+        resurrection=(
+            "Re-raise once the document resolves at a stable location, or once "
+            "the operator supplies an archived copy with a retrieval timestamp."
+        ),
+        refuse_to_score=True,
+    ),
+    ReasonCode(
+        code="event_definition_absent",
+        surface=Surface.INTAKE,
+        description=(
+            "The proposal states no mechanism in one sentence, so there is "
+            "nothing for §3.6.5's table to classify."
+        ),
+        summary_template=(
+            "The proposal named no event definition, so §3.6.5 had no "
+            "mechanism to classify and check 3 had no input to consume. An "
+            "idea without a stated mechanism is a topic, not a pointer. "
+            "{resurrection}"
+        ),
+        resurrection=(
+            "Re-raise with a one-sentence mechanism in the item-extraction "
+            "idiom, naming what happens and to whom."
+        ),
+        refuse_to_score=True,
+    ),
+    ReasonCode(
+        code="measured_on_absent",
+        surface=Surface.INTAKE,
+        description=(
+            "No target population stated, so §3.6.3 check 2 cannot record even "
+            "an intention."
+        ),
+        summary_template=(
+            "The proposal stated no target population, so the measured-on "
+            "field required by §3.6.3 check 2 was empty. §0.9's error class is "
+            "exactly a figure travelling without the set it was measured on, "
+            "and the lane will not accept one at intake. {resurrection}"
+        ),
+        resurrection=(
+            "Re-raise naming the market, capitalisation range and filters the "
+            "claim is intended to hold on."
+        ),
+        refuse_to_score=True,
+    ),
+    ReasonCode(
+        code="provenance_tag_absent",
+        surface=Surface.INTAKE,
+        description=(
+            "A claim field arrived without a provenance tag, so no consumer can "
+            "tell verified fact from recollection."
+        ),
+        summary_template=(
+            "Field {failed_field} carried no provenance tag, so no consumer "
+            "could distinguish a verified claim from a recollection. §14 cannot "
+            "be signed while an untagged claim feeds anything, and the tag is "
+            "cheaper to supply at intake than to reconstruct later. "
+            "{resurrection}"
+        ),
+        resurrection=(
+            "Re-raise with verified_primary, verified_secondary or recollection "
+            "on every populated claim field."
+        ),
+        refuse_to_score=True,
+    ),
+    ReasonCode(
+        code="claim_provenance_recollection",
+        surface=Surface.INTAKE,
+        description=(
+            "A load-bearing claim carries recollection provenance, so the "
+            "consuming check refuses to score."
+        ),
+        summary_template=(
+            "Field {failed_field} carried recollection provenance, so the "
+            "consuming check refused to score rather than guessing. The lane's "
+            "first intake found a recollected claim wrong in two places, which "
+            "is why this refusal exists and why it is not a nuisance. "
+            "{resurrection}"
+        ),
+        resurrection=(
+            "Re-raise once the field is verified against the primary document "
+            "and re-tagged."
+        ),
+        refuse_to_score=True,
+    ),
+    ReasonCode(
+        code="registered_at_unstampable",
+        surface=Surface.INTAKE,
+        description=(
+            "The proposal's target population already carries a logged "
+            "conditional-return query, so the query fence bars registration."
+        ),
+        summary_template=(
+            "The target population {measured_on} was queried for conditional "
+            "returns at {fence_breach_at}, before any registration existed for "
+            "it. P59 makes a directive whose population was queried that way "
+            "pre-registration inadmissible, and the bar is mechanical rather "
+            "than a matter of the operator's care. {resurrection}"
+        ),
+        resurrection=(
+            "Not resurrectable on this population within this archive; re-raise "
+            "on a population the query log shows clean, or after a partition "
+            "boundary the contaminating query does not span."
+        ),
+    ),
+    ReasonCode(
+        code="agent_overreached_schema",
+        surface=Surface.INTAKE,
+        description=(
+            "The agent populated a field it holds no authority over -- merit, "
+            "evidence tier, abandonment threshold, severity or a stream for an "
+            "unclassified class."
+        ),
+        summary_template=(
+            "The proposal populated {failed_field}, which the discovery agent "
+            "holds no authority over. The clerk classifies and the table "
+            "decides; a proposal that sets its own pass condition has moved "
+            "the model from clerk to analyst, and the whole proposal is "
+            "discarded rather than trimmed. {resurrection}"
+        ),
+        resurrection=(
+            "Re-raise through the proposal schema with the reserved fields "
+            "left empty for the table and the operator to populate."
+        ),
+    ),
+    ReasonCode(
+        code="security_master_unavailable",
+        surface=Surface.INTAKE,
+        description=(
+            "The entity fence's binding layer is a lookup against the security "
+            "master, and no master was supplied."
+        ),
+        summary_template=(
+            "No security master was available to the entity fence, so its "
+            "binding layer could not run and only the identifier and "
+            "designator patterns were live. The trace that replaced the "
+            "pattern-only fence showed patterns alone are not a fence, so the "
+            "check refuses to score rather than passing on the weaker half. "
+            "{resurrection}"
+        ),
+        resurrection=(
+            "Proceeds as soon as the security master and the discovery markets' "
+            "listing lists are loaded and named in the parameter object."
+        ),
+        refuse_to_score=True,
+    ),
+    ReasonCode(
+        code="proposal_names_entity",
+        surface=Surface.INTAKE,
+        description=(
+            "The proposal named an issuer, instrument or dated episode. The "
+            "discovery agent emits mechanisms, never episodes."
+        ),
+        summary_template=(
+            "The proposal named {failed_field}, an entity or dated episode "
+            "rather than a mechanism. The leak the discovery fence exists to "
+            "close runs through the underlying price path, and an episode-level "
+            "proposal is precisely the field it would travel in; the whole "
+            "proposal is discarded rather than stripped of its names. "
+            "{resurrection}"
+        ),
+        resurrection=(
+            "Re-raise the same idea stated as a class-level mechanism, with no "
+            "issuer, instrument, ticker or dated episode anywhere in the record."
+        ),
+    ),
+    ReasonCode(
+        code="discovery_partition_violation",
+        surface=Surface.INTAKE,
+        description=(
+            "The proposal rests on material drawn from a partition the "
+            "discovery agent may not read."
+        ),
+        summary_template=(
+            "The proposal rests on {source_ref}, which sits in the "
+            "{failed_field} partition and is not readable by a discovery agent. "
+            "Selection and evaluation must share no observations, and the "
+            "assertion is made here for the same reason Gate 0 makes it for "
+            "manually injected items: an unguarded hole in the separation is a "
+            "hole in the instrument being relied on. {resurrection}"
+        ),
+        resurrection=(
+            "Re-raise from readable material, or register the directive under "
+            "forward_only scoring so that selection and measurement remain "
+            "disjoint in time."
+        ),
+    ),
+    ReasonCode(
+        code="scoring_mode_unsatisfiable",
+        surface=Surface.INTAKE,
+        description=(
+            "No exclusivity guarantee can be constructed for this proposal: it "
+            "is not cross-market separable, no disjoint partition carries the "
+            "class, and forward-only would not reach n_min before the archive "
+            "ends."
+        ),
+        summary_template=(
+            "No exclusivity construction is available for "
+            "({event_class}, {measured_on}): the class does not occur outside "
+            "the traded universe, no disjoint partition carries it, and "
+            "forward-only collection would not reach n_min before the archive "
+            "ends. A directive with no separation between finding and "
+            "evaluation measures the finder. {resurrection}"
+        ),
+        resurrection=(
+            "Admissible once a market outside §0.7(f) carrying the class is "
+            "readable, or once the archive extends far enough for forward-only "
+            "scoring to reach n_min."
+        ),
+    ),
+    ReasonCode(
+        code="duplicate_of_open_pointer",
+        surface=Surface.INTAKE,
+        description=(
+            "The proposal's (event_class, measured_on) pair already has an open "
+            "or registered pointer."
+        ),
+        summary_template=(
+            "The pair ({event_class}, {measured_on}) already carries "
+            "{duplicate_ref}, raised at {duplicate_registered_at}. A second "
+            "directive on the same cell would consume design-segment span "
+            "twice for one question and would overlap itself at rho equal to "
+            "one. {resurrection}"
+        ),
+        resurrection=(
+            "Re-raise once the incumbent directive reaches a verdict, or as an "
+            "amendment to it rather than as a new pointer."
+        ),
+    ),
+]
+
+
+# ---------------------------------------------------------------------------
+# Surface A continued -- screen, directive and registration refusals.
+# ---------------------------------------------------------------------------
+
+_SCREEN: List[ReasonCode] = [
+    ReasonCode(
+        code="no_observable_stream",
+        surface=Surface.SCREEN,
+        description=(
+            "§3.6.3 check 3, binding: no machine-readable, timestamped, "
+            "corroborable stream carries the event class."
+        ),
+        summary_template=(
+            "No machine-readable, timestamped and corroborable stream carries "
+            "{event_class}, so §3.6.3 check 3 refused the pointer outright. A "
+            "directive that names no stream is not a directive, and this is the "
+            "one screen a pointer can fail. {resurrection}"
+        ),
+        resurrection=(
+            "Re-raise once a stream carrying the class exists and the operator "
+            "can answer the five observability questions about it."
+        ),
+        inherited=True,
+    ),
+    ReasonCode(
+        code="check_not_applicable_pointer_tier",
+        surface=Surface.SCREEN,
+        description=(
+            "Cost survival and horizon admissibility have no input to consume "
+            "on a pointer. Recorded, and never readable as a pass."
+        ),
+        summary_template=(
+            "Checks 1 and 4 reported not-applicable because a pointer states no "
+            "claimed effect and no claimed horizon. This is recorded so that a "
+            "reader cannot mistake an absent input for a cleared hurdle; a "
+            "not-applicable check may never be read as a pass. {resurrection}"
+        ),
+        resurrection=(
+            "Both checks become applicable when the pointer is promoted to a "
+            "quantified intake under §3.6.8 step 6."
+        ),
+        inherited=True,
+    ),
+]
+
+_DIRECTIVE: List[ReasonCode] = [
+    ReasonCode(
+        code="stream_requires_new_subscription",
+        surface=Surface.DIRECTIVE,
+        description=(
+            "The named stream needs a production ingestion adapter, which is "
+            "apparatus under §0.6."
+        ),
+        summary_template=(
+            "The directive named {stream}, which this system does not ingest "
+            "and which would need a parser, anchor semantics and a "
+            "parameter-object footprint to obtain. That is apparatus however "
+            "modestly it is described, so the row waits behind its Annex A.1 "
+            "predicate and the feed is logged against the roster decision. "
+            "{resurrection}"
+        ),
+        resurrection=(
+            "Admissible once the §0.6 instruments have reported and this "
+            "directive has a pre-registered measurement it cannot run on any "
+            "existing stream."
+        ),
+        inherited=True,
+    ),
+    ReasonCode(
+        code="stream_unmapped_pending_operator",
+        surface=Surface.DIRECTIVE,
+        description=(
+            "The event class classified as unclassified. The agent proposes no "
+            "stream; the operator names one by hand."
+        ),
+        summary_template=(
+            "The class {event_class} sits outside §3.6.5's table, so the agent "
+            "emitted unclassified and proposed no stream, having no authority "
+            "to invent one. The mapping waits on the operator answering the "
+            "five observability questions by hand. {resurrection}"
+        ),
+        resurrection=(
+            "Proceeds as soon as the operator records publisher, access route, "
+            "machine-readability, per-item timestamps and corroborability."
+        ),
+        inherited=True,
+    ),
+    ReasonCode(
+        code="manual_observation_capacity_exhausted",
+        surface=Surface.DIRECTIVE,
+        description=(
+            "The stream is collectable by hand but the operator's registered "
+            "manual-observation capacity for the period is already committed."
+        ),
+        summary_template=(
+            "{stream} is collectable under the manual-observation protocol, but "
+            "the period's registered capacity of {capacity} slots is already "
+            "committed. Collection when something interesting happens is not "
+            "collection, so the cadence is not stretched to fit an extra "
+            "directive. {resurrection}"
+        ),
+        resurrection=(
+            "Admissible at the next period boundary, or immediately if the "
+            "operator retires an open manual protocol and records the swap."
+        ),
+    ),
+]
+
+_REGISTRATION: List[ReasonCode] = [
+    ReasonCode(
+        code="confound_unmeasurable",
+        surface=Surface.REGISTRATION,
+        description=(
+            "P58 pre-mortem: the most plausible false-mechanism explanation "
+            "cannot be measured on available data."
+        ),
+        summary_template=(
+            "The pre-mortem named {confound} as the most plausible reason the "
+            "observation would show an effect even if the mechanism is false, "
+            "and that confound is not measurable on available data. The pointer "
+            "is refused here rather than after it has consumed a session of "
+            "the design segment. {resurrection}"
+        ),
+        resurrection=(
+            "Re-raise once data measuring the named confound is in the stack, "
+            "or with a design that separates the confound from the mechanism."
+        ),
+        inherited=True,
+    ),
+    ReasonCode(
+        code="premortem_unratified",
+        surface=Surface.REGISTRATION,
+        description=(
+            "The pre-mortem was drafted by the agent and has not been ratified "
+            "by the operator."
+        ),
+        summary_template=(
+            "The pre-mortem for this directive was drafted by the discovery "
+            "agent and carries author=agent, ratified=false. §8 requires the "
+            "decision's own author where the decision is human, and a "
+            "machine-drafted falsification condition the operator has not read "
+            "is not a commitment. {resurrection}"
+        ),
+        resurrection=(
+            "Registration proceeds the moment the operator ratifies or rewrites "
+            "the pre-mortem and the ledger records the author."
+        ),
+    ),
+    ReasonCode(
+        code="delta_min_absent",
+        surface=Surface.REGISTRATION,
+        description=(
+            "No abandonment threshold. The agent may not supply one and the "
+            "operator has not."
+        ),
+        summary_template=(
+            "No abandonment threshold was registered for this directive. "
+            "delta_min is the magnitude the operator commits to before knowing "
+            "whether it flatters them, and a threshold supplied by the same "
+            "process that raised the idea would return the pass condition to "
+            "the party that wants it to pass. {resurrection}"
+        ),
+        resurrection=(
+            "Registration proceeds once the operator states delta_min in the "
+            "units the measurement reports, at or above the §14 floor."
+        ),
+    ),
+    ReasonCode(
+        code="delta_min_below_floor",
+        surface=Surface.REGISTRATION,
+        description=(
+            "The registered abandonment threshold is below the §14 floor, so "
+            "the directive is not worth a session of the segment."
+        ),
+        summary_template=(
+            "delta_min was registered at {delta_min} against a floor of "
+            "{delta_min_floor}. An effect smaller than the floor would not "
+            "change a deployment decision even if it were real, so the segment "
+            "span it would consume buys nothing. {resurrection}"
+        ),
+        resurrection=(
+            "Re-raise at or above the floor, or bring a §0 decision to move the "
+            "floor with its arithmetic on the record."
+        ),
+    ),
+    ReasonCode(
+        code="literature_search_absent",
+        surface=Surface.REGISTRATION,
+        description="P60: no literature search was run and recorded.",
+        summary_template=(
+            "No literature search was recorded before registration. Either the "
+            "idea is already published, in which case it enters as a paper "
+            "intake with a decay prior and someone else's referees, or it is "
+            "not, and why not is itself an answer the published literature "
+            "systematically declines to supply. {resurrection}"
+        ),
+        resurrection=(
+            "Registration proceeds once the search is run and its result -- "
+            "including a null result and its interpretation -- is recorded."
+        ),
+        inherited=True,
+    ),
+]
+
+_SEGMENT: List[ReasonCode] = [
+    ReasonCode(
+        code="segment_overlap_exceeds_theta",
+        surface=Surface.SEGMENT,
+        description=(
+            "Admitting the directive would push a pairwise design-segment "
+            "overlap above the registered tolerance θ."
+        ),
+        summary_template=(
+            "Admitting this directive would raise pairwise overlap with "
+            "{worst_pair} to {overlap:.2f} against a tolerance of {theta:.2f}. "
+            "An over-reused design segment quietly stops being out of sample "
+            "for anything measured on it, and the arithmetic refuses rather "
+            "than the operator judging. {resurrection}"
+        ),
+        resurrection=(
+            "Admissible when the overlapping directive closes, or on a "
+            "re-registered span that keeps every pairwise overlap within θ."
+        ),
+    ),
+    ReasonCode(
+        code="segment_reserved_for_calibration",
+        surface=Surface.SEGMENT,
+        description=(
+            "The segment's unconsumed span is at or below the floor the pending "
+            "§13 calibrations require, which hold first claim."
+        ),
+        summary_template=(
+            "The design segment's unconsumed span is {available} sessions "
+            "against a calibration reserve of {reserve}. The §13 calibrations "
+            "have first claim on the segment and directives take the residual, "
+            "so this draft queues rather than displacing a calibration. "
+            "{resurrection}"
+        ),
+        resurrection=(
+            "Admissible once the pending calibrations release their reserve, or "
+            "once the archive span extends."
+        ),
+    ),
+    ReasonCode(
+        code="queued_behind_capacity",
+        surface=Surface.SEGMENT,
+        description=(
+            "Registration-ready, but the segment arithmetic admits by smallest "
+            "span first and this draft is not yet at the head of the queue."
+        ),
+        summary_template=(
+            "The draft is registration-ready and queued at position "
+            "{queue_position} of {queue_length}, ordered by smallest registered "
+            "segment span and then by registration time. Agent-origin drafts "
+            "queue rather than displace, so the machine cannot evict the "
+            "operator's own directives by out-producing them. {resurrection}"
+        ),
+        resurrection=(
+            "Admitted automatically when the queue reaches it and the segment "
+            "arithmetic clears."
+        ),
+    ),
+]
+
+
+# ---------------------------------------------------------------------------
+# Surface B -- observation ingestion, in the order the runner applies them.
+# ---------------------------------------------------------------------------
+
+_OBSERVATION: List[ReasonCode] = [
+    ReasonCode(
+        code="item_source_inaccessible",
+        surface=Surface.OBSERVATION,
+        description="The item's document could not be retrieved.",
+        summary_template=(
+            "Item {item_id} cited {source_ref}, which could not be retrieved "
+            "({detail}). The item was abandoned at the first ingestion point "
+            "and the next item started; the gap is recorded as a gap, never as "
+            "an absence of events. {resurrection}"
+        ),
+        resurrection="Re-ingest when the document resolves.",
+        refuse_to_score=True,
+    ),
+    ReasonCode(
+        code="running_document_no_anchor",
+        surface=Surface.OBSERVATION,
+        description=(
+            "document_type is running, so the item carries no publication "
+            "moment and may take no anchor role."
+        ),
+        summary_template=(
+            "Item {item_id} is a running document, whose stable topic and "
+            "unstable content make t_pub_earliest a republication timestamp "
+            "rather than a publication moment. It may seed upstream tracing and "
+            "takes no anchor role, so it cannot carry an observation. "
+            "{resurrection}"
+        ),
+        resurrection=(
+            "Not resurrectable as an anchored item; a static item covering the "
+            "same event may be ingested in its place."
+        ),
+        inherited=True,
+    ),
+    ReasonCode(
+        code="anchor_provenance_absent",
+        surface=Surface.OBSERVATION,
+        description=(
+            "An anchor arrived without provenance, so its safe-error direction "
+            "is unknown."
+        ),
+        summary_template=(
+            "Anchor {failed_field} on item {item_id} arrived without "
+            "provenance, so it is not known whether the value is a visible "
+            "date, a feed timestamp, content-management metadata or an "
+            "inference. Content-management metadata routinely predates "
+            "publication, which would run Gate 2's window over a period before "
+            "the catalyst existed. {resurrection}"
+        ),
+        resurrection="Re-ingest once the anchor's provenance is recorded.",
+        refuse_to_score=True,
+    ),
+    ReasonCode(
+        code="observation_anchor_absent",
+        surface=Surface.OBSERVATION,
+        description=(
+            "t_pub_observed is absent, so there is no moment at which this "
+            "system could have acted."
+        ),
+        summary_template=(
+            "Item {item_id} carries no t_pub_observed, so there is no moment at "
+            "which this system could have acted on it and no anchor for the "
+            "forward ledger. Every consumer that would read it names it "
+            "explicitly, and none has a fallback. {resurrection}"
+        ),
+        resurrection="Re-ingest with the observation timestamp recorded.",
+        refuse_to_score=True,
+    ),
+    ReasonCode(
+        code="ingestion_lag_exceeds_window",
+        surface=Surface.OBSERVATION,
+        description=(
+            "Ingestion lag exceeds the stated fraction of the tuple's "
+            "admissible horizon."
+        ),
+        summary_template=(
+            "Item {item_id} reached this system {lag} sessions after "
+            "publication, against a ceiling of {lag_ceiling} for a horizon of "
+            "{horizon}. The entry window had closed before the item arrived, "
+            "which is the quantity §0.9's breadth case depends on and which "
+            "nothing measured before this rule existed. {resurrection}"
+        ),
+        resurrection=(
+            "Admissible at a longer admissible horizon, or once the source's "
+            "realised lag distribution improves."
+        ),
+        inherited=True,
+    ),
+    ReasonCode(
+        code="extraction_class_suspended",
+        surface=Surface.OBSERVATION,
+        description=(
+            "The extraction class is below its per-field accuracy floor and is "
+            "suspended."
+        ),
+        summary_template=(
+            "Extraction class {extraction_class} is suspended, having fallen "
+            "below its accuracy floor at the last quarterly re-draw. "
+            "Suspensions lift on the calendar and on a freshly drawn set, never "
+            "on demand and never gated on throughput, so the item is abandoned "
+            "rather than extracted at a known-degraded accuracy. "
+            "{resurrection}"
+        ),
+        resurrection=(
+            "Admissible at the next quarterly review if the class clears its "
+            "floor on a freshly drawn set."
+        ),
+        inherited=True,
+    ),
+    ReasonCode(
+        code="extraction_schema_incomplete",
+        surface=Surface.OBSERVATION,
+        description=(
+            "The schema-enforced extraction call did not return every mandatory "
+            "field."
+        ),
+        summary_template=(
+            "Extraction of item {item_id} returned no value for "
+            "{failed_field}, which the schema marks mandatory. The clerk's "
+            "output is an input to arithmetic and never an authority over it, "
+            "so an absent field is a refusal rather than a default. "
+            "{resurrection}"
+        ),
+        resurrection=(
+            "Re-ingest on a content hash change, or after a schema revision "
+            "that makes the field optional with its consumers restated."
+        ),
+        refuse_to_score=True,
+    ),
+    ReasonCode(
+        code="issuer_unresolved",
+        surface=Surface.OBSERVATION,
+        description=(
+            "The issuer could not be resolved to a primary listing."
+        ),
+        summary_template=(
+            "The issuer referenced by item {item_id} did not resolve to a "
+            "primary listing ({detail}). Resolution is unconditional and Gate "
+            "1's universe test is a separate rule, so an unresolvable issuer "
+            "dies here rather than reaching a gate that would report a "
+            "different reason. {resurrection}"
+        ),
+        resurrection=(
+            "Re-ingest once the identifier maps, or once the security master "
+            "covers the listing."
+        ),
+    ),
+    ReasonCode(
+        code="catalyst_date_corroborated",
+        surface=Surface.OBSERVATION,
+        description=(
+            "The claimed catalyst date is not corroborated against a subscribed "
+            "calendar or a regulator-stamped filing."
+        ),
+        summary_template=(
+            "The catalyst date claimed by item {item_id} is not corroborated "
+            "against a machine-readable calendar or a regulator-stamped filing, "
+            "so the claimed-date cell is inadmissible. Filings are "
+            "self-corroborating because the filing is the event; a claim in "
+            "prose is not. {resurrection}"
+        ),
+        resurrection=(
+            "Admissible if the event later appears on a subscribed calendar "
+            "with a per-item timestamp."
+        ),
+        inherited=True,
+    ),
+    ReasonCode(
+        code="catalyst_duration_below_floor",
+        surface=Surface.OBSERVATION,
+        description=(
+            "The catalyst resolves inside a single session, so it is "
+            "inadmissible to every fixed-horizon family."
+        ),
+        summary_template=(
+            "The catalyst on item {item_id} resolves inside a single session. "
+            "Speed buys nothing for a daily-bar instrument, and the exclusion "
+            "that already applies to information diffusing sub-session applies "
+            "identically to the event itself. {resurrection}"
+        ),
+        resurrection=(
+            "Admissible only under an intraday data dependency, which is an "
+            "Annex A.1 row."
+        ),
+    ),
+    ReasonCode(
+        code="observation_precedes_registration",
+        surface=Surface.OBSERVATION,
+        description=(
+            "The item is dated before the directive's registered_at, so it is "
+            "inadmissible to that directive."
+        ),
+        summary_template=(
+            "Item {item_id} is dated {item_date}, before the directive was "
+            "registered at {registered_at}. Observations predating registration "
+            "are inadmissible: the rule does not stop hindsight, it stops "
+            "hindsight being added after the fact and makes the ordering "
+            "auditable. {resurrection}"
+        ),
+        resurrection=(
+            "Not resurrectable for this directive; the item remains available "
+            "to any directive registered before it."
+        ),
+        inherited=True,
+    ),
+]
+
+
+# ---------------------------------------------------------------------------
+# Registry.
+# ---------------------------------------------------------------------------
+
+ALL_CODES: Dict[str, ReasonCode] = {
+    rc.code: rc
+    for rc in (*_INTAKE, *_SCREEN, *_DIRECTIVE, *_REGISTRATION, *_SEGMENT, *_OBSERVATION)
+}
+
+#: The ordered fail-fast sequence for each surface.  Stated explicitly rather
+#: than derived from definition order, because the ordering is part of the
+#: parameter object and must not change when a file is tidied: a different
+#: order produces a different reason-code distribution over the same corpus,
+#: and §7.2's attribution would read the difference as a change in the world.
+#:
+#: Intake is ordered on §2's rule -- kill rate per unit of compute -- subject to
+#: one override: the three fences run before anything opens a document.  A
+#: proposal that breaches a fence must not have its source retrieved, its
+#: duplicates searched or its exclusivity construction computed, because a
+#: cheap refusal that has already read the thing it refuses is not cheap.
+INTAKE_ORDER: List[str] = [
+    # Fences: free, and they must precede reading.
+    "agent_overreached_schema",
+    "security_master_unavailable",
+    "proposal_names_entity",
+    "discovery_partition_violation",
+    # Schema completeness: free.
+    "event_definition_absent",
+    "measured_on_absent",
+    # Ledger lookups: cheap, and they bar work that would otherwise be wasted.
+    "duplicate_of_open_pointer",
+    "registered_at_unstampable",
+    "scoring_mode_unsatisfiable",
+    # Retrieval: the first costly point on this surface.
+    "source_inaccessible",
+    # Content-dependent: require the retrieved document.
+    "provenance_tag_absent",
+    "claim_provenance_recollection",
+]
+
+#: Observation is ordered as the §3.5 path already runs, cheapest anchor checks
+#: before the schema-enforced extraction call, which is the expensive step.
+OBSERVATION_ORDER: List[str] = [rc.code for rc in _OBSERVATION]
+
+_declared = set(INTAKE_ORDER)
+_defined = {rc.code for rc in _INTAKE}
+if _declared != _defined:
+    raise RuntimeError(
+        "INTAKE_ORDER and the intake code definitions disagree: "
+        f"ordered-not-defined={sorted(_declared - _defined)}, "
+        f"defined-not-ordered={sorted(_defined - _declared)}"
+    )
+del _declared, _defined
+
+
+def by_surface(surface: Surface) -> List[ReasonCode]:
+    return [rc for rc in ALL_CODES.values() if rc.surface is surface]
+
+
+def coverage(emitted: Iterable[str]) -> "CoverageReport":
+    """§9.4's headline ratio, computed over this package's own codes."""
+
+    emitted_set = {c for c in emitted}
+    unknown = sorted(emitted_set - set(ALL_CODES))
+    if unknown:
+        raise ValueError(
+            "emitted codes not present in the registry: "
+            + ", ".join(unknown)
+            + " -- a code emitted from outside the registry cannot be counted, "
+            "and a kill that cannot be counted cannot be shown to have been "
+            "reached"
+        )
+    never = sorted(set(ALL_CODES) - emitted_set)
+    return CoverageReport(
+        defined=len(ALL_CODES),
+        emitted=len(emitted_set),
+        never_emitted=never,
+    )
+
+
+@dataclass(frozen=True)
+class CoverageReport:
+    defined: int
+    emitted: int
+    never_emitted: List[str] = field(default_factory=list)
+
+    @property
+    def ratio(self) -> float:
+        return self.emitted / self.defined if self.defined else 0.0
+
+    def render(self) -> str:
+        lines = [
+            "Reason-code coverage (§9.4)",
+            f"  defined: {self.defined}",
+            f"  emitted: {self.emitted}  ({self.ratio:.0%})",
+        ]
+        if self.never_emitted:
+            lines.append("  defined but never emitted -- untested branches:")
+            lines.extend(f"    {c}" for c in self.never_emitted)
+        else:
+            lines.append("  every defined code has been emitted at least once")
+        return "\n".join(lines)
