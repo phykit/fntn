@@ -31,8 +31,16 @@ from .segment import SegmentPolicy
 DEFAULT_REG = "discovery_registration.json"
 
 
-def _load_master(reg: Registration) -> SecurityMaster:
+def _load_master(reg: Registration) -> tuple:
+    """Load every master file. Returns (master, problems).
+
+    A missing or unreadable file is a refusal with the file named, not a
+    traceback: the template prefills a path per market and most of them will
+    not exist yet, which is an ordinary state rather than an error.
+    """
+
     master = SecurityMaster()
+    problems: List[str] = []
     for spec in reg.security_master_files:
         # "path" or "path:market" or "path:market:listed_total"
         parts = spec.split(":")
@@ -43,11 +51,19 @@ def _load_master(reg: Registration) -> SecurityMaster:
             total = int(parts[2])
         # The SEC publishes JSON, every exchange publishes CSV. Dispatch on the
         # file rather than making the operator remember which loader to name.
-        if path.lower().endswith(".json"):
-            master.load_sec_tickers(path, market=market or "US", listed_total=total)
-        else:
-            master.load_csv(path, market=market, listed_total=total)
-    return master
+        try:
+            if path.lower().endswith(".json"):
+                master.load_sec_tickers(path, market=market or "US", listed_total=total)
+            else:
+                master.load_csv(path, market=market, listed_total=total)
+        except FileNotFoundError:
+            problems.append(
+                f"{path}: not found, so {market or 'its market'} has no master "
+                "and is not readable for discovery"
+            )
+        except (OSError, ValueError) as exc:
+            problems.append(f"{path}: {exc}")
+    return master, problems
 
 
 def cmd_init(args) -> int:
@@ -140,12 +156,12 @@ def cmd_check(args) -> int:
     gaps = reg.missing()
     if reg.security_master_files:
         print()
-        try:
-            master = _load_master(reg)
-            print(master.render(floor=reg.master_coverage_floor))
-        except (OSError, ValueError) as exc:
-            print(f"Security master (§13 row 25)\n  UNREADABLE: {exc}")
-            gaps.append("security master is unreadable")
+        master, problems = _load_master(reg)
+        print(master.render(floor=reg.master_coverage_floor))
+        for prob in problems:
+            print(f"    unreadable: {prob}")
+        if not master.per_market:
+            gaps.append("no security master could be loaded (§13 row 25)")
     return 1 if gaps else 0
 
 
@@ -162,8 +178,22 @@ def cmd_sweep(args) -> int:
         print(exc)
         return 2
 
-    master = _load_master(reg)
+    master, problems = _load_master(reg)
+    for prob in problems:
+        print(f"master: {prob}")
+    if not master.per_market:
+        print()
+        print("No security master loaded, so the entity fence has no binding")
+        print("layer and every machine-origin proposal would refuse to score.")
+        print("Nothing swept.")
+        return 5
     unreadable = master.unreadable_markets(reg.master_coverage_floor)
+    # A market with no master at all is unreadable for the same reason as one
+    # below the floor, and is named the same way.
+    for c in reg.corpora:
+        code = (resolve(c.market).code if resolve(c.market) else c.market)
+        if code not in master.per_market and c.market not in master.per_market:
+            unreadable.setdefault(c.market, "no security master loaded for this market")
 
     # A corpus whose market the master does not cover is refused here rather
     # than swept and silently under-fenced.
