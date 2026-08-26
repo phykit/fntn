@@ -1239,7 +1239,8 @@ def test_an_external_corpus_may_claim_cross_market(venue):
 @pytest.mark.parametrize("venue,mode", [("US", "pre_archive"), ("UK", "forward_only")])
 def test_in_universe_corpora_accept_the_time_disjoint_constructions(venue, mode):
     reg = _complete_registration(
-        corpora=[RegCorpus("c", venue, "external", "./c", mode)]
+        corpora=[RegCorpus("c", venue, "external", "./c", mode)],
+        archive_opens="2023-01-01",
     )
     assert reg.missing() == []
 
@@ -1293,8 +1294,28 @@ def test_construction_is_a_property_of_the_corpus_not_the_class():
         corpora=[
             RegCorpus("au", "AU", "external", "./au", "cross_market"),
             RegCorpus("us", "US", "external", "./us", "pre_archive"),
-        ]
+        ],
+        archive_opens="2023-01-01",
     )
     assert reg.missing() == []
     assert reg.scoring_mode_for_corpus("au") == "cross_market"
     assert reg.scoring_mode_for_corpus("us") == "pre_archive"
+
+
+def test_pre_archive_requires_a_stated_boundary():
+    """Without archive_opens the mode names nothing and is a label."""
+
+    reg = _complete_registration(
+        corpora=[RegCorpus("us", "US", "external", "./us", "pre_archive")]
+    )
+    assert any("archive_opens is not set" in g for g in reg.missing())
+    reg.archive_opens = "2023-01-01"
+    assert reg.missing() == []
+
+
+def test_cross_market_needs_no_archive_boundary():
+    reg = _complete_registration(
+        corpora=[RegCorpus("au", "AU", "external", "./au", "cross_market")]
+    )
+    assert reg.archive_opens is None
+    assert reg.missing() == []

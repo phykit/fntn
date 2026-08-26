@@ -255,6 +255,13 @@ def cmd_sweep(args) -> int:
     )
 
     print(f"registration {reg.hash()} stamped {reg.registered_at}")
+    if any((c.scoring_mode or reg.default_scoring_mode) == "pre_archive"
+           for c in reg.corpora):
+        print(
+            f"archive opens {reg.archive_opens}; pre_archive corpora must "
+            "contain only material predating it. Document dates are NOT "
+            "checked: that guarantee rests on your curation of the folder."
+        )
     print(master.render(floor=reg.master_coverage_floor))
     print()
     result = scan(client, corpora, grid, config, ledger)

@@ -105,6 +105,16 @@ class Registration:
     #: it cannot see and the market is refused.
     master_coverage_floor: float = 0.95
 
+    # -- the archive boundary that pre_archive is defined against ----------
+    #: ISO date on which the archive opens. **Required when any corpus declares
+    #: ``pre_archive``**, because without it that mode names no boundary and is
+    #: a label rather than a guarantee.
+    #:
+    #: This is one of §13's pre-calibration fixings and it needs no purchase:
+    #: it is a decision about which span the archive will cover, not an
+    #: acquisition of it.
+    archive_opens: Optional[str] = None
+
     # -- §14 governance ----------------------------------------------------
     #: Pairwise design-segment overlap tolerance.
     theta: Optional[float] = None
@@ -179,6 +189,15 @@ class Registration:
                     validate_corpus(c.market, mode)
                 except CorpusInvalid as exc:
                     out.append(f"corpus {c.corpus_id!r}: {exc}")
+                if mode == "pre_archive" and not self.archive_opens:
+                    out.append(
+                        f"corpus {c.corpus_id!r} declares pre_archive but "
+                        "archive_opens is not set: the mode is defined as "
+                        "'material predating the archive's opening boundary', "
+                        "so with no boundary it names nothing and the guarantee "
+                        "is a label. Fixing the archive span is a §13 "
+                        "pre-calibration decision and needs no purchase"
+                    )
         if self.delta_min_floor is not None and self.control_arm_delta is not None:
             if self.control_arm_delta < self.delta_min_floor:
                 out.append(
@@ -280,6 +299,7 @@ class Registration:
             f"  control arm n_min            : {self.control_arm_n_min}",
             f"  control arm ratio / seed     : {self.control_arm_ratio} / {self.control_arm_seed}",
             f"  default scoring mode         : {self.default_scoring_mode}",
+            f"  archive opens                : {self.archive_opens or 'NOT SET'}",
             f"  theta / delta_min floor      : {self.theta} / {self.delta_min_floor}",
             f"  corpora                      : {len(self.corpora)}",
         ]

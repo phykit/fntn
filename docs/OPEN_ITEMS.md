@@ -42,16 +42,20 @@ Until step 5, no version may add capability (§0.6).
 | 16 | News-adjacency magnitude threshold | BLOCKED | Design segment; sign taken from the paper, kill criterion written first |
 | 17 | Filing materiality threshold | BLOCKED | Design segment; 0.1% of market capitalisation as the paper-sourced prior |
 | 18 | Source-lead minimum call count | BLOCKED | Calibration, per-source call counts |
-| 19 | **Control-arm separation δ and *n*ₘᵢₙ** | **OPEN** | Nothing. **Register before the first sweep.** A kill criterion written after a result is not a kill criterion |
-| 20 | **Control-arm ratio *M/N* and seed** | **OPEN** | Nothing. Governance, strictly above zero. Register before the first sweep |
+| 19 | **Control-arm separation δ and *n*ₘᵢₙ** | **CLOSED 26 Aug 2026** | δ = 50 bps, *n*ₘᵢₙ = 30. Registration `890a80e3a8566837`, stamped 22:54 UTC, before any archive exists |
+| 20 | **Control-arm ratio *M/N* and seed** | **CLOSED 26 Aug 2026** | Ratio 1.0 (matched arms), seed 20260826 |
 | 21 | Entity-fence error rates | **PROVISIONAL** | 200 hand-labelled proposals. A reading of 42 exists: 0% / 0% repaired, 94% / 0% on the pattern-only fence it replaced |
-| 22 | **Discovery corpus roster, partitions, discoverable classes** | **OPEN** | Nothing. Name the corpora, their markets, their partition and retrieval route, and which classes are declared discoverable |
+| 22 | **Discovery corpus roster, partitions, discoverable classes** | **PART CLOSED** | US declared (`pre_archive`). UK, AU, EU and NZ profiled but not registered: each needs a listing file with a known total |
 | 23 | Intake abort-position distribution | **PROVISIONAL** | Audit stream at scale. A reading of 42 exists: every failure at position 3, so nine intake points remain unexercised on real material |
 | 24 | Cross-market generalisability | BLOCKED | Design segment; classes present in both markets |
-| 25 | **Security master and lexicon coverage** | **OPEN** | Load the master and the discovery markets' listing lists. Until then the entity fence refuses to score |
+| 25 | **Security master and lexicon coverage** | **CLOSED for US** | 10,388 issuers from the SEC's own file, 100% by construction. Other markets outstanding |
 | n/a | FX exposure budget (§0 decision) | OPEN | Governance judgement in a stated range |
 
-**Rows 19, 20, 22 and 25 are the only four that are open rather than blocked.** They need no archive, no commission and no segment. They are what stands between the discovery layer and a run whose output can be attributed.
+**Rows 19, 20 and 25 closed on 26 August 2026**, and row 22 closed for US. Registration hash `890a80e3a8566837`.
+
+**What now stands between the layer and a first sweep** is the archive's opening boundary. `pre_archive` is defined as *material predating* it, so with no boundary declared the mode names nothing. Fixing the archive span is a §13 pre-calibration decision (week-plan task 3.3) and **needs no purchase**: it is a decision about which span the archive will cover, not an acquisition of it. Set `archive_opens` in the registration and the US corpus becomes sweepable.
+
+**One limit, stated rather than implied.** Nothing checks the date of each document in a `pre_archive` corpus folder. The guarantee rests on the operator putting only pre-boundary material there. That is a curation control, not a mechanical one.
 
 ---
 

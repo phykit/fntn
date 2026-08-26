@@ -86,6 +86,13 @@ class ScoringMode(str, Enum):
     #: finding is direct evidence that a regime moves, so this is not the weaker
     #: assumption by default and is measured on its own terms rather than under
     #: the cross-market generalisability row.
+    #:
+    #: **What enforces it, and what does not.**  ``archive_opens`` is required
+    #: before this mode may be declared, so the boundary is stated rather than
+    #: implied.  Nothing checks the date of each document in the corpus folder:
+    #: the guarantee rests on the operator having put only pre-boundary material
+    #: there.  That is a curation control, not a mechanical one, and saying so
+    #: is the difference between a guarantee and a label.
     PRE_ARCHIVE = "pre_archive"
     #: The agent read only the Discovery partition; Gate 0 asserts separation
     #: from design, calibration and evaluation.  Stricter, and it costs span.
