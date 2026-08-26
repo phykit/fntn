@@ -1103,9 +1103,14 @@ def test_a_stamp_cannot_be_moved():
         _complete_registration().stamp("operator")
 
 
-def test_undeclared_class_has_no_scoring_mode():
-    assert _complete_registration().scoring_mode_for("lunar_phase") is None
-    assert _complete_registration().scoring_mode_for("insider_dealing") == "cross_market"
+def test_discoverability_and_construction_are_separate_questions():
+    """The class says whether; the corpus says which guarantee."""
+
+    reg = _complete_registration()
+    assert reg.is_discoverable("insider_dealing")
+    assert not reg.is_discoverable("lunar_phase")
+    assert reg.scoring_mode_for_corpus("asx") == "cross_market"
+    assert reg.scoring_mode_for_corpus("nonexistent") is None
 
 
 def test_master_indexes_names_and_strips_suffixes(tmp_path):
@@ -1205,11 +1210,46 @@ def test_registration_refuses_an_unknown_scoring_mode():
     assert any("not one of" in g for g in reg.missing())
 
 
-def test_registration_refuses_an_unknown_per_class_mode():
+def test_registration_refuses_an_unknown_corpus_mode():
     reg = _complete_registration(
-        discoverable_classes=[DiscoverableClass("insider_dealing", "sideways")]
+        corpora=[RegCorpus("x", "ASX", "external", "./x", "sideways")]
     )
     assert any("sideways" in g for g in reg.missing())
+
+
+def test_an_in_universe_corpus_may_not_claim_cross_market():
+    """The one direction the mistake goes, and it voids the guarantee silently."""
+
+    for venue in ("US", "NYSE", "EDGAR", "UK", "LSE", "AIM"):
+        reg = _complete_registration(
+            corpora=[RegCorpus("c", venue, "external", "./c", "cross_market")]
+        )
+        gaps = reg.missing()
+        assert any("cannot provide cross_market" in g for g in gaps), venue
+
+
+@pytest.mark.parametrize("venue", ["AU", "ASX", "EU", "Euronext", "NZ", "NZX"])
+def test_an_external_corpus_may_claim_cross_market(venue):
+    reg = _complete_registration(
+        corpora=[RegCorpus("c", venue, "external", "./c", "cross_market")]
+    )
+    assert reg.missing() == []
+
+
+@pytest.mark.parametrize("venue,mode", [("US", "pre_archive"), ("UK", "forward_only")])
+def test_in_universe_corpora_accept_the_time_disjoint_constructions(venue, mode):
+    reg = _complete_registration(
+        corpora=[RegCorpus("c", venue, "external", "./c", mode)]
+    )
+    assert reg.missing() == []
+
+
+def test_every_named_market_resolves_from_its_venue_names():
+    from fntn.scanner.markets import ALIASES, MARKETS, resolve
+
+    assert set(MARKETS) == {"US", "UK", "AU", "EU", "NZ"}
+    for alias, code in ALIASES.items():
+        assert resolve(alias).code == code, alias
 
 
 def test_sec_ticker_file_loads_and_is_its_own_population(tmp_path):
@@ -1238,3 +1278,23 @@ def test_sec_master_fences_us_issuers(tmp_path):
     fence = m.as_fence()
     assert entity_mentions("director purchases at Apple after the filing", fence)
     assert entity_mentions("Form 4 filings within two business days", fence) == []
+
+
+def test_construction_is_a_property_of_the_corpus_not_the_class():
+    """One class read from two markets carries two different guarantees."""
+
+    from fntn.scanner.markets import construction_for
+
+    assert construction_for("ASX") == ScoringMode.CROSS_MARKET
+    assert construction_for("EDGAR") == ScoringMode.PRE_ARCHIVE
+    assert construction_for("LSE") == ScoringMode.PRE_ARCHIVE
+    assert construction_for("NZX") == ScoringMode.CROSS_MARKET
+    reg = _complete_registration(
+        corpora=[
+            RegCorpus("au", "AU", "external", "./au", "cross_market"),
+            RegCorpus("us", "US", "external", "./us", "pre_archive"),
+        ]
+    )
+    assert reg.missing() == []
+    assert reg.scoring_mode_for_corpus("au") == "cross_market"
+    assert reg.scoring_mode_for_corpus("us") == "pre_archive"

@@ -73,13 +73,16 @@ class ScanConfig:
     #: and the assumption is disclosed on every verdict and measured by §13
     #: row 24 rather than left implicit.
     default_scoring_mode: ScoringMode = ScoringMode.CROSS_MARKET
-    #: Event classes declared discoverable, per §13 row 22.  A value of ``None``
-    #: means *use the registered default*; an explicit value overrides it for
-    #: that class.  A class **absent from this mapping is not discoverable** and
-    #: is refused with ``scoring_mode_unsatisfiable``: the default settles which
-    #: construction is used, never whether one exists, and a directive with no
-    #: separation between finding and evaluation measures the finder.
+    #: Event classes declared discoverable, per §13 row 22.  Membership decides
+    #: *whether* a class may be discovered; a class **absent from this mapping
+    #: is refused** with ``scoring_mode_unsatisfiable``, whatever corpus raised
+    #: it.  The value is advisory and unused for the construction.
     exclusivity: Dict[str, Optional[ScoringMode]] = field(default_factory=dict)
+    #: corpus_id -> the exclusivity guarantee that corpus provides.  The
+    #: construction is a property of where material was read, not of the class
+    #: read from it: one class from an ASX corpus is cross_market and from an
+    #: EDGAR corpus is pre_archive.
+    corpus_modes: Dict[str, ScoringMode] = field(default_factory=dict)
     #: Security master plus regulatory lexicon.  §13 row 22 names the lists.
     entity_fence: EntityFence = DEFAULT_FENCE
     policy: SegmentPolicy = field(default_factory=SegmentPolicy)
@@ -214,8 +217,10 @@ def scan(
     control_count = (
         max(1, round(len(proposals) * config.control_arm_ratio)) if proposals else 0
     )
+    control_corpus = corpora[0].corpus_id if corpora else ""
     for p in draw_control_mechanisms(
-        grid, control_count, config.control_arm_seed, now=now
+        grid, control_count, config.control_arm_seed, now=now,
+        corpus_id=control_corpus,
     ):
         proposals.append((p, {}))
 
@@ -290,8 +295,9 @@ def scan(
             continue
 
         # -- directive ----------------------------------------------------
-        scoring_mode = (
-            config.exclusivity[record.event_class] or config.default_scoring_mode
+        scoring_mode = config.corpus_modes.get(
+            proposal.corpus_id,
+            config.exclusivity.get(record.event_class) or config.default_scoring_mode,
         )
         report.scoring_modes[scoring_mode.value] = (
             report.scoring_modes.get(scoring_mode.value, 0) + 1

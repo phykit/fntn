@@ -318,6 +318,10 @@ class Proposal:
     #: partition the agent may read.
     source_ref: str
     source_partition: Partition
+    #: Which corpus this was read from.  The exclusivity guarantee is a
+    #: property of the corpus, so a directive cannot resolve its scoring_mode
+    #: without it.
+    corpus_id: str = ""
     #: Free-text mechanism note.  Also entity-fenced.
     mechanism_note: str = ""
     #: Populated only by the control arm, so a drawn mechanism is legible as

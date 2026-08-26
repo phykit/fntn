@@ -26,6 +26,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
+from .markets import CorpusInvalid, validate_corpus
 from .records import ScoringMode
 
 
@@ -37,15 +38,14 @@ class RegistrationIncomplete(RuntimeError):
 class DiscoverableClass:
     """One row of §13 row 22: a class declared discoverable, and how.
 
-    ``scoring_mode`` may be omitted to take the registered default. It may not
-    be omitted *and* absent from the default, which is the case the loader
-    refuses.
+    Declares *whether* a class may be discovered. It does not declare the
+    exclusivity guarantee: that is a property of the corpus the proposal was
+    read from, and lives on ``Corpus``.
     """
 
     event_class: str
-    scoring_mode: Optional[str] = None
-    #: Free text: which markets carry this class outside the traded universe.
-    #: Recorded so that a `cross_market` claim can be audited later.
+    #: Free text: which markets carry this class. Recorded so a construction
+    #: claim can be audited later. Advisory: the corpus decides the guarantee.
     external_markets: str = ""
 
 
@@ -62,6 +62,12 @@ class Corpus:
     market: str
     partition: str
     retrieval_route: str
+    #: The exclusivity guarantee THIS CORPUS provides. A property of where the
+    #: material was read, not of the class that was read from it: one event
+    #: class discovered from an ASX corpus is cross_market and from an EDGAR
+    #: corpus is pre_archive. An earlier version keyed this on the class, which
+    #: made the guarantee unstateable for any class read from both.
+    scoring_mode: Optional[str] = None
 
 
 @dataclass
@@ -155,12 +161,6 @@ class Registration:
                 f"default_scoring_mode {self.default_scoring_mode!r} is not one "
                 f"of {sorted(valid)}"
             )
-        for c in self.discoverable_classes:
-            if c.scoring_mode is not None and c.scoring_mode not in valid:
-                out.append(
-                    f"class {c.event_class!r} names scoring_mode "
-                    f"{c.scoring_mode!r}, which is not one of {sorted(valid)}"
-                )
 
         for c in self.corpora:
             if c.partition not in ("discovery", "external"):
@@ -168,6 +168,17 @@ class Registration:
                     f"corpus {c.corpus_id!r} sits in partition {c.partition!r}, "
                     "which a discovery agent may not read"
                 )
+            mode = c.scoring_mode or self.default_scoring_mode
+            if mode not in valid:
+                out.append(
+                    f"corpus {c.corpus_id!r} names scoring_mode {mode!r}, which "
+                    f"is not one of {sorted(valid)}"
+                )
+            else:
+                try:
+                    validate_corpus(c.market, mode)
+                except CorpusInvalid as exc:
+                    out.append(f"corpus {c.corpus_id!r}: {exc}")
         if self.delta_min_floor is not None and self.control_arm_delta is not None:
             if self.control_arm_delta < self.delta_min_floor:
                 out.append(
@@ -199,11 +210,21 @@ class Registration:
         blob = json.dumps(payload, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(blob.encode()).hexdigest()[:16]
 
-    def scoring_mode_for(self, event_class: str) -> Optional[str]:
-        for c in self.discoverable_classes:
-            if c.event_class == event_class:
+    def is_discoverable(self, event_class: str) -> bool:
+        """Whether the class may be discovered at all (§13 row 22).
+
+        Separate from the construction, which the corpus supplies. A class
+        absent here is refused with `scoring_mode_unsatisfiable` whatever
+        corpus raised it.
+        """
+
+        return any(c.event_class == event_class for c in self.discoverable_classes)
+
+    def scoring_mode_for_corpus(self, corpus_id: str) -> Optional[str]:
+        for c in self.corpora:
+            if c.corpus_id == corpus_id:
                 return c.scoring_mode or self.default_scoring_mode
-        return None  # not declared discoverable: `scoring_mode_unsatisfiable`
+        return None
 
     # -- persistence -------------------------------------------------------
 
@@ -263,11 +284,15 @@ class Registration:
             f"  corpora                      : {len(self.corpora)}",
         ]
         for c in self.corpora:
-            lines.append(f"    {c.corpus_id} ({c.market}, {c.partition}) via {c.retrieval_route}")
+            lines.append(
+                f"    {c.corpus_id} ({c.market}, {c.partition}) "
+                f"-> {c.scoring_mode or self.default_scoring_mode} "
+                f"via {c.retrieval_route}"
+            )
         lines.append(f"  discoverable classes         : {len(self.discoverable_classes)}")
         for c in self.discoverable_classes:
             lines.append(
-                f"    {c.event_class} -> {c.scoring_mode or self.default_scoring_mode}"
+                f"    {c.event_class}"
                 + (f"  [{c.external_markets}]" if c.external_markets else "")
             )
         gaps = self.missing()

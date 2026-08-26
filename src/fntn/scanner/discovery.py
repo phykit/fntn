@@ -231,6 +231,7 @@ def sweep(
                 event_class=str(raw.get("event_class", "")),
                 source_ref=str(raw.get("source_ref", "")),
                 source_partition=corpus.partition,
+                corpus_id=corpus.corpus_id,
                 mechanism_note=str(raw.get("mechanism_note", "")),
                 origin=Origin.AGENT,
                 raised_at=now,
@@ -269,6 +270,7 @@ def draw_control_mechanisms(
     seed: int,
     corpus_partition: Partition = Partition.EXTERNAL,
     now: Optional[datetime] = None,
+    corpus_id: str = "",
 ) -> List[Proposal]:
     """Draw mechanisms uniformly from the reachable grid.
 
@@ -287,6 +289,7 @@ def draw_control_mechanisms(
             event_class=cell.event_class,
             source_ref=f"grid:{cell.event_class}",
             source_partition=corpus_partition,
+            corpus_id=corpus_id,
             mechanism_note="drawn uniformly from the reachable grid",
             drawn_from_grid_cell=f"{cell.event_class}|{cell.population}",
             origin=Origin.RANDOM_CONTROL,

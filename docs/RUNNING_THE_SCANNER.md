@@ -12,10 +12,29 @@ existence. That is the strongest form of pre-registration available, stronger
 than registering before you looked, because the data could not have been looked
 at. Nothing about it is a measurement and nothing here pretends otherwise.
 
+## The five markets
+
+| | Venues | Universe | Construction |
+|---|---|---|---|
+| US | NYSE, Nasdaq | traded | `pre_archive` |
+| UK | LSE Main Market, AIM | traded | `pre_archive` |
+| AU | ASX | external | `cross_market` |
+| EU | Frankfurt, Euronext | external | `cross_market` |
+| NZ | NZX Main Board | external | `cross_market` |
+
+**The construction belongs to the corpus, not to the event class.** Insider
+dealing read from an ASX corpus is `cross_market`; the same class read from an
+EDGAR corpus is `pre_archive`, because NYSE and Nasdaq sit inside §0.7(f) and
+the two would share a price path. Declaring an in-universe corpus as
+`cross_market` costs nothing, looks like a configuration detail, and voids the
+guarantee silently, so the CLI refuses it.
+
 ## The order, which the CLI enforces
 
 ```bash
-python -m fntn.scanner init      # write a blank registration form
+python -m fntn.scanner markets   # profiles, constructions, master sources
+python -m fntn.scanner template  # a form prefilled for all five markets
+python -m fntn.scanner init      # or an empty one
 python -m fntn.scanner check     # report exactly what is still missing
 python -m fntn.scanner sweep     # runs only if the form is complete
 ```
@@ -51,7 +70,23 @@ Vodafone Group plc,VOD,LSE
 Rio Tinto Limited,RIO,ASX
 ```
 
-Reference a file as `path`, `path:market`, or `path:market:listed_total`.
+Reference a file as `path`, `path:market`, or `path:market:listed_total`. A
+`.json` path loads as an SEC `company_tickers.json`; anything else as CSV.
+
+```bash
+mkdir -p master
+curl -sA "fntn research <your email>" \
+  https://www.sec.gov/files/company_tickers.json -o master/us.json
+# UK: londonstockexchange.com/reports?tab=instruments -> master/uk.csv
+# AU: asx.com.au/asx/research/ASXListedCompanies.csv  -> master/au.csv
+# EU: per-venue lists from Deutsche Boerse and Euronext
+# NZ: nzx.com/markets/NZSX                            -> master/nz.csv
+```
+
+The SEC file needs no `listed_total`: the regulator's list **is** the
+population, so US coverage is complete by construction. Every CSV market needs
+one, and EU needs one per venue rather than a combined file, because a combined
+file leaves per-venue coverage unknown and unknown is not readable.
 
 **Coverage is measured, not assumed.** An issuer absent from the master is an
 episode the fence cannot see, and it will pass silently. A market below

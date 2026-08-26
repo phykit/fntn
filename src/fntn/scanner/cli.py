@@ -21,6 +21,7 @@ from typing import List, Optional, Sequence
 from .clients import AnthropicClient, ClientRefusal, TranscriptClient
 from .discovery import Corpus as SweepCorpus, GridCell
 from .ledger import Ledger
+from .markets import MARKETS, render as render_markets, resolve
 from .master import SecurityMaster
 from .params import Registration, RegistrationIncomplete
 from .records import Partition, ScoringMode, SegmentSpan
@@ -38,9 +39,14 @@ def _load_master(reg: Registration) -> SecurityMaster:
         path, market, total = parts[0], None, None
         if len(parts) > 1 and parts[1]:
             market = parts[1]
-        if len(parts) > 2 and parts[2]:
+        if len(parts) > 2 and parts[2] and parts[2] != "<listed_total>":
             total = int(parts[2])
-        master.load_csv(path, market=market, listed_total=total)
+        # The SEC publishes JSON, every exchange publishes CSV. Dispatch on the
+        # file rather than making the operator remember which loader to name.
+        if path.lower().endswith(".json"):
+            master.load_sec_tickers(path, market=market or "US", listed_total=total)
+        else:
+            master.load_csv(path, market=market, listed_total=total)
     return master
 
 
@@ -66,6 +72,61 @@ def cmd_init(args) -> int:
     print("  control_arm_seed     any integer, recorded, never redrawn.")
     print("  theta                pairwise design-segment overlap tolerance.")
     print("  delta_min_floor      smallest effect worth a session of the segment.")
+    return 0
+
+
+def cmd_markets(args) -> int:
+    print(render_markets())
+    print()
+    print("A corpus from an in-universe market cannot provide cross_market:")
+    print("discovery and evaluation would share a price path. Use pre_archive")
+    print("(material predating the archive) or forward_only (scored after")
+    print("registered_at). The CLI refuses the other way round.")
+    return 0
+
+
+def cmd_template(args) -> int:
+    """Write a registration prefilled for every known market."""
+
+    from .params import Corpus as RegCorpus, DiscoverableClass, Registration
+
+    reg = Registration.blank()
+    reg.corpora = [
+        RegCorpus(
+            corpus_id=m.code.lower(),
+            market=m.code,
+            partition="external",
+            retrieval_route=f"./corpora/{m.code.lower()}",
+            scoring_mode=m.construction.value,
+        )
+        for m in MARKETS.values()
+    ]
+    reg.discoverable_classes = [
+        DiscoverableClass("insider_dealing", external_markets="US, UK, AU, EU, NZ"),
+        DiscoverableClass("major_holdings_change", external_markets="US, UK, AU, EU"),
+        DiscoverableClass("buyback", external_markets="UK, AU, EU"),
+        DiscoverableClass("earnings_event", external_markets="US, UK, AU, EU, NZ"),
+    ]
+    reg.security_master_files = [
+        f"./master/{m.code.lower()}.json:{m.code}" if m.master_loader == "load_sec_tickers"
+        else f"./master/{m.code.lower()}.csv:{m.code}:<listed_total>"
+        for m in MARKETS.values()
+    ]
+    reg.rationale = "Why these values and not others. Replace this line."
+    p = Path(args.registration)
+    if p.exists() and not args.force:
+        print(f"{p} exists. Use --force to overwrite.")
+        return 1
+    reg.save(p)
+    print(f"wrote {p}, prefilled for {len(MARKETS)} markets")
+    print()
+    print("Still yours to supply: control_arm_delta, control_arm_n_min,")
+    print("control_arm_ratio, control_arm_seed, theta, delta_min_floor,")
+    print("registered_at, registered_by, and a listed_total per CSV market.")
+    print()
+    print("Master files to fetch:")
+    for m in MARKETS.values():
+        print(f"  {m.code}: {m.master_source}")
     return 0
 
 
@@ -134,9 +195,10 @@ def cmd_sweep(args) -> int:
         print(exc)
         return 4
 
-    exclusivity = {
-        c.event_class: ScoringMode(c.scoring_mode or reg.default_scoring_mode)
-        for c in reg.discoverable_classes
+    exclusivity = {c.event_class: None for c in reg.discoverable_classes}
+    corpus_modes = {
+        c.corpus_id: ScoringMode(c.scoring_mode or reg.default_scoring_mode)
+        for c in reg.corpora
     }
     grid = [
         GridCell(c.event_class, "declared discoverable population",
@@ -149,6 +211,7 @@ def cmd_sweep(args) -> int:
         parameter_hash=reg.hash(),
         default_scoring_mode=ScoringMode(reg.default_scoring_mode),
         exclusivity=exclusivity,
+        corpus_modes=corpus_modes,
         entity_fence=master.as_fence(),
         control_arm_ratio=reg.control_arm_ratio,
         control_arm_seed=reg.control_arm_seed,
@@ -192,6 +255,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     p_init = sub.add_parser("init", help="write a blank registration form")
     p_init.add_argument("--force", action="store_true")
     p_init.set_defaults(func=cmd_init)
+
+    p_markets = sub.add_parser("markets", help="show market profiles and constructions")
+    p_markets.set_defaults(func=cmd_markets)
+
+    p_tmpl = sub.add_parser("template", help="write a registration prefilled for all markets")
+    p_tmpl.add_argument("--force", action="store_true")
+    p_tmpl.set_defaults(func=cmd_template)
 
     p_check = sub.add_parser("check", help="report what is still missing")
     p_check.set_defaults(func=cmd_check)
