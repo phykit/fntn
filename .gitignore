@@ -6,3 +6,5 @@ __pycache__/
 fntn_repo.zip
 .venv/
 tidy.sh
+*.egg-info/
+fntn_discovery.db

@@ -1,7 +1,0 @@
-Metadata-Version: 2.4
-Name: fntn
-Version: 1.13.0
-Summary: From Narrative to Null: a falsification-first architecture for trading ideas extracted from financial media
-Requires-Python: >=3.10
-Provides-Extra: dev
-Requires-Dist: pytest>=7; extra == "dev"
