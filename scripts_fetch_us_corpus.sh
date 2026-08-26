@@ -57,8 +57,14 @@ echo
 # path. A list that half-fails on first run is worse than a shorter list that
 # works, so they are omitted with their reason rather than included on hope.
 # Add them by hand if you want them, once you have confirmed the paths.
+# NOTHING FROM sec.gov IS FETCHED. The page exists and carries the staff
+# section 16 C&DIs, but sec.gov returns a 698-byte stub to curl rather
+# than the document, reproducibly. A URL that resolves and a URL that
+# returns the document are different claims. To include the C&DIs, open
+# the page in a browser, save it into corpora/us/, and add a manifest
+# line by hand:
+#   https://www.sec.gov/divisions/corpfin/guidance/sec16interp.htm
 DOCS=$(cat <<'LIST'
-section16_cdi.htm|2022-01-01|https://www.sec.gov/divisions/corpfin/guidance/sec16interp.htm
 exchange_act_section16.htm|1934-06-06|https://www.law.cornell.edu/uscode/text/15/78p
 rule_16a1_definitions.htm|1991-05-01|https://www.law.cornell.edu/cfr/text/17/240.16a-1
 rule_16a2_persons_subject.htm|1991-05-01|https://www.law.cornell.edu/cfr/text/17/240.16a-2
@@ -100,6 +106,43 @@ done <<< "$DOCS"
 echo
 echo "fetched $ok, failed $failed, refused $refused"
 echo "manifest: $MANIFEST"
+
+echo
+python3 - "$OUT" <<'CHECKPY'
+import hashlib, pathlib, sys
+from collections import defaultdict
+out = pathlib.Path(sys.argv[1]); MIN_BYTES = 4000
+files = [p for p in sorted(out.glob("*")) if p.is_file() and not p.name.startswith("_")]
+problems, notes = [], []
+for f in files:
+    n = f.stat().st_size
+    if n < MIN_BYTES:
+        problems.append(f"{f.name}: {n} bytes, below {MIN_BYTES}. Not the document.")
+by_digest = defaultdict(list)
+for f in files:
+    by_digest[hashlib.sha256(f.read_bytes()).hexdigest()].append(f.name)
+for names in by_digest.values():
+    if len(names) > 1:
+        problems.append("byte-identical, so one URL served another's content: " + ", ".join(names))
+by_size = defaultdict(list)
+for f in files:
+    by_size[f.stat().st_size].append(f.name)
+for size, names in by_size.items():
+    if len(names) > 1 and len({hashlib.sha256((out / n).read_bytes()).hexdigest() for n in names}) > 1:
+        notes.append(f"same size ({size}), different content, which is normal: " + ", ".join(names))
+print("Corpus integrity")
+print(f"  documents                    : {len(files)}")
+print(f"  smallest                     : {min((f.stat().st_size for f in files), default=0)} bytes")
+for n in notes:
+    print(f"  note: {n}")
+if problems:
+    print(f"  PROBLEMS                     : {len(problems)}")
+    for pr in problems:
+        print(f"    - {pr}")
+    sys.exit(1)
+print("  no undersized or duplicated documents")
+CHECKPY
+INTEGRITY=$?
 if (( failed )); then
   echo
   echo "A failed fetch is recorded as failed and its file removed. A corpus is"
@@ -111,6 +154,10 @@ if (( ok == 0 )); then
   exit 4
 fi
 echo
+if (( INTEGRITY != 0 )); then
+  echo "Corpus has integrity problems, listed above. Fix before sweeping."
+  exit 5
+fi
 echo "Next:  python -m fntn.scanner sweep"
 echo
 echo "The sweep produces directive drafts blocked on your delta_min, registered"

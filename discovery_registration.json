@@ -1,0 +1,45 @@
+{
+  "archive_opens": "2023-01-01",
+  "control_arm_delta": 50.0,
+  "control_arm_delta_units": "bps",
+  "control_arm_n_min": 30,
+  "control_arm_ratio": 1.0,
+  "control_arm_seed": 20260826,
+  "corpora": [
+    {
+      "corpus_id": "us",
+      "market": "US",
+      "partition": "external",
+      "retrieval_route": "./corpora/us",
+      "scoring_mode": "pre_archive"
+    }
+  ],
+  "default_scoring_mode": "cross_market",
+  "delta_min_floor": 25.0,
+  "discoverable_classes": [
+    {
+      "event_class": "insider_dealing",
+      "external_markets": "US, UK, AU, EU, NZ"
+    },
+    {
+      "event_class": "major_holdings_change",
+      "external_markets": "US, UK, AU, EU"
+    },
+    {
+      "event_class": "buyback",
+      "external_markets": "UK, AU, EU"
+    },
+    {
+      "event_class": "earnings_event",
+      "external_markets": "US, UK, AU, EU, NZ"
+    }
+  ],
+  "master_coverage_floor": 0.95,
+  "rationale": "delta 50 bps: an agent beating a random draw by less than half a round trip is not paying for the search it consumes. n_min 30: \u00a76.1 already refuses below 30 non-overlapping trades, so this reuses the paper's minimum rather than inventing a second. ratio 1.0: equal n maximises power for a fixed total, and an underpowered control arm is worse than none because it consumes segment and returns undetermined forever. delta_min_floor 25 bps: the cheapest break-even in \u00a75.2.2 is 22.5 bps, so an effect below that could never be traded in any cell. theta 0.25 is a placeholder, non-binding until the archive exists.",
+  "registered_at": "2026-08-26T22:54:01.850224+00:00",
+  "registered_by": "operator",
+  "security_master_files": [
+    "./master/us.json:US"
+  ],
+  "theta": 0.25
+}
