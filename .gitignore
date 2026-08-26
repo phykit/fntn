@@ -5,3 +5,4 @@ __pycache__/
 *.bundle
 fntn_repo.zip
 .venv/
+tidy.sh
