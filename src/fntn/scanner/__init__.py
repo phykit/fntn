@@ -39,6 +39,8 @@ from .records import (
     StreamStatus,
     Verdict,
 )
+from .master import SecurityMaster
+from .params import Registration, RegistrationIncomplete
 from .segment import ReuseLedger, SegmentPolicy
 from .run import ScanConfig, ScanResult, scan
 
@@ -71,6 +73,9 @@ __all__ = [
     "SegmentSpan",
     "StreamStatus",
     "Verdict",
+    "SecurityMaster",
+    "Registration",
+    "RegistrationIncomplete",
     "ReuseLedger",
     "SegmentPolicy",
     "ScanConfig",

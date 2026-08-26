@@ -1023,3 +1023,170 @@ def test_every_defined_code_is_emitted(tmp_path):
     )
     assert report.ratio == 1.0
     ledger.close()
+
+
+# ---------------------------------------------------------------------------
+# Registration and the security master.
+# ---------------------------------------------------------------------------
+
+from fntn.scanner.master import SecurityMaster
+from fntn.scanner.params import (
+    Corpus as RegCorpus,
+    DiscoverableClass,
+    Registration,
+    RegistrationIncomplete,
+)
+
+
+def _complete_registration(**over) -> Registration:
+    base = dict(
+        control_arm_delta=50.0, control_arm_n_min=30,
+        control_arm_ratio=0.25, control_arm_seed=20260826,
+        corpora=[RegCorpus("asx", "ASX", "external", "./corpora/asx")],
+        discoverable_classes=[DiscoverableClass("insider_dealing")],
+        security_master_files=["master.csv"],
+        theta=0.25, delta_min_floor=25.0,
+        registered_at="2026-08-26T00:00:00+00:00", registered_by="operator",
+    )
+    base.update(over)
+    return Registration(**base)
+
+
+def test_blank_registration_names_every_gap_at_once():
+    gaps = Registration.blank().missing()
+    assert len(gaps) >= 10
+    assert any("control_arm_delta" in g for g in gaps)
+    assert any("theta" in g for g in gaps)
+
+
+def test_sweep_refuses_on_an_incomplete_registration():
+    with pytest.raises(RegistrationIncomplete, match="not a kill criterion"):
+        Registration.blank().require_complete()
+
+
+def test_complete_registration_passes():
+    assert _complete_registration().missing() == []
+
+
+def test_control_arm_ratio_of_zero_is_refused_at_registration():
+    assert any("exceed zero" in g for g in _complete_registration(control_arm_ratio=0).missing())
+
+
+def test_kill_threshold_may_not_sit_below_the_floor():
+    gaps = _complete_registration(control_arm_delta=10.0, delta_min_floor=25.0).missing()
+    assert any("below delta_min_floor" in g for g in gaps)
+
+
+def test_scored_partitions_are_refused_in_a_corpus_row():
+    reg = _complete_registration(
+        corpora=[RegCorpus("x", "LSE", "evaluation", "./x")]
+    )
+    assert any("may not read" in g for g in reg.missing())
+
+
+def test_registration_hash_changes_with_any_value():
+    a = _complete_registration()
+    b = _complete_registration(control_arm_seed=1)
+    assert a.hash() != b.hash()
+
+
+def test_rationale_is_prose_and_does_not_change_the_hash():
+    a = _complete_registration()
+    b = _complete_registration()
+    b.rationale = "because"
+    assert a.hash() == b.hash()
+
+
+def test_a_stamp_cannot_be_moved():
+    with pytest.raises(RegistrationIncomplete, match="cannot move"):
+        _complete_registration().stamp("operator")
+
+
+def test_undeclared_class_has_no_scoring_mode():
+    assert _complete_registration().scoring_mode_for("lunar_phase") is None
+    assert _complete_registration().scoring_mode_for("insider_dealing") == "cross_market"
+
+
+def test_master_indexes_names_and_strips_suffixes(tmp_path):
+    csv = tmp_path / "m.csv"
+    csv.write_text("Company Name,ASX Code\nAcme Holdings plc,ACM\nBarclays PLC,BARC\n")
+    m = SecurityMaster()
+    cov = m.load_csv(csv, market="ASX", listed_total=2)
+    assert cov.rows == 2
+    # Legal form stripped; "Holdings" retained, because it is a name component
+    # and stripping it would reduce the name to a generic word.
+    assert "acme holdings" in m.names and "acme holdings plc" in m.names
+    assert "barclays" in m.names
+    assert "barc" in m.tickers
+    assert cov.coverage == 1.0
+
+
+def test_master_refuses_a_file_it_cannot_read(tmp_path):
+    csv = tmp_path / "bad.csv"
+    csv.write_text("alpha,beta\n1,2\n")
+    with pytest.raises(ValueError, match="no name or ticker column"):
+        SecurityMaster().load_csv(csv)
+
+
+def test_unknown_coverage_is_not_treated_as_complete(tmp_path):
+    csv = tmp_path / "m.csv"
+    csv.write_text("Company,Ticker\nAcme plc,ACM\n")
+    m = SecurityMaster()
+    m.load_csv(csv, market="ASX")  # no listed_total
+    assert m.readable_markets(0.95) == []
+    assert "coverage unknown" in m.unreadable_markets(0.95)["ASX"]
+
+
+def test_master_below_floor_is_unreadable(tmp_path):
+    csv = tmp_path / "m.csv"
+    csv.write_text("Company,Ticker\nAcme plc,ACM\n")
+    m = SecurityMaster()
+    m.load_csv(csv, market="ASX", listed_total=100)
+    assert "below floor" in m.unreadable_markets(0.95)["ASX"]
+
+
+def test_master_builds_a_working_fence(tmp_path):
+    csv = tmp_path / "m.csv"
+    csv.write_text("Company,Ticker\nVodafone Group plc,VOD\n")
+    m = SecurityMaster(); m.load_csv(csv, market="LSE")
+    f = m.as_fence()
+    assert entity_mentions("purchases at Vodafone Group in the window", f)
+    assert entity_mentions("notifications lodged with ASX under Listing Rule 12.9", f) == []
+
+
+def test_fence_matches_multi_word_names_as_spans(tmp_path):
+    """The binding layer was inert for any issuer whose name is more than one word."""
+
+    csv = tmp_path / "m.csv"
+    csv.write_text("Company,Ticker\nVodafone Group plc,VOD\nRio Tinto Limited,RIO\n")
+    m = SecurityMaster(); m.load_csv(csv, market="LSE")
+    f = m.as_fence()
+    assert entity_mentions("purchases at Vodafone Group in the window", f)
+    assert entity_mentions("directors of Rio Tinto filing late", f)
+    assert entity_mentions("a mechanism with no issuer named at all", f) == []
+
+
+def test_multi_market_csv_is_grouped_not_collapsed(tmp_path):
+    """An earlier version reported the last market as covering every row."""
+
+    csv = tmp_path / "m.csv"
+    csv.write_text(
+        "Company,Ticker,Market\n"
+        "Vodafone Group plc,VOD,LSE\nBarclays PLC,BARC,LSE\n"
+        "Rio Tinto Limited,RIO,ASX\nShopify Inc.,SHOP,TSX\n"
+    )
+    m = SecurityMaster(); m.load_csv(csv)
+    assert set(m.per_market) == {"LSE", "ASX", "TSX"}
+    assert m.per_market["LSE"].rows == 2
+    assert m.per_market["ASX"].rows == 1
+    # No per-market total can be inferred from a combined file, so coverage is
+    # unknown, and unknown is not readable.
+    assert m.readable_markets(0.95) == []
+
+
+def test_named_market_override_still_attaches_the_total(tmp_path):
+    csv = tmp_path / "m.csv"
+    csv.write_text("Company,Ticker,Market\nAcme plc,ACM,IGNORED\n")
+    m = SecurityMaster(); m.load_csv(csv, market="ASX", listed_total=1)
+    assert set(m.per_market) == {"ASX"}
+    assert m.per_market["ASX"].coverage == 1.0

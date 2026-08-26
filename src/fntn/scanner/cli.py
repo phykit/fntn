@@ -1,0 +1,214 @@
+"""Command line: register, then check, then sweep. In that order, enforced.
+
+    python -m fntn.scanner init      > writes a blank registration form
+    python -m fntn.scanner check     > says exactly what is still missing
+    python -m fntn.scanner sweep     > runs, only if the form is complete
+
+`sweep` refuses on an incomplete registration and names every gap. That refusal
+is the point of the command existing: the alternative is a sweep that runs on
+whatever happened to be filled in, and a directive raised under a partial
+registration cannot be attributed to anything.
+"""
+
+from __future__ import annotations
+
+import argparse
+import sys
+from datetime import date, datetime, timezone
+from pathlib import Path
+from typing import List, Optional, Sequence
+
+from .clients import AnthropicClient, ClientRefusal, TranscriptClient
+from .discovery import Corpus as SweepCorpus, GridCell
+from .ledger import Ledger
+from .master import SecurityMaster
+from .params import Registration, RegistrationIncomplete
+from .records import Partition, ScoringMode, SegmentSpan
+from .run import ScanConfig, scan
+from .segment import SegmentPolicy
+
+DEFAULT_REG = "discovery_registration.json"
+
+
+def _load_master(reg: Registration) -> SecurityMaster:
+    master = SecurityMaster()
+    for spec in reg.security_master_files:
+        # "path" or "path:market" or "path:market:listed_total"
+        parts = spec.split(":")
+        path, market, total = parts[0], None, None
+        if len(parts) > 1 and parts[1]:
+            market = parts[1]
+        if len(parts) > 2 and parts[2]:
+            total = int(parts[2])
+        master.load_csv(path, market=market, listed_total=total)
+    return master
+
+
+def cmd_init(args) -> int:
+    p = Path(args.registration)
+    if p.exists() and not args.force:
+        print(f"{p} exists. Use --force to overwrite, but note that overwriting")
+        print("a stamped registration destroys the timestamp its standing rests on.")
+        return 1
+    reg = Registration.blank()
+    reg.save(p)
+    print(f"wrote {p}")
+    print()
+    print("Fill in every field, then run `check`. The six that only you can")
+    print("supply, and why each is yours rather than the machine's:")
+    print()
+    print("  control_arm_delta    the separation below which the discovery layer")
+    print("                       is refuted. Committed before you know whether")
+    print("                       the answer flatters you.")
+    print("  control_arm_n_min    observations per arm below which the verdict is")
+    print("                       undetermined rather than a quiet pass.")
+    print("  control_arm_ratio    drawn mechanisms per proposed one. Above zero.")
+    print("  control_arm_seed     any integer, recorded, never redrawn.")
+    print("  theta                pairwise design-segment overlap tolerance.")
+    print("  delta_min_floor      smallest effect worth a session of the segment.")
+    return 0
+
+
+def cmd_check(args) -> int:
+    try:
+        reg = Registration.load(args.registration)
+    except FileNotFoundError:
+        print(f"{args.registration} not found. Run `init` first.")
+        return 1
+    print(reg.render())
+    gaps = reg.missing()
+    if reg.security_master_files:
+        print()
+        try:
+            master = _load_master(reg)
+            print(master.render(floor=reg.master_coverage_floor))
+        except (OSError, ValueError) as exc:
+            print(f"Security master (§13 row 25)\n  UNREADABLE: {exc}")
+            gaps.append("security master is unreadable")
+    return 1 if gaps else 0
+
+
+def cmd_sweep(args) -> int:
+    try:
+        reg = Registration.load(args.registration)
+    except FileNotFoundError:
+        print(f"{args.registration} not found. Run `init` first.")
+        return 1
+
+    try:
+        reg.require_complete()
+    except RegistrationIncomplete as exc:
+        print(exc)
+        return 2
+
+    master = _load_master(reg)
+    unreadable = master.unreadable_markets(reg.master_coverage_floor)
+
+    # A corpus whose market the master does not cover is refused here rather
+    # than swept and silently under-fenced.
+    corpora: List[SweepCorpus] = []
+    for c in reg.corpora:
+        if c.market in unreadable:
+            print(f"skipping corpus {c.corpus_id!r}: {unreadable[c.market]}")
+            continue
+        docs = []
+        for path in Path(c.retrieval_route).glob("*") if Path(c.retrieval_route).is_dir() else []:
+            docs.append(path.read_text(encoding="utf-8", errors="replace")[:20000])
+        if not docs and not args.transcript:
+            print(f"skipping corpus {c.corpus_id!r}: no documents at {c.retrieval_route}")
+            continue
+        corpora.append(
+            SweepCorpus(c.corpus_id, Partition(c.partition), docs or ["(transcript)"])
+        )
+    if not corpora:
+        print("no readable corpus. Nothing swept.")
+        return 3
+
+    try:
+        client = (
+            TranscriptClient(args.transcript)
+            if args.transcript
+            else AnthropicClient(model=args.model)
+        )
+    except ClientRefusal as exc:
+        print(exc)
+        return 4
+
+    exclusivity = {
+        c.event_class: ScoringMode(c.scoring_mode or reg.default_scoring_mode)
+        for c in reg.discoverable_classes
+    }
+    grid = [
+        GridCell(c.event_class, "declared discoverable population",
+                 f"a mechanism drawn from the {c.event_class} cell")
+        for c in reg.discoverable_classes
+    ]
+
+    ledger = Ledger(args.ledger, parameter_hash=reg.hash())
+    config = ScanConfig(
+        parameter_hash=reg.hash(),
+        default_scoring_mode=ScoringMode(reg.default_scoring_mode),
+        exclusivity=exclusivity,
+        entity_fence=master.as_fence(),
+        control_arm_ratio=reg.control_arm_ratio,
+        control_arm_seed=reg.control_arm_seed,
+        policy=SegmentPolicy(
+            theta=reg.theta,
+            delta_min_floor=reg.delta_min_floor,
+            segment_sessions=args.segment_sessions,
+            calibration_reserve_sessions=args.calibration_reserve,
+        ),
+        span_start=date.fromisoformat(args.span_start),
+    )
+
+    print(f"registration {reg.hash()} stamped {reg.registered_at}")
+    print(master.render(floor=reg.master_coverage_floor))
+    print()
+    result = scan(client, corpora, grid, config, ledger)
+    print(result.render(ledger))
+    print()
+    print(f"ledger: {args.ledger}")
+    if result.blocked_on_operator:
+        print()
+        print(f"{len(result.blocked_on_operator)} draft(s) awaiting your delta_min,")
+        print("registered sign, ratified pre-mortem and literature search.")
+        print("That queue is the layer's steady state, not a failure of it.")
+    ledger.close()
+    return 0
+
+
+def main(argv: Optional[Sequence[str]] = None) -> int:
+    parser = argparse.ArgumentParser(
+        prog="fntn.scanner",
+        description=(
+            "Agent discovery layer (spec §3.7). Locates class-level mechanisms "
+            "and produces observation directives at zero capital. Produces no "
+            "trading signal and cannot."
+        ),
+    )
+    parser.add_argument("--registration", default=DEFAULT_REG)
+    sub = parser.add_subparsers(dest="cmd", required=True)
+
+    p_init = sub.add_parser("init", help="write a blank registration form")
+    p_init.add_argument("--force", action="store_true")
+    p_init.set_defaults(func=cmd_init)
+
+    p_check = sub.add_parser("check", help="report what is still missing")
+    p_check.set_defaults(func=cmd_check)
+
+    p_sweep = sub.add_parser("sweep", help="run a sweep, if registration is complete")
+    p_sweep.add_argument("--transcript", help="replay a saved payload instead of calling the model")
+    p_sweep.add_argument("--model", default="claude-opus-4-6")
+    p_sweep.add_argument("--ledger", default="fntn_discovery.db")
+    p_sweep.add_argument("--segment-sessions", type=int, default=0,
+                         help="design-segment sessions. 0 until the archive exists")
+    p_sweep.add_argument("--calibration-reserve", type=int, default=0)
+    p_sweep.add_argument("--span-start", default="2024-01-01")
+    p_sweep.set_defaults(func=cmd_sweep)
+
+    args = parser.parse_args(argv)
+    return args.func(args)
+
+
+if __name__ == "__main__":  # pragma: no cover
+    sys.exit(main())

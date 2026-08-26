@@ -181,12 +181,22 @@ class EntityFence:
             phrase = m.group(0)
             if phrase.split()[0].lower() not in self.lexicon:
                 hits.append(phrase)
-        for token in re.findall(r"\b[A-Z][\w&.'-]{1,}\b", text):
-            low = token.lower()
-            if low in self.lexicon:
-                continue
-            if low in self.security_master:
-                hits.append(token)
+        # Multi-token names must be matched as spans, not as single tokens.
+        # An earlier version tested one capitalised word at a time against the
+        # master, which meant "Vodafone Group" could sit in the master and never
+        # match anything: the fence's binding layer was inert for every issuer
+        # whose name is more than one word, which is most of them.
+        for run in re.findall(r"(?:\b[A-Z][\w&.'-]*\b\s*){1,5}", text):
+            tokens = run.split()
+            for start in range(len(tokens)):
+                for end in range(len(tokens), start, -1):
+                    span = " ".join(tokens[start:end])
+                    low = span.lower().strip(".,;:")
+                    if low in self.lexicon:
+                        continue
+                    if low in self.security_master:
+                        hits.append(span)
+                        break
         seen, ordered = set(), []
         for h in hits:
             if h not in seen:
