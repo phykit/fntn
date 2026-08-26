@@ -203,7 +203,13 @@ def cmd_sweep(args) -> int:
             print(f"skipping corpus {c.corpus_id!r}: {unreadable[c.market]}")
             continue
         docs = []
-        for path in Path(c.retrieval_route).glob("*") if Path(c.retrieval_route).is_dir() else []:
+        route = Path(c.retrieval_route)
+        for path in sorted(route.glob("*")) if route.is_dir() else []:
+            # Underscore-prefixed files are corpus bookkeeping, not corpus. The
+            # manifest records what was fetched; feeding it to the agent as
+            # material would put source URLs and filenames in front of it.
+            if path.name.startswith("_") or not path.is_file():
+                continue
             docs.append(path.read_text(encoding="utf-8", errors="replace")[:20000])
         if not docs and not args.transcript:
             print(f"skipping corpus {c.corpus_id!r}: no documents at {c.retrieval_route}")
