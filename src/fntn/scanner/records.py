@@ -70,9 +70,23 @@ class ScoringMode(str, Enum):
     kept the finder out of the measurement*.
     """
 
-    #: The agent read only markets outside §0.7(f) and material predating the
-    #: archive.  Return paths are disjoint at zero cost in archive span.
+    #: The agent read only markets outside §0.7(f).  Return paths are disjoint
+    #: at zero cost in archive span.  **The assumption**: a mechanism observed
+    #: under one market's disclosure regime holds under another's.
     CROSS_MARKET = "cross_market"
+    #: The agent read in-universe material **predating the archive's opening
+    #: boundary**.  Disjoint in time rather than in market, and free: the
+    #: archive does not reach back that far, so the two share no observation.
+    #:
+    #: Split out from ``cross_market`` in v1.13 because the two rest on
+    #: different assumptions with different failure modes.  Cross-market assumes
+    #: mechanisms generalise across disclosure regimes; this assumes they are
+    #: stable over time within one.  §0.7(a) records that the archive sits
+    #: entirely inside the post-collapse regime, and Brochet's disclosure-speed
+    #: finding is direct evidence that a regime moves, so this is not the weaker
+    #: assumption by default and is measured on its own terms rather than under
+    #: the cross-market generalisability row.
+    PRE_ARCHIVE = "pre_archive"
     #: The agent read only the Discovery partition; Gate 0 asserts separation
     #: from design, calibration and evaluation.  Stricter, and it costs span.
     DISJOINT_PARTITION = "disjoint_partition"

@@ -149,6 +149,19 @@ class Registration:
         if not self.registered_by:
             out.append("registered_by")
 
+        valid = {m.value for m in ScoringMode}
+        if self.default_scoring_mode not in valid:
+            out.append(
+                f"default_scoring_mode {self.default_scoring_mode!r} is not one "
+                f"of {sorted(valid)}"
+            )
+        for c in self.discoverable_classes:
+            if c.scoring_mode is not None and c.scoring_mode not in valid:
+                out.append(
+                    f"class {c.event_class!r} names scoring_mode "
+                    f"{c.scoring_mode!r}, which is not one of {sorted(valid)}"
+                )
+
         for c in self.corpora:
             if c.partition not in ("discovery", "external"):
                 out.append(

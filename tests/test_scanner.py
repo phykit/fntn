@@ -12,6 +12,7 @@ Two obligations, and the second is the one that matters:
 
 from __future__ import annotations
 
+import json
 from datetime import date, datetime, timedelta, timezone
 
 import pytest
@@ -1190,3 +1191,50 @@ def test_named_market_override_still_attaches_the_total(tmp_path):
     m = SecurityMaster(); m.load_csv(csv, market="ASX", listed_total=1)
     assert set(m.per_market) == {"ASX"}
     assert m.per_market["ASX"].coverage == 1.0
+
+
+def test_pre_archive_is_a_distinct_construction():
+    """US discovery cannot be cross_market: the US is inside the traded universe."""
+
+    assert ScoringMode.PRE_ARCHIVE.value == "pre_archive"
+    assert len({m.value for m in ScoringMode}) == 4
+
+
+def test_registration_refuses_an_unknown_scoring_mode():
+    reg = _complete_registration(default_scoring_mode="wishful")
+    assert any("not one of" in g for g in reg.missing())
+
+
+def test_registration_refuses_an_unknown_per_class_mode():
+    reg = _complete_registration(
+        discoverable_classes=[DiscoverableClass("insider_dealing", "sideways")]
+    )
+    assert any("sideways" in g for g in reg.missing())
+
+
+def test_sec_ticker_file_loads_and_is_its_own_population(tmp_path):
+    f = tmp_path / "company_tickers.json"
+    f.write_text(json.dumps({
+        "0": {"cik_str": 320193, "ticker": "AAPL", "title": "Apple Inc."},
+        "1": {"cik_str": 789019, "ticker": "MSFT", "title": "Microsoft Corporation"},
+    }))
+    m = SecurityMaster()
+    cov = m.load_sec_tickers(f)
+    assert cov.rows == 2
+    # The regulator's own file is the population, so coverage is complete by
+    # construction rather than by estimate.
+    assert cov.coverage == 1.0
+    assert m.readable_markets(0.95) == ["US"]
+    assert "apple" in m.names and "aapl" in m.tickers
+    assert "microsoft" in m.names
+
+
+def test_sec_master_fences_us_issuers(tmp_path):
+    f = tmp_path / "company_tickers.json"
+    f.write_text(json.dumps({
+        "0": {"cik_str": 1, "ticker": "AAPL", "title": "Apple Inc."},
+    }))
+    m = SecurityMaster(); m.load_sec_tickers(f)
+    fence = m.as_fence()
+    assert entity_mentions("director purchases at Apple after the filing", fence)
+    assert entity_mentions("Form 4 filings within two business days", fence) == []

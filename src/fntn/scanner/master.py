@@ -21,6 +21,7 @@ kind of chore that gets skipped.
 from __future__ import annotations
 
 import csv
+import json
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -175,6 +176,55 @@ class SecurityMaster:
             indexed_tickers=sum(c.indexed_tickers for c in buckets.values()),
             skipped_generic=sum(c.skipped_generic for c in buckets.values()),
         )
+
+    def load_sec_tickers(
+        self, path: str | Path, market: str = "US", listed_total: Optional[int] = None
+    ) -> MasterCoverage:
+        """Load the SEC's own `company_tickers.json`.
+
+        The authoritative, free, complete list of every issuer with an EDGAR
+        filing obligation, published by the regulator whose filings the agent
+        would be reading. Using it means `listed_total` is the file's own row
+        count, so US coverage is 100% by construction rather than by estimate:
+        the master and the population are the same object.
+
+            https://www.sec.gov/files/company_tickers.json
+
+        Shape: {"0": {"cik_str": 320193, "ticker": "AAPL", "title": "Apple Inc."}, ...}
+        """
+
+        raw = json.loads(Path(path).read_text(encoding="utf-8"))
+        rows = raw.values() if isinstance(raw, dict) else raw
+        cov = MasterCoverage(
+            market=market, rows=0, indexed_names=0, indexed_tickers=0,
+            listed_total=listed_total,
+        )
+        for row in rows:
+            cov.rows += 1
+            for variant in self._name_variants(str(row.get("title", ""))):
+                if len(variant) < _MIN_NAME_LEN or variant in SEED_LEXICON:
+                    cov.skipped_generic += 1
+                    continue
+                self.names.add(variant)
+                cov.indexed_names += 1
+            t = str(row.get("ticker", "")).strip().lower()
+            if t and t not in SEED_LEXICON:
+                self.tickers.add(t)
+                cov.indexed_tickers += 1
+        # The file is the population, so coverage is complete unless the caller
+        # deliberately measures against a different denominator.
+        if cov.listed_total is None:
+            cov.listed_total = cov.rows
+        existing = self.per_market.get(market)
+        if existing is None:
+            self.per_market[market] = cov
+        else:
+            existing.rows += cov.rows
+            existing.indexed_names += cov.indexed_names
+            existing.indexed_tickers += cov.indexed_tickers
+            existing.listed_total = (existing.listed_total or 0) + cov.rows
+        self.sources.append(str(path))
+        return cov
 
     @staticmethod
     def _name_variants(raw: str) -> List[str]:

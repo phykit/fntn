@@ -291,6 +291,17 @@ class FenceReport:
                     "    cross_market assumes mechanisms generalise across "
                     "markets whilst episodes do not; §13 row 24 measures it"
                 )
+            if "pre_archive" in self.scoring_modes:
+                lines.append(
+                    "    pre_archive assumes mechanisms are stable across the "
+                    "regime boundary the archive opens after; §13 row 26 "
+                    "measures it, and Brochet is evidence regimes move"
+                )
+            if "forward_only" in self.scoring_modes:
+                lines.append(
+                    "    forward_only is disjoint in time by construction and "
+                    "assumes nothing; it accumulates slowly, which is its cost"
+                )
         lines += [
             f"  import fence                 : {'clean' if self.import_fence_clean else 'BREACHED'}",
             f"  queries logged               : {self.query_log_entries}",
