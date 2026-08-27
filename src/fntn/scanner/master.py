@@ -81,6 +81,13 @@ class SecurityMaster:
     tickers: Set[str] = field(default_factory=set)
     per_market: Dict[str, MasterCoverage] = field(default_factory=dict)
     sources: List[str] = field(default_factory=list)
+    #: The lexicon the loader filters against, which is a different job from
+    #: the one the fence's copy does and has to be the same list. A token here
+    #: never enters the master at all, so a lexicon row changes what the fence
+    #: **can see** as well as what it ignores. Defaults to the module seed so a
+    #: bare ``SecurityMaster()`` still filters; the CLI passes the registered
+    #: list, so a run's master is attributable to the run's hash.
+    lexicon: frozenset = SEED_LEXICON
 
     # -- loading -----------------------------------------------------------
 
@@ -145,14 +152,14 @@ class SecurityMaster:
                         if len(variant) < _MIN_NAME_LEN:
                             cov.skipped_generic += 1
                             continue
-                        if variant in SEED_LEXICON:
+                        if variant in self.lexicon:
                             cov.skipped_generic += 1
                             continue
                         self.names.add(variant)
                         cov.indexed_names += 1
                 if tick_col:
                     t = (row.get(tick_col) or "").strip().lower()
-                    if t and t not in SEED_LEXICON:
+                    if t and t not in self.lexicon:
                         self.tickers.add(t)
                         cov.indexed_tickers += 1
         for name, cov in buckets.items():
@@ -202,13 +209,13 @@ class SecurityMaster:
         for row in rows:
             cov.rows += 1
             for variant in self._name_variants(str(row.get("title", ""))):
-                if len(variant) < _MIN_NAME_LEN or variant in SEED_LEXICON:
+                if len(variant) < _MIN_NAME_LEN or variant in self.lexicon:
                     cov.skipped_generic += 1
                     continue
                 self.names.add(variant)
                 cov.indexed_names += 1
             t = str(row.get("ticker", "")).strip().lower()
-            if t and t not in SEED_LEXICON:
+            if t and t not in self.lexicon:
                 self.tickers.add(t)
                 cov.indexed_tickers += 1
         # The file is the population, so coverage is complete unless the caller
@@ -240,7 +247,7 @@ class SecurityMaster:
     # -- use ---------------------------------------------------------------
 
     def as_fence(
-        self, lexicon=SEED_LEXICON, stopwords=RULEBOOK_STOPWORDS
+        self, lexicon=None, stopwords=RULEBOOK_STOPWORDS
     ) -> EntityFence:
         """Names and tickers go in separately, and the fence matches them apart.
 
@@ -256,7 +263,11 @@ class SecurityMaster:
         return EntityFence(
             security_master=frozenset(self.names),
             tickers=frozenset(self.tickers),
-            lexicon=lexicon,
+            #: Defaults to the list this master was loaded under rather than to
+            #: the module seed. The loader and the fence consult the lexicon for
+            #: different purposes and a fence built from a master filtered by a
+            #: different list would refuse a set neither list explains.
+            lexicon=frozenset(self.lexicon if lexicon is None else lexicon),
             rulebook_stopwords=frozenset(stopwords),
         )
 

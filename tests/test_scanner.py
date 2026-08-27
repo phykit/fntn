@@ -12,7 +12,11 @@ Two obligations, and the second is the one that matters:
 
 from __future__ import annotations
 
+import dataclasses
 import json
+import os
+import subprocess
+import sys
 from datetime import date, datetime, timedelta, timezone
 
 from pathlib import Path
@@ -1285,6 +1289,7 @@ from fntn.scanner.params import (
     Corpus as RegCorpus,
     DiscoverableClass,
     Registration,
+    RegistrationHistoryMissing,
     RegistrationIncomplete,
 )
 
@@ -1569,3 +1574,288 @@ def test_cross_market_needs_no_archive_boundary():
     )
     assert reg.archive_opens is None
     assert reg.missing() == []
+
+
+# ---------------------------------------------------------------------------
+# The registration's own history.
+#
+# A hash on a record is a promise that the object it was taken over can be
+# recovered.  Until docs/REGISTRATION_HISTORY.md existed the promise was false
+# for every superseded hash, because `save` overwrote the file and the chain
+# was recorded nowhere.  These tests are what makes the document a record
+# rather than a claim: every row is recomputed from the object it names, under
+# the dataclass of the commit it names, and a row that does not recompute fails
+# here rather than warning.
+# ---------------------------------------------------------------------------
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+HISTORY_MD = REPO_ROOT / "docs" / "REGISTRATION_HISTORY.md"
+REGISTRATION_FILE = "discovery_registration.json"
+
+
+def _history_rows():
+    """Parse the chain table.  A malformed table is a failure, not zero rows.
+
+    Returning an empty list on a table this cannot read would make the whole
+    suite below vacuous, which is the failure mode a provenance test can least
+    afford: it would pass loudest exactly when the record had been broken.
+    """
+
+    rows = []
+    for line in HISTORY_MD.read_text().splitlines():
+        if not line.startswith("|"):
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) != 6 or not cells[0].isdigit():
+            continue
+        rows.append(
+            {
+                "n": int(cells[0]),
+                "hash": cells[1].strip("`"),
+                "stamped": cells[2],
+                "commit": cells[3].strip("`*"),
+                "object": cells[4],
+                "field": cells[5],
+            }
+        )
+    assert rows, f"no chain rows parsed from {HISTORY_MD}"
+    assert [r["n"] for r in rows] == list(range(1, len(rows) + 1))
+    return rows
+
+
+def _git(*args) -> str:
+    return subprocess.run(
+        ["git", "-C", str(REPO_ROOT), *args],
+        check=True, capture_output=True, text=True,
+    ).stdout
+
+
+def _hash_under(commit: str, blob: bytes, tmp: Path) -> str:
+    """Recompute a registration hash under the dataclass of ``commit``.
+
+    The code has to come from the commit, not from the working tree. A hash is
+    taken over the field set as well as the values, so the 26 August object
+    hashes to `a06400ef28ebb54c` under the schema it was stamped under and to
+    something else under today's, whilst being the same bytes throughout. A
+    test that recomputed with today's `Registration` would fail every
+    historical row and would be measuring the wrong thing when it did.
+    """
+
+    work = tmp / commit
+    work.mkdir(parents=True, exist_ok=True)
+    tar = subprocess.run(
+        ["git", "-C", str(REPO_ROOT), "archive", commit, "src"],
+        check=True, capture_output=True,
+    ).stdout
+    subprocess.run(["tar", "-x", "-C", str(work)], input=tar, check=True)
+    (work / "r.json").write_bytes(blob)
+    out = subprocess.run(
+        [sys.executable, "-c",
+         "from fntn.scanner.params import Registration;"
+         "print(Registration.load('r.json').hash())"],
+        cwd=work, check=True, capture_output=True, text=True,
+        env={**os.environ, "PYTHONPATH": "src"},
+    )
+    return out.stdout.strip()
+
+
+def _row_object(row, tmp: Path) -> bytes:
+    """The bytes the row names, from git or from the tree."""
+
+    cell = row["object"]
+    if cell.startswith("`git show "):
+        ref = cell.split("`git show ", 1)[1].split("`", 1)[0]
+        return subprocess.run(
+            ["git", "-C", str(REPO_ROOT), "show", ref],
+            check=True, capture_output=True,
+        ).stdout
+    path = cell.strip("`").split("`", 1)[0]
+    if path.startswith("docs/"):
+        return (REPO_ROOT / path).read_bytes()
+    return (REPO_ROOT / REGISTRATION_FILE).read_bytes()
+
+
+def test_every_history_row_names_the_registration_file():
+    """`save` looks for a line carrying both the hash and the file.
+
+    A row that names the hash and not the file would let the overwrite through
+    without recording what was overwritten.
+    """
+
+    for row in _history_rows():
+        assert REGISTRATION_FILE in row["object"], row
+
+
+def test_registration_history_recomputes(tmp_path):
+    """Every hash in the chain, recomputed from the object the row names.
+
+    This is the whole of what makes the file a record. A row that does not
+    recompute is a hash nothing in the repository accounts for, which is the
+    state the file exists to end, so it fails here rather than warning.
+    """
+
+    for row in _history_rows():
+        blob = _row_object(row, tmp_path)
+        if row["commit"] == "current":
+            got = Registration.load(REPO_ROOT / REGISTRATION_FILE).hash()
+        else:
+            got = _hash_under(row["commit"], blob, tmp_path)
+        assert got == row["hash"], (
+            f"row {row['n']}: {row['object']} under {row['commit']} hashes to "
+            f"{got}, and the history says {row['hash']}"
+        )
+
+
+def test_a_superseded_row_carries_its_object_commit():
+    """Only the newest row may say `current`, and it must be the newest.
+
+    The current row is completed with a SHA when it is superseded. A row left
+    on `current` behind a newer one is a version whose object was overwritten
+    with nothing recording where it went, which is the original defect.
+    """
+
+    rows = _history_rows()
+    for row in rows[:-1]:
+        assert row["commit"] != "current", row
+    assert rows[-1]["commit"] == "current"
+
+
+def test_the_registration_in_the_tree_is_the_newest_row():
+    """The file and the chain agree, and the file says so itself."""
+
+    rows = _history_rows()
+    reg = Registration.load(REPO_ROOT / REGISTRATION_FILE)
+    assert reg.hash() == rows[-1]["hash"]
+    assert reg.registered_hash == rows[-1]["hash"]
+    assert reg.registered_at.startswith(rows[-1]["stamped"])
+
+
+def test_every_causing_field_names_a_real_field_or_the_first_stamp():
+    fields = {f.name for f in dataclasses.fields(Registration)}
+    for row in _history_rows():
+        cell = row["field"].strip("`")
+        assert cell in fields or cell.startswith("n/a"), row
+
+
+# -- the overwrite guard itself ---------------------------------------------
+
+
+def _stamped(tmp_path, **over) -> Path:
+    reg = _complete_registration(**over)
+    p = tmp_path / REGISTRATION_FILE
+    (tmp_path / "docs").mkdir(exist_ok=True)
+    reg.save(p)
+    return p
+
+
+def test_save_refuses_to_overwrite_a_stamped_registration_unrecorded(tmp_path):
+    """Rule 4 reaches the registration, which was exempt from its own rule."""
+
+    p = _stamped(tmp_path)
+    later = _complete_registration(control_arm_seed=1)
+    with pytest.raises(RegistrationHistoryMissing, match="destroy the object"):
+        later.save(p)
+    # And the file that would have been destroyed is still there, unchanged.
+    assert Registration.load(p).control_arm_seed == 20260826
+
+
+def test_save_proceeds_once_the_prior_hash_and_path_are_recorded(tmp_path):
+    p = _stamped(tmp_path)
+    prior = Registration.load(p).registered_hash
+    hist = tmp_path / "docs" / "REGISTRATION_HISTORY.md"
+    hist.write_text(f"| 1 | `{prior}` | `{REGISTRATION_FILE}` |\n")
+    later = _complete_registration(control_arm_seed=1)
+    assert later.save(p) == later.hash()
+    assert Registration.load(p).control_arm_seed == 1
+
+
+def test_a_row_naming_the_hash_but_not_the_file_does_not_release_the_guard(tmp_path):
+    p = _stamped(tmp_path)
+    prior = Registration.load(p).registered_hash
+    hist = tmp_path / "docs" / "REGISTRATION_HISTORY.md"
+    hist.write_text(f"| 1 | `{prior}` | some other object |\n")
+    with pytest.raises(RegistrationHistoryMissing):
+        _complete_registration(control_arm_seed=1).save(p)
+
+
+def test_an_unstamped_form_may_be_written_over_freely(tmp_path):
+    """A blank form is not a commitment, and nothing is destroyed by filling it."""
+
+    p = tmp_path / REGISTRATION_FILE
+    Registration.blank().save(p)
+    assert _complete_registration().save(p)
+
+
+def test_rewriting_the_same_values_is_not_an_overwrite(tmp_path):
+    p = _stamped(tmp_path)
+    same = _complete_registration()
+    assert same.save(p) == same.hash()
+
+
+def test_a_prior_without_a_recorded_hash_refuses_rather_than_recomputing(tmp_path):
+    """The file says, or nobody does.
+
+    Recomputing would answer a different question, namely what those bytes hash
+    to under today's dataclass, and for every registration written before the
+    last schema change that is not the hash its records carry.
+    """
+
+    p = tmp_path / REGISTRATION_FILE
+    raw = json.loads(_complete_registration().save(p) and p.read_text())
+    raw.pop("registered_hash")
+    p.write_text(json.dumps(raw))
+    with pytest.raises(RegistrationHistoryMissing, match="does not record the hash"):
+        _complete_registration(control_arm_seed=1).save(p)
+
+
+def test_a_stated_prior_hash_is_an_assertion_the_file_may_refute(tmp_path):
+    p = _stamped(tmp_path)
+    with pytest.raises(RegistrationHistoryMissing, match="disagreement is"):
+        _complete_registration(control_arm_seed=1).save(p, prior_hash="deadbeefdeadbeef")
+
+
+# -- the lexicon now reaches the hash ---------------------------------------
+
+
+def test_the_lexicon_reaches_the_hash():
+    """Adding a lexicon row is a re-stamp.  That is the cost, and the point.
+
+    Until this landed the lexicon was a module constant, so two runs under one
+    hash could refuse two different sets of tokens and could load two different
+    security masters, the loader filtering the ticker set against it as well.
+    """
+
+    a = _complete_registration()
+    b = _complete_registration(lexicon=sorted(SEED_LEXICON | {"gadget"}))
+    assert a.hash() != b.hash()
+
+
+def test_the_registered_lexicon_seeds_from_the_module_constant():
+    assert set(_complete_registration().lexicon) == set(SEED_LEXICON)
+
+
+def test_registered_hash_is_provenance_and_is_not_hashed():
+    """It records this function's own result, so hashing it would be circular."""
+
+    a = _complete_registration()
+    b = _complete_registration()
+    b.registered_hash = "not a hash"
+    assert a.hash() == b.hash()
+
+
+def test_the_master_filters_against_the_registered_lexicon(tmp_path):
+    """The loader's copy and the fence's copy have to be one list.
+
+    A token in the lexicon never enters the master at all, so the lexicon
+    decides what the fence CAN SEE as well as what it ignores. A master loaded
+    under the module seed whilst the fence ran on a registered list would
+    refuse a set neither list explains.
+    """
+
+    csv = tmp_path / "m.csv"
+    csv.write_text("Company Name,Ticker\nGadget Industries plc,GDGT\n")
+    wide = SecurityMaster(lexicon=frozenset({"gdgt"}))
+    wide.load_csv(csv, market="US", listed_total=1)
+    assert "gdgt" not in wide.tickers
+    assert "gadget industries" in wide.names
+    assert wide.as_fence().lexicon == frozenset({"gdgt"})

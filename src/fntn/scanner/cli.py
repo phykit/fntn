@@ -42,7 +42,10 @@ def _load_master(reg: Registration) -> tuple:
     not exist yet, which is an ordinary state rather than an error.
     """
 
-    master = SecurityMaster()
+    # The registered lexicon, not the module seed: the loader filters the
+    # ticker set against it, so a master loaded under a different list is a
+    # master the run's hash does not describe.
+    master = SecurityMaster(lexicon=frozenset(reg.lexicon))
     problems: List[str] = []
     for spec in reg.security_master_files:
         # "path" or "path:market" or "path:market:listed_total"
@@ -209,7 +212,10 @@ def cmd_trace(args) -> int:
                    for c in reg.discoverable_classes}
     harness = TraceHarness(
         exclusivity_available=exclusivity,
-        entity_fence=master.as_fence(stopwords=frozenset(reg.rulebook_stopwords)),
+        entity_fence=master.as_fence(
+            lexicon=frozenset(reg.lexicon),
+            stopwords=frozenset(reg.rulebook_stopwords),
+        ),
     )
     print(f"registration {reg.hash()} stamped {reg.registered_at}")
     print(master.render(floor=reg.master_coverage_floor))
@@ -306,7 +312,8 @@ def cmd_sweep(args) -> int:
         exclusivity=exclusivity,
         corpus_modes=corpus_modes,
         entity_fence=master.as_fence(
-            stopwords=frozenset(reg.rulebook_stopwords)
+            lexicon=frozenset(reg.lexicon),
+            stopwords=frozenset(reg.rulebook_stopwords),
         ),
         control_arm_ratio=reg.control_arm_ratio,
         control_arm_seed=reg.control_arm_seed,

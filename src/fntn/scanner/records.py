@@ -306,9 +306,21 @@ class EntityFence:
         return out
 
 
-#: Seed lexicon.  In the parameter object, so adding a row is a specification
-#: version; the operator-mapped additions are ledgered separately, exactly as
-#: §3.6.5's stream mappings are.
+#: Seed lexicon: tokens that are entity-shaped and are not entities.
+#:
+#: **This is the seed, and the registration is the value.**  ``Registration``
+#: defaults its ``lexicon`` field to this set and every run reads the
+#: registered list, so adding a row here is a re-stamp and a specification
+#: version, and the operator-mapped additions are ledgered separately exactly
+#: as §3.6.5's stream mappings are.  Until the 27 August re-stamp to
+#: `701adbd9d48015ed` the list lived here alone and reached no hash, which
+#: meant two runs under one hash could refuse two different sets of tokens; the
+#: constant survives as the seed and no longer as the authority.
+#:
+#: Consulted for two different jobs, which is why both consumers take it as a
+#: parameter: the fence ignores what is in it, and the master loader refuses to
+#: index it, so a lexicon row changes what the fence CAN SEE as well as what it
+#: passes over.
 SEED_LEXICON = frozenset(
     w.lower()
     for w in (

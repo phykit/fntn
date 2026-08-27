@@ -27,11 +27,30 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 from .markets import CorpusInvalid, validate_corpus
-from .records import RULEBOOK_STOPWORDS, ScoringMode
+from .records import RULEBOOK_STOPWORDS, SEED_LEXICON, ScoringMode
 
 
 class RegistrationIncomplete(RuntimeError):
     """Raised rather than defaulted. See the module docstring."""
+
+
+class RegistrationHistoryMissing(RuntimeError):
+    """A stamped registration was about to be overwritten unrecorded.
+
+    Rule 4 says nothing in the ledger is deleted and nothing is overwritten. The
+    registration was exempt from its own rule: ``save`` wrote over whatever was
+    already at the path, so a re-stamp destroyed the object the previous hash
+    was taken over and left the hash on records that nothing could be replayed
+    against. Recording the prior hash in the history file is the price of the
+    overwrite.
+    """
+
+
+#: Where the chain of superseded hashes lives, relative to the registration
+#: file's own directory. Named as a path fragment rather than a repository
+#: constant so a registration saved somewhere else looks for its history beside
+#: itself rather than in a tree it has nothing to do with.
+HISTORY_FILE = Path("docs") / "REGISTRATION_HISTORY.md"
 
 
 @dataclass(frozen=True)
@@ -115,6 +134,18 @@ class Registration:
     rulebook_stopwords: List[str] = field(
         default_factory=lambda: sorted(RULEBOOK_STOPWORDS)
     )
+    #: The regulatory lexicon: tokens that are entity-shaped and are not
+    #: entities. Here for the same reason as ``rulebook_stopwords`` and one
+    #: level up: it decides what the fence ignores, and it also decides what
+    #: the master loader lets into the ticker set, so two runs under one hash
+    #: could otherwise refuse two different things. It was a module constant
+    #: until the 27 August re-stamp, and the specification recorded that as a
+    #: known defect rather than fixing it silently; this is the fix.
+    #:
+    #: Adding a row is therefore a re-stamp. That is the cost, and it is the
+    #: point: a row added quietly widens what a sweep lets through with nothing
+    #: on the record.
+    lexicon: List[str] = field(default_factory=lambda: sorted(SEED_LEXICON))
 
     # -- the archive boundary that pre_archive is defined against ----------
     #: ISO date on which the archive opens. **Required when any corpus declares
@@ -135,6 +166,18 @@ class Registration:
     # -- provenance --------------------------------------------------------
     registered_at: Optional[str] = None
     registered_by: str = ""
+    #: The hash this object was stamped under, written by ``save`` and excluded
+    #: from the hash itself.
+    #:
+    #: **Why the file has to say.** A hash is taken over the dataclass as well
+    #: as the values, so a stored registration stops recomputing to its own
+    #: hash the moment a field is added: the 26 August object hashes to
+    #: `a06400ef28ebb54c` under the schema it was stamped under and to
+    #: something else under every schema since, and it is the same file. The
+    #: first row of ``docs/REGISTRATION_HISTORY.md`` is a reconstruction for
+    #: exactly that reason, and every row there needs its own commit's code to
+    #: recompute. A file that carries its own hash needs neither.
+    registered_hash: Optional[str] = None
     #: Free text: why these values and not others. Not read by anything; it
     #: exists because a number whose reasoning is not written down gets changed
     #: by whoever meets it next.
@@ -237,6 +280,9 @@ class Registration:
 
         payload = asdict(self)
         payload.pop("rationale", None)  # prose, not a parameter
+        # Self-referential: it records the result of this function, so hashing
+        # it would make the value depend on itself.
+        payload.pop("registered_hash", None)
         blob = json.dumps(payload, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(blob.encode()).hexdigest()[:16]
 
@@ -258,10 +304,113 @@ class Registration:
 
     # -- persistence -------------------------------------------------------
 
-    def save(self, path: str | Path) -> str:
+    def save(
+        self,
+        path: str | Path,
+        history: str | Path | None = None,
+        prior_hash: Optional[str] = None,
+    ) -> str:
+        """Write the registration. Refuses to overwrite a stamped one unrecorded.
+
+        **Why this is not a plain write.** Rule 4 says nothing is deleted and
+        nothing is overwritten, and the registration was exempt from its own
+        rule: a re-stamp destroyed the object the previous hash was taken over,
+        so records already carrying that hash pointed at a file that no longer
+        existed in any form a reader could recover. Two re-stamps had happened
+        before this check existed, and the object behind the first of them is a
+        reconstruction in ``docs/REGISTRATION_HISTORY.md`` rather than a
+        recovery, no commit carrying it.
+
+        The overwrite is therefore conditional on the prior version being
+        written down first: its hash, on a line that also names the file it was
+        the hash of, in the history document beside the registration. This is a
+        *precondition*, not a side effect. ``save`` does not append the row
+        itself, because a record written automatically by the step it is meant
+        to constrain records only that the step ran.
+
+        Refused rather than defaulted wherever the prior version cannot be
+        shown to be on the record. A prior file that will not parse, and a
+        prior file that does not say which hash it was stamped under, are both
+        refusals: a hash that cannot be established cannot be looked for, and
+        the alternative is to overwrite the file on the grounds that we could
+        not read it.
+
+        ``prior_hash`` is the operator stating that hash for a file written
+        before ``registered_hash`` existed. It is an assertion, not a default:
+        the history document must still corroborate it, and where the file does
+        say, a disagreeing assertion is refused rather than preferred.
+        """
+
         p = Path(path)
+        hist = Path(history) if history is not None else p.parent / HISTORY_FILE
+
+        prior = self._prior_hash(p, stated=prior_hash)
+        if prior is not None and prior != self.hash():
+            text = hist.read_text() if hist.exists() else ""
+            if not any(prior in line and p.name in line for line in text.splitlines()):
+                raise RegistrationHistoryMissing(
+                    f"{p} holds a stamped registration whose hash is {prior}, "
+                    f"and writing {self.hash()} over it would destroy the "
+                    f"object that hash was taken over.\n\n"
+                    f"Append a row naming both {prior} and {p.name} to {hist} "
+                    "first, then save. Nothing is overwritten (rule 4), and a "
+                    "registration is not exempt from the rule it exists to "
+                    "serve."
+                )
+
+        self.registered_hash = self.hash()
         p.write_text(json.dumps(asdict(self), indent=2, sort_keys=True) + "\n")
         return self.hash()
+
+    @staticmethod
+    def _prior_hash(p: Path, stated: Optional[str] = None) -> Optional[str]:
+        """The hash of what is already at ``p``, or None if nothing is at risk.
+
+        None means there is nothing there, or what is there was never stamped
+        and is therefore a blank form rather than a commitment.
+
+        The hash is **read from the file, not recomputed from it.** Recomputing
+        would answer a different question: what this file would hash to under
+        today's dataclass, which for every registration written before the last
+        schema change is not the hash it was registered under and not the hash
+        any record carries.
+        """
+
+        if not p.exists():
+            return None
+        try:
+            prior = Registration.load(p)
+        except Exception as exc:
+            raise RegistrationHistoryMissing(
+                f"{p} exists but will not load under the current schema "
+                f"({exc}). Its hash therefore cannot be established, so it "
+                "cannot be checked against the history, so it cannot be "
+                "overwritten. Record it by hand in the history document and "
+                "move the file aside deliberately."
+            ) from exc
+        if not prior.registered_at:
+            return None
+        if prior.registered_hash:
+            if stated and stated != prior.registered_hash:
+                raise RegistrationHistoryMissing(
+                    f"{p} records its hash as {prior.registered_hash}; "
+                    f"prior_hash was given as {stated}. The file is the "
+                    "record and the assertion is not, so the disagreement is "
+                    "refused rather than resolved in favour of either."
+                )
+            return prior.registered_hash
+        if stated:
+            return stated
+        raise RegistrationHistoryMissing(
+            f"{p} was stamped at {prior.registered_at} and does not record the "
+            "hash it was stamped under, so what would be overwritten cannot be "
+            "named.\n\n"
+            "Recomputing it here would give what the file hashes to under "
+            "today's dataclass, which is a different number from the one its "
+            "records carry whenever a field has been added since. Pass "
+            "prior_hash=... with the hash from docs/REGISTRATION_HISTORY.md, "
+            "which the history must then corroborate."
+        )
 
     @classmethod
     def load(cls, path: str | Path) -> "Registration":

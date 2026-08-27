@@ -88,6 +88,10 @@ src/fntn/scanner/  the agent discovery layer (spec §3.7)
   run.py          one scan cycle and its report
 docs/spec/         the governing manuscript
 docs/OPEN_ITEMS.md   §13 calibrations, §14 decisions, Annex A.1 predicates
+docs/REGISTRATION_HISTORY.md  one row per registration hash ever stamped, the
+                     object each was taken over and the field that caused it.
+                     Registration.save() will not overwrite a stamped
+                     registration until the prior row is here
 docs/CONVENTIONS.md  coding conventions derived from the spec
 tests/
 ```
@@ -96,7 +100,7 @@ tests/
 
 ```bash
 pip install -e ".[dev]"      # once: puts src/ on the path
-python -m pytest tests/ -q   # 141 tests
+python -m pytest tests/ -q   # 162 tests
 ```
 
 Without the editable install the package sits at `src/fntn` and is invisible to
