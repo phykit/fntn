@@ -379,6 +379,111 @@ schedule at whatever granularity the answer turns out to require.
 
 ---
 
+### PENDING, and addressed to the operator: three decisions the FIRST SWEEP surfaced
+
+***Opened 27 August 2026 (P139), by the first sweeps that ever ran. No rule is
+changed by this block and no figure is edited.*** Each is written with the
+options named and their costs stated, and none is taken. **Full evidence in
+`docs/CANDIDATE_MECHANISMS.md`.**
+
+---
+
+#### A. Should `strict: true` be set on the proposal tool call?
+
+**The evidence the earlier decision waited for now exists.**
+`docs/DECISION_structured_outputs_2026-08-27.md` prepared this on 27 August
+2026 and recommended waiting on one thing: *no sweep has ever run, so nothing
+is known about whether models return out-of-schema material against this prompt
+at all.* ***Fourteen calls have now run.***
+
+> ***In 8 of 14, the model returned `proposals` as a JSON STRING rather than an
+> array.*** A forced tool call is not a validated tool call: `tool_choice`
+> compels the call, not the arguments.
+
+**The failure rate is not marginal and it is not stable.** Run 2 lost all three
+families; run 3 lost none. **A layer that loses a whole family's search to a
+transport-level shape error, unpredictably, cannot support §7.1's funnel-depth
+association**, because the depth varies with something that is not a fact about
+the market.
+
+| Option | What it costs |
+|---|---|
+| **A1. Take it.** Set `strict: true`, `additionalProperties: false`, `required` | ***`agent_overreached_schema` becomes unreachable BY CONSTRUCTION***, not merely unwired. The authority fence's guarantee moves off this tree and onto a supplier: it is versioned by them, it is not in the parameter object, and **`trace.py` cannot read it against a world.** The code must then be **retired or explicitly re-based on the API's guarantee in the same commit**, and the second is honest only if that guarantee is stronger than the fence's, which nobody here has established |
+| **A2. Leave it.** Keep counting the failures | The two new codes count them and the count is real. **The cost is the variance**: a search whose population is decided partly by reply formatting, carried into every figure §7.1 computes |
+| **A3. Parse the string.** `json.loads` the payload and recover the array | ***REFUSED here rather than offered as an equal, and the reason is rule 3.*** A consuming check that repairs a broken input has substituted a working value for a broken one, and it would destroy the count that A1's case rests on. *It is listed so that it is on the record as considered* |
+
+**Whichever way it goes it is an admissibility rule, so it is a rule-5
+specification version and takes a `§12.1` row.** §0.6 was applied in the earlier
+document and the answer recorded: **not apparatus.**
+
+---
+
+#### B. The two arms are not running the same gauntlet
+
+**On the run of record, all six agent proposals died at
+`scoring_mode_unsatisfiable` and no control draw could have.** The clerk emits
+`unclassified` where the fixed table has no row, which is what the system
+prompt instructs; `unclassified` is absent from row 22's `discoverable_classes`;
+**the control arm draws its class from the registered grid by construction and
+therefore cannot emit `unclassified` at all.**
+
+> ***A comparison in which only one arm can fail the check that decides it is
+> not the comparison §13 rows 19 and 20 register.*** The control arm beat the
+> agent arm three drafts to nought, and that number is not evidence about the
+> discovery layer.
+
+| Option | What it costs |
+|---|---|
+| **B1. Admit `unclassified` as a discoverable class** | A **§13 row 22** change. It lets through every proposal the class table does not fit, which is the population the table exists to bound. **Almost certainly apparatus** |
+| **B2. Draw the control arm from the class distribution the agent produced** | Changes what the control arm **is**: it stops being a random draw over the registered grid and becomes a draw conditioned on the treatment arm. *A control conditioned on the treatment is a weaker instrument, and §3.7.5 chose the stronger one deliberately* |
+| **B3. Report the asymmetry and compare only within the classes both arms can reach** | Costs nothing and answers less. **On the run of record it would compare nought agent proposals against six control draws**, because every agent proposal was `unclassified` |
+| **B4. Leave it, with the asymmetry recorded** | The status quo. **The cost is that §13 row 19's verdict can never be computed honestly from these two arms**, and row 19 is registered as the discovery layer's kill criterion |
+
+***Not urgent by count and urgent by kind.*** Row 19's *n*ₘᵢₙ is 30 per arm and
+this run produced six, so no verdict is due. **But the defect is in the
+construction rather than the sample, and more sweeps do not fix it.**
+
+---
+
+#### C. The achievability lens reads fields the discovery layer may not emit
+
+**Nine criteria, nine unscorables, on every mechanism in both arms.** The lens
+reads `claimed_effect_bps` and `holding_period_sessions`, and **the system
+prompt forbids the clerk from stating an effect size or a horizon**, with
+`agent_overreached_schema` there to discard a proposal that does. The other
+seven read fields the proposal schema has no column for.
+
+> **The lens was written for §3.5 ITEMS, which declare claims. The discovery
+> layer emits class-level POINTERS, which by construction do not.** *Pointing
+> it at this output returns nine unscorables for ever, and no run of any size
+> changes that.*
+
+| Option | What it costs |
+|---|---|
+| **C1. Record that the lens does not apply to pointers, and stop running it on them** | Honest and free. **`docs/CANDIDATE_MECHANISMS.md`'s schema requires the lens criterion by criterion**, so the schema would then require a section that says *not applicable*, which 3f forbids revising once results are known |
+| **C2. Run the lens where it belongs**, on §3.5 items once the item pipeline produces any | Costs nothing now and defers the question. **The item pipeline has produced nothing** |
+| **C3. Give the pointer schema the fields the lens reads** | ***The clerk would then state an effect size and a horizon, which rule 1 forbids and the authority fence exists to catch.*** Listed to be refused |
+
+**C1 and C2 are compatible and neither is a rule change.** *C3 is recorded so
+that the obvious repair is on the register as refused rather than unconsidered.*
+
+---
+
+#### D, recorded here and not offered as a decision: what the clerk read
+
+**Five of the six agent proposals describe a REGULATION rather than a
+MECHANISM** — Item 703, Regulation M, Rule 10b-18 — and each is an accurate
+description of the document it cites. **The registered corpora are regulatory
+text.** *A clerk told to read a rulebook and emit mechanisms returns the rules.*
+
+***No option is offered, because changing what the layer is shown on account of
+what it returned is fitting the input to the output.*** §13 row 22 registers
+these three corpora and the registration was stamped before the sweep. **If the
+operator wishes to change them, that is a row 22 change and a `§12.1` row, and
+the reason must be stated as something other than the result.**
+
+---
+
 ## §14: open decisions
 
 | Decision | Status | Scope | Note |

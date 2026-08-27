@@ -118,6 +118,11 @@ class ScanResult:
     proposed: int = 0
     registered: int = 0
     promoted: int = 0
+    #: Per family, and NEVER pooling the two arms. `{corpus_id: {...}}` for the
+    #: agent arm and one `control_arm` entry beside it, because §13 row 20's
+    #: whole purpose is a comparison, and a table that adds the two together
+    #: destroys the only instrument that can refute the discovery layer.
+    per_family: Dict[str, Dict[str, int]] = field(default_factory=dict)
 
     def render(self, ledger: Ledger) -> str:
         blocks: List[str] = ["Scan cycle", ""]
@@ -134,6 +139,28 @@ class ScanResult:
             )
         )
         blocks.append("")
+        if self.per_family:
+            blocks.append("Per family, agent arm and control arm NEVER pooled")
+            head = f"  {'family':<26}{'raised':>8}{'refused':>9}{'drafts':>8}{'admitted':>10}"
+            blocks.append(head)
+            for name in sorted(self.per_family):
+                row = self.per_family[name]
+                blocks.append(
+                    f"  {name:<26}{row.get('raised', 0):>8}"
+                    f"{row.get('refused', 0):>9}{row.get('blocked', 0):>8}"
+                    f"{row.get('admitted', 0):>10}"
+                )
+            blocks.append(
+                "  The control arm is sized on the agent arm at the registered"
+            )
+            blocks.append(
+                "  ratio and drawn from the registered seed. It is a row here"
+            )
+            blocks.append(
+                "  and never a column: pooling the arms would destroy the only"
+            )
+            blocks.append("  instrument that can refute the discovery layer.")
+            blocks.append("")
         if self.fence_report:
             blocks.append(self.fence_report.render())
             blocks.append("")
@@ -216,10 +243,16 @@ def scan(
 
     # -- gather proposals: agent arm, then the control arm ------------------
     proposals: List[Tuple[Proposal, Dict[str, object]]] = []
+    off_schema: List[Tuple[str, int, str]] = []
+    not_a_list: List[Tuple[str, str, int]] = []
     for index, corpus in enumerate(corpora):
         sweep_result = sweep(client, corpus, fence, cache, now=now)
         for p in sweep_result.proposals:
             proposals.append((p, {}))
+        for element_index, got in sweep_result.off_schema:
+            off_schema.append((corpus.corpus_id, element_index, got))
+        if sweep_result.payload_not_a_list is not None:
+            not_a_list.append((corpus.corpus_id, *sweep_result.payload_not_a_list))
         # The cost guard hooks HERE and not around three separate scans.
         # `control_count` is `round(len(all proposals) * ratio)` drawn once from
         # the registered seed; three scans would draw three arms from the same
@@ -242,6 +275,12 @@ def scan(
             "(§3.7.5), and running one is worse than running none because it "
             "produces directives nothing can attribute"
         )
+    # **Sized on proposals and NOT on off-schema elements**, and the exclusion
+    # is a decision rather than an oversight. The control arm exists to say
+    # whether the agent located anything a random draw over the grid would not
+    # have; an element that never became a mechanism is not something located,
+    # and drawing a control mechanism to match it would inflate the control arm
+    # against a treatment arm that did not grow.
     control_count = (
         max(1, round(len(proposals) * config.control_arm_ratio)) if proposals else 0
     )
@@ -252,7 +291,65 @@ def scan(
     ):
         proposals.append((p, {}))
 
-    result.proposed = len(proposals)
+    # **Off-schema elements are counted into the denominator.** The clerk
+    # emitted them, so leaving them out would make the funnel report a
+    # narrower search than the one that was paid for, and rule 5 says counting
+    # is mechanical because intent flatters the denominator.
+    result.proposed = len(proposals) + len(off_schema) + len(not_a_list)
+    _payload_rows: List[str] = []
+    for corpus_id, got, length in not_a_list:
+        subject_id = f"prop-notalist-{corpus_id}"
+        refusal = summaries.render(
+            "agent_payload_not_a_list",
+            subject_id,
+            {"corpus_id": corpus_id, "got": got, "length": length,
+             "failed_field": "proposals"},
+        )
+        ledger.write_refusals([refusal])
+        result.abandoned.append((subject_id, refusal))
+        _payload_rows.append(corpus_id)
+    for corpus_id, element_index, got in off_schema:
+        subject_id = f"prop-offschema-{corpus_id}-{element_index}"
+        refusal = summaries.render(
+            "agent_payload_off_schema",
+            subject_id,
+            {"index": element_index, "got": got, "corpus_id": corpus_id,
+             "failed_field": "the element itself"},
+        )
+        ledger.write_refusals([refusal])
+        result.abandoned.append((subject_id, refusal))
+        _payload_rows.append(corpus_id)
+
+    # Per-family counting, in memory rather than read back out of the ledger.
+    # A ledger accumulates runs; this is one run's funnel, and reading it back
+    # would silently pool this sweep with every earlier one under the same
+    # parameter hash.
+    _BUCKET = {
+        "abandoned_at_ingestion": "refused",
+        "refused_at_screen": "refused",
+        "directive_deferred": "refused",
+        "blocked_on_operator": "blocked",
+        "queued": "queued",
+        "admitted": "admitted",
+    }
+
+    def _family_of(p: Proposal) -> str:
+        # **The control arm is its own row and never a corpus.** It is drawn
+        # from the grid and carries the first corpus's id by construction, so
+        # keying it on that id would file random draws under a family that did
+        # not produce them and pool the two arms in the only table that exists
+        # to keep them apart.
+        return "control_arm" if p.origin is not Origin.AGENT else (p.corpus_id or "(none)")
+
+    def terminal(subject_id: str, p: Proposal, outcome_name: str) -> None:
+        ledger.write_proposal(subject_id, p, outcome_name)
+        row = result.per_family.setdefault(
+            _family_of(p),
+            {"raised": 0, "refused": 0, "blocked": 0, "queued": 0, "admitted": 0},
+        )
+        row["raised"] += 1
+        row[_BUCKET[outcome_name]] += 1
+
     open_pairs: Dict[Tuple[str, str], Dict[str, object]] = {}
 
     for proposal, raw_payload in proposals:
@@ -293,7 +390,7 @@ def scan(
                     )
 
         if not outcome.passed:
-            ledger.write_proposal(subject_id, proposal, "abandoned_at_ingestion")
+            terminal(subject_id, proposal, "abandoned_at_ingestion")
             assert outcome.first_refusal is not None
             result.abandoned.append((subject_id, outcome.first_refusal))
             continue  # <-- the rule: stop, and start the next idea.
@@ -318,7 +415,7 @@ def scan(
         screened = screen_pointer(record)
         ledger.write_refusals(screened.refusals)
         if not screened.passed:
-            ledger.write_proposal(subject_id, proposal, "refused_at_screen")
+            terminal(subject_id, proposal, "refused_at_screen")
             result.abandoned.append((subject_id, screened.refusals[-1]))
             continue
 
@@ -349,7 +446,7 @@ def scan(
                 subject_id, draft.declined_feed, draft.refusals[0].code
             )
         if draft.directive is None:
-            ledger.write_proposal(subject_id, proposal, "directive_deferred")
+            terminal(subject_id, proposal, "directive_deferred")
             result.abandoned.append((subject_id, draft.refusals[0]))
             continue
 
@@ -366,7 +463,7 @@ def scan(
         blocking = register(directive, inputs, config.policy.delta_min_floor, now)
         ledger.write_refusals(blocking)
         if blocking:
-            ledger.write_proposal(subject_id, proposal, "blocked_on_operator")
+            terminal(subject_id, proposal, "blocked_on_operator")
             ledger.write_directive(directive, "blocked_on_operator")
             result.blocked_on_operator.append((directive, blocking))
             continue
@@ -382,14 +479,22 @@ def scan(
             ledger.write_refusal(refusal)
             queued = reuse.enqueue(directive)
             ledger.write_refusal(queued)
-            ledger.write_proposal(subject_id, proposal, "queued")
+            terminal(subject_id, proposal, "queued")
             ledger.write_directive(directive, "queued")
             result.queued.append(directive)
             continue
 
-        ledger.write_proposal(subject_id, proposal, "admitted")
+        terminal(subject_id, proposal, "admitted")
         ledger.write_directive(directive, "open")
         result.admitted.append(directive)
+
+    for corpus_id in _payload_rows:
+        row = result.per_family.setdefault(
+            corpus_id,
+            {"raised": 0, "refused": 0, "blocked": 0, "queued": 0, "admitted": 0},
+        )
+        row["raised"] += 1
+        row["refused"] += 1
 
     ledger.write_query_log(fence.log)
     report.query_log_entries = len(fence.log)

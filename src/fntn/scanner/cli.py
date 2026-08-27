@@ -430,9 +430,14 @@ def _cost_guard(client, ceiling_usd: float):
         return None
 
     def guard(index: int, total: int) -> None:
-        if index != 0 or total <= 1:
-            return
         spend = client.spend()
+        if index != 0 or total <= 1:
+            # Every family is reported, cumulatively, because a per-family
+            # figure costs nothing to print and the alternative is a total
+            # nobody can attribute. Only the FIRST one projects and enforces.
+            print()
+            print(spend.render(f"cumulative after family {index + 1} of {total}"))
+            return
         print()
         print("COST GUARD, after the first family and before the rest.")
         print(spend.render("measured"))
@@ -616,6 +621,14 @@ def cmd_sweep(args) -> int:
         return 8
     print(result.render(ledger))
     print()
+    if not args.transcript:
+        # **The figure the operator is owed, measured and not projected.** The
+        # guard's projection answers *may this continue*; this answers *what
+        # did it cost*, and the two are different questions. A run that printed
+        # only the projection would leave the only number anyone can check
+        # afterwards being an estimate made before most of the calls happened.
+        print(client.spend().render("TOTAL for this sweep"))
+        print()
     print(f"ledger: {args.ledger}")
     if result.blocked_on_operator:
         print()

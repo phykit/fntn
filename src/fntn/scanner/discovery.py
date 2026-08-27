@@ -28,7 +28,7 @@ from __future__ import annotations
 import hashlib
 import json
 import random
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Dict, Iterable, List, Optional, Protocol, Sequence
 
@@ -181,6 +181,13 @@ class SweepResult:
     proposals: List[Proposal]
     cache_hit: bool
     cache_key: str
+    #: Elements of the returned payload the schema does not describe, as
+    #: ``(index, type name)``. **Counted, never repaired.** See `sweep`.
+    off_schema: List[tuple] = field(default_factory=list)
+    #: Set when the ``proposals`` value was not an array at all, as
+    #: ``(type name, length)``. **One refusal for the whole call**, and the
+    #: distinction from ``off_schema`` is not tidiness: see `sweep`.
+    payload_not_a_list: Optional[tuple] = None
 
 
 def sweep(
@@ -223,7 +230,43 @@ def sweep(
         hit = False
 
     proposals: List[Proposal] = []
-    for raw in payload.get("proposals", []):
+    off_schema: List[tuple] = []
+    not_a_list: Optional[tuple] = None
+
+    raw_proposals = payload.get("proposals", [])
+    # **A string is iterable, and that is the whole reason this branch exists
+    # separately from the one below.** On the first live sweep, two of three
+    # families returned `proposals` as a JSON *string*. Iterating it walked its
+    # characters, so a single malformed reply produced 5,607 and 2,869
+    # refusals, the funnel reported 8,484 proposals raised, and **a search that
+    # located four mechanisms looked like a search that located eight
+    # thousand**. Rule 5 says counting is mechanical because intent flatters
+    # the denominator; nothing intended that denominator, and it was flattered
+    # anyway.
+    #
+    # So a non-array `proposals` is ONE refusal for the whole call. The call
+    # yielded no mechanism, which is one fact about one call.
+    if not isinstance(raw_proposals, list):
+        not_a_list = (type(raw_proposals).__name__, len(raw_proposals)
+                      if hasattr(raw_proposals, "__len__") else -1)
+        raw_proposals = []
+
+    for index, raw in enumerate(raw_proposals):
+        # **A forced tool call is not a validated tool call.** `tool_choice`
+        # makes the model call the tool; it does not make the arguments
+        # conform, and `strict` is not set (that is a registered decision, see
+        # `docs/DECISION_structured_outputs_2026-08-27.md`). The first live
+        # sweep returned a bare string here and this loader raised
+        # `AttributeError` part-way through the second family, losing both the
+        # remaining families and the money already spent on them.
+        #
+        # **Discarded whole and never repaired.** A bare string could be coaxed
+        # into `event_definition`, and that would be the loader guessing which
+        # field the clerk meant, which is the loader doing the clerk's work on
+        # material the clerk did not put in a field.
+        if not isinstance(raw, dict):
+            off_schema.append((index, type(raw).__name__))
+            continue
         proposals.append(
             Proposal(
                 event_definition=str(raw.get("event_definition", "")),
@@ -237,7 +280,10 @@ def sweep(
                 raised_at=now,
             )
         )
-    return SweepResult(proposals=proposals, cache_hit=hit, cache_key=key)
+    return SweepResult(
+        proposals=proposals, cache_hit=hit, cache_key=key,
+        off_schema=off_schema, payload_not_a_list=not_a_list,
+    )
 
 
 def raw_payloads(payload: Dict[str, object]) -> List[Dict[str, object]]:
@@ -249,7 +295,10 @@ def raw_payloads(payload: Dict[str, object]) -> List[Dict[str, object]]:
     dropped on the way in would pass a fence designed to catch exactly that.
     """
 
-    return [dict(p) for p in payload.get("proposals", [])]
+    raw = payload.get("proposals", [])
+    if not isinstance(raw, list):
+        return []
+    return [dict(p) for p in raw if isinstance(p, dict)]
 
 
 # ---------------------------------------------------------------------------

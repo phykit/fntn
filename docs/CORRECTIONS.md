@@ -51,6 +51,7 @@ repair does not need a third instance to be believed.**
 | **III. A population pooled, mis-scoped or miscounted** | B6 (itself three), B7, the §13 table's two hand counts, and `_unexercised` at P126 | **7** | **INSTALLED at P105 and WIDENED at P126**: the invariant was applied to a METHOD when the class was about a QUERY, so it now reads **every ledger read path carries the marker the fences rely on**, and phase 2 swept every `SELECT` in the package to hold it |
 | **IV. A quantity validated against something computed from that quantity** | A7, B10 | **2** | **INSTALLED at P133, and deliberately at two instances rather than three**: *a bound may not be validated against a table computed from that bound*, and a table recomputed against a registered value carries that value's name from then on |
 | **V. A guard implemented WEAKER than the rule its own docstring states** | B1, B5, B11, B12, B13 | **5** | **INSTALLED at P136**: *a presence check is not a content check*, and **every guard carries a test that supplies material it must REFUSE, present and well-formed, not merely absent** |
+| **VI. A dependency's contract assumed rather than read** | B8pre, B12, B16 | **3** | **INSTALLED in the session protocol at P137 and STRENGTHENED at P139**: the reconciliation enumerates the dependency contracts a batch writes against, naming the reference READ for each — **and where a batch will run a code path for the first time, the contracts THAT PATH depends on as well.** *B16 got past the first form because the loader was code the batch ran rather than code it wrote* |
 | Singletons, which are not a class | A1, A3, A4, A5, A6, B2 | n/a | n/a, no invariant is owed: a row belonging to no class asserts no recurrence |
 
 ---
@@ -670,20 +671,46 @@ docstring oversold as determinism, and the oversell is the correction.*
 ### The class question R4a asks, answered rather than assumed
 
 ***Is "a dependency's contract assumed rather than read" a class of its own?***
-**It has TWO instances and the second is not new:**
+**It has THREE instances as of 27 August 2026, and the third arrived one
+sitting after the second was written up:**
 
 | | The contract | What stood in for reading it |
 |---|---|---|
 | **B8pre** | IBKR's published fee schedule | a **fit** to two readings, which gave both schedules the same fixed term and could not distinguish them. Reading the schedule **reversed the election** (P118) |
 | **B12** | `messages.create`'s parameter list | **recall.** `temperature=0` was written from what the API used to accept. Reading the reference established it had been removed |
+| **B16** | what a **forced tool call** guarantees about its arguments | **an assumption from the word *forced*.** `tool_choice` compels the call; `strict` validates the arguments and was not set. **8 of 14 live calls returned `proposals` as a JSON string**, and the loader raised `AttributeError` on the first sweep that ever ran |
 
-***One class, two instances, and NO new class is opened.*** The register's rule
+***THE THIRD INSTANCE ARRIVES, AND THE REGISTER'S OWN RULE NOW BINDS: an
+invariant is compulsory at three.*** *It was already installed at two, in the
+session protocol rather than in a test, which is where the two-instance
+judgement below put it.*
+
+***And the third instance sharpens what the invariant must say, because the
+mechanical support did NOT catch it.*** The reconciliation for this batch
+**did** enumerate its dependency contracts and named `response.usage`,
+`models.list`, the pricing table and Sonnet 5's thinking modes, each with the
+reference read. ***It did not name the one that broke***, because the loader
+was not code the batch was writing: it was code the batch was *running*.
+
+> **The enumeration covers contracts a batch WRITES AGAINST. It does not cover
+> contracts already written into code the batch will EXECUTE.** *A batch that
+> runs a module for the first time is depending on every contract that module
+> assumed, and it inherits them unexamined.*
+
+**The invariant is therefore STRENGTHENED rather than merely installed:** where
+a batch will run a code path **for the first time**, the enumeration covers the
+external contracts **that path** depends on, not only the ones the batch is
+about to write. *The cost, stated: on a batch that first-runs a large module
+this is a real reading task, and it is the reading that would have turned up
+`strict` in the document that was written the day before and sat unread.*
+
+***One class, three instances, and NO new class is opened.*** The register's rule
 makes an invariant compulsory at three, and **Class I part 1 already states the
 principle** -- *a decision is taken on an artefact, never on an argument alone*
 -- so a sixth class would restate a clause this file already carries.
 
 ***What IS missing, and it is a gap rather than a class.*** **Part 1 governs
-decisions and B12 was not one**; nobody decided to pass `temperature`, it was
+decisions and neither B12 nor B16 was one**; nobody decided to pass `temperature`, it was
 written into a call. *That is the same gap part 4 was added to close for
 claims, one layer further out:* ***code written against an external contract
 nobody read.*** **The mechanical support belongs in the session protocol, where
@@ -853,6 +880,60 @@ the claim was written. *The claim was written by the same process that later
 caught it, which is the argument for the enumeration being a written step
 rather than a habit: it is not that reading harder would have found this, but
 that nothing was reading at all.*
+
+---
+
+### B16. A crash, and then a repair that produced a worse defect than the crash
+
+| | |
+|---|---|
+| **Believed** | that `discovery.sweep` could read the model's tool-call arguments as the schema describes them. `tool_choice` forces the call, `PROPOSAL_SCHEMA` declares the shape, and the loader called `raw.get(...)` on every element |
+| **True** | ***A forced tool call is not a validated tool call.*** `strict` is not set, so the arguments are unvalidated. **In 8 of 14 live calls the model returned `proposals` as a JSON STRING rather than an array.** The first live sweep raised `AttributeError` part-way through the second of three families |
+| **The link not checked** | **what `strict: true` is for.** `docs/DECISION_structured_outputs_2026-08-27.md`, written the same day, states in terms that *nothing at the API rejects a response carrying fields outside the declared schema* — and the loader was written as though something did |
+| **Provenance** | `verified_primary`. Fourteen calls, five runs, the traceback and the counts in `docs/CANDIDATE_MECHANISMS.md` |
+
+**It is the second instance of `docs/CORRECTIONS.md` B12's class, *a
+dependency's contract assumed rather than read*,** whose first instance was
+`temperature=0` passed to an API that had removed the parameter. *Both were
+found by running the thing. Neither was findable by reading the module, which
+reads correctly in both cases.*
+
+### And the repair was worse than the defect, which is the part worth keeping
+
+**The first fix tested each element for being an object and skipped the ones
+that were not.** ***A string is iterable.*** So two malformed replies were
+walked **character by character**:
+
+| | |
+|---|---|
+| Refusals emitted | **8,476** |
+| Funnel's *proposals raised* | **8,484** |
+| Mechanisms actually located | **4** |
+| Share of the reason-code distribution held by one code | **99.9%** |
+
+> ***Rule 5 says counting is mechanical because intent flatters the
+> denominator. Nothing intended that denominator, and it was flattered
+> anyway.***
+
+**That is the case the rule is weakest against**, and it is why the repair is
+two codes rather than one tolerant branch: `agent_payload_not_a_list` counts
+**one refusal for one call**, because a call that returned no array is one fact
+about one call; `agent_payload_off_schema` counts one per element. **Both are
+non-positional**, so §13 row 23's twelve-point panel does not move.
+
+**What was NOT done, and the reason is rule 3.** A JSON string can be handed to
+`json.loads` and the array recovered. *It is not.* A consuming check that
+repairs a broken input has substituted a working value for a broken one, and
+**the count of how often the producer breaks is the measurement the pending
+`strict` decision rests on.** Repairing it would have destroyed the evidence
+for the decision it makes necessary.
+
+**Two things this says about the instruments.** The crash was found by
+**running a sweep**, which the project had never done in fourteen specification
+versions. The character-counting defect was found by **reading the funnel's own
+output**, where 8,484 proposals raised over 22 documents is absurd on its face.
+*Neither was found by re-reading, and the first repair passed every test in the
+suite at the moment it shipped.*
 
 ---
 

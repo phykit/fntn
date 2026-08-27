@@ -35,6 +35,13 @@ CREATE TABLE IF NOT EXISTS proposal (
     source_ref      TEXT NOT NULL,
     source_partition TEXT NOT NULL,
     drawn_from_grid_cell TEXT,
+    -- Which corpus the proposal was read from. Added 27 August 2026 after the
+    -- first sweeps produced a book nobody could attribute to a family: §13 row
+    -- 22 registers corpora individually and the funnel could only report a
+    -- total over all of them. A control-arm draw carries the corpus of the
+    -- first registered corpus by construction and is marked by `origin`, so
+    -- the two are never pooled by reading this column alone.
+    corpus_id       TEXT NOT NULL DEFAULT '',
     raised_at       TEXT NOT NULL,
     outcome         TEXT NOT NULL
 );
@@ -120,7 +127,7 @@ class Ledger:
 
     def write_proposal(self, subject_id: str, p: Proposal, outcome: str) -> None:
         self.conn.execute(
-            "INSERT OR REPLACE INTO proposal VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+            "INSERT OR REPLACE INTO proposal VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
             (
                 subject_id,
                 self.parameter_hash,
@@ -131,6 +138,7 @@ class Ledger:
                 p.source_ref,
                 p.source_partition.value,
                 p.drawn_from_grid_cell,
+                p.corpus_id,
                 (p.raised_at or datetime.now(timezone.utc)).isoformat(),
                 outcome,
             ),

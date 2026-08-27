@@ -246,6 +246,53 @@ _INTAKE: List[ReasonCode] = [
         ),
     ),
     ReasonCode(
+        code="agent_payload_off_schema",
+        surface=Surface.INTAKE,
+        description=(
+            "The model's tool call returned an element the proposal schema "
+            "does not describe -- a bare string, a number, a null -- where an "
+            "object was required."
+        ),
+        summary_template=(
+            "Element {index} of the returned payload was a {got}, and the "
+            "proposal schema requires an object. The element is discarded "
+            "whole and not repaired: a forced tool call is not a validated "
+            "one, and guessing which field a bare string was meant to be is "
+            "the clerk's work being done by the loader. {resurrection}"
+        ),
+        resurrection=(
+            "Re-raise by re-running the sweep; a payload that conforms is "
+            "read normally. Structurally resurrectable by enabling strict "
+            "schema enforcement on the tool call, which is a registered "
+            "decision and not a loader change."
+        ),
+    ),
+    ReasonCode(
+        code="agent_payload_not_a_list",
+        surface=Surface.INTAKE,
+        description=(
+            "The model's tool call returned a `proposals` value that is not an "
+            "array. The whole call yielded no mechanism, and this is ONE "
+            "refusal for the call and not one per element of whatever arrived."
+        ),
+        summary_template=(
+            "The sweep over {corpus_id} returned a `proposals` value of type "
+            "{got}, and the schema requires an array. **The whole call yielded "
+            "no mechanism** and is counted once. It is counted once because a "
+            "string is iterable: reading it element-wise produced {length} "
+            "character-shaped refusals on the first live sweep, which inflated "
+            "the funnel's denominator by four orders of magnitude and made a "
+            "single malformed reply look like a search. {resurrection}"
+        ),
+        resurrection=(
+            "Re-raise by re-running the sweep over the same corpus; the reply "
+            "is not deterministic and a conforming one is read normally. "
+            "Structurally resurrectable by enabling strict schema enforcement "
+            "on the tool call, which is a registered decision (§13) and not a "
+            "loader change."
+        ),
+    ),
+    ReasonCode(
         code="security_master_unavailable",
         surface=Surface.INTAKE,
         description=(
@@ -994,6 +1041,12 @@ ALL_CODES: Dict[str, ReasonCode] = {
 INTAKE_ORDER: List[str] = [
     # Fences: free, and they must precede reading.
     "agent_overreached_schema",
+    # `agent_payload_off_schema` is deliberately NOT here. Intake positions are
+    # what §13 row 23's abort-position distribution is measured over, so
+    # inserting a code shifts every position after it and makes an earlier
+    # reading incomparable with a later one. The code is also emitted before a
+    # subject exists: the element never became a proposal, so it never entered
+    # intake and has no abort position to report.
     "security_master_unavailable",
     "proposal_names_entity",
     "discovery_partition_violation",
@@ -1026,7 +1079,20 @@ OBSERVATION_ORDER: List[str] = [rc.code for rc in _OBSERVATION]
 #: 23 counts abort positions, so that lie would land directly in a calibration.
 #: The set is named rather than the invariant relaxed, so adding a second
 #: non-positional code is a deliberate act with this comment in front of it.
-INTAKE_NON_POSITIONAL: frozenset = frozenset({"intake_budget_exhausted"})
+#:
+#: ``agent_payload_off_schema`` is the second, added 27 August 2026 and for a
+#: different reason from the first. It is not an interruption; it is emitted
+#: **before a subject exists**. An element of the returned payload that is not
+#: an object never becomes a `Proposal`, so it never enters intake and there is
+#: no position at which it could have aborted. Giving it position 1 would put a
+#: parse failure into §13 row 23's distribution as though the first check had
+#: refused it, and shifting the twelve to make room would make every abort
+#: position recorded before today incomparable with every one recorded after.
+INTAKE_NON_POSITIONAL: frozenset = frozenset({
+    "intake_budget_exhausted",
+    "agent_payload_off_schema",
+    "agent_payload_not_a_list",
+})
 
 _declared = set(INTAKE_ORDER) | INTAKE_NON_POSITIONAL
 _defined = {rc.code for rc in _INTAKE}

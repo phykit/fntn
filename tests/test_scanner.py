@@ -667,7 +667,18 @@ def test_ordering_is_pre_registered_and_complete():
     # nothing is both. `intake_budget_exhausted` is the one non-positional
     # code: a ceiling on time is an interruption, not a thirteenth check, and
     # giving it a position would put it in §13 row 23's distribution.
-    assert codes.INTAKE_NON_POSITIONAL == {"intake_budget_exhausted"}
+    # Two non-positional codes, for two different reasons, and the set is
+    # asserted exhaustively so a third cannot arrive quietly.
+    # `intake_budget_exhausted`: a ceiling on time is an interruption and not a
+    # thirteenth check. `agent_payload_off_schema`: the element never became a
+    # proposal, so it never entered intake and has no position at which it
+    # could have aborted. Either given a position would land in §13 row 23's
+    # distribution as a check that refused.
+    assert codes.INTAKE_NON_POSITIONAL == {
+        "intake_budget_exhausted",
+        "agent_payload_off_schema",
+        "agent_payload_not_a_list",
+    }
     assert not (ordered & codes.INTAKE_NON_POSITIONAL)
     assert ordered | codes.INTAKE_NON_POSITIONAL == defined
     with pytest.raises(ValueError):
@@ -1490,6 +1501,64 @@ def test_every_defined_code_is_emitted(tmp_path):
     second.directive_id = "dir-2"
     ledger.write_refusal(wide.admit(second))
     ledger.write_refusal(wide.enqueue(second))
+
+    # -- the loader, through a REAL scan over a payload the schema does not
+    # describe (B16). Written as a scan and not as a direct `render` call
+    # because the defect it covers was a crash in the path between the model's
+    # reply and the funnel, and a hand-written refusal would exercise the
+    # template whilst leaving that path exactly as it was.
+    from fntn.scanner.discovery import Corpus as _SwCorpus, GridCell as _Cell
+    from fntn.scanner.run import ScanConfig as _Cfg, scan as _scan
+
+    class _OffSchemaClient:
+        _replies = [
+            {"proposals": ["a bare string where an object was required"]},
+            # The shape two of three families actually returned on the first
+            # live sweep: `proposals` as a JSON string, not an array.
+            {"proposals": "[{\"event_definition\": \"...\"}]"},
+        ]
+
+        def __init__(self):
+            self._n = 0
+
+        def complete(self, system, user, schema):
+            reply = self._replies[min(self._n, len(self._replies) - 1)]
+            self._n += 1
+            return reply
+
+    _off_ledger = Ledger(parameter_hash="coverage-offschema")
+    _res = _scan(
+        _OffSchemaClient(),
+        [_SwCorpus("c-off", Partition.EXTERNAL, ["doc-1"]),
+         _SwCorpus("c-notalist", Partition.EXTERNAL, ["doc-2"])],
+        [_Cell("insider_dealing", "pop", "a mechanism")],
+        _Cfg(parameter_hash="coverage-offschema", audit_fraction=1.0,
+             control_arm_ratio=1.0, control_arm_seed=1),
+        _off_ledger,
+    )
+    # It is counted into the denominator, not silently dropped from it.
+    assert _res.proposed >= 1
+    _emitted = {c for c, _ in _off_ledger.code_distribution()}
+    assert "agent_payload_off_schema" in _emitted
+    assert "agent_payload_not_a_list" in _emitted, (
+        "the real scan did not emit the code; a hand-written refusal would "
+        "then be covering a branch nothing reaches"
+    )
+    ledger.write_refusal(
+        summaries.render(
+            "agent_payload_off_schema", "prop-offschema-c-off-0",
+            {"index": 0, "got": "str", "corpus_id": "c-off",
+             "failed_field": "the element itself"},
+        )
+    )
+    ledger.write_refusal(
+        summaries.render(
+            "agent_payload_not_a_list", "prop-notalist-c-notalist",
+            {"corpus_id": "c-notalist", "got": "str", "length": 27,
+             "failed_field": "proposals"},
+        )
+    )
+    _off_ledger.close()
 
     # -- sizing, the derived clip floor (§13 rows 29 and 30) --------------
     # All three fire here rather than in the funnel, because the funnel has no
@@ -4659,3 +4728,166 @@ def test_the_cost_guard_stops_the_whole_sweep_and_never_truncates_it():
     # A ceiling of zero disables the guard, and that is a decision the operator
     # takes explicitly rather than a default that happens to be off.
     assert _cost_guard(_Client(), ceiling_usd=0.0) is None
+
+
+def test_a_payload_element_the_schema_does_not_describe_is_counted_not_crashed():
+    """B16. The first live sweep raised `AttributeError` in the loader.
+
+    **A forced tool call is not a validated tool call.** `tool_choice` makes the
+    model call the tool; it does not make the arguments conform, and `strict` is
+    not set. The clerk returned a bare string in the proposals array and the
+    loader called `.get` on it, part-way through the second of three families,
+    losing the remaining families and the money already spent on them.
+
+    Three things are held here and each failed before the repair: the sweep
+    survives, the element is counted with a registered reason code, and it is
+    NOT repaired into a proposal by guessing which field it was meant to be.
+    """
+
+    from fntn.scanner.discovery import Corpus, ProposalCache, raw_payloads, sweep
+    from fntn.scanner.fences import QueryFence
+    from fntn.scanner.records import Partition
+
+    class _Client:
+        def complete(self, system, user, schema):
+            return {"proposals": [
+                "a bare string the schema does not describe",
+                {"event_definition": "clusters of same-day director purchases",
+                 "measured_on_intention": "US small caps",
+                 "event_class": "insider_dealing",
+                 "source_ref": "doc-1"},
+                None,
+                42,
+            ]}
+
+    result = sweep(
+        _Client(),
+        Corpus("c1", Partition.EXTERNAL, ["doc-1"]),
+        QueryFence(),
+        ProposalCache(),
+    )
+
+    # One proposal survives; three elements are counted off-schema, with the
+    # type named so the refusal says what actually arrived.
+    assert len(result.proposals) == 1
+    assert result.off_schema == [(0, "str"), (2, "NoneType"), (3, "int")]
+
+    # NOT repaired. A bare string could be coaxed into `event_definition`, and
+    # that is the loader doing the clerk's work on material the clerk did not
+    # put in a field.
+    assert all("bare string" not in p.event_definition for p in result.proposals)
+
+    # The authority fence sees only what it can inspect, and a non-object
+    # carries no field for it to inspect.
+    assert len(raw_payloads({"proposals": ["x", {"a": 1}]})) == 1
+
+
+def test_the_off_schema_code_is_non_positional_and_row_23_does_not_move():
+    """§13 row 23 counts abort positions, so the panel may not silently grow.
+
+    The code is emitted before a subject exists: the element never became a
+    proposal, so it never entered intake and there is no position at which it
+    could have aborted. Position 1 would report a parse failure as the first
+    check refusing; inserting it anywhere would make every abort position
+    recorded before today incomparable with every one recorded after.
+    """
+
+    from fntn.scanner.codes import (
+        ALL_CODES,
+        INTAKE_NON_POSITIONAL,
+        INTAKE_ORDER,
+    )
+
+    assert "agent_payload_off_schema" in ALL_CODES
+    assert "agent_payload_off_schema" in INTAKE_NON_POSITIONAL
+    assert "agent_payload_off_schema" not in INTAKE_ORDER
+    # The panel is twelve positions and this batch did not change that.
+    assert len(INTAKE_ORDER) == 12
+
+
+def test_a_string_payload_is_one_refusal_and_not_one_per_character():
+    """B16's second half, and the one that matters for the denominator.
+
+    On the first live sweep two of three families returned `proposals` as a
+    JSON *string*. A string is iterable, so reading it element-wise walked its
+    characters: 5,607 and 2,869 refusals from two malformed replies, a funnel
+    reporting **8,484 proposals raised** where four mechanisms had been
+    located, and a reason-code distribution in which one code held 99.9% of the
+    mass.
+
+    *Rule 5 says counting is mechanical because intent flatters the
+    denominator.* **Nothing intended that denominator and it was flattered
+    anyway**, which is the case the rule is weakest against and the reason the
+    two failures are counted separately rather than by one tolerant branch.
+    """
+
+    from fntn.scanner.discovery import Corpus, ProposalCache, raw_payloads, sweep
+    from fntn.scanner.fences import QueryFence
+    from fntn.scanner.records import Partition
+
+    class _StringPayload:
+        def complete(self, system, user, schema):
+            return {"proposals": "[{\"event_definition\": \"x\"}]"}
+
+    result = sweep(
+        _StringPayload(),
+        Corpus("c1", Partition.EXTERNAL, ["doc-1"]),
+        QueryFence(),
+        ProposalCache(),
+    )
+
+    assert result.proposals == []
+    # ONE fact about ONE call, with the type and the length recorded so the
+    # refusal says what arrived rather than how many characters it had.
+    assert result.payload_not_a_list == ("str", 27)
+    assert result.off_schema == [], (
+        "a non-array payload must not also produce per-element refusals: that "
+        "is the character-counting defect arriving by a second route"
+    )
+
+    # The authority fence is handed nothing rather than a list of characters.
+    assert raw_payloads({"proposals": "not a list"}) == []
+
+
+def test_the_per_family_table_never_pools_the_two_arms():
+    """§13 row 20's whole purpose is a comparison.
+
+    The control arm is drawn from the grid and carries the first registered
+    corpus's id by construction, so keying it on that id would file random
+    draws under a family that did not produce them. Pooling the arms in the one
+    table that exists to keep them apart destroys the only instrument that can
+    refute the discovery layer.
+    """
+
+    from fntn.scanner.discovery import Corpus as _C, GridCell as _G
+    from fntn.scanner.run import ScanConfig as _Cfg, scan as _scan
+
+    class _Client:
+        def complete(self, system, user, schema):
+            return {"proposals": [{
+                "event_definition": "clusters of same-day director purchases",
+                "measured_on_intention": "US small caps",
+                "event_class": "insider_dealing",
+                "source_ref": "doc-1",
+            }]}
+
+    ledger = Ledger(parameter_hash="perfamily")
+    result = _scan(
+        _Client(),
+        [_C("fam-a", Partition.EXTERNAL, ["d1"]), _C("fam-b", Partition.EXTERNAL, ["d2"])],
+        [_G("insider_dealing", "pop", "a mechanism")],
+        _Cfg(parameter_hash="perfamily", audit_fraction=1.0,
+             control_arm_ratio=1.0, control_arm_seed=1),
+        ledger,
+    )
+
+    assert "control_arm" in result.per_family, (
+        "the control arm has no row, so the comparison the sweep exists to "
+        "make cannot be read off the table"
+    )
+    assert set(result.per_family) == {"fam-a", "fam-b", "control_arm"}
+    # Every proposal is in exactly one row, and the rows sum to the funnel.
+    assert sum(r["raised"] for r in result.per_family.values()) == result.proposed
+    rendered = result.render(ledger)
+    assert "NEVER pooled" in rendered
+    ledger.close()
