@@ -65,6 +65,58 @@ A rule change is recorded in the same commit that lands it. Where the specificat
 | 27 | **Intake budget** | **CLOSED 27 Aug 2026** | `intake_point_budget_s` = 20 s, `intake_subject_budget_s` = 120 s, `budget_retry_max` = 1, registered under `ce576a9fa04a7403`. A ceiling on the cost of looking, not a judgement of the idea: a subject exceeding either is abandoned with `intake_budget_exhausted`, which refuses to score. **The decision is taken once, at capture**, and the ledger records the elapsed time, the budget in force and the verdict; a replay reads that record and never re-times the work, `ReplayedBudget` holding no clock at all. **Abandonments are reported beside row 23's abort-position distribution and never inside it**, a subject that ran out of time not having failed the point it was standing on, and the count is printed in every report including when it is zero. **The honest limit: a ceiling that refuses, not a timeout that interrupts.** A check is run and then measured, so a point that blocks forever is never caught. The three values are governance and were set before any sweep at scale; they are not calibrated against an observed distribution of intake times, because none exists yet, and the first run at scale is what would justify moving them |
 | n/a | FX exposure budget (§0 decision) | OPEN | Governance judgement in a stated range |
 
+### PENDING, and addressed to the operator: the SCOPE of row 1 is under review
+
+**The row is not changed by this block and stays BLOCKED. No figure is looked
+up here and no value is assumed.** What is recorded is a question about what
+row 1 is a row about, raised because the answer changes what closing it would
+even mean.
+
+**The question.** Row 1 reads **fixed round-trip commission**. Should it read
+**fixed round-trip transaction cost**, and take in:
+
+- **transfer taxes, per venue**;
+- **exchange and regulatory levies, with their thresholds**, a levy with a
+  threshold not being a rate and not behaving like one at a £2,500 clip;
+- **FX conversion, in both directions**, the outward leg and the return leg
+  being two conversions and not one.
+
+**Why it is not bookkeeping.** Row 1 runs first and **every break-even
+denominator in the paper inherits it**: the clip, the feasible band, the
+reachability matrix, §5.4.4 and the whole break-even table. A row whose scope
+is too narrow closes to a verified figure that is nonetheless the wrong
+quantity, and the arithmetic downstream is then exact over the wrong number.
+**That is a failure no later precision on row 1 repairs**, because the defect
+is not in the measurement.
+
+**AIM and the Main Market may be separate tiers.** Stamp duty exempts AIM and
+does not exempt the Main Market, so the two venues do not share a transfer-tax
+treatment. If they do not, **a single UK denominator is wrong for both**: too
+high for AIM and too low for the Main Market, and wrong in opposite directions,
+so no single figure is conservative for the pair and no average over them is a
+figure about anything. Whether the split is by venue, and whether the US then
+needs its own tier for the same reason, is part of the question and is not
+answered here.
+
+**The options, named.**
+
+| Option | What it would mean |
+|---|---|
+| A. Leave the scope as commission | Row 1 stays a commission row and closes on a commission schedule. The other components are then somebody's row and nobody has said whose, which is the state that produced this block |
+| B. Widen to transaction cost, one UK denominator | Row 1 becomes the whole round-trip cost. Simplest to state and, if stamp duty does exempt AIM, wrong for both UK venues at once |
+| C. Widen to transaction cost, tiered by venue | Row 1 becomes the whole round-trip cost and splits: AIM, UK Main Market, and US considered separately. Most rows to close, and the only option that can be right for both UK venues |
+
+**What is deliberately left open.** Whether taking B or C is a correction to a
+pending row's definition or a **cost-tier change**, which under §0.6 is
+apparatus and takes an Annex A.1 row with a predicate, is itself part of the
+decision and is not settled here. Answering it in this block would be the
+scanner choosing the rule that governs its own scope.
+
+**Raised 27 August 2026.** Carried until the operator answers. Nothing acts on
+it in the meantime, and row 1 remains **BLOCKED** on a cited, published IBKR
+schedule at whatever granularity the answer turns out to require.
+
+
 **Rows 19, 20 and 25 closed on 26 August 2026**, and row 22 closed for US. The registration in the tree now hashes to `701adbd9d48015ed`. *This line previously named `890a80e3a8566837`, which was the hash at the moment those rows closed and stopped being the current hash three re-stamps ago, so it contradicted rows 19 and 20 four lines above whilst reading as the live figure.* The commitments have not moved; the object carrying them has, three times, and **`docs/REGISTRATION_HISTORY.md` is the chain**: one row per hash, the causing field named, each recomputed from the object it was taken over.
 
 **What now stands between the layer and a first sweep** is the archive's opening boundary. `pre_archive` is defined as *material predating* it, so with no boundary declared the mode names nothing. Fixing the archive span is a §13 pre-calibration decision (week-plan task 3.3) and **needs no purchase**: it is a decision about which span the archive will cover, not an acquisition of it. Set `archive_opens` in the registration and the US corpus becomes sweepable.
