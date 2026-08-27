@@ -32,7 +32,7 @@ itself: a class with THREE OR MORE instances must carry an invariant, and
 `test_every_recurring_correction_class_has_an_invariant` refuses this file if one
 does not.**
 
-**Twenty-three rows fall into FIVE classes and six singletons.** *The
+**Twenty-four rows fall into FIVE classes and six singletons.** *The
 concentration is the finding: this project does not make many kinds of mistake.
 It makes a few kinds, repeatedly.*
 
@@ -50,7 +50,7 @@ repair does not need a third instance to be believed.**
 | **II. Material that decided something was not committed at the moment it decided it** | B3, B4, B5, and the registration chain's first object | **4** | **INSTALLED at P114**: `cmd_sweep` refuses over a corpus git cannot produce again, with `corpus_not_committed` |
 | **III. A population pooled, mis-scoped or miscounted** | B6 (itself three), B7, the §13 table's two hand counts, and `_unexercised` at P126 | **7** | **INSTALLED at P105 and WIDENED at P126**: the invariant was applied to a METHOD when the class was about a QUERY, so it now reads **every ledger read path carries the marker the fences rely on**, and phase 2 swept every `SELECT` in the package to hold it |
 | **IV. A quantity validated against something computed from that quantity** | A7, B10 | **2** | **INSTALLED at P133, and deliberately at two instances rather than three**: *a bound may not be validated against a table computed from that bound*, and a table recomputed against a registered value carries that value's name from then on |
-| **V. A guard implemented WEAKER than the rule its own docstring states** | B1, B5, B11, B12 | **4** | **INSTALLED at P136**: *a presence check is not a content check*, and **every guard carries a test that supplies material it must REFUSE, present and well-formed, not merely absent** |
+| **V. A guard implemented WEAKER than the rule its own docstring states** | B1, B5, B11, B12, B13 | **5** | **INSTALLED at P136**: *a presence check is not a content check*, and **every guard carries a test that supplies material it must REFUSE, present and well-formed, not merely absent** |
 | Singletons, which are not a class | A1, A3, A4, A5, A6, B2 | n/a | n/a, no invariant is owed: a row belonging to no class asserts no recurrence |
 
 ---
@@ -576,6 +576,38 @@ is corrected: it was asserting the defect.*
 
 ---
 
+### B13. A blank market cell was attributed to the FILENAME, and the coverage figure rose
+
+| | |
+|---|---|
+| **Asserted** | by the comment eight lines above the line that did it: an earlier `load_csv` collapsed markets and "reported one market as covering every row and the others as absent, **which is worse than no coverage figure at all because it looks like a measurement**" |
+| **True** | the replacement still read `row_market = (row.get(mkt_col) or "").strip() or default_market`, and `default_market` is **the file stem** where the operator names no market. A row with a blank exchange cell was counted into a market that never claimed it, and **`coverage = rows / listed_total` rose with it** |
+| **Caught by** | **the Class V sweep**, mandated by the invariant installed at P136 and run one commit later |
+| **Provenance** | `verified_primary`; `src/fntn/scanner/master.py` before P137, and `src/fntn/scanner/cli.py:67`, which passes `market=None` for any master spec written without a `:MARKET` suffix |
+
+***Reachability was CHECKED, not assumed.*** The branch runs only where the CSV
+has a market column and the operator named no market, and `cli.py` produces
+exactly that whenever a spec omits its suffix. **It is a live path, not a
+latent one.**
+
+**Why it matters more than one row.** §13 row 25 is the security master's
+coverage, the entity fence binds on it, and `unreadable_markets` refuses a
+market below the 0.95 floor. *A defect that inflates the numerator moves a
+market from refused to admitted, which is a fence relaxing itself on a blank
+cell.*
+
+**Repaired at P137.** Unattributable rows go to a bucket of their own, whose
+`listed_total` is `None`, so its coverage reads **unknown** and cannot pass a
+floor it was never measured against. ***The fence is unweakened***: names and
+tickers index into the global sets, so every issuer in the file still binds,
+and **what changed is only which market may CLAIM the row as coverage.**
+
+**And it is rule 3 verbatim.** `CLAUDE.md` says *"No `or default`"*. **This was
+an `or default`, in the structure a hard gate reads, and it survived every
+reading of that rule for as long as the line existed.**
+
+---
+
 ### B12. `ANTHROPIC_API_KEY` was a ten-character stub and the guard admitted it
 
 | | |
@@ -598,6 +630,35 @@ on the prompt's content hash and not on the reply, and the control arm is drawn
 from a registered seed with no model in its path. ***Rule 1's guarantee is over
 LOGGED data and is untouched.*** *Run-to-run stability was a convenience the
 docstring oversold as determinism, and the oversell is the correction.*
+
+### The class question R4a asks, answered rather than assumed
+
+***Is "a dependency's contract assumed rather than read" a class of its own?***
+**It has TWO instances and the second is not new:**
+
+| | The contract | What stood in for reading it |
+|---|---|---|
+| **B8pre** | IBKR's published fee schedule | a **fit** to two readings, which gave both schedules the same fixed term and could not distinguish them. Reading the schedule **reversed the election** (P118) |
+| **B12** | `messages.create`'s parameter list | **recall.** `temperature=0` was written from what the API used to accept. Reading the reference established it had been removed |
+
+***One class, two instances, and NO new class is opened.*** The register's rule
+makes an invariant compulsory at three, and **Class I part 1 already states the
+principle** -- *a decision is taken on an artefact, never on an argument alone*
+-- so a sixth class would restate a clause this file already carries.
+
+***What IS missing, and it is a gap rather than a class.*** **Part 1 governs
+decisions and B12 was not one**; nobody decided to pass `temperature`, it was
+written into a call. *That is the same gap part 4 was added to close for
+claims, one layer further out:* ***code written against an external contract
+nobody read.*** **The mechanical support belongs in the session protocol, where
+part 4's does, and not in a test**: `CLAUDE.md`'s reconciliation now enumerates
+the **dependency contracts** a batch will write against, alongside its factual
+premises about the tree.
+
+**The cost, stated:** one more line of reconciliation per batch that touches an
+external interface, and **it would not have caught B8pre**, which *was* a
+decision and *did* cite its preparation. **It would have caught B12**, in the
+minute before the sweep was attempted rather than in the traceback.
 
 **Repaired at P136:** a preflight `models.retrieve` at construction, which
 costs no tokens and settles the key and the model identifier together. *A shape
