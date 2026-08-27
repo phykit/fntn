@@ -3213,6 +3213,53 @@ def test_the_budget_count_is_printed_even_at_zero_and_never_inside_row_23():
     ledger.close()
 
 
+def test_the_unexercised_list_splits_by_arm_like_the_distribution(tmp_path):
+    """P126: the fourth instance of a class whose invariant was installed at P105.
+
+    P105 split the abort-position distribution by `origin`, because pooling the
+    agent arm with the random-mechanism control arm destroys the comparison the
+    control arm exists for. The method BESIDE it kept the pooled query and went
+    on projecting `origin` away, so a point exercised only by the control arm
+    was reported as exercised when for the agent arm it was not.
+
+    The invariant was applied to a method when the class was about a query.
+    Found by sweeping every SELECT in the package for markers the fences rely
+    on, which is what the class's invariant should have said to do.
+    """
+
+    ledger = Ledger(parameter_hash="unexercised-arms")
+    # The agent arm trips position 3 only; the control arm trips position 7
+    # only. Pooled, both look exercised. Split, each arm is missing the other's.
+    for did, origin, code in (
+        ("prop-a", Origin.AGENT, "proposal_names_entity"),
+        ("prop-c", Origin.RANDOM_CONTROL, "duplicate_of_open_pointer"),
+    ):
+        ledger.write_proposal(did, clean_proposal(origin=origin),
+                              "abandoned_at_ingestion")
+        ledger.write_refusal(summaries.render(code, did, {
+            "entity": "Acme plc", "duplicate_ref": "dir-open",
+            "population_key": "k",
+        }))
+
+    section = _render(ledger).split("### Intake points not exercised")[1]
+    section = section.split("## 4.")[0]
+    agent = section.split("**agent:")[1].split("**random_control:")[0]
+    control = section.split("**random_control:")[1]
+
+    # The control arm's point is unexercised FOR THE AGENT, and vice versa.
+    assert "`duplicate_of_open_pointer`" in agent
+    assert "`proposal_names_entity`" not in agent
+    assert "`proposal_names_entity`" in control
+    assert "`duplicate_of_open_pointer`" not in control
+
+    # Eleven of twelve for each arm, and the pooled ten printed as not a
+    # reading so a reader holding an earlier report can see what moved.
+    assert "**agent: 11 of 12 unexercised**" in section
+    assert "**random_control: 11 of 12 unexercised**" in section
+    assert "Pooled, and NOT a reading: 10 of 12." in section
+    ledger.close()
+
+
 def test_unexercised_intake_points_are_named_not_counted():
     ledger = _report_ledger()
     section = _render(ledger).split("### Intake points not exercised")[1].split("## 4.")[0]

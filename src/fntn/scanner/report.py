@@ -738,7 +738,16 @@ class RunReport:
             "SELECT surface, code, COUNT(*) n FROM refusal GROUP BY surface, code"
         ):
             by_surface.setdefault(r["surface"], {})[r["code"]] = r["n"]
-        out += ["### Refusals per surface, per point", ""]
+        out += [
+            "### Refusals per surface, per point",
+            "",
+            "**Pooled across arms by design, and this line is why that is not "
+            "the P105 defect.** It counts every refusal on a surface, "
+            "including points that fired behind an earlier failure, so it is "
+            "a code census and not an arm reading. The two arm readings are "
+            "the abort-position distribution and the unexercised list below.",
+            "",
+        ]
         if not by_surface:
             out += ["No refusals recorded. Nothing was refused and nothing ran.", ""]
         for surface in sorted(by_surface):
@@ -747,6 +756,10 @@ class RunReport:
                 "intake": codes.INTAKE_ORDER,
                 "observation": codes.OBSERVATION_ORDER,
             }.get(surface, [])
+            # POOLED ACROSS ARMS BY DESIGN, and said so (P126). This table
+            # counts every refusal on a surface, including ones that fired
+            # behind an earlier failure; the per-arm readings are the
+            # abort-position distribution and the unexercised list below.
             for code, n in sorted(
                 by_surface[surface].items(), key=lambda kv: (-kv[1], kv[0])
             ):
@@ -889,25 +902,80 @@ class RunReport:
         ]
 
     def _unexercised(self) -> List[str]:
-        exercised = {
-            r["code"]
-            for r in self.ledger.conn.execute(
-                "SELECT DISTINCT code FROM refusal WHERE surface = 'intake'"
+        """Intake points nothing reached, BY ARM (P126).
+
+        **The fourth instance of a class whose invariant was already
+        installed.** P105 split the abort-position distribution by `origin`
+        because pooling the agent arm with the random-mechanism control arm
+        destroys the comparison the control arm exists for. **This method sat
+        beside it and kept the pooled query**: `SELECT DISTINCT code FROM
+        refusal WHERE surface = 'intake'` projects `origin` away, so **a point
+        exercised only by the control arm was reported as exercised**, and for
+        the agent arm it was not.
+
+        *The invariant was applied to a method when the class was about a
+        query.* Found by the phase 2 sweep of every `SELECT` in the package for
+        markers the fences rely on.
+        """
+
+        rows = list(
+            self.ledger.conn.execute(
+                "SELECT DISTINCT p.origin AS origin, r.code AS code "
+                "FROM refusal r LEFT JOIN proposal p ON p.subject_id = "
+                "r.subject_id WHERE r.surface = 'intake'"
             )
-        }
-        never = [c for c in codes.INTAKE_ORDER if c not in exercised]
-        out = ["### Intake points not exercised by this run", ""]
-        if not never:
-            out += ["None: every intake point fired at least once.", ""]
+        )
+        arms = sorted({r["origin"] or "unattributed" for r in rows})
+        by_arm = {a: set() for a in arms}
+        for r in rows:
+            by_arm[r["origin"] or "unattributed"].add(r["code"])
+        pooled = set().union(*by_arm.values()) if by_arm else set()
+
+        out = ["### Intake points not exercised by this run, BY ARM", ""]
+        if not arms:
+            # No refusal recorded is not "nothing to report": it means EVERY
+            # point is unexercised, and naming them is exactly what this
+            # section is for.
+            out += [
+                "**No intake refusal was recorded, so all "
+                f"{len(codes.INTAKE_ORDER)} points are unexercised**, named "
+                "rather than counted:",
+                "",
+            ]
+            out += [
+                f"- `{c}` (position {i})"
+                for i, c in enumerate(codes.INTAKE_ORDER, start=1)
+            ]
+            out.append("")
             return out
         out += [
-            f"**{len(never)} of {len(codes.INTAKE_ORDER)}**, named rather than "
-            "counted, because a point nothing reached is a branch nothing "
-            "tested and the count alone does not say which:",
+            "**Split by `origin` (P126).** A point exercised only by the "
+            "control arm is not exercised for the agent arm, and a pooled list "
+            "says it is. This is the same correction P105 made to the "
+            "abort-position distribution, made here to the method beside it.",
             "",
         ]
-        out += [f"- `{c}` (position {codes.INTAKE_ORDER.index(c) + 1})" for c in never]
-        out.append("")
+        for arm in arms:
+            never = [c for c in codes.INTAKE_ORDER if c not in by_arm[arm]]
+            out += [
+                f"**{arm}: {len(never)} of {len(codes.INTAKE_ORDER)} "
+                "unexercised**, named rather than counted, because a point "
+                "nothing reached is a branch nothing tested and the count "
+                "alone does not say which:",
+                "",
+            ]
+            out += [
+                f"- `{c}` (position {codes.INTAKE_ORDER.index(c) + 1})"
+                for c in never
+            ] or ["- none: every point fired at least once for this arm"]
+            out.append("")
+        pooled_never = [c for c in codes.INTAKE_ORDER if c not in pooled]
+        out += [
+            f"**Pooled, and NOT a reading: {len(pooled_never)} of "
+            f"{len(codes.INTAKE_ORDER)}.** Printed so a reader holding a "
+            "pre-P126 report can see what moved, and for no other purpose.",
+            "",
+        ]
         return out
 
     def _fences(self) -> List[str]:
