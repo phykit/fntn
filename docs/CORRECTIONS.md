@@ -48,7 +48,7 @@ repair does not need a third instance to be believed.**
 |---|---|---|---|
 | **I. A conclusion acted on without checking the link it rests on** | A2, A5b, A8, A9, A10, B8pre, B9, B14, B15 | **9** | **INSTALLED at P122, STRENGTHENED at P130 and again at P131, to four clauses. **The four-clause version DID catch A10, in preparation rather than in outcome**** |
 | **II. Material that decided something was not committed at the moment it decided it** | B3, B4, B5, and the registration chain's first object | **4** | **INSTALLED at P114**: `cmd_sweep` refuses over a corpus git cannot produce again, with `corpus_not_committed` |
-| **III. A population pooled, mis-scoped or miscounted** | B6 (itself three), B7, the §13 table's two hand counts, and `_unexercised` at P126 | **7** | **INSTALLED at P105 and WIDENED at P126**: the invariant was applied to a METHOD when the class was about a QUERY, so it now reads **every ledger read path carries the marker the fences rely on**, and phase 2 swept every `SELECT` in the package to hold it |
+| **III. A population pooled, mis-scoped or miscounted** | B6 (itself three), B7, the §13 table's two hand counts, `_unexercised` at P126, and B18 | **8** | **INSTALLED at P105 and WIDENED at P126**: the invariant was applied to a METHOD when the class was about a QUERY, so it now reads **every ledger read path carries the marker the fences rely on**, and phase 2 swept every `SELECT` in the package to hold it |
 | **IV. A quantity validated against something computed from that quantity** | A7, B10 | **2** | **INSTALLED at P133, and deliberately at two instances rather than three**: *a bound may not be validated against a table computed from that bound*, and a table recomputed against a registered value carries that value's name from then on |
 | **V. A guard implemented WEAKER than the rule its own docstring states** | B1, B5, B11, B12, B13 | **5** | **INSTALLED at P136**: *a presence check is not a content check*, and **every guard carries a test that supplies material it must REFUSE, present and well-formed, not merely absent** |
 | **VI. A dependency's contract assumed rather than read** | B8pre, B12, B16, B17 (twice) | **4** | **INSTALLED in the session protocol at P137 and STRENGTHENED at P139**: the reconciliation enumerates the dependency contracts a batch writes against, naming the reference READ for each — **and where a batch will run a code path for the first time, the contracts THAT PATH depends on as well.** *B16 got past the first form because the loader was code the batch ran rather than code it wrote* |
@@ -1005,6 +1005,38 @@ release carries nothing every instance has and no error page could.
 `verify_prose_response` states what it establishes — a byte floor, EDGAR's own
 observed stub markers, and a filename taken **from the regulator's own document
 manifest for that accession** — and states what it does not.
+
+---
+
+### B18. Two different numbers printed under one name, one report apart
+
+| | |
+|---|---|
+| **Believed** | that *proposals raised* meant the same thing in the sweep's funnel and in the §9.2 run report |
+| **True** | **13 in one and 12 in the other, on the same run.** `ScanResult.proposed` counts **emissions**: proposals, plus payload elements the schema does not describe, plus calls that returned no array at all. The report counts **rows in the ledger's proposal table**, and an emission that never became a proposal carries a refusal and no proposal row |
+| **Found by** | reading the run report against the sweep output that produced it, minutes after both were written |
+| **Provenance** | `verified_primary`, both artefacts in the tree |
+
+***Neither number is wrong and that is what makes it a defect.*** A funnel that
+counts what the clerk emitted and a ledger that counts what became a proposal
+are both legitimate, and **the label is what makes them incompatible**: a
+denominator meaning one thing in one report and another in the next is unusable
+in either.
+
+**It is the P105 defect in a word rather than in a query.** *P105 split the
+abort-position distribution by `origin` and left the pooled query beside it;
+this is the same shape one layer up, where the two populations differ and the
+name does not.*
+
+**Repaired by naming them apart**, not by making them agree: the report reads
+*proposals recorded in the ledger* and carries a line saying what it excludes
+and why. *Making them agree would have meant choosing which definition is
+right, and both are.*
+
+***And it arrived by the route the batch had just spent a commit on.*** The
+gap between the two numbers is exactly the one `agent_payload_not_a_list`
+refusal. **B16 created the emission that has no proposal row**, and the
+mismatch it produced was one report away and was not looked for.
 
 ---
 

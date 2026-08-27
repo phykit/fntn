@@ -724,7 +724,20 @@ class RunReport:
         out = [
             "## 3. Intake funnel",
             "",
-            f"- proposals raised: **{counts['proposals']}**",
+            # **"recorded", not "raised", and the two are different numbers.**
+            # The sweep's own funnel counts EMISSIONS: proposals, plus payload
+            # elements the schema does not describe, plus calls that returned no
+            # array at all. This counts ROWS IN THE LEDGER'S PROPOSAL TABLE, and
+            # a call that returned no array produced a refusal and no proposal,
+            # so this number can sit below the sweep's. *Both are defensible and
+            # they may not share a label; a denominator that means one thing in
+            # one report and another thing in the next is the P105 defect in a
+            # word rather than in a query.*
+            f"- proposals recorded in the ledger: **{counts['proposals']}**",
+            "  *Emissions that never became a proposal -- a payload that was "
+            "not an array, an element that was not an object -- carry a "
+            "refusal and no proposal row, so this can sit below the sweep's "
+            "own `proposals raised`. See `agent_payload_not_a_list`.*",
             f"- refusals recorded: **{counts['refusals']}**",
             f"- directives built: **{counts['directives']}**",
             f"- directives registered: **{counts['registered']}**",

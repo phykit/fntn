@@ -5082,3 +5082,27 @@ def test_the_span_is_inclusive_at_both_ends_and_a_reversed_span_refuses():
     assert len(quarters_between(_date(2023, 1, 1), _date(2026, 8, 27))) == 15
     with pytest.raises(TraceCorpusRefused, match="closes .* before it opens"):
         quarters_between(_date(2026, 1, 1), _date(2023, 1, 1))
+
+
+def test_the_report_and_the_sweep_do_not_share_a_label_for_different_counts():
+    """B18. Two numbers under one name is the P105 defect in a word.
+
+    `ScanResult.proposed` counts EMISSIONS: proposals, plus payload elements
+    the schema does not describe, plus calls that returned no array at all.
+    The report counts ROWS IN THE PROPOSAL TABLE, and an emission that never
+    became a proposal has a refusal and no proposal row. On the run of record
+    the two read 13 and 12.
+
+    Both are defensible. **They may not share a label**, because a denominator
+    that means one thing in one report and another in the next is unusable in
+    either.
+    """
+
+    from fntn.scanner import report as report_mod
+
+    source = Path(report_mod.__file__).read_text(encoding="utf-8")
+    assert "proposals recorded in the ledger" in source
+    # And the sweep's own funnel keeps its own wording, which is the one that
+    # counts emissions.
+    from fntn.scanner import run as run_mod
+    assert "proposals raised" in Path(run_mod.__file__).read_text(encoding="utf-8")
