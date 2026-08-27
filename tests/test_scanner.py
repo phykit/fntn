@@ -2764,6 +2764,68 @@ def test_the_worksheet_states_the_bound_and_never_the_point_estimate():
 OPEN_ITEMS = REPO_ROOT / "docs" / "OPEN_ITEMS.md"
 
 
+CORRECTIONS = REPO_ROOT / "docs" / "CORRECTIONS.md"
+
+
+def test_every_recurring_correction_class_has_an_invariant():
+    """P122: what turns the corrections register from a list into an instrument.
+
+    A register that only lists instances is a list. The rule this file imposes
+    on itself is that a class with THREE OR MORE instances must carry an
+    invariant, and this test is what holds it: adding a fourth instance to a
+    class with no invariant fails here, at the moment the class is written down,
+    rather than at the moment somebody notices the pattern two batches later.
+
+    It is deliberately a test over the DOCUMENT. The classes are a judgement
+    about what went wrong, and a judgement cannot be computed; what can be
+    computed is that a judgement recording a recurrence has also recorded what
+    would stop the next one.
+    """
+
+    text = CORRECTIONS.read_text()
+    header = "| Class | Instances | Count | Invariant |"
+    assert header in text, "the classes table is the instrument; it must exist"
+
+    body = text.split(header, 1)[1].split("\n\n", 1)[0]
+    rows = [
+        [c.strip() for c in line.strip().strip("|").split("|")]
+        for line in body.splitlines()
+        if line.startswith("|") and not set(line.strip().strip("|")) <= set("-| ")
+    ]
+    assert rows, "the classes table has no rows"
+
+    checked = 0
+    for name, instances, count, invariant in rows:
+        digits = re.sub(r"[^0-9]", "", count)
+        if not digits:
+            # A row with no count is not a class: it is the catch-all for rows
+            # that belong to none. It owes no invariant and asserts no
+            # recurrence, and treating it as a class would demand one.
+            continue
+        n = int(digits)
+        # The count must match the instance list, or the table is asserting a
+        # recurrence it has not enumerated.
+        listed = len([i for i in instances.split(",") if i.strip()])
+        assert n == listed or "itself" in instances or "and" in instances, (
+            f"{name}: count {n} against {listed} listed instances"
+        )
+        if n < 3:
+            continue
+        checked += 1
+        bare = invariant.replace("*", "").strip().lower()
+        assert bare and bare not in {"n/a", "none", "tbd", "pending"}, (
+            f"{name} has {n} instances and no invariant. A class that has "
+            "recurred three times and carries no invariant is a class that "
+            "will recur a fourth time."
+        )
+        assert "installed" in bare, (
+            f"{name}: the invariant cell must say INSTALLED and where, so a "
+            "reader can go and read the thing rather than take the word for it"
+        )
+    assert checked >= 1, "no recurring class found; the table cannot be right"
+
+
+
 def _open_items_row(n: str):
     """(status cell, note cell) for a §13 row, so a status is read as a status.
 

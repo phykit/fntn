@@ -24,6 +24,74 @@ establishes it**, which is recorded as itself rather than dressed up.
 
 ---
 
+## THE CLASSES, and which of them carry an invariant
+
+***A register that only lists instances is a list. One that names classes and
+installs invariants is an instrument.*** **The rule this section imposes on
+itself: a class with THREE OR MORE instances must carry an invariant, and
+`test_every_recurring_correction_class_has_an_invariant` refuses this file if one
+does not.**
+
+**Eighteen rows fall into three classes and four singletons.** *The
+concentration is the finding: this project does not make many kinds of mistake.
+It makes three kinds, repeatedly.*
+
+| Class | Instances | Count | Invariant |
+|---|---|---|---|
+| **I. A conclusion acted on without checking the link it rests on** | A2, A5b, A8, B8pre, B9 | **5** | **INSTALLED, below** |
+| **II. Material that decided something was not committed at the moment it decided it** | B3, B4, B5, and the registration chain's first object | **4** | **INSTALLED at P114**: `cmd_sweep` refuses over a corpus git cannot produce again, with `corpus_not_committed` |
+| **III. A population pooled, mis-scoped or miscounted** | B6 (itself three), B7, and the §13 table's two hand counts | **6** | **INSTALLED at P105**: the abort-position distribution splits by `origin`, and every §13 count is now taken by machine over the table |
+| Singletons, which are not a class | A1, A3, A4, A5, A6, A7, B1, B2 | n/a | n/a, no invariant is owed: a row belonging to no class asserts no recurrence |
+
+---
+
+## THE CLASS I INVARIANT
+
+**The five instances, in one line each, so the shape is visible rather than
+asserted:**
+
+| Row | The conclusion | The link nobody checked |
+|---|---|---|
+| **A2** | *"tests ran and failed"* | whether `pytest` was installed |
+| **A5b** | *"renaming a reason code is a change to the registry"*, therefore defer | whether the code was **in** the registry. It was not |
+| **A8** | *"row 29 is the biggest release, therefore closing it moves step 3"* | which cells settle step 3. Row 29 is not among them |
+| **B8pre** | *"tiered is 28.8% cheaper, therefore elect tiered"* | the published schedule, **which the same row said would refute it** |
+| **B9** | *"a Form 4 exercises none of the intake points"* | **which** intake points §9.4 means. The answer was right about the wrong twelve |
+
+***In every one, the link was checkable in minutes — in the tree, or on a page
+that answers 200 — and in every one it was checked AFTER the conclusion had been
+acted on.***
+
+**The invariant, in two parts, and the second is the one with teeth.**
+
+> **1. A decision is taken on an artefact, never on an argument alone.** The
+> `§12.1` row that takes it names what was read: a path in this tree, a test
+> name, or a URL with a retrieval date and a digest.
+>
+> **2. A decision may not be taken over a caveat its own preparation states.**
+> Where the preparation names the thing that would refute it, ***that thing is
+> checked before the decision, or the decision waits.*** A stated caveat is not
+> a discharged one.
+
+**Part 2 is what B8pre needed and part 1 would not have caught.** P112 cited its
+preparation file, satisfying part 1 in full, **and its own text said 28.8% was
+`74/104` restated and that every unmodelled pass-through would narrow the gap.**
+*It named its refutation and took the decision anyway.*
+
+***The cost of part 2, stated: it makes some decisions wait that would otherwise
+be taken, and the delegation's whole purpose is not to make decisions wait.***
+The trade is deliberate. **A decision taken over a live caveat is not faster
+than one that waited; it is one that has to be taken twice**, and B8pre was
+taken twice, one batch apart, at the cost of a whole phase.
+
+*What part 2 is NOT.* It is not a bar on deciding under uncertainty. A gap that
+the preparation states and **cannot** close — the auto-conversion FX rate under a
+403, row 1's contracting entity before the schedules were compared — is a
+different thing from a caveat that names a page nobody has opened. **The test is
+whether the refuting check was available, not whether the answer was certain.**
+
+---
+
 ## A. Errors made to this project by advice
 
 ### A1. sec.gov served a 698-byte stub, and a stub looks like success
@@ -132,6 +200,29 @@ inaction**, which is the quietest way for one to be wrong.
 
 Renamed to `position_below_clip_floor` on 27 August 2026 (P108), on delegated
 authority.
+
+### A8. "Row 29's closing will move binding-path step 3"
+
+| | |
+|---|---|
+| **Asserted** | in the batch instruction of 27 August 2026: *"row 29 closing should move step 3"* |
+| **True** | **it cannot.** Step 3 is settled by three §14 cells — θ, the δₘᵢₙ floor and the account type — and **§13 row 29 appears in none of them.** Row 29 settles nothing on step 3 at all |
+| **Caught by** | the Codespace, before running the report, by reading which register cells the report's own binding-path section says settle each step |
+| **Provenance** | `verified_primary` |
+
+**The class: asserting a causal chain without reading the link.** The chain
+*"row 29 is the biggest release, therefore closing it moves the path"* is
+plausible, and every step of it is checkable in one file. **The link that fails
+is the one nobody looked up.**
+
+***Recorded rather than satisfied quietly, and that is the point of the row.***
+The convenient response was to take θ and the account type, watch step 3's cells
+move, and let the movement line appear to vindicate the expectation. **What was
+done instead was to say the expectation was mis-attributed, and then take the
+two §14 decisions on their own merits** — which moved two of step 3's three
+cells and still did not close it, the δₘᵢₙ floor being deferred until row 1
+closed. *Step 3 closed one batch later, and it closed on the δₘᵢₙ floor, not on
+row 29.*
 
 ### A6. The 1e cost model dropped the per-share commission
 
