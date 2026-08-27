@@ -34,6 +34,10 @@ A rule change is recorded in the same commit that lands it. Where the specificat
 
 *Empty is the correct state immediately after a version is composed. P76, P77 and P78 were carried here between 27 August 2026 and the composition of v1.14, and are discharged into §12.1.*
 
+**One rule landed in this batch without a row, and the judgement is recorded here rather than left in a commit message.** Commit `d95c816` typed the schema fingerprint as `schema:<digest>` and, with it, made `Registration.schema_matches` accept **two encodings**: the typed form and the superseded bare digest. The loader therefore returns `verified` for a file it would have called `unverifiable_schema_change` the moment before, which is **an acceptance widening**, and P80 is the standard such a thing answers to: a value that changes what a fence lets through, added quietly, widens the sweep with nothing on the record.
+
+**The judgement, stated, and it is a close one.** There is a real argument that it is notation and not a rule: the widening admits exactly those files whose fingerprint equals a digest **the code recomputes from its own dataclass**, so it carries no free parameter, nothing an operator could have chosen otherwise and nothing to attribute to a registration, and every file it newly admits is one whose shape genuinely matches. That would separate it from P80, whose stopword set was a chosen list governing real-world spans. **It is recorded as a version all the same.** Rule 5 names *admissibility rule* without qualifying it as substantive; the bilingualism is a standing property of the loader that outlives the migration and must be findable by a reader of the specification rather than of `git log`; and declining the row would have meant inventing a meta-rule about which admissibility changes count, which is more judgement than the row costs. **Discharged into `§12.1` row P87a**, written retrospectively as P82a was, in the same commit as this paragraph. The table above stays `n/a` because the version is already composed and the row is in it.
+
 ---
 
 ## §13: twenty-five calibrations
