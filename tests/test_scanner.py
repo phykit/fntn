@@ -2584,6 +2584,47 @@ def _open_items_row(n: str):
     return cells[2], cells[3]
 
 
+def test_the_register_names_no_hash_outside_a_reference_to_the_history():
+    """A hash in prose records a moment and is read as a state.
+
+    `docs/OPEN_ITEMS.md` has named a superseded hash as the live one twice: the
+    26 August stamp, overtaken by three re-stamps, and then its replacement,
+    overtaken by one more. Both times the repair was written as though getting
+    the number right were the fix, and both times it was overtaken again. This
+    is the third repair and it is the one that does not need a fourth.
+
+    **The exception is narrow and is exercised.** A hash naming what a reading
+    was TAKEN UNDER is fixed for ever and may be written beside the history row
+    that holds it; a hash naming what is CURRENT may not. The sweep is
+    `HASH_SWEEP`, the same negative-lookaround pattern the schema fingerprint
+    is swept with, so one pattern governs both records.
+    """
+
+    exercised = 0
+    for n, line in enumerate(OPEN_ITEMS.read_text().splitlines(), 1):
+        # Per line first, then per sentence, so a file mention on one line
+        # cannot license a hash on the next.
+        for sentence in re.split(r"(?<=[.!?])\s+", line):
+            if not re.search(HASH_SWEEP, sentence):
+                continue
+            assert "REGISTRATION_HISTORY.md" in sentence, (
+                f"{OPEN_ITEMS.name}:{n} names a hash outside a reference to "
+                f"the history: {sentence.strip()[:160]}"
+            )
+            exercised += 1
+    # A permitted branch nothing reaches is an untested allowance, which is the
+    # defect class this suite exists against. Rows 21a and 21b use it.
+    assert exercised >= 1, "the exception is never taken, so it is untested"
+
+
+def test_the_register_states_the_rule_it_is_swept_under():
+    """The prose cannot drift from the sweep that is run against it."""
+
+    preamble = OPEN_ITEMS.read_text().split("## The binding path")[0]
+    assert "No registration hash is written in this file" in preamble
+    assert "test_the_register_names_no_hash_outside_a_reference_to_the_history" in preamble
+
+
 def test_row_21a_is_blocked_and_states_a_bound_not_a_rate():
     """The split's whole content, locked against drift back to `0%`.
 
