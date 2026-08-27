@@ -32,16 +32,25 @@ itself: a class with THREE OR MORE instances must carry an invariant, and
 `test_every_recurring_correction_class_has_an_invariant` refuses this file if one
 does not.**
 
-**Nineteen rows fall into three classes and eight singletons.** *The
+**Twenty-one rows fall into FOUR classes and eight singletons.** *The
 concentration is the finding: this project does not make many kinds of mistake.
-It makes three kinds, repeatedly.*
+It makes a few kinds, repeatedly.*
+
+***The fourth class is opened 27 August 2026 (P133) at TWO instances, not
+three.*** The register's own rule sets three as the point at which an invariant
+becomes compulsory. **Three is a floor and not a ceiling**, and this class is
+opened early because its second instance was created by the fix for its first:
+*row 29 was what broke A7's loop, and P111's recomputation put row 29's own
+ceiling inside a new one.* **A class that regenerates itself out of its own
+repair does not need a third instance to be believed.**
 
 | Class | Instances | Count | Invariant |
 |---|---|---|---|
-| **I. A conclusion acted on without checking the link it rests on** | A2, A5b, A8, A9, B8pre, B9 | **6** | **INSTALLED at P122, STRENGTHENED at P130 and again at P131, to four clauses. **The installed version would NOT have caught A9**** |
+| **I. A conclusion acted on without checking the link it rests on** | A2, A5b, A8, A9, A10, B8pre, B9 | **7** | **INSTALLED at P122, STRENGTHENED at P130 and again at P131, to four clauses. **The four-clause version DID catch A10, in preparation rather than in outcome**** |
 | **II. Material that decided something was not committed at the moment it decided it** | B3, B4, B5, and the registration chain's first object | **4** | **INSTALLED at P114**: `cmd_sweep` refuses over a corpus git cannot produce again, with `corpus_not_committed` |
 | **III. A population pooled, mis-scoped or miscounted** | B6 (itself three), B7, the §13 table's two hand counts, and `_unexercised` at P126 | **7** | **INSTALLED at P105 and WIDENED at P126**: the invariant was applied to a METHOD when the class was about a QUERY, so it now reads **every ledger read path carries the marker the fences rely on**, and phase 2 swept every `SELECT` in the package to hold it |
-| Singletons, which are not a class | A1, A3, A4, A5, A6, A7, B1, B2 | n/a | n/a, no invariant is owed: a row belonging to no class asserts no recurrence |
+| **IV. A quantity validated against something computed from that quantity** | A7, B10 | **2** | **INSTALLED at P133, and deliberately at two instances rather than three**: *a bound may not be validated against a table computed from that bound*, and a table recomputed against a registered value carries that value's name from then on |
+| Singletons, which are not a class | A1, A3, A4, A5, A6, B1, B2 | n/a | n/a, no invariant is owed: a row belonging to no class asserts no recurrence |
 
 ---
 
@@ -137,6 +146,47 @@ the preparation states and **cannot** close — the auto-conversion FX rate unde
 403, row 1's contracting entity before the schedules were compared — is a
 different thing from a caveat that names a page nobody has opened. **The test is
 whether the refuting check was available, not whether the answer was certain.**
+
+---
+
+## THE CLASS IV INVARIANT
+
+**The two instances, in one line each:**
+
+| Row | The bound | What it was validated against |
+|---|---|---|
+| **A7** | the £2,500 clip, *defined as* the notional at which fixed costs fall below 25 bp | §5.2.2's break-even table, computed on a £6.25 round trip that §0.7(c) records was **recovered backwards from the clip definition** |
+| **B10** | §13 row 29's **12.5 bp** upper bound, drawn from §5.2.2's cheapest break-even and its 12.5 bp fixed-cost basis | **§5.2.2 as recomputed by P111 against row 29's own registered 10 bp**, so the table's basis IS the tolerance the bound was meant to constrain |
+
+***The shape, stated once.*** A quantity `X` is used to recompute a table `T`.
+`T` is then read as independent evidence about `X`. **It is not evidence about
+`X` at all: it is `X`, rearranged.** *The first instance took fourteen versions
+to find. The second was created by the repair for the first, in a single
+batch, by a row whose own text says no conclusion moved.*
+
+> **THE INVARIANT. A bound may not be validated against a table computed from
+> that bound.**
+>
+> **Operationally, and this is the part that is checkable:** where a table,
+> grid or figure is recomputed against a registered value, **the recomputed
+> cells carry that value's name from then on**, and any later derivation that
+> reads them must state which registered value it is thereby reading. **A
+> derivation that finds its own parameter in its own inputs stops and says so.**
+
+**Why it is installed at two instances and not three.** The register's rule
+makes an invariant compulsory at three. **This class produced its second
+instance out of the fix for its first**, which is a generating mechanism rather
+than a coincidence, and *the third instance would by construction be created by
+the fix for the second.* **The cost of installing early, stated:** one class now
+carries an invariant its instance count does not require, and if no third
+instance ever arrives the invariant will look like over-fitting to two events.
+**That is the cheaper error.**
+
+**What it does NOT say.** It does not forbid recomputing a table against a
+registered bound: P111 was right to do it, the recomputed cells are *upper
+bounds that depend on no assumption*, and §5.2.2 is better for it. **What it
+forbids is reading the result back as a constraint on the bound.** *Publishing
+and reading are different acts, and the loop closes only on the second.*
 
 ---
 
@@ -248,6 +298,36 @@ inaction**, which is the quietest way for one to be wrong.
 
 Renamed to `position_below_clip_floor` on 27 August 2026 (P108), on delegated
 authority.
+
+### A10. "Removing per-trade FX moves row 29's LOWER bound"
+
+| | |
+|---|---|
+| **Asserted** | that §0 decision 0b, which removes the per-trade FX conversion, moves the lower end of §13 row 29's derived range from 2.375 bp |
+| **True** | **it does not move.** The lower bound is the asymptote `104/p`, commission plus clearing, **both per-share and both proportional**. The FX was **USD 4.00, absolute**. The lower bound is the limit the cost approaches as the absolute term is diluted to nothing by size, so **removing a decaying term cannot move a limit reached as it decays.** Measured, it is **2.536 bp**, before 0b and after |
+| **Caught by** | **the Class I invariant, in PREPARATION, at P125** — before the recomputation was published and before anything was decided on it |
+| **Provenance** | `verified_primary`; `docs/USD_COST_MODEL_2026-08-27.md` §1a and §1c |
+
+***It is the SEVENTH instance of Class I, and the first the invariant caught
+before the fact rather than after it.*** **A2, A5b, A8, A9, B8pre and B9 were
+every one of them found after the conclusion had been acted on.** This one was
+found while the phase that rested on it was being prepared, and the phase was
+rewritten rather than corrected.
+
+***What made that possible is PART 4, and it is worth being precise about
+why.*** The assertion was **not a decision**. Nothing was decided on it; it was
+a claim in the framing of a task, of exactly A9's shape. **Parts 1, 2 and 3
+reach only decisions**, so an invariant without part 4 would have let it
+through to the same place A9 reached. *The clause added because the invariant
+failed its own test question is the clause that caught the next instance.*
+
+**And the counterfactual is recorded rather than assumed.** *Had it gone
+unchecked*, the phase would have re-derived the lower bound, produced a
+different number for it, and published a range whose lower end had moved for a
+reason that does not exist. **Nothing downstream reads the lower bound today**,
+so the cost of the error would have been a wrong figure in a register rather
+than a wrong trade. ***That is a statement about this instance's blast radius
+and not about the class's.***
 
 ### A9. "Retiring insider dealing takes `SEC_CONTACT` off the critical path"
 
@@ -423,6 +503,45 @@ neither.
 
 *The lesson this register takes from a defect found three times: a correction
 applied to a published number does not travel to the code that produces it.*
+
+### B10. The 12.5 bp ceiling was recomputed into circularity, by this project, in one batch
+
+| | |
+|---|---|
+| **Asserted** | that §13 row 29's defensible range has a **DERIVED** upper bound of **12.5 bp**, being §5.2.2's cheapest break-even of 22.5 bp less the 12.5 bp fixed-cost basis that table was computed on. Stated as *"the finding"* at P102 and carried through P109's decision |
+| **True** | **it was derived when it was written and is not derived now.** P111 recomputed §5.2.2 **against row 29's own registered 10 bp**, so the table's fixed-cost basis **is** the tolerance. A ceiling drawn from that table constrains nothing: it returns the tolerance it was given |
+| **Caught by** | P125's re-derivation, which went looking for what 0b had moved and found that the thing that had moved was not the thing the instruction named |
+| **Provenance** | `verified_primary`; `§12.1` P102, P109, P111; `docs/USD_COST_MODEL_2026-08-27.md` §1c |
+
+**The sequence, because the ordering is the whole defect.**
+
+1. **P102** derives the ceiling from §5.2.2's *published* column. **Sound**: the published basis, 12.5 bp, was an assumption made years before row 29 existed and was independent of it.
+2. **P109** sets row 29 at 10 bp, inside a range whose upper end is that 12.5.
+3. **P111** recomputes §5.2.2 against the registered 10 bp, discharges Erratum B, and records that **no conclusion moved**.
+
+***Step 3's check was real and it was run on the wrong thing.*** It asked
+whether any published *conclusion* changed value, and none did. **It did not
+ask which conclusions had just acquired a dependency on row 29**, and the
+answer is: row 29's own upper bound. *A recomputation that leaves every number
+where it was can still destroy the independence of one of them.*
+
+**The consequence, and it is not cosmetic.** **Row 29 has had no valid upper
+bound since P111**, so between P111 and P133 the register carried a range
+`2.4 to 12.5` of which the upper end described only itself, and P109's
+justification — *"the value sits inside its derived range rather than at an
+edge"* — **rested on it.** *The decision was not thereby wrong; it was less
+supported than it said it was, which is a different defect and the one worth
+recording.*
+
+**What replaces it.** A tolerance derived from **§6.7's smallest position**,
+which is `75.0 bps of reference equity at the widest stop` and **reads no cost
+table at all** (§13 row 29, as re-derived at P134). *Chosen because it is the
+one input in the neighbourhood that row 29 has never been used to compute.*
+
+***It is the SECOND instance of Class IV, and the first was closed by the very
+row this one is about.*** A7 records that row 29's bound is *"what broke the
+loop"*. **It broke that loop and opened this one**, which is why the invariant
+is installed at two.
 
 ### B9. The Form 4 answer was correct about the wrong set
 
