@@ -1272,10 +1272,17 @@ def test_the_import_fence_now_runs_in_both_directions(monkeypatch):
     origin material may not enter the §3.5 item pipeline, because it would
     re-base §7.1's headline on an agent-selected population.
 
-    Today the answer is NOT_APPLICABLE and that is deliberately not CLEAN: none
-    of the forbidden modules exists in this tree, so the walk has nothing to
-    walk. A not-applicable check may never be read as a pass, so it is a state
-    of its own and this test asserts which state.
+    ***The answer moved from NOT_APPLICABLE to CLEAN on 27 August 2026, and
+    that is the fence starting to work rather than a test being relaxed.***
+    Until then no forbidden module existed, so the walk had nothing to walk and
+    a not-applicable check may never be read as a pass. **`fntn.data` now
+    exists**, holding the delisting register, and it is in that package rather
+    than under `fntn.scanner` *precisely so this fence has a name to match*: a
+    delisting is an OUTCOME, and a register of outcomes reachable from
+    `discovery.py` is the contamination §3.7 exists against.
+
+    So the walk is real: it imports `fntn.data`, computes its closure, and
+    establishes that the closure does not reach the discovery layer.
     """
 
     from fntn.scanner.fences import (
@@ -1284,8 +1291,8 @@ def test_the_import_fence_now_runs_in_both_directions(monkeypatch):
         assert_reverse_import_fence,
     )
 
-    # Nothing to walk: reported as itself, never as clean.
-    assert assert_reverse_import_fence() is ReverseImportFenceState.NOT_APPLICABLE
+    # A real closure is now walked, and it is clean.
+    assert assert_reverse_import_fence() is ReverseImportFenceState.CLEAN
 
     # And when a forbidden module DOES exist and reaches the discovery layer,
     # the fence refuses. Built rather than waited for, because a fence first
@@ -4992,3 +4999,86 @@ def test_the_per_family_table_never_pools_the_two_arms():
     rendered = result.render(ledger)
     assert "NEVER pooled" in rendered
     ledger.close()
+
+
+def test_the_delisting_register_never_sums_deregistrations_with_delistings():
+    """A Form 15 is deregistration, not delisting, and conflating them flatters.
+
+    Counting Form 15s into the missing set would inflate the denominator of
+    names the archive is missing, which makes the survivorship bound look
+    tighter than it is. **A bound that errs towards comfort is worse than no
+    bound**, so the two are recorded under their own form codes and the
+    accessors keep them apart.
+    """
+
+    from fntn.data.delistings import Register, parse_index
+
+    index = """Description:           Quarterly Index
+
+Form Type   Company Name                                       CIK         Date Filed  File Name
+---------------------------------------------------------------------------------------------------
+25          ACME CORP                                          0000320193  2023-02-01  edgar/data/320193/a.txt
+25-NSE      BOREALIS MINING PLC                                0000222222  2023-02-02  edgar/data/222222/b.txt
+25-NSE      ACME CORP                                          0000320193  2023-02-03  edgar/data/320193/c.txt
+15-12G      QUIET HOLDINGS INC                                 0000333333  2023-02-04  edgar/data/333333/d.txt
+15F-12B     FOREIGN ISSUER SA                                  0000444444  2023-02-05  edgar/data/444444/e.txt
+8-K         NOT RELEVANT CO                                    0000555555  2023-02-06  edgar/data/555555/f.txt
+"""
+
+    events = parse_index(index)
+    r = Register(events=events, quarters=[(2023, 1)], fetch_log=[])
+
+    assert len(r.delistings) == 3
+    assert len(r.deregistrations) == 2
+    assert r.by_form() == {"25": 1, "25-NSE": 2, "15-12G": 1, "15F-12B": 1}
+
+    # ISSUERS, not filings. ACME filed a 25 and a 25-NSE; it is one missing
+    # name, and the missing-set denominator is a count of names.
+    assert r.distinct_delisted_ciks() == 2
+
+    # `25` is a prefix of `25-NSE`, so the form match is EXACT: a prefix match
+    # would count every exchange notification twice, once as itself and once as
+    # an issuer filing that never happened.
+    from fntn.data.delistings import DELISTING_FORMS
+    assert set(DELISTING_FORMS) == {"25", "25-NSE"}
+    assert [e.form for e in r.delistings].count("25") == 1
+
+
+def test_the_coverage_fraction_refuses_rather_than_assuming_an_archive():
+    """Rule 3, on the number this whole register exists to produce.
+
+    A coverage fraction computed against an assumed archive size is the exact
+    defect the register exists to prevent, wearing the register's own clothes.
+    There is no archive, so there is no N, so there is no fraction.
+    """
+
+    from fntn.data.delistings import Event, Register
+
+    r = Register(
+        events=[Event("25", "1", "A", "2023-01-02", "p.txt"),
+                Event("25-NSE", "2", "B", "2023-01-03", "q.txt")],
+        quarters=[(2023, 1)], fetch_log=[],
+    )
+    assert r.coverage_fraction(None) is None
+    assert r.coverage_fraction(0) is None
+    # 8 covered names against 2 missing is 8/10.
+    assert r.coverage_fraction(8) == pytest.approx(0.8)
+
+
+def test_the_span_is_inclusive_at_both_ends_and_a_reversed_span_refuses():
+    """A partial quarter is still a quarter that must be read.
+
+    Dropping it would leave a hole in the missing set exactly at the span
+    boundary, which is where a coverage claim is least defensible.
+    """
+
+    from datetime import date as _date
+
+    from fntn.data.delistings import TraceCorpusRefused, quarters_between
+
+    assert quarters_between(_date(2023, 1, 1), _date(2023, 1, 1)) == [(2023, 1)]
+    assert quarters_between(_date(2023, 3, 31), _date(2023, 4, 1)) == [
+        (2023, 1), (2023, 2)]
+    assert len(quarters_between(_date(2023, 1, 1), _date(2026, 8, 27))) == 15
+    with pytest.raises(TraceCorpusRefused, match="closes .* before it opens"):
+        quarters_between(_date(2026, 1, 1), _date(2023, 1, 1))

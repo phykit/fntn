@@ -33,6 +33,7 @@ from .records import Partition, ScoringMode, SegmentSpan
 from .run import ScanConfig, scan
 from .segment import SegmentPolicy
 from .trace import TraceHarness, load_labelled
+from .trace_filings import ResponseNotTheDocument
 
 DEFAULT_REG = "discovery_registration.json"
 
@@ -486,6 +487,71 @@ def _cost_guard(client, ceiling_usd: float):
     return guard
 
 
+def cmd_delisting_register(args) -> int:
+    """Build the delisting register (§0.7, survivorship).
+
+    **The span defaults to the registration's `archive_opens` and not to a date
+    chosen here.** A register covering a different span from the archive it
+    bounds would give a coverage fraction over the wrong denominator, which is
+    a worse failure than having none.
+    """
+
+    from ..data import delistings as dl
+
+    if args.opens:
+        opens = date.fromisoformat(args.opens)
+    else:
+        try:
+            reg = Registration.load(args.registration)
+        except FileNotFoundError:
+            print(f"{args.registration} not found, and --opens was not given.")
+            print("Refusing to choose a span: the register's span is the")
+            print("archive's, and reading it from anywhere else would bound")
+            print("the wrong population.")
+            return 1
+        if not reg.archive_opens:
+            print("archive_opens is not registered and --opens was not given.")
+            print("Refused rather than defaulted (§13 pre-calibration fixing).")
+            return 2
+        opens = date.fromisoformat(reg.archive_opens)
+    closes = date.fromisoformat(args.closes) if args.closes else date.today()
+
+    print("Delisting register (§0.7 survivorship, free route)")
+    print(f"  span     : {opens} to {closes}")
+    print(f"  quarters : {len(dl.quarters_between(opens, closes))}")
+    print(f"  forms    : delisting {', '.join(dl.DELISTING_FORMS)};")
+    print(f"             deregistration {', '.join(dl.DEREGISTRATION_FORMS)}")
+    print( "             A Form 15 is NOT a delisting and is never summed with")
+    print( "             the 25s: it can be filed by a company that was never")
+    print( "             listed, and counting it would make the survivorship")
+    print( "             bound look tighter than it is.")
+    print()
+    try:
+        register = dl.build(opens, closes)
+    except (dl.TraceCorpusRefused, ResponseNotTheDocument) as exc:
+        print("REFUSED, and nothing was written:")
+        print()
+        print(exc)
+        return 4
+    out = dl.write_register(register)
+    print(f"wrote {out}")
+    print()
+    print("Counts, and they are counts rather than estimates")
+    for form, n in sorted(register.by_form().items()):
+        kind = "DELISTING" if form in dl.DELISTING_FORMS else "deregistration"
+        print(f"  {n:>6}  {form:<10} {kind}")
+    print(f"  {len(register.delistings):>6}  delisting filings in total")
+    print(f"  {register.distinct_delisted_ciks():>6}  DISTINCT delisted issuers"
+          " -- the missing set's denominator")
+    print()
+    print("Coverage fraction: NOT SCORED. It is N/(N+M) and there is no N:")
+    print("no archive exists, so the number of names covered is unknown.")
+    print("Refusing rather than assuming one, because a fraction computed")
+    print("against an assumed archive is the defect this register exists to")
+    print("prevent, wearing the register's own clothes.")
+    return 0
+
+
 def cmd_sweep(args) -> int:
     try:
         reg = Registration.load(args.registration)
@@ -727,6 +793,17 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     p_tf.add_argument("--limit", type=int, default=None,
                       help="override the block size; normally left alone")
     p_tf.set_defaults(func=cmd_trace_filings)
+
+    p_dl = sub.add_parser(
+        "delisting-register",
+        help="build the Form 25 / 25-NSE / 15 delisting register from EDGAR",
+    )
+    p_dl.add_argument("--opens", default=None,
+                      help="span start, ISO. Defaults to the registration's "
+                           "archive_opens, because the span the register must "
+                           "cover is the archive's and not one chosen here")
+    p_dl.add_argument("--closes", default=None, help="span end, ISO. Defaults to today")
+    p_dl.set_defaults(func=cmd_delisting_register)
 
     p_sweep = sub.add_parser("sweep", help="run a sweep, if registration is complete")
     p_sweep.add_argument("--transcript", help="replay a saved payload instead of calling the model")

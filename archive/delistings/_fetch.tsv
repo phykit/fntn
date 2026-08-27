@@ -1,0 +1,19 @@
+# The sources are NOT retained: fifteen quarterly indices are about
+# 80 MB. This log is what makes them re-checkable, and it is WEAKER
+# than retention (Class II) and is not offered as equivalent.
+url	retrieved_at	bytes	sha256
+https://www.sec.gov/Archives/edgar/full-index/2023/QTR1/form.idx	2026-08-27T22:37:47.127507+00:00	54362089	0f11bf75dd8c43d66a9bb9dd7498fab0cd18316d468f6a941418358efc84d895
+https://www.sec.gov/Archives/edgar/full-index/2023/QTR2/form.idx	2026-08-27T22:37:48.018880+00:00	48017568	fcc801fad9c67def623ad92202e19218d87f412b8510ce0a228e6b3760ba2a55
+https://www.sec.gov/Archives/edgar/full-index/2023/QTR3/form.idx	2026-08-27T22:37:49.032195+00:00	39409649	61971d3b6b16e0d2045ede4d0b179e7d7466faa81c2b9f3c25a9e3f86234787d
+https://www.sec.gov/Archives/edgar/full-index/2023/QTR4/form.idx	2026-08-27T22:37:49.784854+00:00	39210280	c2d706a74b99c28e70984d01390cc41f94d4e0389259d4781d1e249bc8b5c917
+https://www.sec.gov/Archives/edgar/full-index/2024/QTR1/form.idx	2026-08-27T22:37:50.733657+00:00	57768973	5534d4de59046f2672430e0883592cfcf9aed1247a45fe7ecb5166acfcb0e449
+https://www.sec.gov/Archives/edgar/full-index/2024/QTR2/form.idx	2026-08-27T22:37:51.666100+00:00	49300512	8264f5bb1479130920e98067a6c2bc2893a655966af1841cc06f8f25d38d6e57
+https://www.sec.gov/Archives/edgar/full-index/2024/QTR3/form.idx	2026-08-27T22:37:52.521076+00:00	42266789	c64977d1b776b036cea0667d4a38dc1edcdbb5757e0a01f362f80a0e24281f5c
+https://www.sec.gov/Archives/edgar/full-index/2024/QTR4/form.idx	2026-08-27T22:37:53.309083+00:00	44329576	ee394325c9410b28d53563fd635848c44a56f02dacc06d5125a910299c12537b
+https://www.sec.gov/Archives/edgar/full-index/2025/QTR1/form.idx	2026-08-27T22:37:54.131829+00:00	53046385	2ecefe7d7513032ad0db8750e722eafb491e0cb54b50ba92e60c5ec9e2faf9ad
+https://www.sec.gov/Archives/edgar/full-index/2025/QTR2/form.idx	2026-08-27T22:37:55.039393+00:00	51740976	c95e4fadc5b34aa1cb77352e42d094dde3d4ba1717ec74bd657c320b501e5fef
+https://www.sec.gov/Archives/edgar/full-index/2025/QTR3/form.idx	2026-08-27T22:37:55.872804+00:00	44853581	008bb282d444090864fa013f870ed12c755b803a395f38456bf2812e4236541b
+https://www.sec.gov/Archives/edgar/full-index/2025/QTR4/form.idx	2026-08-27T22:38:04.507525+00:00	43108720	414a3a7a80b1929fc14e4537fad3324d580c1cda27d6e136f7ac33d2fa6a90d4
+https://www.sec.gov/Archives/edgar/full-index/2026/QTR1/form.idx	2026-08-27T22:38:12.845395+00:00	57714529	a74f3f47772f471caa3451eb5b307952e7213a1a1a49cc2a925810dbe2d1502c
+https://www.sec.gov/Archives/edgar/full-index/2026/QTR2/form.idx	2026-08-27T22:38:13.751718+00:00	55060188	e83f8298e1528b9cec50a724be7ed589c181f76f2553198e4006180ce986fb84
+https://www.sec.gov/Archives/edgar/full-index/2026/QTR3/form.idx	2026-08-27T22:38:21.911172+00:00	30990170	924312593bc4be66481930f9325c98f346424786c978394e7a0923f921e40013
