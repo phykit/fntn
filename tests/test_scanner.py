@@ -3213,6 +3213,60 @@ def test_the_budget_count_is_printed_even_at_zero_and_never_inside_row_23():
     ledger.close()
 
 
+CANDIDATES = REPO_ROOT / "docs" / "CANDIDATE_MECHANISMS.md"
+
+
+def test_the_candidate_list_carries_no_ranking_key_but_the_criteria_count():
+    """P129: the deliverable may not rank, and plausibility is the one to name.
+
+    The list is ordered by number of achievability criteria met, which is a
+    count of registered constraints satisfied and therefore arithmetic over the
+    parameter object. Any other key would be this file telling the operator
+    which mechanism to believe, which is the clerk becoming an analyst.
+
+    The check is over the STRUCTURE with no exemption, and over the prose less
+    the sentences that exist to disclaim the words. Rewording a disclaimer fails
+    this test and sends the next reader back to it.
+    """
+
+    text = CANDIDATES.read_text()
+
+    structure = "\n".join(
+        l for l in text.splitlines() if l.startswith(("|", "#"))
+    ).lower()
+    for word in RANKING_WORDS + ("plausib", "confidence", "likelihood"):
+        assert word not in structure, word
+
+    disclaimers = (
+        "**By number of achievability criteria MET, descending. Then\n"
+        "alphabetically by mechanism.**\n",
+        "No merit, no severity, no score, no plausibility, no\nrecency, no "
+        "confidence.",
+        "***Plausibility is named explicitly because it is the one a model "
+        "would reach\nfor.*** A model-derived plausibility ranking is the "
+        "clerk becoming an analyst,",
+        "**The alphabetical tie-break ranks nothing**",
+    )
+    prose = text
+    for d in disclaimers:
+        assert d in text, d
+        prose = prose.replace(d, "")
+    # `score` is deliberately NOT checked in the prose: the lens's own third
+    # state is `unscorable`, and a file that may not name the vocabulary of the
+    # thing it reports cannot describe it. It IS checked in the structure
+    # above, which is where a ranking key would live.
+    for word in ("merit", "severity", "plausib", "confidence", "recency"):
+        assert word not in prose.lower(), word
+
+    # And it must say what it is not, in terms a reader cannot skim past.
+    for claim in (
+        "It is NOT evidence that any of them works",
+        "Zero backtests. Zero frozen designs. Zero trades.",
+        "A reader must not be able to mistake this list for results",
+    ):
+        assert claim in text, claim
+
+
 def test_the_achievability_lens_reports_and_refuses_nothing():
     """P128: a LENS, not a fence, and the third state is not a pass.
 
