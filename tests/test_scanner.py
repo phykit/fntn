@@ -51,6 +51,7 @@ from fntn.scanner.ingest import (
 from fntn.scanner.ledger import Ledger
 from fntn.scanner.records import (
     Directive,
+    EvidenceTier,
     Item,
     Origin,
     Partition,
@@ -646,9 +647,12 @@ def test_audit_stream_is_deterministic_and_replayable():
 
 
 def test_ordering_is_pre_registered_and_complete():
-    assert set(codes.INTAKE_ORDER) == {
-        rc.code for rc in codes.by_surface(codes.Surface.INTAKE)
-    }
+    ordered = set(codes.INTAKE_ORDER)
+    defined = {rc.code for rc in codes.by_surface(codes.Surface.INTAKE)}
+    # Two empty sets are equal. The panel's size is stated so this cannot pass
+    # by both sides being empty, and so a point added or removed is legible.
+    assert len(ordered) == 12
+    assert ordered == defined
     with pytest.raises(ValueError):
         from fntn.scanner.ingest import Runner, build_intake_checks
 
@@ -1015,6 +1019,10 @@ def test_control_draw_is_seeded_and_replayable():
     ]
     a = draw_control_mechanisms(grid, 8, seed=7, now=NOW)
     b = draw_control_mechanisms(grid, 8, seed=7, now=NOW)
+    # An arm of zero would make both assertions below true whilst meaning the
+    # control arm had not been drawn at all, which is the one outcome §13
+    # row 20 exists to prevent.
+    assert len(a) == 8 and len(b) == 8
     assert [p.drawn_from_grid_cell for p in a] == [p.drawn_from_grid_cell for p in b]
     assert all(p.origin is Origin.RANDOM_CONTROL for p in a)
 
@@ -1117,6 +1125,10 @@ def test_end_to_end_scan_produces_a_legible_ledger():
     assert result.admitted == []
     assert result.blocked_on_operator
     assert ledger.declined_feed_distribution()
+    # Every abandonment carries its §8 summary. An empty abandoned list would
+    # satisfy that loop whilst showing nothing, and a scan that abandoned
+    # nothing is a different test from this one.
+    assert len(result.abandoned) == 3
     for subject_id, _ in result.abandoned:
         assert ledger.summaries_for(subject_id)
     ledger.close()
@@ -1327,6 +1339,7 @@ from fntn.scanner.params import (
     Corpus as RegCorpus,
     DiscoverableClass,
     Registration,
+    RegistrationHashMismatch,
     RegistrationHistoryMissing,
     RegistrationIncomplete,
 )
@@ -1542,6 +1555,7 @@ def test_every_named_market_resolves_from_its_venue_names():
     from fntn.scanner.markets import ALIASES, MARKETS, resolve
 
     assert set(MARKETS) == {"US", "UK", "AU", "EU", "NZ"}
+    assert len(ALIASES) == 27, "an empty alias table would resolve nothing"
     for alias, code in ALIASES.items():
         assert resolve(alias).code == code, alias
 
@@ -1644,7 +1658,7 @@ def _history_rows():
         if not line.startswith("|"):
             continue
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        if len(cells) != 6 or not cells[0].isdigit():
+        if len(cells) != 7 or not cells[0].isdigit():
             continue
         rows.append(
             {
@@ -1653,7 +1667,8 @@ def _history_rows():
                 "stamped": cells[2],
                 "commit": cells[3].strip("`*"),
                 "object": cells[4],
-                "field": cells[5],
+                "provenance": cells[5],
+                "field": cells[6],
             }
         )
     assert rows, f"no chain rows parsed from {HISTORY_MD}"
@@ -1753,6 +1768,7 @@ def test_a_superseded_row_carries_its_object_commit():
     """
 
     rows = _history_rows()
+    assert len(rows) >= 2, "a chain of one exercises neither half of this"
     for row in rows[:-1]:
         assert row["commit"] != "current", row
     assert rows[-1]["commit"] == "current"
@@ -1897,3 +1913,424 @@ def test_the_master_filters_against_the_registered_lexicon(tmp_path):
     assert "gdgt" not in wide.tickers
     assert "gadget industries" in wide.names
     assert wide.as_fence().lexicon == frozenset({"gdgt"})
+
+
+# ---------------------------------------------------------------------------
+# The corpus can be re-derived from what the server sent.
+#
+# Extraction is destructive: it rewrites the fetched page as its own text. Until
+# the raw bytes were kept, `raw_bytes` in the manifest was a number with nothing
+# behind it, a change to the extractor could be tested only against itself, and
+# the claim that the corpus IS the material rested on a fetch nobody could
+# repeat. corpora/us/_raw holds the pages; this is the round trip.
+# ---------------------------------------------------------------------------
+
+RAW_DIR = REPO_ROOT / "corpora" / "us" / "_raw"
+FETCH_SCRIPT = REPO_ROOT / "scripts_fetch_us_corpus.sh"
+
+
+def _script_extractor(tmp: Path) -> Path:
+    """The extractor as the fetch script defines it, not a copy of it.
+
+    Pulled out of the heredoc so that a divergence between the script and this
+    test is impossible rather than merely unlikely: a test that reimplemented
+    the extraction would pass whilst the corpus was produced by something else.
+    """
+
+    text = FETCH_SCRIPT.read_text().splitlines(keepends=True)
+    try:
+        start = next(i for i, l in enumerate(text)
+                     if l.startswith('cat > "$EXTRACTOR" <<')) + 1
+        end = next(i for i, l in enumerate(text[start:], start)
+                   if l.rstrip("\n") == "EXTRACTPY")
+    except StopIteration:  # pragma: no cover - a structural change to the script
+        raise AssertionError(f"no EXTRACTPY heredoc found in {FETCH_SCRIPT}")
+    body = "".join(text[start:end])
+    assert "def extract_file" in body, "the heredoc is not the extractor"
+    out = tmp / "extractor.py"
+    out.write_text(body)
+    return out
+
+
+def _raw_rows():
+    rows = [r.split("\t") for r in
+            (RAW_DIR / "_fetch.tsv").read_text().splitlines()[1:] if r.strip()]
+    assert len(rows) == 13, f"expected thirteen raw pages, found {len(rows)}"
+    return rows
+
+
+def test_raw_pages_are_the_bytes_the_manifest_claims():
+    """Byte count and digest, so a raw page cannot be edited unnoticed."""
+
+    import hashlib
+
+    main = {r.split("\t")[0]: r.split("\t") for r in
+            (REPO_ROOT / "corpora" / "us" / "_manifest.tsv")
+            .read_text().splitlines()[1:] if r.strip()}
+    for name, url, _at, size, digest, extracts_to in _raw_rows():
+        raw = (RAW_DIR / name).read_bytes()
+        assert len(raw) == int(size), name
+        assert hashlib.sha256(raw).hexdigest() == digest, name
+        # And the two manifests agree about how big the page was.
+        assert main[extracts_to][4] == size, name
+
+
+def test_raw_html_reextracts_to_the_stored_corpus(tmp_path):
+    """Every stored document, re-derived from the page it came from.
+
+    Byte-for-byte, through the fetch script's own extractor. A single differing
+    byte fails: the corpus is either what the extractor makes of those pages or
+    it is something nobody can account for.
+    """
+
+    import shutil
+
+    extractor = _script_extractor(tmp_path)
+    work = tmp_path / "work"
+    work.mkdir()
+    checked = 0
+    for name, _url, _at, _size, _digest, extracts_to in _raw_rows():
+        copy = work / name
+        shutil.copy(RAW_DIR / name, copy)
+        subprocess.run([sys.executable, str(extractor), str(copy)],
+                       check=True, capture_output=True)
+        stored = REPO_ROOT / "corpora" / "us" / extracts_to
+        assert copy.read_bytes() == stored.read_bytes(), (
+            f"{name} does not re-extract to {extracts_to}"
+        )
+        checked += 1
+    assert checked == 13
+
+
+def test_the_raw_pages_are_invisible_to_every_corpus_reader():
+    """Underscore-prefixed, and a directory, so both filters exclude them."""
+
+    assert RAW_DIR.name.startswith("_")
+    assert [p.name for p in _corpus_documents() if p.name.endswith(".htm")] == []
+
+
+def _master_sets(lexicon):
+    m = SecurityMaster(lexicon=lexicon)
+    m.load_sec_tickers(str(REPO_ROOT / "master" / "us.json"), market="US")
+    return set(m.names), set(m.tickers)
+
+
+def test_the_lexicon_move_changed_no_master_entry():
+    """Set equality, not equal counts.
+
+    Equal cardinality is consistent with a filter that swapped one entry for
+    another, and with a filter that never ran at all. What is asserted here is
+    that the symmetric difference is empty in both directions, and
+    `test_a_lexicon_row_removes_exactly_its_own_entry` is what shows the filter
+    is running whilst the difference is empty.
+    """
+
+    reg = Registration.load(REPO_ROOT / REGISTRATION_FILE)
+    registered = _master_sets(frozenset(reg.lexicon))
+    seeded = _master_sets(SEED_LEXICON)
+    assert registered[0] ^ seeded[0] == set()
+    assert registered[1] ^ seeded[1] == set()
+
+
+def test_a_lexicon_row_removes_exactly_its_own_entry():
+    """The filter fires, and reaches no further than the row that fired it.
+
+    Two probes because the loader consults the lexicon at two points and they
+    answer different questions: a ticker is dropped from the ticker set, and a
+    name variant is dropped from the name set whilst its longer variants stay.
+    `apple` goes and `apple inc.` remains, which is the behaviour a one-word
+    issuer name that is also an ordinary word depends on.
+    """
+
+    reg = Registration.load(REPO_ROOT / REGISTRATION_FILE)
+    base = frozenset(reg.lexicon)
+    names, tickers = _master_sets(base)
+    assert "aapl" in tickers and "apple" in names and "apple inc." in names
+
+    n1, t1 = _master_sets(base | {"aapl"})
+    assert tickers - t1 == {"aapl"} and t1 - tickers == set()
+    assert n1 ^ names == set()
+
+    n2, t2 = _master_sets(base | {"apple"})
+    assert names - n2 == {"apple"} and n2 - names == set()
+    assert "apple inc." in n2
+    assert t2 ^ tickers == set()
+
+
+CONTROL_ARM_FIELDS = (
+    "control_arm_delta",
+    "control_arm_n_min",
+    "control_arm_ratio",
+    "control_arm_seed",
+)
+
+
+def _control_arm_under(commit: str, blob: bytes, tmp: Path) -> dict:
+    """The four control-arm values, read under the dataclass of ``commit``.
+
+    Read the same way the hash is recomputed, and for the same reason: a field
+    read under today's schema is a field read from a different object.
+    """
+
+    if commit == "current":
+        reg = Registration.load(REPO_ROOT / REGISTRATION_FILE)
+        return {f: getattr(reg, f) for f in CONTROL_ARM_FIELDS}
+    work = tmp / ("ca-" + commit)
+    work.mkdir(parents=True, exist_ok=True)
+    tar = subprocess.run(
+        ["git", "-C", str(REPO_ROOT), "archive", commit, "src"],
+        check=True, capture_output=True,
+    ).stdout
+    subprocess.run(["tar", "-x", "-C", str(work)], input=tar, check=True)
+    (work / "r.json").write_bytes(blob)
+    out = subprocess.run(
+        [sys.executable, "-c",
+         "import json;from fntn.scanner.params import Registration;"
+         "r=Registration.load('r.json');"
+         "print(json.dumps({f:getattr(r,f) for f in %r}))" % (CONTROL_ARM_FIELDS,)],
+        cwd=work, check=True, capture_output=True, text=True,
+        env={**os.environ, "PYTHONPATH": "src"},
+    )
+    return json.loads(out.stdout)
+
+
+def test_control_arm_values_unchanged_across_restamps(tmp_path):
+    """The claim rows 19 and 20 make, checked against the objects themselves.
+
+    Those rows say the commitment has not moved and that every re-stamp so far
+    was caused by some other field. That is the load-bearing sentence in the
+    whole chain: a new hash on an unmoved commitment is bookkeeping, and a new
+    hash on a moved one is a kill criterion rewritten after the fact. It was
+    prose until this test, and prose is what a reader has to take on trust.
+
+    A row is permitted to move exactly the value it names as its causing field,
+    and nothing else. No row names one of these four, so today every pair must
+    match on all four; the exception is written rather than assumed so that a
+    future re-stamp of delta or n_min is legible instead of failing here as if
+    it were a defect.
+    """
+
+    rows = _history_rows()
+    assert len(rows) >= 2, "a chain of one has no pair to compare"
+    values = [_control_arm_under(r["commit"], _row_object(r, tmp_path), tmp_path)
+              for r in rows]
+    pairs = 0
+    for older, newer, row in zip(values, values[1:], rows[1:]):
+        allowed = row["field"].strip("`")
+        for f in CONTROL_ARM_FIELDS:
+            if f == allowed:
+                continue
+            assert older[f] == newer[f], (
+                f"row {row['n']} ({row['hash']}) moved {f} from {older[f]} to "
+                f"{newer[f]} whilst naming {allowed!r} as its causing field. "
+                "Either the causing field is wrong or the commitment moved."
+            )
+        pairs += 1
+    assert pairs == len(rows) - 1
+
+
+# ---------------------------------------------------------------------------
+# §0.5's provenance vocabulary, and the classifications that must stay total.
+# ---------------------------------------------------------------------------
+
+
+def test_every_provenance_tag_is_classified():
+    """A tag the classifications have never heard of is a tag read as harmless.
+
+    Before this, the freeze-blocking decision was `tag == "recollection"`, a
+    blacklist of one. Adding `reconstructed_hash_verified` to the vocabulary
+    under that arrangement would have made it silently benign at every consumer
+    at once. Both classifications are asserted total here so that the next tag
+    cannot land unclassified.
+    """
+
+    assert len(list(Provenance)) == 6, "the vocabulary is not what this checks"
+    for tag in Provenance:
+        assert isinstance(tag.counts_as_verified, bool), tag
+        assert isinstance(tag.blocks_freeze_signature, bool), tag
+        # And no tag is both: the signature cannot stand on what it blocks.
+        assert not (tag.counts_as_verified and tag.blocks_freeze_signature), tag
+
+
+def test_reconstructed_is_verified_of_a_kind_and_still_blocks_the_signature():
+    """The predicate has two halves and the classification reflects both.
+
+    It reproduces the original hash, so it is not recollection. It is not the
+    original artefact, so the signature cannot stand on it.
+    """
+
+    p = Provenance.RECONSTRUCTED_HASH_VERIFIED
+    assert p.blocks_freeze_signature
+    assert not p.counts_as_verified
+    assert Provenance.RECOLLECTION.blocks_freeze_signature
+    assert not Provenance.VERIFIED_PRIMARY.blocks_freeze_signature
+    assert not Provenance.AGENT_GENERATED.blocks_freeze_signature
+
+
+def test_the_freeze_linter_reads_the_new_tag_rather_than_ignoring_it():
+    """The intake refusal fires on it, and the summary names the tag it found.
+
+    The §8 summary is rendered from the record's own fields, so a refusal
+    caused by `reconstructed_hash_verified` may not describe itself as
+    recollection.
+    """
+
+    ctx = intake_ctx(clean_proposal())
+    ctx.claim_provenance = {
+        "claimed_effect": Provenance.RECONSTRUCTED_HASH_VERIFIED.value
+    }
+    outcome = run_intake(ctx)
+    assert not outcome.passed
+    refusal = [r for r in outcome.refusals
+               if r.code == "claim_provenance_recollection"]
+    assert refusal, [r.code for r in outcome.refusals]
+    assert "reconstructed_hash_verified" in refusal[0].summary
+    assert "carried recollection provenance" not in refusal[0].summary
+
+
+def test_an_unknown_provenance_tag_is_refused_rather_than_passed():
+    """A tag outside the vocabulary is a claim nothing can classify."""
+
+    ctx = intake_ctx(clean_proposal())
+    ctx.claim_provenance = {"claimed_effect": "vibes"}
+    with pytest.raises(ValueError):
+        run_intake(ctx)
+
+
+def test_reconstructed_provenance_does_not_make_an_intake_quantified():
+    record = make_record()
+    record.claimed_effect = "230 bps"
+    record.claimed_horizon_sessions = 5
+    record.claims = {
+        k: ClaimField(k, "v", Provenance.RECONSTRUCTED_HASH_VERIFIED)
+        for k in ("claimed_effect", "claimed_horizon_sessions", "measured_on")
+    }
+    assert record.compute_evidence_tier() is EvidenceTier.POINTER
+    # The same record with verified tags IS quantified, so the assertion above
+    # is about the tag and not about some other gap in the record.
+    record.claims = {
+        k: ClaimField(k, "v", Provenance.VERIFIED_PRIMARY)
+        for k in ("claimed_effect", "claimed_horizon_sessions", "measured_on")
+    }
+    assert record.compute_evidence_tier() is EvidenceTier.QUANTIFIED
+
+
+def test_row_one_is_tagged_reconstructed_and_the_rest_are_not():
+    """The tag is on the row whose artefact is gone, and only that row.
+
+    Its predicate's second half, that the reconstruction reproduces the hash
+    under the dataclass of the naming commit, is asserted by
+    test_registration_history_recomputes. Its first half, that no commit
+    carries the artefact, is asserted here: a row tagged reconstructed may not
+    also claim a git object.
+    """
+
+    tag = Provenance.RECONSTRUCTED_HASH_VERIFIED.value
+    tagged = [r for r in _history_rows() if r["provenance"].strip("`") == tag]
+    assert len(tagged) == 1 and tagged[0]["hash"] == "890a80e3a8566837"
+    assert "git show" not in tagged[0]["object"]
+    for row in _history_rows():
+        cell = row["provenance"].strip("`")
+        assert cell in {t.value for t in Provenance}, row
+        if row["hash"] != tagged[0]["hash"]:
+            assert cell == Provenance.VERIFIED_PRIMARY.value, row
+            assert "git show" in row["object"] or row["commit"] == "current", row
+
+
+# ---------------------------------------------------------------------------
+# Load-time verification, and the third state.
+# ---------------------------------------------------------------------------
+
+
+def test_the_registration_in_the_tree_verifies():
+    reg = Registration.load(REPO_ROOT / REGISTRATION_FILE)
+    assert reg.hash_verification == Registration.VERIFIED
+    assert reg.registered_schema == Registration.schema_fingerprint()
+
+
+def test_a_tampered_registration_is_refused_not_read(tmp_path):
+    """Comparable, and unequal. That is a wrong file, not an old one."""
+
+    p = tmp_path / REGISTRATION_FILE
+    (tmp_path / "docs").mkdir()
+    _complete_registration().save(p)
+    raw = json.loads(p.read_text())
+    raw["control_arm_delta"] = 40.0          # the kill criterion, edited by hand
+    p.write_text(json.dumps(raw))
+    with pytest.raises(RegistrationHashMismatch, match="records its hash as"):
+        Registration.load(p)
+
+
+def test_a_schema_change_reports_that_it_cannot_verify_rather_than_verifying(tmp_path):
+    """The state that had to exist.
+
+    A recomputation under a different shape answers a different question, so
+    its disagreement means nothing. The file loads, and `verified` is not what
+    it says.
+    """
+
+    p = tmp_path / REGISTRATION_FILE
+    (tmp_path / "docs").mkdir()
+    _complete_registration().save(p)
+    raw = json.loads(p.read_text())
+    raw["registered_schema"] = "0000000000000000"   # stamped under another shape
+    p.write_text(json.dumps(raw))
+    reg = Registration.load(p)
+    assert reg.hash_verification == Registration.UNVERIFIABLE
+    assert reg.hash_verification != Registration.VERIFIED
+    assert Registration.UNVERIFIABLE in reg.render()
+
+
+def test_a_file_predating_the_field_loads_and_claims_nothing(tmp_path):
+    """Every registration written before this landed, including the history's."""
+
+    p = tmp_path / REGISTRATION_FILE
+    (tmp_path / "docs").mkdir()
+    _complete_registration().save(p)
+    raw = json.loads(p.read_text())
+    raw.pop("registered_schema")
+    p.write_text(json.dumps(raw))
+    assert Registration.load(p).hash_verification == Registration.UNVERIFIABLE
+
+    raw.pop("registered_hash")
+    p.write_text(json.dumps(raw))
+    assert Registration.load(p).hash_verification == Registration.UNSTAMPED
+
+
+def test_a_provenance_field_moves_neither_the_hash_nor_the_fingerprint():
+    """Which is what makes this landable without a re-stamp.
+
+    `registered_hash`, `registered_schema` and `rationale` are all outside the
+    hashed payload, and the fingerprint describes that payload, so a fourth one
+    would change neither. A field that reached the payload would change both,
+    which is the behaviour §13 rows 19 and 20 depend on.
+    """
+
+    a = _complete_registration()
+    b = _complete_registration()
+    b.registered_hash, b.registered_schema, b.rationale = "x", "y", "z"
+    assert a.hash() == b.hash()
+    assert Registration.schema_fingerprint() == Registration.schema_fingerprint()
+
+
+def test_the_fingerprint_moves_when_the_hashed_shape_moves():
+    """Otherwise it cannot tell an old file from a wrong one, which is its job."""
+
+    excluded = {"rationale", "registered_hash", "registered_schema"}
+    hashed = {f.name for f in dataclasses.fields(Registration)} - excluded
+    assert "control_arm_delta" in hashed and "lexicon" in hashed
+    # Recomputed from the same inputs the method reads, with one name added.
+    import hashlib as _h
+
+    def fingerprint_of(names):
+        shape = {
+            "registration": sorted(names),
+            "corpus": sorted(f.name for f in dataclasses.fields(RegCorpus)),
+            "discoverable_class": sorted(
+                f.name for f in dataclasses.fields(DiscoverableClass)),
+        }
+        return _h.sha256(json.dumps(shape, sort_keys=True,
+                                    separators=(",", ":")).encode()).hexdigest()[:16]
+
+    assert fingerprint_of(hashed) == Registration.schema_fingerprint()
+    assert fingerprint_of(hashed | {"a_new_gate"}) != Registration.schema_fingerprint()

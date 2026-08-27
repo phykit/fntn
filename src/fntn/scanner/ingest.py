@@ -47,7 +47,7 @@ from .records import (
     Item,
     Origin,
     Partition,
-    Proposal,
+    Provenance,
     READABLE_BY_DISCOVERY,
     Refusal,
     entity_mentions,
@@ -224,9 +224,27 @@ def build_intake_checks() -> Dict[str, Callable[[object], CheckResult]]:
         return None
 
     def claim_provenance_recollection(ctx: IntakeContext) -> CheckResult:
+        """Refuse on any tag the freeze signature cannot stand on.
+
+        Asked of the vocabulary rather than compared against the string
+        ``recollection``, which was a blacklist of one: a tag added to §0.5 was
+        read as harmless here purely because this line had never heard of it.
+        The refusal now names the tag it found, so the §8 summary describes the
+        record rather than the commonest case.
+
+        An unknown string is not silently passed either. It raises, because a
+        provenance tag outside the vocabulary is a claim nothing can classify,
+        and passing it would be the same defect one level further out.
+        """
+
         for name, tag in ctx.claim_provenance.items():
-            if tag == "recollection":
-                return ("claim_provenance_recollection", {"failed_field": name})
+            if tag is None:
+                continue
+            if Provenance(tag).blocks_freeze_signature:
+                return (
+                    "claim_provenance_recollection",
+                    {"failed_field": name, "provenance": tag},
+                )
         return None
 
     def registered_at_unstampable(ctx: IntakeContext) -> CheckResult:

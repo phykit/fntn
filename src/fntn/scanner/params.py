@@ -21,10 +21,10 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, fields as dc_fields
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import ClassVar, Dict, List, Optional
 
 from .markets import CorpusInvalid, validate_corpus
 from .records import RULEBOOK_STOPWORDS, SEED_LEXICON, ScoringMode
@@ -32,6 +32,17 @@ from .records import RULEBOOK_STOPWORDS, SEED_LEXICON, ScoringMode
 
 class RegistrationIncomplete(RuntimeError):
     """Raised rather than defaulted. See the module docstring."""
+
+
+class RegistrationHashMismatch(RuntimeError):
+    """A stored registration does not hash to the hash it records.
+
+    Raised only where the two are actually comparable, that is where the file's
+    schema fingerprint matches the current one. Across a schema change the
+    recomputation answers a different question and the state is
+    ``unverifiable_schema_change``, which is reported and never called
+    verification.
+    """
 
 
 class RegistrationHistoryMissing(RuntimeError):
@@ -178,6 +189,18 @@ class Registration:
     #: exactly that reason, and every row there needs its own commit's code to
     #: recompute. A file that carries its own hash needs neither.
     registered_hash: Optional[str] = None
+    #: The shape the hash was taken over, written by ``save`` beside the hash
+    #: and excluded from the hash for the same reason.
+    #:
+    #: **Why a fingerprint and not just the hash.** A recomputation can only
+    #: check a stored hash whilst the dataclass is the one it was taken under.
+    #: Add a field and every registration on disk stops hashing to its own
+    #: recorded hash, all at once and with nothing wrong. Without the
+    #: fingerprint there is no way to tell that case from a tampered file, so
+    #: the choice is between verifying nothing and raising on every old file,
+    #: and both are wrong. With it the two are distinguishable and the third
+    #: state, *cannot verify*, can be reported as itself.
+    registered_schema: Optional[str] = None
     #: Free text: why these values and not others. Not read by anything; it
     #: exists because a number whose reasoning is not written down gets changed
     #: by whoever meets it next.
@@ -275,6 +298,47 @@ class Registration:
 
     # -- identity ----------------------------------------------------------
 
+    #: What ``load`` was able to establish about the file it read. NOT a
+    #: dataclass field, deliberately: it describes the reading and not the
+    #: registration, so it must stay out of ``asdict`` and out of the hash.
+    #:
+    #: ``not_loaded`` is the default because an object built in memory was
+    #: never read from anything and has nothing to verify against. The state
+    #: that matters is ``unverifiable_schema_change``, which exists so that
+    #: *cannot verify* is a value a reader can see rather than the silence that
+    #: *verified* also produces.
+    UNSTAMPED: ClassVar[str] = "unstamped"
+    VERIFIED: ClassVar[str] = "verified"
+    UNVERIFIABLE: ClassVar[str] = "unverifiable_schema_change"
+    hash_verification: ClassVar[str] = "not_loaded"
+
+    @classmethod
+    def schema_fingerprint(cls) -> str:
+        """A digest of the shape the hash is taken over. Not of the values.
+
+        Covers exactly what ends up in the hashed payload: this class's field
+        names less the provenance fields ``hash`` discards, plus the field
+        names of the two nested dataclasses, whose shapes reach the payload
+        through ``asdict``. Names only, sorted, because ``hash`` serialises
+        with ``sort_keys`` and so depends on the set of keys and not their
+        order.
+
+        A field added to the payload changes this; a provenance field added
+        beside it changes neither this nor the hash, which is the whole reason
+        the two exclusions are shared.
+        """
+
+        excluded = {"rationale", "registered_hash", "registered_schema"}
+        shape = {
+            "registration": sorted(
+                f.name for f in dc_fields(cls) if f.name not in excluded
+            ),
+            "corpus": sorted(f.name for f in dc_fields(Corpus)),
+            "discoverable_class": sorted(f.name for f in dc_fields(DiscoverableClass)),
+        }
+        blob = json.dumps(shape, sort_keys=True, separators=(",", ":"))
+        return hashlib.sha256(blob.encode()).hexdigest()[:16]
+
     def hash(self) -> str:
         """Canonical hash. Goes on every record the run produces."""
 
@@ -283,6 +347,11 @@ class Registration:
         # Self-referential: it records the result of this function, so hashing
         # it would make the value depend on itself.
         payload.pop("registered_hash", None)
+        # And the fingerprint describes the shape of what is left, so it cannot
+        # be part of what is left. Both being outside the payload is what makes
+        # adding a provenance field move neither the hash nor the fingerprint,
+        # which is the behaviour a provenance field ought to have.
+        payload.pop("registered_schema", None)
         blob = json.dumps(payload, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(blob.encode()).hexdigest()[:16]
 
@@ -359,6 +428,7 @@ class Registration:
                 )
 
         self.registered_hash = self.hash()
+        self.registered_schema = self.schema_fingerprint()
         p.write_text(json.dumps(asdict(self), indent=2, sort_keys=True) + "\n")
         return self.hash()
 
@@ -414,12 +484,57 @@ class Registration:
 
     @classmethod
     def load(cls, path: str | Path) -> "Registration":
+        """Read a registration, and establish what can be established about it.
+
+        **Until this checked, nothing did.** A file whose ``registered_hash``
+        disagreed with its own contents loaded silently, and ``save``'s
+        overwrite guard reads that recorded hash as the identity of what it is
+        about to destroy: an edited hash would have released the guard against
+        a history row for an object that was never on disk.
+
+        Three outcomes, and the third is the one worth having:
+
+        * **no recorded hash** -- ``unstamped``. A blank form or a file written
+          before the field existed. Nothing to verify, and nothing claimed.
+        * **fingerprint matches** -- the recomputation is comparable, so it is
+          performed. Equal is ``verified``; unequal raises
+          ``RegistrationHashMismatch``, because at that point the file is
+          wrong rather than merely old.
+        * **fingerprint absent or different** --
+          ``unverifiable_schema_change``. The hash is taken over the dataclass
+          as well as the values, so a recomputation under a different shape
+          answers a different question and its disagreement means nothing.
+          **The file loads and no verification is claimed.** Raising here would
+          make every registration written before this landed unreadable,
+          including the two the history's own test replays; passing silently
+          would let *cannot verify* read as *verified*, which is the failure
+          this whole exercise is about.
+        """
+
         raw = json.loads(Path(path).read_text())
         raw["corpora"] = [Corpus(**c) for c in raw.get("corpora", [])]
         raw["discoverable_classes"] = [
             DiscoverableClass(**c) for c in raw.get("discoverable_classes", [])
         ]
-        return cls(**raw)
+        obj = cls(**raw)
+
+        if not obj.registered_hash:
+            obj.hash_verification = cls.UNSTAMPED
+        elif obj.registered_schema != cls.schema_fingerprint():
+            obj.hash_verification = cls.UNVERIFIABLE
+        else:
+            recomputed = obj.hash()
+            if recomputed != obj.registered_hash:
+                raise RegistrationHashMismatch(
+                    f"{path} records its hash as {obj.registered_hash} and "
+                    f"hashes to {recomputed}, under the schema it was written "
+                    f"under ({obj.registered_schema}). The values have been "
+                    "changed since it was stamped, or the recorded hash has. "
+                    "Either way the file no longer describes the object any "
+                    "record carrying that hash was raised under."
+                )
+            obj.hash_verification = cls.VERIFIED
+        return obj
 
     @classmethod
     def blank(cls) -> "Registration":
@@ -453,6 +568,7 @@ class Registration:
         lines = [
             "Discovery-layer registration",
             f"  hash                         : {self.hash()}",
+            f"  hash verification            : {self.hash_verification}",
             f"  registered_at                : {self.registered_at or 'NOT STAMPED'}",
             f"  registered_by                : {self.registered_by or 'n/a'}",
             f"  control arm delta            : {self.control_arm_delta} {self.control_arm_delta_units}",

@@ -25,17 +25,32 @@ JSON would not be enough to reproduce a single row here.
 
 Since the row for `701adbd9d48015ed`, the registration carries its own
 `registered_hash`, so a file written from now on states the hash it was stamped
-under and needs no reconstruction. The field is excluded from the hash, being
-the hash's own result.
+under and needs no reconstruction. It carries a **schema fingerprint** beside
+it, a digest of the field names the hash is taken over, because a recorded hash
+can only be checked whilst the dataclass is the one it was taken under.
+`Registration.load` therefore reports one of three states: `unstamped`,
+`verified`, or `unverifiable_schema_change`. **The third is not a failure and is
+not a pass.** It is what a reader is owed when the file predates the current
+shape: the recomputation would answer a different question, so no verification
+is claimed. A file whose fingerprint matches and whose hash does not is refused
+outright. Both provenance fields sit outside the hashed payload, so adding them
+moved neither the hash nor the fingerprint.
+
+**The provenance column** carries a §0.5 tag per row. `verified_primary` means
+the object itself is retrievable at the commit named.
+`reconstructed_hash_verified` means it is not: what is retrievable is a
+reconstruction that reproduces the hash under the dataclass of the naming
+commit, which is a positive verification and still not the artefact, so it
+blocks the freeze signature exactly as `recollection` does.
 
 ## The chain
 
-| # | Hash | Stamped (UTC) | Object commit | Registration object | Field that caused this stamp |
-|---|---|---|---|---|---|
-| 1 | `890a80e3a8566837` | 2026-08-26T22:54:01.850224 | `3d3a09a` | `docs/registration_history/890a80e3a8566837.json`, a **reconstruction** of `discovery_registration.json` | n/a, the first stamp |
-| 2 | `a06400ef28ebb54c` | 2026-08-26T22:54:01.850224 | `1057c44` | `git show 1057c44:discovery_registration.json` | `archive_opens` |
-| 3 | `b8dd61e7eea6898e` | 2026-08-27T06:51:39.473454 | `e955d2b` | `git show e955d2b:discovery_registration.json` | `rulebook_stopwords` |
-| 4 | `701adbd9d48015ed` | 2026-08-27T07:59:55.127137 | **current** | `discovery_registration.json` | `lexicon` |
+| # | Hash | Stamped (UTC) | Object commit | Registration object | Provenance (§0.5) | Field that caused this stamp |
+|---|---|---|---|---|---|---|
+| 1 | `890a80e3a8566837` | 2026-08-26T22:54:01.850224 | `3d3a09a` | `docs/registration_history/890a80e3a8566837.json`, a **reconstruction** of `discovery_registration.json` | `reconstructed_hash_verified` | n/a, the first stamp |
+| 2 | `a06400ef28ebb54c` | 2026-08-26T22:54:01.850224 | `1057c44` | `git show 1057c44:discovery_registration.json` | `verified_primary` | `archive_opens` |
+| 3 | `b8dd61e7eea6898e` | 2026-08-27T06:51:39.473454 | `e955d2b` | `git show e955d2b:discovery_registration.json` | `verified_primary` | `rulebook_stopwords` |
+| 4 | `701adbd9d48015ed` | 2026-08-27T07:59:55.127137 | **current** | `discovery_registration.json` | `verified_primary` | `lexicon` |
 
 Each cell in the object column is the command or path that yields the bytes,
 and every one of them names `discovery_registration.json`, because that is what

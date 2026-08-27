@@ -155,15 +155,18 @@ _INTAKE: List[ReasonCode] = [
         code="claim_provenance_recollection",
         surface=Surface.INTAKE,
         description=(
-            "A load-bearing claim carries recollection provenance, so the "
-            "consuming check refuses to score."
+            "A load-bearing claim carries a provenance tag the freeze "
+            "signature cannot stand on, so the consuming check refuses to "
+            "score. Named for its commonest case, recollection; the set is "
+            "Provenance.blocks_freeze_signature and reconstructed_hash_"
+            "verified is also in it."
         ),
         summary_template=(
-            "Field {failed_field} carried recollection provenance, so the "
-            "consuming check refused to score rather than guessing. The lane's "
-            "first intake found a recollected claim wrong in two places, which "
-            "is why this refusal exists and why it is not a nuisance. "
-            "{resurrection}"
+            "Field {failed_field} carried {provenance} provenance, which the "
+            "§14 signature cannot stand on, so the consuming check refused to "
+            "score rather than guessing. The lane's first intake found a "
+            "recollected claim wrong in two places, which is why this refusal "
+            "exists and why it is not a nuisance. {resurrection}"
         ),
         resurrection=(
             "Re-raise once the field is verified against the primary document "

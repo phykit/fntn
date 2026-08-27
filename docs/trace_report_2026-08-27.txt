@@ -337,14 +337,39 @@ THE CORPUS NOW STORES TEXT, AND THAT IS WHAT CLOSED THE THREE
   Files are now .txt rather than .htm, which is the warning to the next reader
   that markup is gone and with it a table's structure and a link's target.
 
-  THE DOCUMENTS WERE NOT RE-FETCHED, and the manifest's raw_bytes still record
-  what the server sent on 26 August. The extraction was run over the documents
-  already in the tree, which is sound because element removal commutes with
-  text extraction, and it was checked rather than asserted: all thirteen were
-  fetched again into a scratch directory, put through the new pipeline whole,
-  and compared. Every raw size matched the manifest to the byte and every
-  extracted document was byte-identical to the one in the tree. The pages have
-  not changed since 26 August.
+  WHAT WAS FETCHED, AND WHEN. An earlier issue of this report said both that
+  the documents were not re-fetched and that all thirteen were fetched again.
+  Both describe something that happened and the two together describe nothing,
+  so here is the sequence.
+
+  THE NETWORK WAS HIT. Thirteen GETs to law.cornell.edu on 27 August 2026,
+  08:07 UTC, one per document. That is the fetch of record for the raw pages.
+
+  The corpus text in the tree was NOT produced by those GETs. It was produced
+  by running the fetch script's extractor over the chrome-stripped HTML already
+  committed, on the argument that element removal commutes with text
+  extraction. The 27 August GETs were the check on that argument: the pages
+  were put through the pipeline whole and compared, every raw size matched the
+  26 August manifest to the byte, and every extracted document came out
+  byte-identical to the one produced from the tree. The pages had not changed
+  between the two fetches.
+
+  THE RAW PAGES ARE NOW KEPT, at corpora/us/_raw, underscore-prefixed so both
+  the corpus reader and the integrity check skip them, with their digests in
+  corpora/us/_raw/_fetch.tsv. Extraction is destructive, and until this the
+  corpus could not be re-derived from anything: raw_bytes was a number with
+  nothing behind it and a change to the extractor could be tested only against
+  itself. test_raw_html_reextracts_to_the_stored_corpus now re-derives all
+  thirteen through the script's own extractor and compares byte-for-byte.
+
+  THE HONEST LIMIT. What is kept is the 27 AUGUST fetch, not the 26 August one.
+  The 26 August raw pages were overwritten by the chrome strip at fetch time
+  and are gone. The two fetches agree on every byte count and on every
+  extracted document, which is strong evidence they were the same pages, and it
+  is evidence rather than the pages themselves. The manifest's retrieved_at
+  still reads 26 August, because that is when the document in the corpus was
+  first retrieved; _raw/_fetch.tsv reads 27 August, because that is when the
+  page beside it was.
 
   THE INTEGRITY FLOOR MOVED, from 4,000 bytes to 500. The standard has not
   relaxed; the quantity has changed, a document as text being between a

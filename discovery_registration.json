@@ -222,6 +222,7 @@
   "registered_at": "2026-08-27T07:59:55.127137+00:00",
   "registered_by": "operator",
   "registered_hash": "701adbd9d48015ed",
+  "registered_schema": "a8799f71429695be",
   "rulebook_stopwords": [
     "trust"
   ],

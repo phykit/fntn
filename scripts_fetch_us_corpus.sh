@@ -63,10 +63,20 @@ BOUNDARY=$(python3 -c "import json;print(json.load(open('$REG')).get('archive_op
 }
 
 OUT=corpora/us
-mkdir -p "$OUT"
+# The server's own bytes are KEPT, underscore-prefixed so both the corpus
+# reader and the integrity check skip them. Extraction is destructive and a
+# corpus you cannot re-derive is a corpus whose derivation cannot be checked:
+# raw_bytes in the manifest would be a number with nothing behind it, and a
+# change to the extractor could not be tested against anything but itself. The
+# round trip is locked by test_raw_html_reextracts_to_the_stored_corpus.
+RAW="$OUT/_raw"
+mkdir -p "$OUT" "$RAW"
 MANIFEST="$OUT/_manifest.tsv"
 : > "$MANIFEST"
 printf 'filename\tadopted\tsource_url\tretrieved_at\traw_bytes\tbytes\n' >> "$MANIFEST"
+RAWMANIFEST="$RAW/_fetch.tsv"
+: > "$RAWMANIFEST"
+printf 'filename\tsource_url\tretrieved_at\tbytes\tsha256\textracts_to\n' >> "$RAWMANIFEST"
 
 # The text extractor, written out so the same code runs at fetch time and can
 # be re-run over an existing corpus without re-fetching it. That is not a
@@ -259,18 +269,26 @@ while IFS='|' read -r name adopted url; do
     refused=$((refused+1)); continue
   fi
   if curl -fsS --max-time 45 -A "fntn research $SEC_CONTACT" "$url" -o "$OUT/$name" 2>/dev/null; then
+    # Keep the server's bytes before anything touches them. The extractor
+    # rewrites in place, so this copy is the only thing that can ever show what
+    # was thrown away.
+    cp "$OUT/$name" "$RAW/${name%.txt}.htm"
     # Extract before the byte count is taken, so `bytes` is always the size
     # of what a reader will actually read and raw_bytes what the server sent.
     sizes=$(python3 "$EXTRACTOR" "$OUT/$name")
     raw_bytes=$(cut -f1 <<< "$sizes")
     bytes=$(cut -f2 <<< "$sizes")
+    now=$(date -u +%Y-%m-%dT%H:%M:%SZ)
     printf '%s\t%s\t%s\t%s\t%s\t%s\n' \
-      "$name" "$adopted" "$url" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$raw_bytes" "$bytes" >> "$MANIFEST"
+      "$name" "$adopted" "$url" "$now" "$raw_bytes" "$bytes" >> "$MANIFEST"
+    printf '%s\t%s\t%s\t%s\t%s\t%s\n' \
+      "${name%.txt}.htm" "$url" "$now" "$raw_bytes" \
+      "$(sha256sum < "$RAW/${name%.txt}.htm" | cut -d' ' -f1)" "$name" >> "$RAWMANIFEST"
     echo "  ok       $name  ($adopted, $bytes bytes of text from $raw_bytes)"
     ok=$((ok+1))
   else
     echo "  FAILED   $name  $url"
-    rm -f "$OUT/$name"
+    rm -f "$OUT/$name" "$RAW/${name%.txt}.htm"
     failed=$((failed+1))
   fi
   sleep 0.4          # the SEC asks for no more than 10 requests a second

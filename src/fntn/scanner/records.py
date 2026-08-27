@@ -40,13 +40,64 @@ class EvidenceTier(str, Enum):
 
 
 class Provenance(str, Enum):
+    """§0.5's provenance vocabulary.
+
+    Two classifications hang off this enum and both are **total**: every member
+    must appear in each, and ``test_every_provenance_tag_is_classified`` fails
+    if one does not.  That is the point of putting them here rather than
+    leaving a string literal in each consumer.  Before it, the freeze-blocking
+    decision was ``tag == "recollection"``, a blacklist of one, so a tag added
+    to the vocabulary was read as harmless by every consumer that had never
+    heard of it.  A vocabulary that grows silently past its readers is worse
+    than no vocabulary.
+    """
+
     VERIFIED_PRIMARY = "verified_primary"
     VERIFIED_SECONDARY = "verified_secondary"
     RECOLLECTION = "recollection"
+    #: **Not the original artefact.**  The artefact it stands for is gone, and
+    #: what is tagged is a reconstruction that **reproduces the original's hash
+    #: under the dataclass of the commit the record names**.  Both halves are
+    #: required: a reconstruction that does not reproduce the hash is a guess,
+    #: and a hash reproduced under a different schema is a different question
+    #: answered.
+    #:
+    #: It is a positive verification and it is still not the artefact, so it
+    #: **blocks the freeze signature** exactly as ``recollection`` does whilst
+    #: meaning something quite different.  Introduced for
+    #: `890a80e3a8566837`, the first discovery-layer registration hash, whose
+    #: object was overwritten before it was ever committed;
+    #: ``docs/REGISTRATION_HISTORY.md`` carries it.
+    RECONSTRUCTED_HASH_VERIFIED = "reconstructed_hash_verified"
     #: Evidence produced by a directive this system raised.  Routes
     #: advisory-only under §3.6.3 check 5, exactly as ``single_study`` does.
     SELF_GENERATED = "self_generated"
     AGENT_GENERATED = "agent_generated"
+
+    @property
+    def counts_as_verified(self) -> bool:
+        """Whether a claim carrying this tag may make an intake quantified."""
+
+        return self in _VERIFIED
+
+    @property
+    def blocks_freeze_signature(self) -> bool:
+        """Whether a load-bearing claim carrying this tag stops §14 being signed."""
+
+        return self in _BLOCKS_FREEZE
+
+
+#: Read the paper's own tables.  Nothing else is verified.
+_VERIFIED = frozenset(
+    {Provenance.VERIFIED_PRIMARY, Provenance.VERIFIED_SECONDARY}
+)
+#: A claim the signature cannot stand on.  ``self_generated`` and
+#: ``agent_generated`` are absent deliberately: they are contained by routing
+#: advisory-only under §3.6.3 check 5 rather than by refusing at intake, and
+#: moving them here would be a rule change wearing a classification's clothes.
+_BLOCKS_FREEZE = frozenset(
+    {Provenance.RECOLLECTION, Provenance.RECONSTRUCTED_HASH_VERIFIED}
+)
 
 
 class StreamStatus(str, Enum):
@@ -501,13 +552,15 @@ class IntakeRecord:
     tradable_on: Optional[str] = None
 
     def compute_evidence_tier(self) -> EvidenceTier:
-        verified = {Provenance.VERIFIED_PRIMARY, Provenance.VERIFIED_SECONDARY}
+        # The verified set is read off the vocabulary rather than restated
+        # here. A tag added to `Provenance` and not classified fails a test;
+        # a tag added and classified is read by this the moment it lands.
         complete = (
             self.claimed_effect
             and self.claimed_horizon_sessions
             and self.measured_on
             and all(
-                self.claims[k].provenance in verified
+                Provenance(self.claims[k].provenance).counts_as_verified
                 for k in ("claimed_effect", "claimed_horizon_sessions", "measured_on")
                 if k in self.claims
             )

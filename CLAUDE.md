@@ -89,9 +89,14 @@ src/fntn/scanner/  the agent discovery layer (spec §3.7)
 docs/spec/         the governing manuscript
 docs/OPEN_ITEMS.md   §13 calibrations, §14 decisions, Annex A.1 predicates
 docs/REGISTRATION_HISTORY.md  one row per registration hash ever stamped, the
-                     object each was taken over and the field that caused it.
-                     Registration.save() will not overwrite a stamped
-                     registration until the prior row is here
+                     object each was taken over, its §0.5 provenance tag and
+                     the field that caused it. Registration.save() will not
+                     overwrite a stamped registration until the prior row is
+                     here; Registration.load() verifies the recorded hash, or
+                     says it cannot
+corpora/us/_raw/   the pages the server sent, kept because extraction is
+                     destructive. Underscore-prefixed, so every corpus reader
+                     skips them
 docs/CONVENTIONS.md  coding conventions derived from the spec
 tests/
 ```
@@ -100,7 +105,7 @@ tests/
 
 ```bash
 pip install -e ".[dev]"      # once: puts src/ on the path
-python -m pytest tests/ -q   # 163 tests
+python -m pytest tests/ -q   # 181 tests
 ```
 
 Without the editable install the package sits at `src/fntn` and is invisible to
