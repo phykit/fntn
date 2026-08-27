@@ -326,7 +326,14 @@ def cmd_report(args) -> int:
         corpora=report_mod.corpus_digest([c.retrieval_route for c in reg.corpora]),
         commit=report_mod._git("rev-parse", "HEAD")[:12],
         on=on,
-        budget_abandoned=args.budget_abandoned,
+        # Read off the ledger, not off a flag. The count is a record of what
+        # the run did, and a report that took it from the command line would
+        # print whatever the caller said.
+        budget_abandoned=(
+            args.budget_abandoned
+            if args.budget_abandoned is not None
+            else ledger.budget_abandoned()
+        ),
     )
     out = Path(args.out) if args.out else report_mod.next_path(
         Path(args.dir), on
@@ -342,7 +349,7 @@ def cmd_report(args) -> int:
     ledger.close()
     print(f"wrote {out}")
     print(f"  registration {reg.hash()} ({reg.hash_verification})")
-    print(f"  abandoned to intake budget: {args.budget_abandoned}")
+    print(f"  abandoned to intake budget: {rep.budget_abandoned}")
     return 0
 
 
@@ -524,8 +531,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     p_rep.add_argument("--dir", default="docs/runs")
     p_rep.add_argument("--out", help="explicit path, bypassing the dated name")
     p_rep.add_argument("--on", help="date to stamp the report with, ISO")
-    p_rep.add_argument("--budget-abandoned", type=int, default=0,
-                       help="subjects abandoned to the intake budget this run")
+    p_rep.add_argument("--budget-abandoned", type=int, default=None,
+                       help="override the ledger's count; normally read from it")
     p_rep.set_defaults(func=cmd_report)
 
     p_sweep = sub.add_parser("sweep", help="run a sweep, if registration is complete")

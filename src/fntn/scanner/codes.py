@@ -152,6 +152,35 @@ _INTAKE: List[ReasonCode] = [
         refuse_to_score=True,
     ),
     ReasonCode(
+        code="intake_budget_exhausted",
+        surface=Surface.INTAKE,
+        description=(
+            "Intake exceeded the registered time ceiling, at one point or "
+            "cumulatively over the subject, and the subject is abandoned "
+            "rather than held open. Not a verdict on the idea: a verdict on "
+            "how long looking at it took."
+        ),
+        summary_template=(
+            "Intake was abandoned at {point} after {elapsed_s}s against a "
+            "registered budget of {budget_s}s, on attempt {attempts}. The "
+            "ceiling is a ceiling on the cost of looking, not a judgement of "
+            "the idea, and the idea is neither refused nor accepted by it. "
+            "**This decision was taken once, when the work ran, and the "
+            "elapsed time above is the record of it**: a replay reads this "
+            "figure and does not re-time the work, so the same inputs produce "
+            "the same refusal on any machine. {resurrection}"
+        ),
+        resurrection=(
+            "Re-raise where EITHER the registered budget has been raised above "
+            "the elapsed time recorded here, which is a re-stamp with "
+            "intake_point_budget_s or intake_subject_budget_s named as the "
+            "causing field, OR a later attempt on the same source completed "
+            "within the budget in force, which the ledger's own budget rows "
+            "show as an unexhausted decision at the same point."
+        ),
+        refuse_to_score=True,
+    ),
+    ReasonCode(
         code="claim_provenance_recollection",
         surface=Surface.INTAKE,
         description=(
@@ -842,13 +871,31 @@ INTAKE_ORDER: List[str] = [
 #: before the schema-enforced extraction call, which is the expensive step.
 OBSERVATION_ORDER: List[str] = [rc.code for rc in _OBSERVATION]
 
-_declared = set(INTAKE_ORDER)
+#: Intake codes that are NOT positions in the panel, named exhaustively.
+#:
+#: The ordering invariant below exists so that a code cannot be defined without
+#: a place in the sequence, which would leave a refusal nothing could locate.
+#: ``intake_budget_exhausted`` is the one refusal that genuinely has no place in
+#: it: a ceiling on time is not a check that runs after the twelfth, it is an
+#: interruption that can fall at any of them, and giving it position 13 would
+#: say every budget abandonment happened after every other check passed. §13 row
+#: 23 counts abort positions, so that lie would land directly in a calibration.
+#: The set is named rather than the invariant relaxed, so adding a second
+#: non-positional code is a deliberate act with this comment in front of it.
+INTAKE_NON_POSITIONAL: frozenset = frozenset({"intake_budget_exhausted"})
+
+_declared = set(INTAKE_ORDER) | INTAKE_NON_POSITIONAL
 _defined = {rc.code for rc in _INTAKE}
 if _declared != _defined:
     raise RuntimeError(
         "INTAKE_ORDER and the intake code definitions disagree: "
         f"ordered-not-defined={sorted(_declared - _defined)}, "
         f"defined-not-ordered={sorted(_defined - _declared)}"
+    )
+if INTAKE_NON_POSITIONAL & set(INTAKE_ORDER):
+    raise RuntimeError(
+        "a code cannot be both a position and non-positional: "
+        + ", ".join(sorted(INTAKE_NON_POSITIONAL & set(INTAKE_ORDER)))
     )
 del _declared, _defined
 

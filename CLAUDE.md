@@ -82,6 +82,9 @@ src/fntn/scanner/  the agent discovery layer (spec §3.7)
   segment.py      design-segment reuse ledger, theta arithmetic, the queue
   discovery.py    agent protocol, schema, prompt, cache, control arm
                   ** UNDER THE IMPORT FENCE: no prices, no outcomes **
+  budget.py       §13 row 27 intake ceiling. THE DECISION IS TAKEN ONCE, AT
+                  CAPTURE. ReplayedBudget holds no clock; a replay that
+                  re-races one makes rule 1 false
   ledger.py       SQLite; nothing deleted, nothing overwritten
   summaries.py    §8 rejection summaries: rendered, never judged
   trace.py        §9.4 trace harness; evidentially inert by construction
@@ -109,7 +112,7 @@ tests/
 
 ```bash
 pip install -e ".[dev]"      # once: puts src/ on the path
-python -m pytest tests/ -q   # 206 tests
+python -m pytest tests/ -q   # 218 tests
 ```
 
 Without the editable install the package sits at `src/fntn` and is invisible to

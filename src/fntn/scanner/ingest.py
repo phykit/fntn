@@ -79,6 +79,16 @@ class IngestOutcome:
     #: failures cluster at position one is a surface whose later points have
     #: never been exercised.
     failed_at_position: Optional[int] = None
+    #: True where the subject was abandoned to the registered time ceiling.
+    #: **Deliberately not expressed by setting `failed_at_position`**: a
+    #: subject that ran out of time did not fail the check it was standing on,
+    #: and §13 row 23 counts abort positions, so putting it there would land a
+    #: clock's verdict inside a calibration.
+    budget_exhausted: bool = False
+    #: Every budget decision taken on this subject, in order: the elapsed time,
+    #: the budget in force and the verdict. The ledger's copy of these is what
+    #: a replay reads instead of a clock.
+    budget_decisions: List[object] = field(default_factory=list)
 
     @property
     def first_refusal(self) -> Optional[Refusal]:
@@ -95,6 +105,7 @@ class Runner:
         checks: Dict[str, Callable[[object], CheckResult]],
         audit_fraction: float = 0.10,
         parameter_hash: str = "unfrozen",
+        budget: Optional[object] = None,
     ) -> None:
         missing = [c for c in order if c not in checks]
         if missing:
@@ -115,6 +126,10 @@ class Runner:
         self.checks = checks
         self.audit_fraction = audit_fraction
         self.parameter_hash = parameter_hash
+        #: A MeasuringBudget at capture, a ReplayedBudget on replay, or None
+        #: where no ceiling applies. None is not a budget of infinity dressed
+        #: up: it means the run declares no ceiling, and the outcome says so.
+        self.budget = budget
 
     # -- the audit sample --------------------------------------------------
 
@@ -143,20 +158,63 @@ class Runner:
         outcome = IngestOutcome(
             subject_id=subject_id, surface=self.surface, mode=mode, passed=True
         )
+        if self.budget is not None:
+            self.budget.start_subject(subject_id)
+
         for position, name in enumerate(self.order, start=1):
             outcome.checks_reached.append(name)
-            result = self.checks[name](subject)
-            if result is None:
-                continue
-            code, fields = result
-            fields.setdefault("attempted_at", datetime.now(timezone.utc).isoformat())
-            outcome.refusals.append(summaries.render(code, subject_id, fields))
-            outcome.passed = False
-            if outcome.failed_at_position is None:
-                outcome.failed_at_position = position
-            if mode is Mode.FAIL_FAST:
-                # The whole point: stop here, and start the next idea.
-                break
+            if self.budget is None:
+                result = self.checks[name](subject)
+            else:
+                result, decision = self.budget.run_point(
+                    subject_id, name, lambda: self.checks[name](subject)
+                )
+                outcome.budget_decisions.append(decision)
+                if decision.exhausted:
+                    # Abandoned to the ceiling, and NOT recorded as a failure of
+                    # the point it was standing on. `failed_at_position` stays
+                    # None, so §13 row 23's distribution never sees it: a
+                    # subject that ran out of time did not fail this check, and
+                    # counting it here would put a clock's verdict in a check's
+                    # column.
+                    outcome.budget_exhausted = True
+                    outcome.refusals.append(
+                        summaries.render(
+                            "intake_budget_exhausted",
+                            subject_id,
+                            decision.as_fields(),
+                        )
+                    )
+                    outcome.passed = False
+                    return outcome
+
+            if result is not None:
+                code, fields = result
+                fields.setdefault(
+                    "attempted_at", datetime.now(timezone.utc).isoformat()
+                )
+                outcome.refusals.append(summaries.render(code, subject_id, fields))
+                outcome.passed = False
+                if outcome.failed_at_position is None:
+                    outcome.failed_at_position = position
+                if mode is Mode.FAIL_FAST:
+                    # The whole point: stop here, and start the next idea.
+                    break
+
+            if self.budget is not None:
+                subject_decision = self.budget.check_subject(subject_id)
+                outcome.budget_decisions.append(subject_decision)
+                if subject_decision.exhausted:
+                    outcome.budget_exhausted = True
+                    outcome.refusals.append(
+                        summaries.render(
+                            "intake_budget_exhausted",
+                            subject_id,
+                            subject_decision.as_fields(),
+                        )
+                    )
+                    outcome.passed = False
+                    return outcome
         return outcome
 
 
@@ -346,11 +404,16 @@ def build_intake_checks() -> Dict[str, Callable[[object], CheckResult]]:
     }
 
 
-def intake_runner(parameter_hash: str = "unfrozen", audit_fraction: float = 0.10) -> Runner:
+def intake_runner(
+    parameter_hash: str = "unfrozen",
+    audit_fraction: float = 0.10,
+    budget: Optional[object] = None,
+) -> Runner:
     return Runner(
         surface="intake",
         order=INTAKE_ORDER,
         checks=build_intake_checks(),
+        budget=budget,
         audit_fraction=audit_fraction,
         parameter_hash=parameter_hash,
     )

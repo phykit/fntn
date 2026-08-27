@@ -50,7 +50,8 @@ blocks the freeze signature exactly as `recollection` does.
 | 1 | `890a80e3a8566837` | 2026-08-26T22:54:01.850224 | `3d3a09a` | `docs/registration_history/890a80e3a8566837.json`, a **reconstruction** of `discovery_registration.json` | `reconstructed_hash_verified` | n/a, the first stamp |
 | 2 | `a06400ef28ebb54c` | 2026-08-26T22:54:01.850224 | `1057c44` | `git show 1057c44:discovery_registration.json` | `verified_primary` | `archive_opens` |
 | 3 | `b8dd61e7eea6898e` | 2026-08-27T06:51:39.473454 | `e955d2b` | `git show e955d2b:discovery_registration.json` | `verified_primary` | `rulebook_stopwords` |
-| 4 | `701adbd9d48015ed` | 2026-08-27T07:59:55.127137 | **current** | `discovery_registration.json` | `verified_primary` | `lexicon` |
+| 4 | `701adbd9d48015ed` | 2026-08-27T07:59:55.127137 | `d84fd5b` | `git show d84fd5b:discovery_registration.json` | `verified_primary` | `lexicon` |
+| 5 | `ce576a9fa04a7403` | 2026-08-27T09:06:19.906138 | **current** | `discovery_registration.json` | `verified_primary` | `intake_point_budget_s` |
 
 Each cell in the object column is the command or path that yields the bytes,
 and every one of them names `discovery_registration.json`, because that is what

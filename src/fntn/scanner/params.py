@@ -158,6 +158,30 @@ class Registration:
     #: on the record.
     lexicon: List[str] = field(default_factory=lambda: sorted(SEED_LEXICON))
 
+    # -- §13 row 27: the intake budget -------------------------------------
+    #: Seconds one intake point may take before the subject is abandoned with
+    #: `intake_budget_exhausted`.
+    #:
+    #: **Registered because it changes what a run refuses.** Two sweeps over
+    #: one corpus under one hash could otherwise abandon different subjects,
+    #: and the difference would be attributable to nothing on the record.
+    #:
+    #: **The decision it drives is taken once, at capture, and the ledger holds
+    #: it.** A replay reads the recorded elapsed time and never re-times the
+    #: work: a clock in the replay path would make the refusal set depend on
+    #: the machine, which is rule 1 made false on the surface where it is
+    #: hardest to see. See `budget.py`.
+    intake_point_budget_s: float = 20.0
+    #: Seconds the whole of one subject's intake may take, cumulatively.
+    #: Separate from the point budget because twelve points each comfortably
+    #: inside their own ceiling can still add to an intake nobody would run.
+    intake_subject_budget_s: float = 120.0
+    #: Further attempts a point gets after an over-run. 1 means two attempts in
+    #: total. Offered because the commonest cause of one slow point is a source
+    #: briefly unavailable, and refusing an idea for that refuses the source's
+    #: weather rather than the idea. Every attempt is counted and recorded.
+    budget_retry_max: int = 1
+
     # -- the archive boundary that pre_archive is defined against ----------
     #: ISO date on which the archive opens. **Required when any corpus declares
     #: ``pre_archive``**, because without it that mode names no boundary and is
@@ -275,6 +299,23 @@ class Registration:
                         "is a label. Fixing the archive span is a §13 "
                         "pre-calibration decision and needs no purchase"
                     )
+        for name in ("intake_point_budget_s", "intake_subject_budget_s"):
+            value = getattr(self, name)
+            if value is None or value <= 0:
+                out.append(
+                    f"{name} must exceed zero (§13 row 27): a ceiling of zero "
+                    "abandons every subject before any check runs, which is a "
+                    "refusal of the whole surface wearing a budget's clothes"
+                )
+        if self.intake_subject_budget_s and self.intake_point_budget_s:
+            if self.intake_subject_budget_s < self.intake_point_budget_s:
+                out.append(
+                    "intake_subject_budget_s is below intake_point_budget_s "
+                    "(§13 row 27): a subject may not be given less time than "
+                    "one of its own points"
+                )
+        if self.budget_retry_max is None or self.budget_retry_max < 0:
+            out.append("budget_retry_max must be zero or more (§13 row 27)")
         if self.delta_min_floor is not None and self.control_arm_delta is not None:
             if self.control_arm_delta < self.delta_min_floor:
                 out.append(

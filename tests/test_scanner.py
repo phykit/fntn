@@ -13,6 +13,7 @@ Two obligations, and the second is the one that matters:
 from __future__ import annotations
 
 import dataclasses
+import itertools
 import json
 import os
 import subprocess
@@ -47,6 +48,14 @@ from fntn.scanner.ingest import (
     ObservationContext,
     intake_runner,
     observation_runner,
+)
+from fntn.scanner.budget import (
+    BudgetDecision,
+    BudgetReplayError,
+    MeasuringBudget,
+    ReplayedBudget,
+    decisions_from_rows,
+    decisions_to_rows,
 )
 from fntn.scanner.ledger import Ledger
 from fntn.scanner.records import (
@@ -128,8 +137,8 @@ def intake_ctx(proposal, **overrides) -> IntakeContext:
     return IntakeContext(**base)
 
 
-def run_intake(ctx, subject_id="s1", mode=Mode.FAIL_FAST):
-    return intake_runner().run(subject_id, ctx, mode=mode)
+def run_intake(ctx, subject_id="s1", mode=Mode.FAIL_FAST, budget=None):
+    return intake_runner(budget=budget).run(subject_id, ctx, mode=mode)
 
 
 # ---------------------------------------------------------------------------
@@ -652,7 +661,13 @@ def test_ordering_is_pre_registered_and_complete():
     # Two empty sets are equal. The panel's size is stated so this cannot pass
     # by both sides being empty, and so a point added or removed is legible.
     assert len(ordered) == 12
-    assert ordered == defined
+    # Every intake code is either a position or declared non-positional, and
+    # nothing is both. `intake_budget_exhausted` is the one non-positional
+    # code: a ceiling on time is an interruption, not a thirteenth check, and
+    # giving it a position would put it in §13 row 23's distribution.
+    assert codes.INTAKE_NON_POSITIONAL == {"intake_budget_exhausted"}
+    assert not (ordered & codes.INTAKE_NON_POSITIONAL)
+    assert ordered | codes.INTAKE_NON_POSITIONAL == defined
     with pytest.raises(ValueError):
         from fntn.scanner.ingest import Runner, build_intake_checks
 
@@ -1256,6 +1271,20 @@ def test_every_defined_code_is_emitted(tmp_path):
     f2.record(QueryKind.CONDITIONAL_RETURN, "insider_dealing|pop", "CAR", "operator", at=NOW - timedelta(days=1))
     p2 = clean_proposal(measured_on_intention="pop")
     ledger.write_refusals(run_intake(intake_ctx(p2, fence=f2), mode=Mode.FULL_PANEL).refusals)
+
+    # -- intake, abandoned to the registered ceiling -----------------------
+    # A clock that steps past the point budget on every call, so the first
+    # check over-runs, its one retry over-runs, and the subject is abandoned.
+    ledger.write_refusals(
+        run_intake(
+            intake_ctx(clean_proposal()),
+            mode=Mode.FULL_PANEL,
+            budget=MeasuringBudget(
+                point_budget_s=20.0, subject_budget_s=120.0, retry_max=1,
+                clock=itertools.count(0.0, 30.0).__next__,
+            ),
+        ).refusals
+    )
 
     # -- screen ------------------------------------------------------------
     ledger.write_refusals(screen_pointer(make_record(event_class="lunar_phase")).refusals)
@@ -2772,3 +2801,195 @@ def test_a_report_never_overwrites_another(tmp_path):
 def test_a_corpus_with_no_manifest_is_not_reported_as_clean(tmp_path):
     got = report_mod.corpus_digest([str(tmp_path)])
     assert "no manifest" in got[0][1]
+
+
+# ---------------------------------------------------------------------------
+# The intake budget (§13 row 27).
+#
+# The decision is taken once, at capture. Everything below exists to hold that
+# line: a clock in the replay path makes rule 1 false, because the same inputs
+# would then produce a different refusal set on a different machine.
+# ---------------------------------------------------------------------------
+
+
+def _exploding_clock():
+    def clock():
+        raise AssertionError(
+            "a replay called a clock. The decision was taken at capture and "
+            "the ledger holds it; re-racing it makes the run's refusal set "
+            "depend on the machine it was replayed on."
+        )
+    return clock
+
+
+def _capture(clock_step: float, subject_budget: float = 120.0):
+    budget = MeasuringBudget(
+        point_budget_s=20.0,
+        subject_budget_s=subject_budget,
+        retry_max=1,
+        clock=itertools.count(0.0, clock_step).__next__,
+    )
+    outcome = intake_runner(budget=budget).run(
+        "s1", intake_ctx(clean_proposal()), mode=Mode.FULL_PANEL
+    )
+    return outcome, budget
+
+
+def test_a_slow_point_abandons_the_subject_after_its_retry():
+    outcome, budget = _capture(30.0)
+    assert outcome.budget_exhausted
+    assert not outcome.passed
+    assert [r.code for r in outcome.refusals] == ["intake_budget_exhausted"]
+    # Two attempts: the over-run, then the one retry the registration allows.
+    exhausted = [d for d in budget.decisions if d.exhausted]
+    assert exhausted[0].attempts == 2
+    assert exhausted[0].budget_s == 20.0
+
+
+def test_a_budget_abandonment_is_not_an_abort_position():
+    """§13 row 23 counts where a subject FAILED, and this did not fail a check.
+
+    Recording it as a position would put a clock's verdict in a check's column,
+    and row 23's distribution is a calibration.
+    """
+
+    outcome, _ = _capture(30.0)
+    assert outcome.budget_exhausted
+    assert outcome.failed_at_position is None
+
+
+def test_a_fast_run_is_not_charged_and_nothing_is_abandoned():
+    outcome, budget = _capture(0.5)
+    assert not outcome.budget_exhausted
+    assert all(not d.exhausted for d in budget.decisions)
+    assert all(d.attempts == 1 for d in budget.decisions if d.point != "__subject__")
+
+
+def test_the_subject_budget_bites_where_every_point_is_inside_its_own():
+    """Twelve comfortable points still add to an intake nobody would run."""
+
+    outcome, budget = _capture(15.0, subject_budget=40.0)
+    assert outcome.budget_exhausted
+    charged = [d for d in budget.decisions if d.exhausted]
+    assert charged and charged[-1].point == "__subject__"
+    assert charged[-1].budget_s == 40.0
+
+
+def test_a_replay_under_a_different_wall_clock_reproduces_the_decision(tmp_path):
+    """THE test for this feature. Byte-for-byte, including the timestamp.
+
+    Capture races a clock once. Replay is given the recorded decisions and a
+    clock that raises if it is touched, and must produce an identical refusal:
+    same code, same fields, same rendered summary, same `attempted_at`. If any
+    of those moved, the run would not be replayable from the parameter hash and
+    rule 1 would be false.
+    """
+
+    outcome, budget = _capture(30.0)
+    assert outcome.budget_exhausted
+
+    # Through the ledger, as production would: the records are written and read
+    # back rather than passed in memory.
+    ledger = Ledger(parameter_hash="budget-replay")
+    ledger.write_budget_decisions(budget.decisions)
+    rows = ledger.budget_decisions("s1")
+    assert rows, "the ledger recorded no budget decision to replay"
+
+    replay = ReplayedBudget(decisions_from_rows(rows))
+    replay.clock = _exploding_clock()          # touched, and the test fails
+    replayed = intake_runner(budget=replay).run(
+        "s1", intake_ctx(clean_proposal()), mode=Mode.FULL_PANEL
+    )
+
+    def serialise(o):
+        return json.dumps(
+            [
+                {
+                    "code": r.code,
+                    "subject_id": r.subject_id,
+                    "surface": r.surface,
+                    "fields": r.fields,
+                    "summary": r.summary,
+                }
+                for r in o.refusals
+            ],
+            sort_keys=True,
+        )
+
+    assert serialise(replayed) == serialise(outcome)
+    assert replayed.budget_exhausted == outcome.budget_exhausted
+    assert replayed.failed_at_position == outcome.failed_at_position
+    ledger.close()
+
+
+def test_the_replay_budget_holds_no_clock_at_all():
+    """Not "does not call one": has none to call."""
+
+    replay = ReplayedBudget([])
+    assert not hasattr(replay, "clock")
+    assert replay.replaying is True
+    assert MeasuringBudget(1.0, 2.0).replaying is False
+
+
+def test_a_replay_missing_a_record_refuses_rather_than_re_timing():
+    replay = ReplayedBudget([])
+    with pytest.raises(BudgetReplayError, match="a replay that measures is not a replay"):
+        replay.run_point("s1", "agent_overreached_schema", lambda: None)
+
+
+def test_the_ledger_records_elapsed_the_budget_and_the_decision():
+    outcome, budget = _capture(30.0)
+    ledger = Ledger(parameter_hash="b")
+    ledger.write_budget_decisions(budget.decisions)
+    rows = ledger.budget_decisions()
+    assert rows
+    for row in rows:
+        assert set(row) == {
+            "subject_id", "point", "elapsed_s", "budget_s", "attempts",
+            "exhausted", "at",
+        }
+    assert ledger.budget_abandoned() == 1
+    assert Ledger(parameter_hash="b").budget_abandoned() == 0
+    ledger.close()
+
+
+def test_the_budget_is_registered_and_reaches_the_hash():
+    a = _complete_registration()
+    for field_name, value in (
+        ("intake_point_budget_s", 30.0),
+        ("intake_subject_budget_s", 200.0),
+        ("budget_retry_max", 2),
+    ):
+        b = _complete_registration(**{field_name: value})
+        assert a.hash() != b.hash(), field_name
+    reg = Registration.load(REPO_ROOT / REGISTRATION_FILE)
+    assert reg.intake_point_budget_s == 20.0
+    assert reg.intake_subject_budget_s == 120.0
+    assert reg.budget_retry_max == 1
+
+
+def test_a_ceiling_of_zero_is_refused_as_a_refusal_of_the_whole_surface():
+    assert any("must exceed zero (§13 row 27)" in g
+               for g in _complete_registration(intake_point_budget_s=0).missing())
+    assert any("may not be given less time" in g
+               for g in _complete_registration(intake_subject_budget_s=5.0).missing())
+    assert any("budget_retry_max" in g
+               for g in _complete_registration(budget_retry_max=-1).missing())
+
+
+def test_the_budget_code_is_non_positional_and_says_why():
+    rc = codes.ALL_CODES["intake_budget_exhausted"]
+    assert rc.refuse_to_score
+    assert rc.code not in codes.INTAKE_ORDER
+    assert rc.code in codes.INTAKE_NON_POSITIONAL
+    # The resurrection predicate names both routes back, and both are checkable.
+    assert "budget has been raised" in rc.resurrection
+    assert "later attempt" in rc.resurrection
+
+
+def test_the_budget_summary_renders_from_the_records_own_fields():
+    outcome, _ = _capture(30.0)
+    summary = outcome.refusals[0].summary
+    assert "against a registered budget of 20.000s" in summary
+    assert "on attempt 2" in summary
+    assert "a replay reads this figure and does not re-time the work" in summary
