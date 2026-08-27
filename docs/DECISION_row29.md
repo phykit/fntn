@@ -18,7 +18,7 @@ with participation.
 |---|---|---|---|
 | 1 | **§13 row 30**, the derived clip floor per market | direct: row 30 *is* `absolute ÷ ((tolerance − proportional) ÷ 10,000)` | row 1's PROVISIONAL status |
 | 2 | **§4.4's three ATR bounds** at full size, and their multiplier-floor halves | direct: the bounds were computed against a clip floor and the floor is the output of row 29 | row 1 |
-| 3 | **§4.4's reachability matrix zero cells.** `capital_exceeds_clip_floor` acquires a threshold to test against and the zero cells can be located | direct | row 1 |
+| 3 | **§4.4's reachability matrix zero cells.** `position_below_clip_floor` (renamed from `capital_exceeds_clip_floor` by P108) acquires a threshold to test against and the zero cells can be located | direct | row 1 |
 | 4 | **§5.4.4's admissibility × reachability intersection** | inherited from §4.4 entire; the table has no independent content | nothing further |
 | 5 | **§0.7(c)'s two withdrawn right-hand columns**, max ATR at h=63 and h=5 | direct, by arithmetic | row 1 |
 | 6 | **§0.10's microcap break-even table**, which is invalidated and today cannot even be recomputed, there being no clip to recompute it at | direct | row 1; the impact column it has never had |

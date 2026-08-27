@@ -37,7 +37,7 @@ and a reason to read them anyway.
 | 5 | **§13 row 28**, §9.4's stopping threshold and its block size | 1 | Zero **must-class** defects, not zero defects | At *n* = 100 the freeze is signed over a residual rate that could be 1.5 per hundred |
 | 6 | The FX exposure budget | 1 | not made here | n/a |
 | 7 | Row 21b's ratification set | 1 | An hour's work. **The cheapest item here** | none |
-| 8 | The **P96 rename**, `capital_exceeds_clip_floor` | 0 | `position_below_clip_floor`, **now** | A three-document find and replace, against a registry migration later |
+| ~~8~~ | ~~The **P96 rename**~~ | ~~0~~ | **TAKEN 27 Aug 2026, P108** | Done as prose. It would have cost a registry migration after row 29 |
 | 9 | Register **`audit_fraction`** | 0 | Take the re-stamp in the next batch | The current hash moves, and rows 21a and 21b name it |
 | 10 | The **seven other undefined referents** | 0 | Two are live; five sit behind things nothing can reach | Reading time |
 
@@ -643,7 +643,9 @@ hour into a closed row, and it is the only one whose cost is bounded and known.
 **They are last because the ordering is by release count and honest. They are
 here because two of them are live defects and the third has a closing window.**
 
-### 8a. The P96 rename, and its window closes when row 29 is set
+### 8a. The P96 rename — **TAKEN 27 August 2026 on delegated authority (P108)**
+
+***Closed.*** `position_below_clip_floor` replaces `capital_exceeds_clip_floor` in the operative rule text; the old name is retained where §4.4 is quoted, and does **not** enter `codes.py` until §4.4's matrix is implemented. **The window argument below is why it was taken before row 29 rather than after.**
 
 **`capital_exceeds_clip_floor` marks a ZERO cell**, one where the position
 **fails to reach** the floor, and **the name reads as the passing case**.
@@ -720,8 +722,7 @@ orders the pack; this orders the afternoon.
    in this pack change shape once it is answered.
 4. **Item 2b**, the contracting entity. One look at a statement, and it gates
    2a and 2c.
-5. **Item 8a**, the rename, while it is still prose. **Minutes now; a registry
-   migration and a permanently mixed ledger later.**
+5. ~~**Item 8a**, the rename~~ — **taken, P108**.
 6. **Item 3**'s four decisions and two free retrievals.
 7. **Item 2c**, the FX route, on the asymmetry argument, leaving the row's FX
    term open.

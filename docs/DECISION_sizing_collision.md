@@ -32,7 +32,7 @@ what the manuscript does.
 
 | Where | What it says | What that makes the clip |
 |---|---|---|
-| §4.4 | zero cells carry `capital_exceeds_clip_floor` | a **floor** |
+| §4.4 | zero cells carry `capital_exceeds_clip_floor` *(renamed `position_below_clip_floor`, P108)* | a **floor** |
 | §5.2 | "a floored product still below the clip → `advisory_haircut_below_clip`, counted as a kill" | a **floor** |
 | §5.9 | "Partial fills: below 60% of clip within the window → close, `liquidity_insufficient_realised`" | a **floor** |
 | §5.1 | the explore arm is "accepted at the **minimum clip**" | a **floor** |
@@ -74,7 +74,7 @@ six was wrong and is corrected here: there are seven.** §0.1 was missed.
 | # | Section | Quoted | Reads as |
 |---|---|---|---|
 | 1 | **§0.1** *(missed in the earlier count)* | *"At £100,000, h = 63 and 3% daily ATR, no stop both preserves the thesis and **clears the minimum clip**."* | **FLOOR.** *Clears* is a threshold word |
-| 2 | **§4.4** | *"zero cells carry `capital_exceeds_clip_floor`"* | **FLOOR.** The code names one. *See the naming defect below* |
+| 2 | **§4.4** | *"zero cells carry `capital_exceeds_clip_floor`"* *(the wording as it then stood; renamed `position_below_clip_floor` by P108)* | **FLOOR.** The code names one. *See the naming defect below* |
 | 3 | **§5.1** | *"accepted at the **minimum clip**"* | **FLOOR, and additionally sized AT it.** The explore arm elects the smallest permissible size |
 | 4 | **§5.2** | *"a floored product still below the clip → `advisory_haircut_below_clip`, counted as a kill"* | **FLOOR.** Unambiguous: below the clip kills |
 | 5 | **§5.9** | *"Partial fills: below 60% of clip within the window → close"* | **FLOOR, on the fill.** Consistent with either reading of the clip itself |
@@ -88,7 +88,7 @@ which is the floor by definition. **So there is no disagreement defect and no
 §12.1 row is taken for one.**
 
 **One defect WAS found, and it is a legibility defect in a reason code.**
-`capital_exceeds_clip_floor` marks a **zero** cell, that is one where the
+`capital_exceeds_clip_floor` **(renamed `position_below_clip_floor` on 27 August 2026, P108)** marks a **zero** cell, that is one where the
 position **fails to reach** the floor. **The name asserts the opposite**:
 *capital exceeds the clip floor* is the passing case. Rule 4 makes a code's
 legibility a first-class concern, so this is recorded with its own §12.1 row
@@ -276,7 +276,7 @@ floor.**
 **Cost 1: it does not restore §4.4. It empties it.** Under the floor reading
 the clip is still £50,000 and a capped position of £7,500 never clears it, so
 **every cell of the reachability matrix is zero** and every candidate carries
-`capital_exceeds_clip_floor`. **Resolution (i) is not sufficient on its own**;
+`position_below_clip_floor`. **Resolution (i) is not sufficient on its own**;
 it requires a second decision setting the clip floor at or below the cap. That
 second decision is not prepared here because it is downstream of §1.0.
 
@@ -357,7 +357,7 @@ one rule.
 
 **"Treat §0.11 as a ceiling" is a NEW RULE, and therefore apparatus under
 armed §0.6.** The clip is a **floor** in every one of the six places §1.0
-tabulates, and its two reason codes, `capital_exceeds_clip_floor` and
+tabulates, and its two reason codes, `position_below_clip_floor` and
 `advisory_haircut_below_clip`, both fire when a position is **too small**.
 **Reading it as a ceiling inverts the operator of the rule.** That is not a
 reading; it is a different rule with the same name, it changes a sizing input,

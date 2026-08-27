@@ -113,6 +113,26 @@ will return the wrong one as soon as the case changes.**
 Adding a gate is apparatus under §0.6 and takes a §0 decision; the cap needs
 none because it already exists.
 
+### A5b. P96's stated ground for not renaming a code, which was itself an assertion
+
+| | |
+|---|---|
+| **Asserted** | §4.4, in terms: the naming defect *"is left alone because renaming a reason code is a change to the registry and takes its own decision"* |
+| **True** | **the name was never in the registry.** `ALL_CODES` holds forty codes and none is `capital_exceeds_clip_floor`; the string appeared in three documents and **no Python file** |
+| **Caught by** | costing the rename for the decision pack, which required knowing what the registry actually held |
+| **Provenance** | `verified_primary` |
+
+**Why this row is here and not merely in §12.1.** The rule P96 stated was
+sound; **the fact it rested on was not checked**. The defect was therefore
+deferred for a cost that did not exist, and the deferral would have created
+that cost: once §4.4's matrix is implemented the same rename does become a
+registry migration plus a permanently mixed ledger. **A correct rule applied to
+an unverified fact produces a decision that is wrong in the direction of
+inaction**, which is the quietest way for one to be wrong.
+
+Renamed to `position_below_clip_floor` on 27 August 2026 (P108), on delegated
+authority.
+
 ### A6. The 1e cost model dropped the per-share commission
 
 | | |
