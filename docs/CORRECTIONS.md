@@ -32,13 +32,13 @@ itself: a class with THREE OR MORE instances must carry an invariant, and
 `test_every_recurring_correction_class_has_an_invariant` refuses this file if one
 does not.**
 
-**Eighteen rows fall into three classes and four singletons.** *The
+**Nineteen rows fall into three classes and eight singletons.** *The
 concentration is the finding: this project does not make many kinds of mistake.
 It makes three kinds, repeatedly.*
 
 | Class | Instances | Count | Invariant |
 |---|---|---|---|
-| **I. A conclusion acted on without checking the link it rests on** | A2, A5b, A8, B8pre, B9 | **5** | **INSTALLED, below** |
+| **I. A conclusion acted on without checking the link it rests on** | A2, A5b, A8, A9, B8pre, B9 | **6** | **INSTALLED at P122, and RE-EXAMINED at P133 after a sixth instance arrived** |
 | **II. Material that decided something was not committed at the moment it decided it** | B3, B4, B5, and the registration chain's first object | **4** | **INSTALLED at P114**: `cmd_sweep` refuses over a corpus git cannot produce again, with `corpus_not_committed` |
 | **III. A population pooled, mis-scoped or miscounted** | B6 (itself three), B7, and the §13 table's two hand counts | **6** | **INSTALLED at P105**: the abort-position distribution splits by `origin`, and every §13 count is now taken by machine over the table |
 | Singletons, which are not a class | A1, A3, A4, A5, A6, A7, B1, B2 | n/a | n/a, no invariant is owed: a row belonging to no class asserts no recurrence |
@@ -200,6 +200,28 @@ inaction**, which is the quietest way for one to be wrong.
 
 Renamed to `position_below_clip_floor` on 27 August 2026 (P108), on delegated
 authority.
+
+### A9. "Retiring insider dealing takes `SEC_CONTACT` off the critical path"
+
+| | |
+|---|---|
+| **Asserted** | that retiring the insider-dealing family removes the dependency on `SEC_CONTACT` |
+| **True** | **it does not touch it.** What retiring the family removes is a **discovery corpus**, and the discovery corpus is **thirteen documents from `law.cornell.edu`**, fetched with no SEC contact at all. What needs `SEC_CONTACT` is **step 4's ITEM-PIPELINE trace**, which needs live filings **whatever the family**, and **13D, 8-K and issuer repurchase disclosures are all EDGAR** |
+| **Caught by** | the operator, in the instruction that recorded it |
+| **Provenance** | `verified_primary` |
+
+***The error was conflating the DISCOVERY corpus with the TRACE corpus.*** They
+are different objects with different fences, and `corpora/_trace_filings` is
+fenced out of every registration route **precisely so the two cannot be
+confused**. **The conflation this error makes is the one that fence exists
+against**, which is a sharper way of saying the fence is doing work the prose
+around it is not.
+
+***It is the SIXTH instance of Class I***, after A2, A5b, A8, B8pre and B9.
+**So the invariant installed at P122 was installed against a class that was
+still generating instances**, and §9b of this batch asks whether it would have
+caught this one. *An invariant that does not catch the next instance of its own
+class is not yet an invariant.*
 
 ### A8. "Row 29's closing will move binding-path step 3"
 
