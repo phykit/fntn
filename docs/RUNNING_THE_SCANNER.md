@@ -29,6 +29,77 @@ the two would share a price path. Declaring an in-universe corpus as
 `cross_market` costs nothing, looks like a configuration detail, and voids the
 guarantee silently, so the CLI refuses it.
 
+## The key, and why it is not in the environment
+
+**Auth is split.** Claude Code runs on the claude.ai Max subscription. **Only
+the scanner's model calls bill the API key.** The key sits at `~/.fntn_key`,
+`chmod 600`, **outside the work tree**.
+
+Every scanner invocation that makes model calls takes it at exec time:
+
+```bash
+ANTHROPIC_API_KEY="$(cat ~/.fntn_key)" python -m fntn.scanner <cmd>
+```
+
+***The reason, stated as a cost rather than a convenience.*** **Putting the key
+in the environment makes the harness spend the budget meant for the
+measurement.** An exported key is picked up by every process in the session,
+including the agent doing the engineering, so the balance intended to pay for a
+sweep is drawn down by the work of preparing one — and the draw is invisible,
+because nothing in the sweep's own accounting sees it. *The split is what makes
+the figure in `docs/CANDIDATE_MECHANISMS.md` a measurement of the sweep and not
+of the session.*
+
+**Three rules that follow, and none of them is stylistic:**
+
+- **Never export it.** `ANTHROPIC_API_KEY` must be absent from the session
+  environment; the inline form above sets it for one process and no other.
+- **Never echo it**, into a terminal, a log or a commit message.
+- **Never write it into any file in the repository.** The key is outside the
+  tree so that no `git add -A` can reach it.
+
+**What the code does about it, so this is not only a convention.** The client
+refuses at construction on an absent key, and separately on a key the API
+declines: **a variable that is SET is not thereby USABLE**, and the two are
+distinguished because a ten-character stub satisfied a presence check for a
+whole day and three sittings. The preflight is a `models.list` call, which
+costs no tokens and settles the key and the pinned model together.
+
+**What it does not check, and this is where the money goes.** *The models
+endpoint does not consult the balance.* A 200 from it establishes that the key
+authenticates and establishes **nothing whatever about credit**; a shortfall
+surfaces as a 400 on the first message call. The preflight reports credit as
+`not established` for exactly that reason.
+
+## The pin, and the cost guard
+
+**The model is a registered field, `agent_model` (§13 row 39), and there is no
+`--model` flag.** An override would let a sweep run under a model the parameter
+hash does not name, which is the ledger recording the wrong clerk. Re-pinning
+is a re-stamp: a new hash, a row in `docs/REGISTRATION_HISTORY.md`, and the
+four register rows that name a hash re-read.
+
+`sweep` takes `--cost-ceiling-usd`, default **4.00**. After the **first** corpus
+and before any other, it prints the measured input and output tokens, the cost
+at list price, and the projection for all families; **if the projection exceeds
+the ceiling it stops.**
+
+***A stop, and deliberately not a truncation.*** The abort is raised inside the
+gather loop, **before the control arm is drawn and before a record reaches the
+ledger**, so what remains is a measurement of what a sweep costs and no partial
+sweep at all. *A book over one family of three, presented as a book, would put
+a partial population under §7.1's headline with nothing saying so.*
+
+**Two things the guard does not do.** It does not re-project after every
+family, because that pays to re-learn what it already measured. And it does not
+treat an unknown price as a small one: a model absent from the rate table makes
+the cost **NOT SCORED** and stops the sweep, which is rule 3 applied to the one
+quantity the operator is actually spending. **The rates themselves are list
+prices read from a reference table stamped `cached: 2026-06-24`, so they are
+`named, unread` against a live pricing page** and every figure derived from them
+carries that tag. Adequate for *is this about to cost more than the balance*;
+not adequate for anything a decision is taken on.
+
 ## Install, once
 
 ```bash
@@ -47,7 +118,8 @@ python -m fntn.scanner template  # a form prefilled for all five markets
 python -m fntn.scanner init      # or an empty one
 python -m fntn.scanner check     # report exactly what is still missing
 python -m fntn.scanner trace     # test the machinery; evidentially inert
-python -m fntn.scanner sweep     # runs only if the form is complete
+ANTHROPIC_API_KEY="$(cat ~/.fntn_key)" \
+  python -m fntn.scanner sweep   # runs only if the form is complete
 ```
 
 `trace` and `sweep` are different acts and are kept apart deliberately. A sweep
