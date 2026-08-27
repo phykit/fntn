@@ -169,6 +169,17 @@ the repository and it is checked before work proceeds on it. *Added 27 August
 retiring a family would take `SEC_CONTACT` off the critical path shaped a phase
 before anyone ran the two greps that refuted it.*
 
+**And it enumerates the DEPENDENCY CONTRACTS the batch will write code
+against**, naming for each the reference that was read rather than recalled.
+*Added 27 August 2026 after `AnthropicClient` passed `temperature=0` to an API
+that had removed the parameter, so the sweep raised `TypeError` before it ever
+reached authentication and could not have run with a working key either. The
+class is `docs/CORRECTIONS.md` B12, **a dependency's contract assumed rather
+than read**, whose other instance is B8pre's fitted fee schedule. It is NOT a
+new class, Class I part 1 already saying a decision is taken on an artefact,
+but **part 1 governs decisions and this was a line of code**, which is the same
+gap part 4 closed for claims, one layer further out.*
+
 Every session ENDS by pushing. An unpushed commit in a Codespace is not a
 record.
 
