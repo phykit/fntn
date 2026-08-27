@@ -396,6 +396,74 @@ def cmd_trace_filings(args) -> int:
     return 0
 
 
+class CostCeilingExceeded(RuntimeError):
+    """The projected cost of the whole sweep exceeded the stated ceiling.
+
+    Raised from inside the gather loop so that nothing is registered, nothing
+    is drawn and nothing reaches the ledger. **A stop, never a truncation:** a
+    sweep over one family of three, reported as a sweep, would put a partial
+    population under §7.1's headline with nothing on the record saying so.
+    """
+
+
+def _cost_guard(client, ceiling_usd: float):
+    """Measure what the first corpus cost and project the whole sweep.
+
+    **Why a projection from one family and not a token count up front.** The
+    input side could be counted before calling, but the output side cannot: how
+    many proposals the clerk emits is the thing being measured. One family is
+    the cheapest real observation of both halves.
+
+    **What the projection assumes, stated because it is an assumption.** That
+    the remaining families cost about what the first one did. They differ in
+    document count and length, so this is an order-of-magnitude guard and is
+    reported as one. It is deliberately the crude version: a guard that needed
+    calibrating would need a sweep to calibrate it.
+
+    **The control arm adds nothing to the projection, and that is measured
+    rather than assumed:** `draw_control_mechanisms` takes the grid, a count
+    and the registered seed, and takes no client. It makes no model call, so
+    its marginal cost is zero.
+    """
+
+    if ceiling_usd <= 0:
+        return None
+
+    def guard(index: int, total: int) -> None:
+        if index != 0 or total <= 1:
+            return
+        spend = client.spend()
+        print()
+        print("COST GUARD, after the first family and before the rest.")
+        print(spend.render("measured"))
+        if spend.usd is None:
+            raise CostCeilingExceeded(
+                f"the cost of the first family cannot be scored: {spend.model!r} "
+                "is not in the price table. Refusing to project from a number "
+                "that does not exist, and refusing to treat an unknown rate as "
+                "a small one."
+            )
+        projected = spend.usd * total
+        print(f"  families                 : {total}")
+        print(f"  PROJECTED for all {total}      : USD {projected:.4f}")
+        print( "  control arm              : USD 0.0000, and this is measured,")
+        print( "                             not assumed: the draw takes the grid")
+        print( "                             and the registered seed and makes no")
+        print( "                             model call.")
+        print(f"  ceiling                  : USD {ceiling_usd:.2f}")
+        if projected > ceiling_usd:
+            raise CostCeilingExceeded(
+                f"PROJECTED USD {projected:.4f} for {total} families exceeds the "
+                f"ceiling of USD {ceiling_usd:.2f}, projected from USD "
+                f"{spend.usd:.4f} measured on the first. Nothing further was "
+                "called."
+            )
+        print("  within the ceiling; continuing.")
+        print()
+
+    return guard
+
+
 def cmd_sweep(args) -> int:
     try:
         reg = Registration.load(args.registration)
@@ -464,11 +532,19 @@ def cmd_sweep(args) -> int:
         print("no readable corpus. Nothing swept.")
         return 3
 
+    if not args.transcript and not reg.agent_model:
+        print(
+            "agent_model is not registered (§13 row 39). Refusing rather than "
+            "defaulting: a sweep whose clerk is unrecorded cannot be compared "
+            "with the next one. Nothing swept."
+        )
+        return 7
+
     try:
         client = (
             TranscriptClient(args.transcript)
             if args.transcript
-            else AnthropicClient(model=args.model)
+            else AnthropicClient(model=reg.agent_model)
         )
     except ClientRefusal as exc:
         print(exc)
@@ -520,7 +596,24 @@ def cmd_sweep(args) -> int:
         )
     print(master.render(floor=reg.master_coverage_floor))
     print()
-    result = scan(client, corpora, grid, config, ledger)
+
+    # A transcript replay costs nothing and has no usage to read, so the guard
+    # is not installed rather than being installed and told to report zero.
+    guard = None if args.transcript else _cost_guard(client, args.cost_ceiling_usd)
+    try:
+        result = scan(client, corpora, grid, config, ledger, after_corpus=guard)
+    except CostCeilingExceeded as exc:
+        print()
+        print(exc)
+        print()
+        print("STOPPED, and not truncated. The corpora already swept produced")
+        print("proposals that were NOT registered: the abort happens inside the")
+        print("gather loop, before the control arm is drawn and before a single")
+        print("record reaches the ledger, so what exists is a measurement of")
+        print("what a sweep costs and no partial sweep at all. A partial book")
+        print("presented as a book is the defect this refuses.")
+        ledger.close()
+        return 8
     print(result.render(ledger))
     print()
     print(f"ledger: {args.ledger}")
@@ -607,7 +700,17 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     p_sweep = sub.add_parser("sweep", help="run a sweep, if registration is complete")
     p_sweep.add_argument("--transcript", help="replay a saved payload instead of calling the model")
-    p_sweep.add_argument("--model", default="claude-opus-4-6")
+    # There is deliberately no --model. The pin is a registered field (§13 row
+    # 39) and a CLI override would let a sweep run under a model the parameter
+    # hash does not name, which is the ledger recording the wrong clerk.
+    p_sweep.add_argument(
+        "--cost-ceiling-usd", type=float, default=4.0,
+        help=(
+            "stop after the first corpus if the projected cost of the whole "
+            "sweep exceeds this. Default 4.0 against a 5.00 balance. Set to 0 "
+            "to disable the guard, which is a decision and not a default"
+        ),
+    )
     p_sweep.add_argument("--ledger", default="fntn_discovery.db")
     p_sweep.add_argument("--segment-sessions", type=int, default=0,
                          help="design-segment sessions. 0 until the archive exists")

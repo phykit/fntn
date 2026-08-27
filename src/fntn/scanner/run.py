@@ -188,6 +188,7 @@ def scan(
     fence: Optional[QueryFence] = None,
     source_resolver: Optional[Callable[[str], bool]] = None,
     now: Optional[datetime] = None,
+    after_corpus: Optional[Callable[[int, int], None]] = None,
 ) -> ScanResult:
     now = now or datetime.now(timezone.utc)
     fence = fence or QueryFence()
@@ -215,10 +216,19 @@ def scan(
 
     # -- gather proposals: agent arm, then the control arm ------------------
     proposals: List[Tuple[Proposal, Dict[str, object]]] = []
-    for corpus in corpora:
+    for index, corpus in enumerate(corpora):
         sweep_result = sweep(client, corpus, fence, cache, now=now)
         for p in sweep_result.proposals:
             proposals.append((p, {}))
+        # The cost guard hooks HERE and not around three separate scans.
+        # `control_count` is `round(len(all proposals) * ratio)` drawn once from
+        # the registered seed; three scans would draw three arms from the same
+        # seed over three smaller populations, which is not the construction
+        # §13 row 20 registers. A guard that changed the control arm to measure
+        # the cost of the treatment arm would be paid for in the only
+        # instrument this layer has.
+        if after_corpus is not None:
+            after_corpus(index, len(corpora))
 
     # A sweep with no control arm is a sweep whose selection effect cannot be
     # measured, which makes the discovery layer unfalsifiable.  A configured

@@ -98,7 +98,8 @@ blocks the freeze signature exactly as `recollection` does.
 | 10 | `09e1e23c447edf92` | 2026-08-27T09:06:19.906138 | `bb49304` | `git show bb49304:discovery_registration.json` | `verified_primary` | `discoverable_classes` |
 | 11 | `81e9b57128f9285a` | 2026-08-27T09:06:19.906138 | `bd1a345` | `git show bd1a345:discovery_registration.json` | `verified_primary` | `corpora` |
 | 12 | `2616ba37fb307c0e` | 2026-08-27T09:06:19.906138 | `df5f721` | `git show df5f721:discovery_registration.json` | `verified_primary` | `max_tolerable_fixed_cost_bps` |
-| 13 | `827cf0d8c84791e8` | 2026-08-27T09:06:19.906138 | **current** | `discovery_registration.json` | `verified_primary` | `delta_min_floor` |
+| 13 | `827cf0d8c84791e8` | 2026-08-27T09:06:19.906138 | `270066e` | `git show 270066e:discovery_registration.json` | `verified_primary` | `delta_min_floor` |
+| 14 | `bbfc50c781de67b5` | 2026-08-27T09:06:19.906138 | **current** | `discovery_registration.json` | `verified_primary` | `agent_model` |
 
 Each cell in the object column is the command or path that yields the bytes,
 and every one of them names `discovery_registration.json`, because that is what
@@ -202,3 +203,41 @@ re-stamp caused by `archive_opens`, `rulebook_stopwords` or `lexicon` is a new
 hash on an unmoved commitment. A re-stamp caused by δ would be a new
 commitment, and the distinction is the reason the causing field is a column
 here rather than a note.
+
+## Row 14 registers a value that was never registered, which is why it is here
+
+*Row 14's causing field is `agent_model`, **§13 row 39**, set to
+`claude-sonnet-5` on 27 August 2026.*
+
+**The field did not exist until this stamp, and row 39 said it did.** Row 39
+was written on 27 August 2026 asserting that *the pinned identifier is a
+registered field and re-pinning re-stamps*. It was not one. The pin lived as a
+default string in `src/fntn/scanner/clients.py` and a second copy as an
+argparse default in `src/fntn/scanner/cli.py`, and **a change to either would
+have moved what every future sweep produced whilst moving no hash and leaving
+no row here.** The correction is `docs/CORRECTIONS.md` B15.
+
+***So this row records two different things at once and the difference
+matters.*** The **schema** moved: the field is new, the fingerprint moved from
+`schema:cb1dffbfadbe3d58` to `schema:a392b1fd72119c24`, and every registration
+written before it now reports `unverifiable_schema_change` rather than
+`verified`, which is the third state doing its job. The **value** did not move
+in the sense of a commitment being revised: it was `claude-opus-4-6` in the
+code and is `claude-sonnet-5` in the registration, and *nothing was ever swept
+under the old one*, so no result is made non-comparable by the change.
+
+**What the operator is buying with this row, stated as a cost.** Every future
+re-pin is now a re-stamp: a new hash, a row here, and rows 19, 20, 21a and 21b
+re-read to confirm the commitment behind each has not moved. *That is the
+expense, and it is the point:* a pin that can move cheaply moves, and two
+sweeps under two pins are not comparable however similar the models are.
+
+**Rows 19, 20, 21a and 21b do not move under this stamp.** δ, *n*ₘᵢₙ, the ratio
+and the seed are byte-identical to their 26 August values in every row of the
+chain above, and the causing field of this stamp reaches none of them: which
+model reads a corpus cannot change how far apart the arms must be before the
+difference counts, and it cannot redraw a seed. The 21a reading of 0 of 36 and
+21b's five closed routes were taken under `701adbd9d48015ed` against
+`docs/labelled_proposals.json` with clerk labels already written, and this
+stamp changes no rule the fence applies, so **neither reading is restated under
+`bbfc50c781de67b5`** and neither is carried forward.

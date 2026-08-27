@@ -67,13 +67,33 @@ class AnthropicClient:
     a convenience the docstring oversold as determinism.*
     """
 
-    model: str = "claude-opus-4-6"
+    #: **No default, deliberately.** The pin is a registered field (§13 row 39)
+    #: and a default here is a second copy of it that no hash covers: a sweep
+    #: could run under a model the registration does not name and the ledger
+    #: would record the wrong clerk. `cli.py` reads it from the registration
+    #: and from nowhere else.
+    model: str
     max_tokens: int = 8000
     api_key: Optional[str] = None
     _client: Any = None
     #: What the preflight established, so a caller can print it rather than
     #: re-derive it. See `__post_init__`.
     _preflight: Any = None
+    #: Cumulative usage over every call this client has made. Counted because
+    #: the budget is small and was unmeasured, and because a cost figure
+    #: recovered afterwards from a dashboard is a different number from the one
+    #: the run itself observed. Read from ``response.usage`` and from nothing
+    #: else; a field the API does not return is counted as absent and not as
+    #: zero (see ``spend``).
+    calls: int = 0
+    input_tokens: int = 0
+    output_tokens: int = 0
+    cache_read_input_tokens: int = 0
+    cache_creation_input_tokens: int = 0
+    #: Set when a usage block arrived without one of the two billed counters.
+    #: A missing counter makes the cost a LOWER BOUND rather than a figure, and
+    #: the distinction is carried rather than smoothed away.
+    usage_incomplete: bool = False
 
     def __post_init__(self) -> None:
         try:
@@ -184,6 +204,7 @@ class AnthropicClient:
             tool_choice={"type": "tool", "name": "emit_proposals"},
             messages=[{"role": "user", "content": user}],
         )
+        self._account(getattr(response, "usage", None))
         for block in response.content:
             if getattr(block, "type", None) == "tool_use":
                 return dict(block.input)
@@ -192,6 +213,146 @@ class AnthropicClient:
             "prose into a record: the clerk's output is an input to arithmetic "
             "and an unparsed guess is not one."
         )
+
+
+    def _account(self, usage: Any) -> None:
+        """Accumulate one response's usage. Absent is absent, never zero.
+
+        **Why the distinction is kept.** A cost computed over a counter the API
+        did not return is not a smaller cost; it is a cost that was not
+        measured. Reporting it as a number would be the refuse-to-score rule
+        broken in the one place the project is spending real money, so a
+        missing counter sets ``usage_incomplete`` and every figure derived from
+        it is labelled a lower bound.
+        """
+
+        self.calls += 1
+        if usage is None:
+            self.usage_incomplete = True
+            return
+        for field_name in ("input_tokens", "output_tokens",
+                           "cache_read_input_tokens",
+                           "cache_creation_input_tokens"):
+            value = getattr(usage, field_name, None)
+            if value is None:
+                # The two cache counters are absent on an uncached request and
+                # that is not a gap. The two billed counters are.
+                if field_name in ("input_tokens", "output_tokens"):
+                    self.usage_incomplete = True
+                continue
+            setattr(self, field_name, getattr(self, field_name) + int(value))
+
+    def spend(self) -> "Spend":
+        """What this client has cost so far, at the rates in `PRICING`."""
+
+        return Spend.of(
+            model=self.model,
+            calls=self.calls,
+            input_tokens=self.input_tokens,
+            output_tokens=self.output_tokens,
+            cache_read_input_tokens=self.cache_read_input_tokens,
+            cache_creation_input_tokens=self.cache_creation_input_tokens,
+            complete=not self.usage_incomplete,
+        )
+
+
+#: Published list prices, USD per million tokens, as (input, output).
+#:
+#: ***PROVENANCE, stated because a cost figure without one is a guess wearing a
+#: decimal point.*** These are read from the bundled `claude-api` reference
+#: table, which carries its own stamp `cached: 2026-06-24`. That makes them
+#: **`named, unread`** against a live pricing page under §0.5, and every figure
+#: this module derives inherits that tag. They are adequate for a spend guard,
+#: whose question is *is this about to cost more than the balance*, and they
+#: are NOT adequate for anything a decision is taken on.
+#:
+#: **Cache rates are the published multipliers on the input rate**: a cache
+#: write bills at 1.25x input and a cache read at 0.1x. The sweep sets no
+#: `cache_control`, so both counters are expected to be zero and are carried
+#: anyway rather than assumed away.
+PRICING: Dict[str, tuple] = {
+    "claude-opus-5": (5.00, 25.00),
+    "claude-opus-4-8": (5.00, 25.00),
+    "claude-opus-4-7": (5.00, 25.00),
+    "claude-opus-4-6": (5.00, 25.00),
+    "claude-sonnet-5": (2.00, 10.00),
+    "claude-sonnet-4-6": (3.00, 15.00),
+    "claude-fable-5": (10.00, 50.00),
+    "claude-haiku-4-5": (1.00, 5.00),
+    "claude-haiku-4-5-20251001": (1.00, 5.00),
+    "claude-opus-4-5-20251101": (5.00, 25.00),
+    "claude-sonnet-4-5-20250929": (3.00, 15.00),
+}
+
+CACHE_WRITE_MULTIPLIER = 1.25
+CACHE_READ_MULTIPLIER = 0.10
+
+
+@dataclass
+class Spend:
+    """One client's measured token usage and what it costs at list price.
+
+    ``usd`` is ``None`` when the model is not in `PRICING`. **It is not zero
+    and it is not a guess**: a model whose rate is unknown produces a refusal
+    to score, which is rule 3 applied to the one quantity the operator is
+    actually spending.
+    """
+
+    model: str
+    calls: int
+    input_tokens: int
+    output_tokens: int
+    cache_read_input_tokens: int
+    cache_creation_input_tokens: int
+    complete: bool
+    usd: Optional[float]
+    rate: Optional[tuple]
+
+    @classmethod
+    def of(cls, model: str, calls: int, input_tokens: int, output_tokens: int,
+           cache_read_input_tokens: int, cache_creation_input_tokens: int,
+           complete: bool) -> "Spend":
+        rate = PRICING.get(model)
+        usd = None
+        if rate is not None:
+            rin, rout = rate
+            usd = (
+                input_tokens * rin
+                + cache_creation_input_tokens * rin * CACHE_WRITE_MULTIPLIER
+                + cache_read_input_tokens * rin * CACHE_READ_MULTIPLIER
+                + output_tokens * rout
+            ) / 1_000_000
+        return cls(model=model, calls=calls, input_tokens=input_tokens,
+                   output_tokens=output_tokens,
+                   cache_read_input_tokens=cache_read_input_tokens,
+                   cache_creation_input_tokens=cache_creation_input_tokens,
+                   complete=complete, usd=usd, rate=rate)
+
+    def render(self, label: str = "spend") -> str:
+        lines = [
+            f"{label}: {self.calls} model call(s) at {self.model}",
+            f"  input tokens          : {self.input_tokens}",
+            f"  output tokens         : {self.output_tokens}",
+        ]
+        if self.cache_creation_input_tokens or self.cache_read_input_tokens:
+            lines.append(
+                f"  cache write / read    : {self.cache_creation_input_tokens}"
+                f" / {self.cache_read_input_tokens}"
+            )
+        if self.usd is None:
+            lines.append(
+                f"  cost                  : NOT SCORED. {self.model!r} is not "
+                "in the price table, and a rate that is not known is not zero."
+            )
+        else:
+            bound = "" if self.complete else "  (LOWER BOUND: a usage counter was absent)"
+            lines.append(f"  cost at list price    : USD {self.usd:.4f}{bound}")
+            lines.append(
+                f"  rate                  : USD {self.rate[0]:.2f} in / "
+                f"{self.rate[1]:.2f} out per 1M, list, provenance "
+                "`named, unread` (cached table, 2026-06-24)"
+            )
+        return "\n".join(lines)
 
 
 @dataclass

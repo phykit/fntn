@@ -1580,6 +1580,7 @@ def _complete_registration(**over) -> Registration:
         discoverable_classes=[DiscoverableClass("insider_dealing")],
         security_master_files=["master.csv"],
         theta=0.25, delta_min_floor=25.0,
+        agent_model="claude-test-0",
         registered_at="2026-08-26T00:00:00+00:00", registered_by="operator",
     )
     base.update(over)
@@ -4087,7 +4088,7 @@ def test_a_SET_ANTHROPIC_API_KEY_can_still_be_unusable(monkeypatch):
                                               response=response, body=None)),
     )
     with pytest.raises(ClientRefusal, match="SET IS NOT USABLE"):
-        AnthropicClient()
+        AnthropicClient(model="claude-anything")
 
     # A model the key cannot reach is refused too, and NOT substituted: which
     # model read the corpus is part of what a proposal is replayable against.
@@ -4099,7 +4100,7 @@ def test_a_SET_ANTHROPIC_API_KEY_can_still_be_unusable(monkeypatch):
                                         body=None)),
     )
     with pytest.raises(ClientRefusal, match="not available to this key"):
-        AnthropicClient()
+        AnthropicClient(model="claude-anything")
 
     # A network failure is reported as one and never as an empty sweep.
     monkeypatch.setattr(
@@ -4108,12 +4109,12 @@ def test_a_SET_ANTHROPIC_API_KEY_can_still_be_unusable(monkeypatch):
         _raiser(anthropic.APIConnectionError(request=request)),
     )
     with pytest.raises(ClientRefusal, match="reported as a network failure"):
-        AnthropicClient()
+        AnthropicClient(model="claude-anything")
 
     # An absent key still refuses before any of that is reached.
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
     with pytest.raises(ClientRefusal, match="no API key"):
-        AnthropicClient()
+        AnthropicClient(model="claude-anything")
 
 
 def test_the_preflight_refuses_a_pinned_model_the_key_cannot_see(monkeypatch):
@@ -4553,3 +4554,108 @@ def test_the_election_moves_the_us_hard_floor_by_about_thirty_percent():
         ratio = hard_floor_bps(US_TIERED, p) / hard_floor_bps(US_FIXED, p)
         assert ratio == pytest.approx(74 / 104, rel=1e-9)
         assert 0.70 < ratio < 0.72
+
+
+def test_the_model_pin_is_a_registered_field_and_has_no_default_anywhere():
+    """B15. §13 row 39 said this was already true. It was not.
+
+    The pin lived as a default string in `clients.py` and a second copy as an
+    argparse default in `cli.py`, so the model every future sweep ran under
+    could be changed without moving a hash or leaving a row in
+    `docs/REGISTRATION_HISTORY.md`. That is the defect row 39's open half is
+    about, reached through the front door rather than through an alias.
+
+    Three things are held here and each failed before the repair: the field
+    exists and is hashed, an absent pin is a named gap rather than a default,
+    and neither module carries a fallback the registration does not cover.
+    """
+
+    import dataclasses
+    import re
+
+    from fntn.scanner.params import Registration
+
+    # One: it is a field, and it reaches the hash.
+    names = {f.name for f in dataclasses.fields(Registration)}
+    assert "agent_model" in names
+    a = _complete_registration(agent_model="claude-a")
+    b = _complete_registration(agent_model="claude-b")
+    assert a.hash() != b.hash(), "a pin that does not move the hash is not registered"
+
+    # Two: absent is a gap with a reason, never a default.
+    gaps = _complete_registration(agent_model=None).missing()
+    assert any("agent_model" in g and "§13 row 39" in g for g in gaps)
+
+    # Three: no second copy of the pin anywhere in the package. A default in
+    # the code is a pin that moves with nothing on the record.
+    root = Path(__file__).resolve().parents[1] / "src" / "fntn" / "scanner"
+    for path in root.glob("*.py"):
+        body = path.read_text(encoding="utf-8")
+        # Comments and docstrings may name an identifier; assignments may not.
+        for line in body.splitlines():
+            code = line.split("#", 1)[0]
+            assert not re.search(r"=\s*\"claude-[a-z0-9.\-]+\"", code), (
+                f"{path.name} assigns a model identifier: {line.strip()!r}. The "
+                "pin is registered (§13 row 39) and a default here is a copy "
+                "of it that no hash covers."
+            )
+
+
+def test_the_spend_refuses_to_score_a_model_it_has_no_rate_for():
+    """Rule 3, applied to the one quantity the operator actually spends.
+
+    An unknown rate is not a small rate. A cost guard that treated a missing
+    price as zero would wave through exactly the sweep it exists to stop, and
+    it would do it silently.
+    """
+
+    from fntn.scanner.clients import Spend
+
+    known = Spend.of("claude-sonnet-5", 1, 1_000_000, 1_000_000, 0, 0, True)
+    assert known.usd == pytest.approx(12.00)
+
+    unknown = Spend.of("claude-not-in-the-table", 1, 1_000_000, 0, 0, 0, True)
+    assert unknown.usd is None
+    assert "NOT SCORED" in unknown.render()
+    assert "is not zero" in unknown.render()
+
+    # A usage block missing a billed counter makes the figure a LOWER BOUND and
+    # says so, rather than reporting a smaller number as though it were the
+    # measurement.
+    partial = Spend.of("claude-sonnet-5", 1, 1_000_000, 0, 0, 0, False)
+    assert "LOWER BOUND" in partial.render()
+
+
+def test_the_cost_guard_stops_the_whole_sweep_and_never_truncates_it():
+    """B1's guard. A stop, and deliberately not a partial book.
+
+    The abort is raised from inside the gather loop, so the control arm has not
+    been drawn and nothing has reached the ledger. A sweep over one family of
+    three, reported as a sweep, would put a partial population under §7.1's
+    headline with nothing on the record saying so.
+    """
+
+    from fntn.scanner.cli import CostCeilingExceeded, _cost_guard
+
+    class _Client:
+        model = "claude-sonnet-5"
+
+        def spend(self):
+            from fntn.scanner.clients import Spend
+            return Spend.of(self.model, 1, 1_000_000, 200_000, 0, 0, True)
+
+    # 1M in + 200k out at Sonnet 5 list is USD 4.00 for one family; three
+    # families project to 12.00.
+    guard = _cost_guard(_Client(), ceiling_usd=4.0)
+    with pytest.raises(CostCeilingExceeded, match="exceeds the ceiling"):
+        guard(0, 3)
+
+    # Within the ceiling it returns, and it fires only after the FIRST corpus:
+    # a guard that re-projected after every family would keep paying to
+    # re-learn what it already measured.
+    assert _cost_guard(_Client(), ceiling_usd=20.0)(0, 3) is None
+    assert _cost_guard(_Client(), ceiling_usd=0.01)(1, 3) is None
+
+    # A ceiling of zero disables the guard, and that is a decision the operator
+    # takes explicitly rather than a default that happens to be off.
+    assert _cost_guard(_Client(), ceiling_usd=0.0) is None

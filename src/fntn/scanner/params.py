@@ -280,6 +280,30 @@ class Registration:
     #: **revising to 12.5 is the decision about whether the UK exists**.
     max_tolerable_fixed_cost_bps: Optional[float] = None
 
+    # -- §13 row 39: which clerk read the corpus ---------------------------
+    #: The model identifier the discovery agent runs under, taken **verbatim
+    #: from the models endpoint** and never retyped from memory.
+    #:
+    #: **Why this is a registered field and was not one until 27 August 2026.**
+    #: §13 row 39 asserted that it already was. It was not: the pin lived as a
+    #: default string in ``clients.py`` and a second copy as an argparse
+    #: default in ``cli.py``, so **the model could be changed, and every future
+    #: sweep changed with it, without moving a hash or leaving a record**. That
+    #: is the precise defect row 39's open half is about, reached through the
+    #: front door rather than through an alias.
+    #:
+    #: **What registering it costs, stated rather than the benefit.** Every
+    #: re-pin is now a re-stamp: a new hash, a row in
+    #: ``docs/REGISTRATION_HISTORY.md``, and the four rows that name a hash
+    #: re-examined. That is deliberately expensive, because a pin that moves
+    #: between sweeps makes them incomparable and the cost of saying so is the
+    #: only thing that keeps it still.
+    #:
+    #: **It is not read at decision time and adds no capability** (§0.6): it
+    #: records which clerk read the corpus, which already varied and was
+    #: already unrecorded.
+    agent_model: Optional[str] = None
+
     # -- the archive boundary that pre_archive is defined against ----------
     #: ISO date on which the archive opens. **Required when any corpus declares
     #: ``pre_archive``**, because without it that mode names no boundary and is
@@ -360,6 +384,14 @@ class Registration:
             out.append("discoverable_classes (§13 row 22)")
         if not self.security_master_files:
             out.append("security_master_files (§13 row 25)")
+        if not self.agent_model:
+            out.append(
+                "agent_model (§13 row 39): the model identifier the sweep runs "
+                "under, taken verbatim from the models endpoint. Refused rather "
+                "than defaulted: a sweep whose clerk is unrecorded cannot be "
+                "compared with the next one, and a default in the code is a pin "
+                "that moves with nothing on the record"
+            )
         if self.theta is None:
             out.append("theta (§14 governance)")
         if self.delta_min_floor is None:

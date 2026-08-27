@@ -46,7 +46,7 @@ repair does not need a third instance to be believed.**
 
 | Class | Instances | Count | Invariant |
 |---|---|---|---|
-| **I. A conclusion acted on without checking the link it rests on** | A2, A5b, A8, A9, A10, B8pre, B9, B14 | **8** | **INSTALLED at P122, STRENGTHENED at P130 and again at P131, to four clauses. **The four-clause version DID catch A10, in preparation rather than in outcome**** |
+| **I. A conclusion acted on without checking the link it rests on** | A2, A5b, A8, A9, A10, B8pre, B9, B14, B15 | **9** | **INSTALLED at P122, STRENGTHENED at P130 and again at P131, to four clauses. **The four-clause version DID catch A10, in preparation rather than in outcome**** |
 | **II. Material that decided something was not committed at the moment it decided it** | B3, B4, B5, and the registration chain's first object | **4** | **INSTALLED at P114**: `cmd_sweep` refuses over a corpus git cannot produce again, with `corpus_not_committed` |
 | **III. A population pooled, mis-scoped or miscounted** | B6 (itself three), B7, the §13 table's two hand counts, and `_unexercised` at P126 | **7** | **INSTALLED at P105 and WIDENED at P126**: the invariant was applied to a METHOD when the class was about a QUERY, so it now reads **every ledger read path carries the marker the fences rely on**, and phase 2 swept every `SELECT` in the package to hold it |
 | **IV. A quantity validated against something computed from that quantity** | A7, B10 | **2** | **INSTALLED at P133, and deliberately at two instances rather than three**: *a bound may not be validated against a table computed from that bound*, and a table recomputed against a registered value carries that value's name from then on |
@@ -814,6 +814,47 @@ generalisation, stated so a fourth instance has to get past it: any input to a
 decision must be retrievable by commit at the moment the decision is taken, and
 the check belongs at the point of DECISION rather than at the point of storage.**
 *Retention is a hope about the future. A refusal is a fact about the present.*
+
+### B15. A row asserting that the value it governs was already registered, when it was two default strings
+
+| | |
+|---|---|
+| **Asserted** | in §13 row 39, written by me one sitting earlier (P137): **"The pinned identifier is a registered field and re-pinning re-stamps."** P137's own `§12.1` row repeats it as *a row opened for a field already registered* |
+| **True** | **It was not a field.** `Registration` had no model attribute, `discovery_registration.json` had no key matching `model` or `pin`, and the pin lived as a **default string at `clients.py:70` and a second copy as an argparse default at `cli.py:610`** |
+| **The link not checked** | **the dataclass.** Two greps, run in the reconciliation that opened the next sitting, and neither was run when the row was written |
+| **Provenance** | `verified_primary`, both halves: the row is in the tree and so is the absence of the field |
+
+***The ninth instance of Class I, and the sharpest, because the unchecked link
+was one line long and sat in the file the row was about.***
+
+**What the false premise would have cost, and it is not bookkeeping.** The
+instruction that followed the row said *re-stamp with the model as the causing
+field, rows 19, 20, 21a and 21b in the established idiom.* **Carried out
+literally against the tree as it stood, that produces nothing:** editing two
+default strings moves no hash, so there is no stamp to record, no row for the
+history, and the four register rows have no new hash to be re-read against.
+***The batch would have reported a re-stamp that did not happen.*** Worse, the
+edit itself is the defect row 39's own open half warns about: **a value that
+changes what every sweep produces, moving with nothing on the record.** *The
+row named that defect, in those words, whilst being an instance of it.*
+
+**The repair is to make the assertion true rather than to withdraw it** (P138).
+`agent_model` is now a hashed field; an absent pin is a named gap and never a
+default; `AnthropicClient.model` has no default; and **`--model` is removed
+from the CLI**, because an override lets a sweep run under a model the
+parameter hash does not name. `test_the_model_pin_is_a_registered_field_and_has_no_default_anywhere`
+greps the package for a second copy, and it fails on the tree as it stood.
+
+**What this says about the instrument, since the register exists to say it.**
+Part 4 of the Class I invariant — *the reconciliation enumerates the batch's
+factual premises about this tree and marks each CHECKED or UNCHECKED* — **was
+added on 27 August 2026 and caught this on 27 August 2026**, one sitting after
+the claim was written. *The claim was written by the same process that later
+caught it, which is the argument for the enumeration being a written step
+rather than a habit: it is not that reading harder would have found this, but
+that nothing was reading at all.*
+
+---
 
 ### B7. Six floor sites, and there were seven
 
