@@ -301,6 +301,51 @@ def cmd_ratify_reveal(args) -> int:
     return 0 if not result.refutes else 5
 
 
+def cmd_report(args) -> int:
+    """Write the run report. Renders the ledger; measures nothing."""
+
+    from . import report as report_mod
+
+    try:
+        reg = Registration.load(args.registration)
+    except FileNotFoundError:
+        print(f"{args.registration} not found. Run `init` first.")
+        return 1
+
+    ledger_path = Path(args.ledger)
+    if not ledger_path.exists():
+        print(f"{ledger_path} not found. A run report renders a ledger, and")
+        print("there is no ledger. Run `sweep` first, or pass --ledger.")
+        return 2
+
+    ledger = Ledger(ledger_path, parameter_hash=reg.hash())
+    on = date.fromisoformat(args.on) if args.on else date.today()
+    rep = report_mod.RunReport(
+        registration=reg,
+        ledger=ledger,
+        corpora=report_mod.corpus_digest([c.retrieval_route for c in reg.corpora]),
+        commit=report_mod._git("rev-parse", "HEAD")[:12],
+        on=on,
+        budget_abandoned=args.budget_abandoned,
+    )
+    out = Path(args.out) if args.out else report_mod.next_path(
+        Path(args.dir), on
+    )
+    if out.exists():
+        print(f"{out} exists. Reports are append-only, one file per run: a")
+        print("second run takes the next number rather than replacing the")
+        print("record the first one made.")
+        ledger.close()
+        return 3
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(rep.render(), encoding="utf-8")
+    ledger.close()
+    print(f"wrote {out}")
+    print(f"  registration {reg.hash()} ({reg.hash_verification})")
+    print(f"  abandoned to intake budget: {args.budget_abandoned}")
+    return 0
+
+
 def cmd_sweep(args) -> int:
     try:
         reg = Registration.load(args.registration)
@@ -471,6 +516,17 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     p_rr.add_argument("labels", help="JSON: {subject_id: class_level|not_class_level}")
     p_rr.add_argument("--labelled", default="docs/labelled_proposals.json")
     p_rr.set_defaults(func=cmd_ratify_reveal)
+
+    p_rep = sub.add_parser(
+        "report", help="write the run report from the ledger (§9.2)"
+    )
+    p_rep.add_argument("--ledger", default="fntn_discovery.db")
+    p_rep.add_argument("--dir", default="docs/runs")
+    p_rep.add_argument("--out", help="explicit path, bypassing the dated name")
+    p_rep.add_argument("--on", help="date to stamp the report with, ISO")
+    p_rep.add_argument("--budget-abandoned", type=int, default=0,
+                       help="subjects abandoned to the intake budget this run")
+    p_rep.set_defaults(func=cmd_report)
 
     p_sweep = sub.add_parser("sweep", help="run a sweep, if registration is complete")
     p_sweep.add_argument("--transcript", help="replay a saved payload instead of calling the model")

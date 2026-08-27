@@ -2524,3 +2524,251 @@ def test_the_old_row_21_is_gone_from_both_registers():
     assert "| 21 | **Entity-fence error rates**" not in spec
     assert "| 21a | **Fence false-positive rate" in spec
     assert "| 21b | **Fence false-negative route coverage" in spec
+
+
+# ---------------------------------------------------------------------------
+# The run report (§9.2).
+# ---------------------------------------------------------------------------
+
+from fntn.scanner import report as report_mod
+from fntn.scanner.report import Draft, RunReport, queue_from_ledger
+
+RANKING_WORDS = (
+    "merit", "severity", "priority", "score", "rank", "importance",
+    "urgency", "promising", "best", "worst", "recommend",
+)
+
+
+def _report_ledger():
+    """A ledger whose every other plausible ordering disagrees with the count.
+
+    Insertion order is B, C, D, A. Identifier order is aaa, bbb, mmm, zzz.
+    Class order is a_first, b, m, z_last. Outstanding-count order is A, B, D, C.
+    No two of those agree, so the rendered order identifies the key uniquely.
+    """
+
+    ledger = Ledger(parameter_hash="report-test")
+    spec = [
+        # (id, class, outstanding codes, registered_sign)
+        ("dir-aaa", "a_first", ["delta_min_absent"], 1),
+        ("dir-mmm", "m_third",
+         ["delta_min_absent", "premortem_unratified",
+          "literature_search_absent"], 1),
+        ("dir-bbb", "b_second", ["premortem_unratified"], 1),
+        ("dir-zzz", "z_last", [], 1),
+    ]
+    for did, cls, blockers, sign in spec:
+        d = _directive()
+        d.directive_id = did
+        d.event_class = cls
+        d.registered_sign = sign
+        ledger.write_directive(d, "blocked_on_operator")
+        for code in blockers:
+            ledger.write_refusal(summaries.render(code, did, {"directive_id": did}))
+    return ledger
+
+
+def test_the_queue_is_ordered_by_outstanding_count_and_nothing_else():
+    """The one design decision in the report, and it is a refusal.
+
+    Any other ordering is this file telling the operator which of their own
+    decisions matters most. The fixture is built so that identifier order,
+    class order and insertion order each disagree with the count, which is what
+    makes the rendered order evidence about the key rather than a coincidence.
+    """
+
+    ledger = _report_ledger()
+    drafts = queue_from_ledger(ledger)
+    assert [d.directive_id for d in drafts] == [
+        "dir-zzz",   # 0 outstanding, and last by identifier, class and insertion
+        "dir-aaa",   # 1
+        "dir-bbb",   # 1, after aaa on the identifier tie-break alone
+        "dir-mmm",   # 3
+    ]
+    assert [d.n_outstanding for d in drafts] == [0, 1, 1, 3]
+    ledger.close()
+
+
+def test_zero_outstanding_drafts_come_first_under_their_own_heading():
+    ledger = _report_ledger()
+    text = _render(ledger)
+    queue = text.split("## 4. The queue")[1].split("## 5.")[0]
+    assert "Nothing outstanding: 1 draft(s). **These need a decision now.**" in queue
+    assert queue.index("dir-zzz") < queue.index("dir-aaa") < queue.index("dir-mmm")
+    ledger.close()
+
+
+def _render(ledger, **over) -> str:
+    reg = Registration.load(REPO_ROOT / REGISTRATION_FILE)
+    kwargs = dict(
+        registration=reg, ledger=ledger, corpora=[("./corpora/us", "abcd")],
+        commit="deadbeef", on=date(2026, 8, 27),
+    )
+    kwargs.update(over)
+    return RunReport(**kwargs).render()
+
+
+def test_the_report_carries_no_ranking_key_other_than_the_count():
+    """No merit, no severity, no score, no recency: not in the table, not in the prose.
+
+    A column that ranks does not have to be sorted on to do damage. A reader
+    given a `merit` figure beside a draft ranks by it themselves, and the file
+    has then made the judgement it declined to make in the sort.
+    """
+
+    ledger = _report_ledger()
+    queue = _render(ledger).split("## 4. The queue")[1].split("## 5.")[0]
+
+    # A ranking key lives in a column or a heading. Those are checked with no
+    # exemption at all.
+    structure = "\n".join(
+        l for l in queue.splitlines() if l.startswith(("|", "#"))
+    ).lower()
+    for word in RANKING_WORDS:
+        assert word not in structure, word
+
+    # The prose is checked too, less the one sentence that exists to disclaim
+    # these words. It is matched verbatim rather than pattern-matched, so
+    # rewording it fails this test and sends the next reader back to it.
+    disclaimers = (
+        "Ties break on the directive identifier, which ranks nothing.",
+        "There is no merit column, no severity, no score and no recency: any "
+        "of them would be this file telling the operator which of their own "
+        "decisions matters most, which is the clerk becoming an analyst.",
+    )
+    prose = queue
+    for d in disclaimers:
+        assert d in queue, d
+        prose = prose.replace(d, "")
+    prose = prose.lower()
+    for word in RANKING_WORDS:
+        assert word not in prose, word
+
+    # The only numeric column in the waiting table is the outstanding count.
+    header = [l for l in queue.splitlines() if l.startswith("| outstanding |")]
+    assert header == ["| outstanding | directive | class | awaiting |"]
+    ledger.close()
+
+
+def test_the_queue_ordering_survives_a_reversed_ledger():
+    """Same drafts, opposite insertion order, same rendered order."""
+
+    a = [d.directive_id for d in queue_from_ledger(_report_ledger())]
+    ledger = Ledger(parameter_hash="report-test")
+    for did, cls, blockers in reversed([
+        ("dir-aaa", "a_first", ["delta_min_absent"]),
+        ("dir-mmm", "m", ["delta_min_absent", "premortem_unratified",
+                          "literature_search_absent"]),
+        ("dir-bbb", "b", ["premortem_unratified"]),
+        ("dir-zzz", "z", []),
+    ]):
+        d = _directive()
+        d.directive_id, d.event_class, d.registered_sign = did, cls, 1
+        ledger.write_directive(d, "blocked_on_operator")
+        for code in blockers:
+            ledger.write_refusal(summaries.render(code, did, {"directive_id": did}))
+    assert [d.directive_id for d in queue_from_ledger(ledger)] == a
+    ledger.close()
+
+
+def test_the_report_has_its_eight_sections_in_order():
+    ledger = _report_ledger()
+    text = _render(ledger)
+    wanted = [
+        "## 1. Provenance",
+        "## 2. Intake funnel",
+        "## 3. Fence report",
+        "## 4. The queue",
+        "## 5. Control arm",
+        "## 6. Reason-code coverage",
+        "## 7. Refutations",
+        "## 8. Not measured",
+    ]
+    positions = [text.index(w) for w in wanted]
+    assert positions == sorted(positions)
+    ledger.close()
+
+
+def test_the_provenance_header_carries_the_fingerprint_and_its_verdict():
+    ledger = _report_ledger()
+    prov = _render(ledger).split("## 1. Provenance")[1].split("## 2.")[0]
+    reg = Registration.load(REPO_ROOT / REGISTRATION_FILE)
+    assert reg.hash() in prov
+    assert reg.registered_schema in prov
+    assert reg.hash_verification in prov
+    assert "deadbeef" in prov and "abcd" in prov
+    ledger.close()
+
+
+def test_the_two_fence_arms_are_reported_apart_and_neither_is_rounded_up():
+    ledger = _report_ledger()
+    fences = _render(ledger).split("## 3. Fence report")[1].split("## 4.")[0]
+    assert "upper bound" in fences and "8.3%" in fences
+    assert "5 of 6 routes closed" in fences
+    assert "coverage, never a rate" in fences
+    assert "is not 0%" in fences
+    # The probe arm's line carries no percentage.
+    probe_line = [l for l in fences.splitlines() if "authored probes (21b)" in l]
+    assert len(probe_line) == 1 and "%" not in probe_line[0]
+    ledger.close()
+
+
+def test_the_control_arm_verdict_is_not_yet_run_and_not_undetermined():
+    """`undetermined_at_budget` would say a measurement had happened."""
+
+    ledger = _report_ledger()
+    arm = _render(ledger).split("## 5. Control arm")[1].split("## 6.")[0]
+    assert "**NOT YET RUN**" in arm
+    assert "undetermined_at_budget" in arm and "claiming" in arm
+    assert "not measured" in arm
+    ledger.close()
+
+
+def test_the_budget_count_is_printed_even_at_zero_and_never_inside_row_23():
+    ledger = _report_ledger()
+    zero = _render(ledger)
+    assert "abandoned to intake budget: **0**" in zero
+
+    some = _render(ledger, budget_abandoned=3)
+    dist = some.split("### Abort-position distribution")[1].split("### Intake points")[0]
+    assert "Beside this distribution and not inside it" in dist
+    assert "3 subject(s) abandoned to the intake budget" in dist
+    # And it is not added into any position's count.
+    assert "| 3 | `proposal_names_entity` | 0 |" in dist
+    ledger.close()
+
+
+def test_unexercised_intake_points_are_named_not_counted():
+    ledger = _report_ledger()
+    section = _render(ledger).split("### Intake points not exercised")[1].split("## 3.")[0]
+    for code in codes.INTAKE_ORDER:
+        assert f"`{code}`" in section
+    ledger.close()
+
+
+def test_the_refutations_section_is_seeded_with_the_three_to_date():
+    ledger = _report_ledger()
+    ref = _render(ledger).split("## 7. Refutations")[1].split("## 8.")[0]
+    assert "94%" in ref
+    assert "Trust Holdings and Transactions" in ref
+    assert "RAW FETCHED PAGES WERE NEVER RETAINED" in ref
+    assert len(report_mod.STANDING_REFUTATIONS) == 3
+    ledger.close()
+
+
+def test_a_report_never_overwrites_another(tmp_path):
+    """Append-only, one file per run."""
+
+    on = date(2026, 8, 27)
+    first = report_mod.next_path(tmp_path, on)
+    first.write_text("x")
+    second = report_mod.next_path(tmp_path, on)
+    assert second != first and not second.exists()
+    second.write_text("y")
+    assert report_mod.next_path(tmp_path, on).name.endswith("_03.md")
+    assert first.read_text() == "x"
+
+
+def test_a_corpus_with_no_manifest_is_not_reported_as_clean(tmp_path):
+    got = report_mod.corpus_digest([str(tmp_path)])
+    assert "no manifest" in got[0][1]

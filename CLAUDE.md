@@ -88,6 +88,8 @@ src/fntn/scanner/  the agent discovery layer (spec §3.7)
   ratify.py       §13 row 21a/21b ratification: twelve drawn by the
                   registered seed, clerk labels withheld
   run.py          one scan cycle and its report
+  report.py       the §9.2 run report; renders the ledger, measures nothing.
+                  The queue is ordered by outstanding-blocker count ONLY
 docs/spec/         the governing manuscript
 docs/OPEN_ITEMS.md   §13 calibrations, §14 decisions, Annex A.1 predicates
 docs/REGISTRATION_HISTORY.md  one row per registration hash ever stamped, the
@@ -107,7 +109,7 @@ tests/
 
 ```bash
 pip install -e ".[dev]"      # once: puts src/ on the path
-python -m pytest tests/ -q   # 193 tests
+python -m pytest tests/ -q   # 206 tests
 ```
 
 Without the editable install the package sits at `src/fntn` and is invisible to
