@@ -68,6 +68,7 @@ from fntn.scanner.screen import (
     screen_pointer,
 )
 from fntn.scanner.segment import ReuseLedger, SegmentPolicy
+from fntn.scanner.trace import FenceAudit, TraceHarness, load_labelled
 from fntn.scanner.records import IntakeRecord, ClaimField
 
 NOW = datetime(2026, 8, 26, 12, 0, tzinfo=timezone.utc)
@@ -130,9 +131,11 @@ def run_intake(ctx, subject_id="s1", mode=Mode.FAIL_FAST):
 
 
 #: A stand-in master. In production these are the security master and the
-#: discovery markets' listing lists, named in §13 row 22.
-MASTER = frozenset({"barclays", "vodafone", "bhp", "aapl", "vod", "acme"})
-FENCE = EntityFence(security_master=MASTER, lexicon=SEED_LEXICON)
+#: discovery markets' listing lists, named in §13 row 22. Names and tickers are
+#: separate because the fence matches them by different rules.
+MASTER = frozenset({"barclays", "vodafone", "acme"})
+TICKERS = frozenset({"aapl", "vod", "bhp"})
+FENCE = EntityFence(security_master=MASTER, tickers=TICKERS, lexicon=SEED_LEXICON)
 
 
 @pytest.mark.parametrize(
@@ -178,6 +181,173 @@ def test_entity_fence_passes_a_clean_mechanism():
 def test_a_date_is_episodic_only_when_bound_to_an_entity():
     assert entity_mentions("effective in March 2024", FENCE) == []
     assert entity_mentions("Barclays PLC in March 2024", FENCE)
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        # Title case and lower case are words, whatever the ticker table says.
+        "a Vod filing lodged in the window",
+        "purchases recorded as vod in the register",
+        # Two characters is too short to carry the signal. The US master holds
+        # T, IT, ON, FR and ARE as tickers; the corpus trace tripped on all of
+        # them, and the length floor is what removes them.
+        "the IT function of the issuer",
+        "published in the FR under the rule",
+    ],
+)
+def test_a_bare_ticker_matches_only_in_a_symbols_shape(text):
+    """§13 row 21. The ticker set entered the fence unfiltered and refused
+    ordinary English at 257 hits across the thirteen US corpus documents."""
+
+    assert entity_mentions(text, FENCE) == [], f"false positive on: {text}"
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "directors buying AAPL after a fall",
+        "positions in BHP disclosed late",
+    ],
+)
+def test_an_all_capital_ticker_of_three_or_more_still_matches(text):
+    assert entity_mentions(text, FENCE), f"fence missed a ticker: {text}"
+
+
+def test_the_ticker_rule_takes_a_false_negative_and_names_it():
+    """The cost of the length-and-case rule, asserted rather than described.
+
+    A bare ticker in title case is invisible. Sixty-five US issuers have a
+    one-word name identical to their ticker, so the *name* half must keep
+    matching them or the rule would cost their names too; that is why the two
+    sets are separate fields.
+    """
+
+    assert entity_mentions("purchases at Aapl in the window", FENCE) == []
+    both = EntityFence(
+        security_master=frozenset({"dole"}),
+        tickers=frozenset({"dole"}),
+        lexicon=SEED_LEXICON,
+    )
+    assert entity_mentions("purchases at Dole in the window", both)
+    assert entity_mentions("purchases at DOLE in the window", both)
+
+
+def test_the_committed_labelled_set_loads_and_carries_both_arms():
+    """§13 row 21's denominator is in the tree, not in whatever shell ran it.
+
+    The 26 August reading was measured against six plants defined inline in an
+    uncommitted heredoc. The figure could not be reproduced from the repository,
+    which makes it an assertion about the fence rather than a measurement of it.
+    """
+
+    labelled = load_labelled("docs/labelled_proposals.json")
+    assert len(labelled) == 42
+    assert sum(1 for l in labelled if l.is_class_level) == 36
+    probes = [l for l in labelled if not l.is_class_level]
+    assert len(probes) == 6
+    # Every probe names the route it exercises. A probe set with no route names
+    # is a denominator with nothing behind it, and the arm could not be reported
+    # as coverage at all.
+    assert all(l.probe_route and l.subject_id for l in probes)
+    assert {l.subject_id for l in probes} == {f"plant-0{i}" for i in range(1, 7)}
+    # Row 21 asks for hand labels. These are not, and the file says so.
+    assert all(l.labeller == "model_clerk" for l in labelled)
+
+
+def test_fence_audit_against_the_committed_set_and_the_real_us_master():
+    """The §13 row 21 reading, locked so a fence change cannot move it quietly.
+
+    Read against the real security master rather than a stand-in, because the
+    defect this exercise found lived in the real master's ticker table and a
+    six-name fixture would not have contained it.
+    """
+
+    m = SecurityMaster()
+    m.load_sec_tickers("./master/us.json", market="US")
+    harness = TraceHarness(
+        exclusivity_available={"insider_dealing": "pre_archive",
+                               "major_holdings_change": "pre_archive",
+                               "buyback": "pre_archive",
+                               "earnings_event": "pre_archive"},
+        entity_fence=m.as_fence(),
+    )
+    report = harness.run(load_labelled("docs/labelled_proposals.json"), QueryFence())
+    audit = report.fence_audit
+    # The drawn arm is a rate. No clean class-level mechanism is refused; before
+    # the ticker rule this was three of thirty-six, on "Note", "T" and "It".
+    assert audit.n == 42
+    assert audit.n_class_level == 36
+    assert audit.false_positives == 0
+    assert audit.false_positive_rate == 0.0
+    # The probe arm is coverage. Five of the six routes are closed; the sixth is
+    # the residual the ticker rule takes on knowingly, and it is named.
+    assert audit.n_probes == 6
+    assert audit.routes_closed == 5
+    assert audit.routes_open == [("title-case bare ticker", "plant-03")]
+    harness.close()
+
+
+def test_the_probe_arm_reports_coverage_and_never_a_percentage():
+    """§13 row 21, the frame rather than the denominator.
+
+    The probes are authored, one per route into the fence, so they have no
+    sampling frame and a proportion over them estimates nothing. "1 of 6 (17%)"
+    reads as the fence's error rate on real episode-level material, which it is
+    not: doubling the probe set to twelve routes halves the percentage whilst
+    leaving the fence untouched. The arm therefore prints named routes and no
+    percentage, and this test is what holds that.
+    """
+
+    audit = FenceAudit(
+        n=10,
+        n_class_level=4,
+        n_probes=6,
+        false_positives=1,
+        routes_closed=4,
+        routes_open=[("ISIN", "plant-05"), ("title-case bare ticker", "plant-03")],
+    )
+    text = audit.render()
+    probe_arm = text.split("authored probes                :")[1]
+    assert "%" not in probe_arm, probe_arm
+    assert "4 of 6" in probe_arm
+    assert "ISIN (plant-05)" in probe_arm
+    assert "title-case bare ticker (plant-03)" in probe_arm
+    assert "NOT a rate" in probe_arm
+    # The drawn arm keeps its rate, over its own n and not over the union of 10.
+    assert "1 of 4 (25%)" in text
+
+
+def test_the_drawn_arm_divides_by_its_own_n():
+    """The denominator, on a shape chosen to make the error visible.
+
+    Nineteen drawn class-level subjects with one refusal reads 5% over its own
+    arm and 4% over a 24-subject union. A rate divided by the wrong population
+    is worse than no rate, because it is a number and it will be quoted.
+    """
+
+    audit = FenceAudit(n=24, n_class_level=19, n_probes=5, false_positives=1,
+                       routes_closed=5)
+    assert audit.false_positive_rate == pytest.approx(1 / 19)
+    text = audit.render()
+    assert "1 of 19" in text
+    # Both arm sizes named in the output, not left to be inferred from the total.
+    assert "19 drawn class-level" in text and "5 authored probes" in text
+    assert "routes left open             : none" in text
+
+
+def test_an_empty_arm_refuses_to_score_rather_than_reading_zero():
+    """Rule 3 at the denominator, on both arms. A fence measured against no
+    clean proposals has not been shown to pass one, and a fence against which
+    no route was probed has not been shown to close one."""
+
+    no_drawn = FenceAudit(n=6, n_class_level=0, n_probes=6, routes_closed=6)
+    assert no_drawn.false_positive_rate is None
+    assert "not scored, no subjects in this arm" in no_drawn.render()
+
+    no_probes = FenceAudit(n=36, n_class_level=36, n_probes=0, false_positives=3)
+    assert "not scored, no subjects in this arm" in no_probes.render()
+    assert "of 0" not in no_probes.render()
 
 
 def test_no_security_master_refuses_to_score():

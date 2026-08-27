@@ -28,8 +28,10 @@ the first sweep whose kill criterion is not yet registered.
 
 from __future__ import annotations
 
+import json
 from collections import Counter
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Tuple
 
 from .codes import INTAKE_ORDER, coverage
@@ -38,6 +40,7 @@ from .ledger import Ledger
 from .records import (
     DEFAULT_FENCE,
     EntityFence,
+    Origin,
     Partition,
     Proposal,
     Provenance,
@@ -56,47 +59,180 @@ class EvidentiaryUseRefused(RuntimeError):
 
 @dataclass
 class LabelledProposal:
-    """A proposal with an independent hand label, for the fence audit.
+    """A proposal with an independent label, for the fence audit.
 
-    ``is_class_level`` is the label: True where a human (or a labeller blind to
-    the fence's verdict) judges the proposal genuinely class-level.  The fence's
-    verdict is then compared against it, and the disagreements are the two error
-    rates §13 row 21 asks for.
+    ``is_class_level`` is the label: True where a labeller blind to the fence's
+    verdict judges the proposal genuinely class-level.  The fence's verdict is
+    then compared against it.
+
+    **The two arms are not the same kind of thing, and the audit does not treat
+    them as one.**  The class-level arm is *drawn*: it is what the discovery
+    agents actually swept, so the share of it the fence refuses is a rate.  The
+    other arm is *authored*: each subject is a probe written to exercise one
+    named route into the fence, so what it yields is coverage of those routes
+    and never a rate.  ``probe_route`` carries the route a probe exercises, and
+    it is the reason the arm can be reported at all: a probe set with no route
+    names is a denominator with nothing behind it.
     """
 
     proposal: Proposal
     is_class_level: bool
     labeller: str = "operator"
+    #: The subject's own identifier in the labelled set, so an open route can be
+    #: named in the report rather than described.
+    subject_id: str = ""
+    #: For an authored probe, the route into the fence it exercises.  Empty on a
+    #: drawn class-level subject, which probes nothing in particular.
+    probe_route: str = ""
+
+
+def load_labelled(
+    path: str, partition: Partition = Partition.EXTERNAL
+) -> List[LabelledProposal]:
+    """Read the committed labelled set.
+
+    The labels live in the repository as data rather than in whatever shell
+    invoked the harness. The 26 August reading was taken against six plants
+    defined inline in a heredoc that was never committed: the figure it produced
+    could not be reproduced, and a fence error rate that cannot be reproduced is
+    an assertion about a fence rather than a measurement of one.
+    """
+
+    doc = json.loads(Path(path).read_text(encoding="utf-8"))
+    out: List[LabelledProposal] = []
+    for row in doc["labelled"]:
+        raw = row["proposal"]
+        out.append(
+            LabelledProposal(
+                proposal=Proposal(
+                    event_definition=raw["event_definition"],
+                    measured_on_intention=raw["measured_on_intention"],
+                    event_class=raw["event_class"],
+                    source_ref=raw["source_ref"],
+                    source_partition=partition,
+                    corpus_id=row.get("corpus_id", ""),
+                    mechanism_note=raw.get("mechanism_note", ""),
+                    origin=Origin.AGENT,
+                ),
+                is_class_level=bool(row["is_class_level"]),
+                labeller=row.get("labeller", "unrecorded"),
+                subject_id=row.get("id", ""),
+                probe_route=row.get("probe_route", ""),
+            )
+        )
+    return out
 
 
 @dataclass
 class FenceAudit:
-    """§13 row 21.  Reported with its n, always."""
+    """§13 row 21.  One arm is a rate; the other is coverage, and never a rate.
 
+    **The class-level arm is drawn, so it yields a rate.**  Its subjects are what
+    the discovery agents actually swept, and the share of them the fence refuses
+    is an estimate of the share of real clean proposals it would refuse.  It is
+    divided by its own n and by nothing else.
+
+    **The probe arm is authored, so it yields coverage.**  Its subjects are
+    written, one per route into the fence, to establish that each route is
+    closed: a designator, a bare ticker in capitals, a bare ticker in title
+    case, an exchange-prefixed identifier, an ISIN, a one-word name equal to its
+    own ticker.  A chosen set has no sampling frame, so a proportion over it
+    estimates nothing.  Printing "1 of 6 (17%)" invites the reader to take 17%
+    as the fence's error rate on real episode-level material, which it is not
+    and cannot be: change the probe set from six routes to twelve and the
+    percentage halves whilst the fence is untouched.  **The probe arm therefore
+    reports which routes are closed and which are open, by name, and prints no
+    percentage at all.**
+
+    An earlier version reported both arms as rates over the 42-subject union.
+    Fixing the denominator left the frame wrong, which is the more expensive
+    half: a number with the right denominator and the wrong meaning still
+    travels, and it travels as a rate.
+    """
+
+    #: Total labelled subjects.  Reported, and used for the 200-subject
+    #: PROVISIONAL note only.  It is never a denominator of a rate.
     n: int = 0
+    #: Drawn class-level subjects: the population a false positive can come
+    #: from, and the only denominator the false-positive rate has.
+    n_class_level: int = 0
+    #: Authored probes.  A count of routes exercised, not a sample size.
+    n_probes: int = 0
     #: Fence refused a proposal the label calls class-level.  The cost of
-    #: bluntness, paid in re-raises.
+    #: bluntness, paid in re-raises.  A rate, over ``n_class_level``.
     false_positives: int = 0
-    #: Fence passed a proposal the label calls episode-level.  The cost that
-    #: matters, paid in the exclusivity guarantee.
-    false_negatives: int = 0
+    #: Probes the fence refused: routes shown closed.
+    routes_closed: int = 0
+    #: Probes the fence passed, as ``(route, subject id)``: routes left open.
+    #: Named rather than counted, because an open route is a specific hole and
+    #: the name is what makes it actionable.
+    routes_open: List[Tuple[str, str]] = field(default_factory=list)
     examples: List[Tuple[str, str]] = field(default_factory=list)
 
     @property
     def false_positive_rate(self) -> Optional[float]:
-        return self.false_positives / self.n if self.n else None
+        """``None`` where the arm is empty, never zero.
+
+        An empty arm is a refusal to score under rule 3, not a clean fence: a
+        fence measured against no clean proposals has not been shown to pass
+        one.
+        """
+
+        if not self.n_class_level:
+            return None
+        return self.false_positives / self.n_class_level
 
     def render(self) -> str:
         if not self.n:
             return "Entity-fence audit (§13 row 21): no labelled proposals"
         lines = [
             "Entity-fence audit (§13 row 21)",
-            f"  labelled proposals           : {self.n}",
-            f"  false positives (clean refused) : {self.false_positives} "
-            f"({self.false_positives / self.n:.0%})",
-            f"  false negatives (episode passed): {self.false_negatives} "
-            f"({self.false_negatives / self.n:.0%})",
+            f"  labelled subjects               : {self.n} "
+            f"({self.n_class_level} drawn class-level, "
+            f"{self.n_probes} authored probes)",
+            "",
+            f"  drawn class-level              : {self.n_class_level}",
         ]
+        if self.n_class_level:
+            lines.append(
+                f"    false positives (clean refused): {self.false_positives} "
+                f"of {self.n_class_level} "
+                f"({self.false_positives / self.n_class_level:.0%})"
+            )
+            lines.append(
+                "    A rate: this arm was drawn, and is divided by its own n."
+            )
+        else:
+            lines.append(
+                "    not scored, no subjects in this arm"
+            )
+
+        lines.append("")
+        lines.append(f"  authored probes                : {self.n_probes}")
+        if self.n_probes:
+            lines.append(
+                f"    routes closed                : "
+                f"{self.routes_closed} of {self.n_probes}"
+            )
+            if self.routes_open:
+                label = (
+                    "route left open              : "
+                    if len(self.routes_open) == 1
+                    else "routes left open             : "
+                )
+                first, *rest = self.routes_open
+                lines.append(f"    {label}{first[0]} ({first[1]})")
+                for route, subject in rest:
+                    lines.append(f"    {' ' * len(label)}{route} ({subject})")
+            else:
+                lines.append("    routes left open             : none")
+            lines.append(
+                "    NOT a rate: probes are chosen, not sampled."
+            )
+        else:
+            lines.append("    not scored, no subjects in this arm")
+
+        lines.append("")
         if self.n < 200:
             lines.append(
                 f"  PROVISIONAL: row 21 specifies 200 hand-labelled proposals; "
@@ -148,6 +284,24 @@ class TraceReport:
                 )
         else:
             blocks.append("  no failures recorded")
+        blocks.append("")
+
+        blocks.append("Every refusal emitted, not only first failures")
+        if self.codes:
+            for code, n in self.codes.most_common():
+                pos = (
+                    str(INTAKE_ORDER.index(code) + 1)
+                    if code in INTAKE_ORDER
+                    else "n/a"
+                )
+                blocks.append(f"  {n:>4}  pos {pos:<4} {code}")
+            blocks.append(
+                "  The distribution above counts first failures only. A point "
+                "that fires behind an earlier one is invisible there and "
+                "appears here, so the two are reported together."
+            )
+        else:
+            blocks.append("  none")
         blocks.append("")
 
         blocks.append(self.fence_audit.render())
@@ -230,18 +384,25 @@ class TraceHarness:
                 r.code == "proposal_names_entity" for r in outcome.refusals
             )
             audit.n += 1
-            if fence_refused and lp.is_class_level:
-                audit.false_positives += 1
-                audit.examples.append(
-                    (
-                        "false positive",
-                        f"{entity_mentions(p.fenced_text(), self.entity_fence)} "
-                        f"in: {p.event_definition}",
+            if lp.is_class_level:
+                audit.n_class_level += 1
+                if fence_refused:
+                    audit.false_positives += 1
+                    audit.examples.append(
+                        (
+                            "false positive",
+                            f"{entity_mentions(p.fenced_text(), self.entity_fence)} "
+                            f"in: {p.event_definition}",
+                        )
                     )
-                )
-            elif not fence_refused and not lp.is_class_level:
-                audit.false_negatives += 1
-                audit.examples.append(("false negative", p.event_definition))
+            else:
+                audit.n_probes += 1
+                if fence_refused:
+                    audit.routes_closed += 1
+                else:
+                    audit.routes_open.append(
+                        (lp.probe_route or "route unnamed", lp.subject_id or subject_id)
+                    )
 
         return self.report
 

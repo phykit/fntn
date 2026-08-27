@@ -136,6 +136,14 @@ _IDENTIFIER_PATTERNS: Sequence[re.Pattern] = (
     re.compile(r"\(\s*(?:ticker|symbol)\s*:?\s*[A-Z0-9.]{1,6}\s*\)", re.I),
 )
 
+#: Bare tickers in running prose.  A ticker is a *symbol*, and the shape a
+#: symbol takes on the page is the whole of what separates it from an ordinary
+#: word: three or more characters, all capitals.  Two characters is too short to
+#: carry the signal (``FR``, ``IT``, ``ON``), and any other case is a word
+#: (``Note``, ``All``, ``Now``).  Exchange-prefixed and explicitly labelled forms
+#: are already caught above, so this pattern carries only the bare case.
+_BARE_TICKER_PATTERN = re.compile(r"\b[A-Z]{3,6}\b")
+
 #: Corporate designators.  A designator is a strong signal because it is a
 #: legal-form suffix that only ever attaches to a named firm; a regulator, a
 #: rulebook and an exchange never carry one.
@@ -182,12 +190,44 @@ class EntityFence:
     a statutory deadline is doing its job.  Dates are therefore reported as
     context beside an entity hit and never as a hit on their own, which is what
     removes the largest single source of the false-positive rate.
+
+    **Tickers are held apart from names, because a symbol is not a word.**  A
+    trace over the US corpus put 257 hits across thirteen documents, essentially
+    all of them false, on ``Law``, ``Are``, ``For``, ``Help``, ``Note``, ``Any``,
+    ``Such``, ``When`` and the single letters ``B``, ``C``, ``D``, ``E``, ``F``,
+    ``H``, ``J``.  Every one came from the ticker half of the lookup: 7,268 of
+    the 10,388 US tickers are four characters or fewer, and the loader's
+    minimum-length and lexicon filters are applied to issuer names only, so the
+    ticker set entered the fence unfiltered and sentence-initial capitalisation
+    was enough to trip it.  A bare ticker therefore matches only in the shape a
+    symbol takes: **all capitals, three characters or more** (see
+    ``_BARE_TICKER_PATTERN``).  Names keep the span lookup unchanged, which is
+    why the two sets are separate fields rather than one: sixty-five US issuers
+    have a one-word name identical to their own ticker (``Ball``, ``Dole``,
+    ``Coty``, ``Angi``), and merging the sets would have made the stricter
+    ticker rule govern their names as well.
+
+    **The cost, stated rather than implied.**  A bare ticker written in lower
+    case or title case is now invisible to the fence: ``purchases at Aapl`` and
+    ``purchases at aapl`` pass where ``purchases at AAPL`` is refused.  That is
+    a false negative, and false negatives are the expensive direction, paid in
+    the exclusivity guarantee rather than in a re-raise.  It is accepted here
+    because the alternative measured worse: an unfiltered ticker set refuses
+    ordinary English at a rate that would silently shape the search to whatever
+    survived it, which is the §3.6.6 endogeneity arriving through the
+    containment.  The issuer's *name* remains matched in any case, so the
+    residual is confined to a proposal that names a ticker and never its issuer.
     """
 
     #: Issuer names and tickers, lower-cased, from the security master and the
     #: discovery markets' listing lists.  Empty means the lookup is unavailable,
     #: which ``entity_mentions`` treats as a refusal to score rather than a pass.
     security_master: frozenset = frozenset()
+    #: Ticker symbols, lower-cased, from the same sources.  Kept apart from
+    #: ``security_master`` rather than folded into it because the two are matched
+    #: by different rules: a name is a word and is matched as a span in any case,
+    #: a ticker is a symbol and is matched only in a symbol's shape.
+    tickers: frozenset = frozenset()
     #: Regulatory and market vocabulary that is *not* an issuer.  Seeded, and
     #: extended by operator mapping in the same idiom as §3.6.5's stream table:
     #: it grows by use rather than by anticipation, and each addition is
@@ -202,6 +242,13 @@ class EntityFence:
             phrase = m.group(0)
             if phrase.split()[0].lower() not in self.lexicon:
                 hits.append(phrase)
+        for m in _BARE_TICKER_PATTERN.finditer(text):
+            symbol = m.group(0)
+            low = symbol.lower()
+            if low in self.lexicon:
+                continue
+            if low in self.tickers:
+                hits.append(symbol)
         # Multi-token names must be matched as spans, not as single tokens.
         # An earlier version tested one capitalised word at a time against the
         # master, which meant "Vodafone Group" could sit in the master and never
@@ -254,6 +301,14 @@ SEED_LEXICON = frozenset(
         "PDMR", "NCIB", "SOX", "ICB", "GICS", "NI", "RG", "GN", "UK", "US",
         "EU", "EEA", "IPO", "ADV", "ATR", "CEO", "CFO", "NAV", "NII", "FIX",
         "SME", "ETF", "AGM", "TR", "TRS", "CAR", "DTE",
+        # Legal-citation and hosting-site vocabulary that collides with real
+        # tickers.  Added by operator mapping on the trace of 27 August 2026,
+        # which found these five as the whole residue after the ticker rule:
+        # CFR and LII are the Code of Federal Regulations and Cornell's Legal
+        # Information Institute, ACT is the word in a statute's short title, and
+        # III and VII are roman numerals in section and title numbers.  Each is
+        # also a listed US ticker, which is why the fence saw them at all.
+        "CFR", "LII", "ACT", "III", "VII",
         # Ordinary capitalised prose that is not an entity
         "Appendix", "Article", "Articles", "Regulation", "Directive",
         "Instrument", "Rule", "Rules", "Notice", "Guide", "Guidance",

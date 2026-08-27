@@ -2,11 +2,11 @@
 
 Project memory for Claude Code. Read this before changing anything.
 
-**What this is.** A falsification-first architecture for trading ideas extracted from financial media, at ~£100,000 reference equity, long-only UK Main Market / AIM and US equities through IBKR. The governing document is `docs/spec/from_narrative_to_null_v1_13.md`. **The specification governs; this file is a summary of it and where the two disagree, the specification wins.**
+**What this is.** A falsification-first architecture for trading ideas extracted from financial media, at ~£100,000 reference equity, long-only UK Main Market / AIM and US equities through IBKR. The governing document is `docs/spec/from_narrative_to_null_v1_14.md`. **The specification governs; this file is a summary of it and where the two disagree, the specification wins.**
 
 **What the product is.** Not returns. The ledger: every unit of capital withheld was withheld for a stated reason, and the reason is machine-checkable. If the stream contains nothing exploitable, the correct output is an empty accepted book, visibly empty.
 
-**Where it stands.** Thirteen specification versions. **Zero frozen designs. Zero backtests. Zero trades.** No gate has been exercised against calibrated thresholds, so the absence of signals to date is structural, not evidential.
+**Where it stands.** Fourteen specification versions. **Zero frozen designs. Zero backtests. Zero trades.** No gate has been exercised against calibrated thresholds, so the absence of signals to date is structural, not evidential.
 
 ---
 
@@ -50,10 +50,10 @@ Concretely, in this codebase:
 
 ### 5. Counting is mechanical, because intent flatters the denominator
 
-- Any change to a grid, threshold, convention, gate membership, anchor assignment, cost tier, sizing rule, admissibility rule, input-source choice, extraction schema field, or estimation span **is a specification version**, however small. `docs/spec/` is currently the **thirteenth**.
+- Any change to a grid, threshold, convention, gate membership, anchor assignment, cost tier, sizing rule, admissibility rule, input-source choice, extraction schema field, or estimation span **is a specification version**, however small. `docs/spec/` is currently the **fourteenth**.
 - A correction to a *justification* is not a version. A correction to a *rule* is.
 - Frozen designs are counted separately and stand at **zero**. Results attribute to frozen designs, never to versions.
-- If you change a rule, add a `§12.1` change-log row in the spec in the same commit.
+- **A rule change must be recorded in the same commit as the rule change.** Where the version is already composed, that record is a `§12.1` change-log row. Where it is not, that record is a **pending block** in `docs/OPEN_ITEMS.md` naming the rule, the sections it touches and its kind, carried until the version is composed and then discharged into the row. What may not happen is a rule moving in one commit and being written down in another. *The earlier wording of this bullet demanded a `§12.1` row in the same commit, which is a stricter thing: it makes composing a whole specification version the price of landing one rule, and the predictable effect is that the rule lands unrecorded instead.*
 
 ---
 
@@ -96,7 +96,7 @@ tests/
 
 ```bash
 pip install -e ".[dev]"      # once: puts src/ on the path
-python -m pytest tests/ -q   # 128 tests
+python -m pytest tests/ -q   # 141 tests
 ```
 
 Without the editable install the package sits at `src/fntn` and is invisible to

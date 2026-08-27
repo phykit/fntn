@@ -8,7 +8,7 @@ Status vocabulary: `OPEN` not started, `BLOCKED` waiting on a named dependency, 
 
 ## The binding path, in order
 
-Progress is not gated on design quality. Thirteen versions, a linter, a reference implementation, a literature lane and a discovery layer have all been built; the score does not move because **nothing has been measured**. Five steps, and the order is not negotiable:
+Progress is not gated on design quality. Fourteen versions, a linter, a reference implementation, a literature lane and a discovery layer have all been built; the score does not move because **nothing has been measured**. Five steps, and the order is not negotiable:
 
 1. **Verify the commission** (§13 row 1). Every break-even denominator in the paper inherits it. Until it closes, the clip, the feasible band, the reachability matrix, §5.4.4 and the whole break-even table are bracketed.
 2. **Fix the pre-calibration fixings**: archive identity and span, partition boundaries, universe constituents, source roster, borrow snapshot date.
@@ -17,6 +17,18 @@ Progress is not gated on design quality. Thirteen versions, a linter, a referenc
 5. **Populate §13, hash the parameter object.** That act creates **frozen design 1**. Then the retrospective deployment, and §7.1 and §7.5 return a verdict.
 
 Until step 5, no version may add capability (§0.6).
+
+---
+
+## Pending rule changes
+
+A rule change is recorded in the same commit that lands it. Where the specification version is already composed, the record is its `§12.1` change-log row. Where it is not, the record is a row here, carried until the version is composed and then discharged into that row. **A rule moving in one commit and being written down in another is the failure this section exists against**: the recording is the version, and a rule change nobody wrote down is a version nobody counted.
+
+| Rule changed | Sections it touches | Kind (§3.6.4) | Landed | Discharged into |
+|---|---|---|---|---|
+| n/a | n/a | n/a | n/a | n/a |
+
+*Empty is the correct state immediately after a version is composed. P76, P77 and P78 were carried here between 27 August 2026 and the composition of v1.14, and are discharged into §12.1.*
 
 ---
 
@@ -44,9 +56,9 @@ Until step 5, no version may add capability (§0.6).
 | 18 | Source-lead minimum call count | BLOCKED | Calibration, per-source call counts |
 | 19 | **Control-arm separation δ and *n*ₘᵢₙ** | **CLOSED 26 Aug 2026** | δ = 50 bps, *n*ₘᵢₙ = 30. Registration `890a80e3a8566837`, stamped 22:54 UTC, before any archive exists |
 | 20 | **Control-arm ratio *M/N* and seed** | **CLOSED 26 Aug 2026** | Ratio 1.0 (matched arms), seed 20260826 |
-| 21 | Entity-fence error rates | **PROVISIONAL** | 200 hand-labelled proposals. A reading of 42 exists: 0% / 0% repaired, 94% / 0% on the pattern-only fence it replaced |
+| 21 | Entity-fence error rates | **PROVISIONAL, corrected 27 Aug 2026 (spec P77 and P79)** | 200 hand-labelled proposals. **The 0% / 0% previously recorded here was not reproducible** and is withdrawn: it was measured against six probes defined inline in a shell heredoc that was never committed, and `docs/trace_corpus.json` carries no labels at all. The labelled set is now in the tree at `docs/labelled_proposals.json` (36 class-level mechanisms drawn by agent sweep, 6 authored probes) and the reading is locked by tests. **The two arms are of two kinds and are not reported as one.** The drawn arm is a rate: **0 of 36 class-level proposals refused (0%)**. The probe arm is coverage and carries no percentage, the six being chosen rather than sampled, one per named route into the fence: **5 of 6 routes closed, the open one a title-case bare ticker**, which is the residual the ticker rule takes on knowingly and which `EntityFence`'s docstring names. Before the ticker rule the same 36 gave **3 refused (8%)**, on `Note`, `T` and `It`. Labels are `model_clerk`, not hand labels, and operator ratification is outstanding |
 | 22 | **Discovery corpus roster, partitions, discoverable classes** | **PART CLOSED** | US declared (`pre_archive`). UK, AU, EU and NZ profiled but not registered: each needs a listing file with a known total |
-| 23 | Intake abort-position distribution | **PROVISIONAL** | Audit stream at scale. A reading of 42 exists: every failure at position 3, so nine intake points remain unexercised on real material |
+| 23 | Intake abort-position distribution | **PROVISIONAL, corrected 27 Aug 2026** | Audit stream at scale. The 26 August reading, every failure at position 3, was taken under a **wider exclusivity map than the registration declares**. Re-run under the registered four classes (`docs/trace_report_2026-08-27.txt`): 5 at position 3, **8 at position 9**, deepest failure **9 of 12**. Of the remaining ten points, every branch fires when a subject is built to trip it, so none is dead code, but **four cannot be reached by any configured path**: `agent_overreached_schema` (`raw_payloads()` is called from nowhere, so the authority fence has no input), `discovery_partition_violation` (`Corpus.__post_init__` refuses first), `registered_at_unstampable` (the query log is written and never read back, and each scan builds a fresh fence), and `source_inaccessible` (the resolver defaults to `bool(ref)`, so retrieval is never attempted). `provenance_tag_absent` can emit but can never be a first failure, being masked by position 10 on the same trigger. Those four are remediation candidates, not measurement gaps |
 | 24 | Cross-market generalisability | BLOCKED | Design segment; classes present in both markets |
 | 25 | **Security master and lexicon coverage** | **CLOSED for US** | 10,388 issuers from the SEC's own file, 100% by construction. Other markets outstanding |
 | n/a | FX exposure budget (§0 decision) | OPEN | Governance judgement in a stated range |
@@ -79,8 +91,8 @@ Until step 5, no version may add capability (§0.6).
 |---|---|
 | Claim provenance: no `recollection` tag on anything feeding a gate, boundary or published table | **OPEN**: Bloomfield and Mitchell & Pulvino remain `recollection` and block the signature |
 | Register completeness | CLOSED on §12.7's terms |
-| Review harness run to its stopping rule | **OPEN**: v1.13 is a new composition; no clean pass recorded, two required |
-| Trace exercise (§9.4) to its stopping rule | **OPEN**: the discovery-layer trace of 26 August is a first block, non-evidentiary, and does not discharge this |
+| Review harness run to its stopping rule | **OPEN**: v1.14 is a new composition and resets the count; no clean pass recorded, two required |
+| Trace exercise (§9.4) to its stopping rule | **OPEN**: the discovery-layer traces of 26 and 27 August are two blocks, both non-evidentiary. Neither includes the primary catalyst family's live filing flow, and no US corpus sweep has run for want of a client |
 | Broker commission schedule verified | **OPEN**: §13 row 1 |
 | FGR published-version tables against journal pagination | OPEN: upgrades §0.5 rows to `verified_primary` |
 

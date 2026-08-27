@@ -240,8 +240,21 @@ class SecurityMaster:
     # -- use ---------------------------------------------------------------
 
     def as_fence(self, lexicon=SEED_LEXICON) -> EntityFence:
+        """Names and tickers go in separately, and the fence matches them apart.
+
+        An earlier version passed the union as one lookup set. That put 10,359
+        unfiltered US tickers, 7,268 of them four characters or fewer, into the
+        same set as the issuer names, where the fence's span matcher tried them
+        against every capitalised word in the text. ``Note``, ``Are``, ``For``
+        and the single letters are all tickers, so ordinary English refused. The
+        two are separated here because they are matched by different rules; see
+        ``EntityFence`` for the rule and for the false negative it accepts.
+        """
+
         return EntityFence(
-            security_master=frozenset(self.names | self.tickers), lexicon=lexicon
+            security_master=frozenset(self.names),
+            tickers=frozenset(self.tickers),
+            lexicon=lexicon,
         )
 
     def readable_markets(self, floor: float) -> List[str]:

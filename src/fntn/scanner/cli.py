@@ -2,6 +2,7 @@
 
     python -m fntn.scanner init      > writes a blank registration form
     python -m fntn.scanner check     > says exactly what is still missing
+    python -m fntn.scanner trace     > tests the machinery, evidentially inert
     python -m fntn.scanner sweep     > runs, only if the form is complete
 
 `sweep` refuses on an incomplete registration and names every gap. That refusal
@@ -20,6 +21,7 @@ from typing import List, Optional, Sequence
 
 from .clients import AnthropicClient, ClientRefusal, TranscriptClient
 from .discovery import Corpus as SweepCorpus, GridCell
+from .fences import QueryFence
 from .ledger import Ledger
 from .markets import MARKETS, render as render_markets, resolve
 from .master import SecurityMaster
@@ -27,6 +29,7 @@ from .params import Registration, RegistrationIncomplete
 from .records import Partition, ScoringMode, SegmentSpan
 from .run import ScanConfig, scan
 from .segment import SegmentPolicy
+from .trace import TraceHarness, load_labelled
 
 DEFAULT_REG = "discovery_registration.json"
 
@@ -163,6 +166,59 @@ def cmd_check(args) -> int:
         if not master.per_market:
             gaps.append("no security master could be loaded (§13 row 25)")
     return 1 if gaps else 0
+
+
+def cmd_trace(args) -> int:
+    """Run the §9.4 trace harness against the registered configuration.
+
+    Separate from `sweep` because the two are different acts. A sweep is the
+    layer running; a trace is the layer being tested, full panel on every
+    subject, stamped NON_EVIDENTIARY, refusing to register or admit. Running the
+    trace through `sweep` would put subjects with no registered kill criterion
+    into the same ledger as subjects that have one, and nothing downstream could
+    then tell them apart.
+    """
+
+    try:
+        reg = Registration.load(args.registration)
+    except FileNotFoundError:
+        print(f"{args.registration} not found. Run `init` first.")
+        return 1
+
+    master, problems = _load_master(reg)
+    for prob in problems:
+        print(f"master: {prob}")
+    if not master.per_market:
+        print()
+        print("No security master loaded, so the entity fence has no binding")
+        print("layer. The trace would measure a fence that is not running.")
+        return 5
+
+    try:
+        labelled = load_labelled(args.labelled)
+    except FileNotFoundError:
+        print(f"{args.labelled} not found.")
+        print()
+        print("The labelled set is the denominator of the §13 row 21 audit and")
+        print("it lives in the tree, not in the shell that invoked the harness.")
+        print("A fence error rate measured against labels nobody can read back")
+        print("is an assertion about a fence, not a measurement of one.")
+        return 6
+
+    exclusivity = {c.event_class: reg.default_scoring_mode
+                   for c in reg.discoverable_classes}
+    harness = TraceHarness(
+        exclusivity_available=exclusivity, entity_fence=master.as_fence()
+    )
+    print(f"registration {reg.hash()} stamped {reg.registered_at}")
+    print(master.render(floor=reg.master_coverage_floor))
+    print(f"labelled set : {args.labelled}, {len(labelled)} subjects, "
+          f"labellers {sorted({l.labeller for l in labelled})}")
+    print()
+    report = harness.run(labelled, QueryFence())
+    print(report.render(harness.ledger))
+    harness.close()
+    return 0
 
 
 def cmd_sweep(args) -> int:
@@ -308,6 +364,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     p_check = sub.add_parser("check", help="report what is still missing")
     p_check.set_defaults(func=cmd_check)
+
+    p_trace = sub.add_parser(
+        "trace", help="run the §9.4 trace harness; measures machinery, not market"
+    )
+    p_trace.add_argument("--labelled", default="docs/labelled_proposals.json")
+    p_trace.set_defaults(func=cmd_trace)
 
     p_sweep = sub.add_parser("sweep", help="run a sweep, if registration is complete")
     p_sweep.add_argument("--transcript", help="replay a saved payload instead of calling the model")
