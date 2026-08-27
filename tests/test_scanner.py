@@ -2695,7 +2695,7 @@ def test_the_queue_is_ordered_by_outstanding_count_and_nothing_else():
 def test_zero_outstanding_drafts_come_first_under_their_own_heading():
     ledger = _report_ledger()
     text = _render(ledger)
-    queue = text.split("## 4. The queue")[1].split("## 5.")[0]
+    queue = text.split("## 5. The queue")[1].split("## 6.")[0]
     assert "Nothing outstanding: 1 draft(s). **These need a decision now.**" in queue
     assert queue.index("dir-zzz") < queue.index("dir-aaa") < queue.index("dir-mmm")
     ledger.close()
@@ -2706,6 +2706,11 @@ def _render(ledger, **over) -> str:
     kwargs = dict(
         registration=reg, ledger=ledger, corpora=[("./corpora/us", "abcd")],
         commit="deadbeef", on=date(2026, 8, 27),
+        # The real register, so the binding path is read against the document
+        # that governs it.  No runs directory by default: a test that diffed
+        # against whatever `docs/runs/` happens to hold would pass or fail on
+        # the tree's history rather than on this code.
+        register=OPEN_ITEMS,
     )
     kwargs.update(over)
     return RunReport(**kwargs).render()
@@ -2720,7 +2725,7 @@ def test_the_report_carries_no_ranking_key_other_than_the_count():
     """
 
     ledger = _report_ledger()
-    queue = _render(ledger).split("## 4. The queue")[1].split("## 5.")[0]
+    queue = _render(ledger).split("## 5. The queue")[1].split("## 6.")[0]
 
     # A ranking key lives in a column or a heading. Those are checked with no
     # exemption at all.
@@ -2774,18 +2779,19 @@ def test_the_queue_ordering_survives_a_reversed_ledger():
     ledger.close()
 
 
-def test_the_report_has_its_eight_sections_in_order():
+def test_the_report_has_its_nine_sections_in_order():
     ledger = _report_ledger()
     text = _render(ledger)
     wanted = [
-        "## 1. Provenance",
-        "## 2. Intake funnel",
-        "## 3. Fence report",
-        "## 4. The queue",
-        "## 5. Control arm",
-        "## 6. Reason-code coverage",
-        "## 7. Refutations",
-        "## 8. Not measured",
+        "## 1. Binding path",
+        "## 2. Provenance",
+        "## 3. Intake funnel",
+        "## 4. Fence report",
+        "## 5. The queue",
+        "## 6. Control arm",
+        "## 7. Reason-code coverage",
+        "## 8. Refutations",
+        "## 9. Not measured",
     ]
     positions = [text.index(w) for w in wanted]
     assert positions == sorted(positions)
@@ -2794,7 +2800,7 @@ def test_the_report_has_its_eight_sections_in_order():
 
 def test_the_provenance_header_carries_the_fingerprint_and_its_verdict():
     ledger = _report_ledger()
-    prov = _render(ledger).split("## 1. Provenance")[1].split("## 2.")[0]
+    prov = _render(ledger).split("## 2. Provenance")[1].split("## 3.")[0]
     reg = Registration.load(REPO_ROOT / REGISTRATION_FILE)
     assert reg.hash() in prov
     assert reg.registered_schema in prov
@@ -2805,7 +2811,7 @@ def test_the_provenance_header_carries_the_fingerprint_and_its_verdict():
 
 def test_the_two_fence_arms_are_reported_apart_and_neither_is_rounded_up():
     ledger = _report_ledger()
-    fences = _render(ledger).split("## 3. Fence report")[1].split("## 4.")[0]
+    fences = _render(ledger).split("## 4. Fence report")[1].split("## 5.")[0]
     assert "upper bound" in fences and "8.3%" in fences
     assert "5 of 6 routes closed" in fences
     assert "coverage, never a rate" in fences
@@ -2820,7 +2826,7 @@ def test_the_control_arm_verdict_is_not_yet_run_and_not_undetermined():
     """`undetermined_at_budget` would say a measurement had happened."""
 
     ledger = _report_ledger()
-    arm = _render(ledger).split("## 5. Control arm")[1].split("## 6.")[0]
+    arm = _render(ledger).split("## 6. Control arm")[1].split("## 7.")[0]
     assert "**NOT YET RUN**" in arm
     assert "undetermined_at_budget" in arm and "claiming" in arm
     assert "not measured" in arm
@@ -2843,7 +2849,7 @@ def test_the_budget_count_is_printed_even_at_zero_and_never_inside_row_23():
 
 def test_unexercised_intake_points_are_named_not_counted():
     ledger = _report_ledger()
-    section = _render(ledger).split("### Intake points not exercised")[1].split("## 3.")[0]
+    section = _render(ledger).split("### Intake points not exercised")[1].split("## 4.")[0]
     for code in codes.INTAKE_ORDER:
         assert f"`{code}`" in section
     ledger.close()
@@ -2851,12 +2857,175 @@ def test_unexercised_intake_points_are_named_not_counted():
 
 def test_the_refutations_section_is_seeded_with_the_three_to_date():
     ledger = _report_ledger()
-    ref = _render(ledger).split("## 7. Refutations")[1].split("## 8.")[0]
+    ref = _render(ledger).split("## 8. Refutations")[1].split("## 9.")[0]
     assert "94%" in ref
     assert "Trust Holdings and Transactions" in ref
     assert "RAW FETCHED PAGES WERE NEVER RETAINED" in ref
     assert len(report_mod.STANDING_REFUTATIONS) == 3
     ledger.close()
+
+
+# ---------------------------------------------------------------------------
+# Section 1: the binding path, and what moved.
+# ---------------------------------------------------------------------------
+
+
+def _register_copy(tmp_path, edits) -> Path:
+    """`docs/OPEN_ITEMS.md` with named §13 rows' status cells replaced."""
+
+    lines = OPEN_ITEMS.read_text().splitlines()
+    for row, status in edits.items():
+        hit = 0
+        for i, line in enumerate(lines):
+            if line.startswith(f"| {row} |"):
+                cells = line.strip().strip("|").split("|")
+                cells[2] = f" {status} "
+                lines[i] = "|" + "|".join(cells) + "|"
+                hit += 1
+        assert hit == 1, f"expected one row {row}, edited {hit}"
+    out = tmp_path / "OPEN_ITEMS.md"
+    out.write_text("\n".join(lines) + "\n")
+    return out
+
+
+def test_the_binding_path_is_first_and_sits_above_the_provenance_header():
+    """The order is the point, not merely the presence.
+
+    The provenance header answers *under what was this run taken*; the binding
+    path answers *has the project moved*. A reader opening the file for the
+    second question should not have to find it under the first.
+    """
+
+    ledger = _report_ledger()
+    text = _render(ledger)
+    assert text.index("## 1. Binding path") < text.index("## 2. Provenance")
+    # And above it in the file, not merely numbered before it.
+    assert text.index("## 1. Binding path") < text.index("registration hash")
+    ledger.close()
+
+
+def test_every_binding_path_status_is_read_from_the_register(tmp_path):
+    """Read, not stated. Move the register and the section moves with it."""
+
+    before = report_mod.binding_path_rows(OPEN_ITEMS)
+    assert [r[0] for r in before] == ["1", "2", "3", "4", "5"]
+    assert before[0][2] == "NOT CLOSED" and "BLOCKED" in before[0][3]
+
+    after = report_mod.binding_path_rows(
+        _register_copy(tmp_path, {"1": "**CLOSED 28 Aug 2026**"})
+    )
+    assert after[0][2] == "CLOSED"
+    assert "CLOSED 28 Aug 2026" in after[0][3]
+    # Row 1 is also one of the twenty-seven step 5 waits on, so step 5's
+    # evidence moves too whilst its status does not.
+    assert after[4][2] == "NOT CLOSED"
+    assert after[4][3] != before[4][3]
+
+
+def test_a_qualified_closure_does_not_close_a_step():
+    """`PART CLOSED` and `CLOSED for US` are closures over part of an object.
+
+    Reading either as done would say the binding path had moved when the
+    register says it has not, which is the one thing this section must not do.
+    """
+
+    assert report_mod.is_closed("CLOSED")
+    assert report_mod.is_closed("CLOSED 26 Aug 2026")
+    assert not report_mod.is_closed("PART CLOSED")
+    assert not report_mod.is_closed("CLOSED for US")
+    assert not report_mod.is_closed("PROVISIONAL")
+    assert not report_mod.is_closed("BLOCKED")
+    # Step 2 names row 22 (PART CLOSED) and row 25 (CLOSED for US), so it is
+    # the step the distinction decides.
+    step2 = report_mod.binding_path_rows(OPEN_ITEMS)[1]
+    assert step2[2] == "NOT CLOSED"
+    assert "PART CLOSED" in step2[3] and "CLOSED for US" in step2[3]
+
+
+def test_a_register_that_cannot_be_read_refuses_rather_than_defaulting(tmp_path):
+    """A step reported outstanding when nothing was read is a refusal in
+    a reading's clothes, and rule 3 forbids it."""
+
+    rows = report_mod.binding_path_rows(tmp_path / "there-is-no-register.md")
+    assert len(rows) == 5
+    assert all(r[2] == "CANNOT READ THE REGISTER" for r in rows)
+    assert all("NOT CLOSED" != r[2] for r in rows)
+
+    ledger = _report_ledger()
+    text = _render(ledger, register=None)
+    assert "**No register was given, so no status was read.**" in text
+    assert "no binding-path movement since" not in text
+    ledger.close()
+
+
+def test_the_movement_line_says_the_exact_words_when_nothing_moved(tmp_path):
+    """`no binding-path movement since <previous report>`, and nothing softer."""
+
+    ledger = _report_ledger()
+    runs = tmp_path / "runs"
+    runs.mkdir()
+    first = _render(ledger, runs_dir=runs)
+    (runs / "2026-08-27_funnel.md").write_text(first)
+    second = _render(ledger, runs_dir=runs)
+    assert "**no binding-path movement since 2026-08-27_funnel.md**" in second
+    ledger.close()
+
+
+def test_the_movement_line_names_the_step_that_moved(tmp_path):
+    """Computed by diffing the previous file, never asserted."""
+
+    ledger = _report_ledger()
+    runs = tmp_path / "runs"
+    runs.mkdir()
+    (runs / "2026-08-27_funnel.md").write_text(_render(ledger, runs_dir=runs))
+    moved = _render(
+        ledger, runs_dir=runs,
+        register=_register_copy(tmp_path, {"1": "**CLOSED 28 Aug 2026**"}),
+    )
+    assert "no binding-path movement" not in moved
+    assert "**Moved since 2026-08-27_funnel.md:**" in moved
+    assert "- step 1: **NOT CLOSED** to **CLOSED**" in moved
+    # Step 5's status held and its evidence moved, and both are said.
+    assert "- step 5: **NOT CLOSED** to **NOT CLOSED**; register cells were" in moved
+    ledger.close()
+
+
+def test_a_previous_report_without_a_binding_path_is_not_called_no_movement(tmp_path):
+    """A comparison that did not happen cannot have come out equal.
+
+    Every report in `docs/runs/` written before this section exists is this
+    case, so the wrong answer here would be the first thing a reader saw.
+    """
+
+    ledger = _report_ledger()
+    runs = tmp_path / "runs"
+    runs.mkdir()
+    (runs / "2026-08-27_funnel.md").write_text("# Run report\n\n## 1. Provenance\n")
+    text = _render(ledger, runs_dir=runs)
+    assert "no binding-path movement since" not in text
+    assert "carries no binding path, so nothing was diffed" in text
+    assert "**This is not the same as no movement**" in text
+    ledger.close()
+
+
+def test_no_previous_report_at_all_is_not_called_no_movement(tmp_path):
+    ledger = _report_ledger()
+    runs = tmp_path / "runs"
+    runs.mkdir()
+    text = _render(ledger, runs_dir=runs)
+    assert "no binding-path movement since" not in text
+    assert "so nothing was diffed" in text
+    ledger.close()
+
+
+def test_the_previous_report_is_the_latest_one_next_path_would_follow(tmp_path):
+    """The ordering `next_path` allocates, read back."""
+
+    for name in ("2026-08-26_funnel.md", "2026-08-27_funnel.md",
+                 "2026-08-27_funnel_02.md", "2026-08-27_funnel_10.md"):
+        (tmp_path / name).write_text("x")
+    assert report_mod.previous_report(tmp_path).name == "2026-08-27_funnel_10.md"
+    assert report_mod.previous_report(tmp_path / "nothing-here") is None
 
 
 def test_a_report_never_overwrites_another(tmp_path):

@@ -334,6 +334,11 @@ def cmd_report(args) -> int:
             if args.budget_abandoned is not None
             else ledger.budget_abandoned()
         ),
+        # Both read at render time and neither guessed at. A missing register
+        # produces a section that says no status was read, never a section of
+        # statuses read from somewhere else.
+        register=Path(args.open_items),
+        runs_dir=Path(args.dir),
     )
     out = Path(args.out) if args.out else report_mod.next_path(
         Path(args.dir), on
@@ -533,6 +538,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     p_rep.add_argument("--on", help="date to stamp the report with, ISO")
     p_rep.add_argument("--budget-abandoned", type=int, default=None,
                        help="override the ledger's count; normally read from it")
+    p_rep.add_argument("--open-items", default="docs/OPEN_ITEMS.md",
+                       help="the register the binding path is read out of")
     p_rep.set_defaults(func=cmd_report)
 
     p_sweep = sub.add_parser("sweep", help="run a sweep, if registration is complete")

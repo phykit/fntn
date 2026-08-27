@@ -14,7 +14,16 @@ than leaving the section out. It is procedure by §0.6's test, adding no gate, n
 family, no grammar row, no cost tier, no feed, no sizing input and no field the
 funnel reads at decision time.
 
-**The queue's ordering is the one design decision in here, and it is a
+**The binding path comes first, above the provenance header.** The provenance
+header answers *under what was this run taken*; the binding path answers *has
+the project moved*, and a reader opening the file for the second question
+should not have to find it under the first. Its five steps are the register's,
+in the register's order, and every status is read out of ``docs/OPEN_ITEMS.md``
+rather than stated here. **The one judgement in that section is which register
+cells settle which step**, and it is printed beside each step so a reader who
+disagrees with it can see it rather than infer it.
+
+**The queue's ordering is the second design decision in here, and it is a
 refusal.** Drafts are ordered by **how many operator inputs each is still
 missing, ascending**, and by nothing else. Any other ordering is a judgement
 about which idea deserves attention first, and a judgement made by this file is
@@ -93,6 +102,340 @@ STANDING_REFUTATIONS: Tuple[Tuple[str, str, str], ...] = (
 
 class ReportRefused(RuntimeError):
     """Raised rather than defaulted.  See each call site."""
+
+
+# ---------------------------------------------------------------------------
+# The binding path.
+# ---------------------------------------------------------------------------
+
+#: The heading this report writes its binding path under.  Named once because
+#: the previous report is parsed back under the same string: a heading that
+#: drifted would silently turn every diff into "the previous report has no
+#: binding path", which reads as reassuring and is not.
+BINDING_PATH_HEADING = "## 1. Binding path"
+
+#: The register's declared status vocabulary, plus the one token in use that
+#: the register's own declaration at the top of `docs/OPEN_ITEMS.md` does not
+#: list.  `PART CLOSED` is row 22's status and `CLOSED for US` is row 25's; the
+#: declaration names four words and the table uses two more.  They are admitted
+#: here **and reported as qualified**, rather than either being smoothed into
+#: `CLOSED` or refused: refusing would make the section unreadable over a
+#: register that is simply more careful than its own preamble, and smoothing
+#: would let part of an object closed read as the whole of one closed.
+REGISTER_STATUSES = ("OPEN", "BLOCKED", "PROVISIONAL", "PART CLOSED", "CLOSED")
+
+#: Words that qualify a closure.  `CLOSED for US` is a closure over part of the
+#: object, and **a binding-path step is not settled by part of one**.
+CLOSURE_QUALIFIERS = ("part", "for")
+
+#: The five steps of `docs/OPEN_ITEMS.md`'s *binding path, in order*, and the
+#: register cells each is settled by.
+#:
+#: **The mapping from a step to its cells is declared here; every status is
+#: read out of the register.** The declaration is the one judgement in this
+#: section and it is printed in the table beside each step, so a reader who
+#: disagrees with it can see it rather than infer it. Nothing here is a field
+#: the funnel reads at decision time, and nothing here decides anything: the
+#: section prints what the register already says, in the order the register
+#: already puts it.
+#:
+#: `("13", ALL_13)` means every numbered row of §13, which is what *populate
+#: §13* means and what step 5 waits on.
+ALL_13 = "*"
+BINDING_PATH: Tuple[Tuple[str, str, Tuple[Tuple[str, str], ...]], ...] = (
+    (
+        "1",
+        "Verify the commission (§13 row 1)",
+        (("13", "1"),),
+    ),
+    (
+        "2",
+        "Fix the pre-calibration fixings",
+        (("13", "22"), ("13", "25")),
+    ),
+    (
+        "3",
+        "Settle the §14 governance decisions that gate registration",
+        (
+            ("14d", "Overlap tolerance θ"),
+            ("14d", "δₘᵢₙ floor"),
+            ("14d", "Account type, cash or margin"),
+        ),
+    ),
+    (
+        "4",
+        "Run the trace harness (§9.4) to its stopping rule",
+        (("14p", "Trace exercise (§9.4) to its stopping rule"),),
+    ),
+    (
+        "5",
+        "Populate §13, hash the parameter object: frozen design 1",
+        (("13", ALL_13),),
+    ),
+)
+
+#: Which markdown table under which heading of the register each key above
+#: refers to.  Read by heading rather than by position, so a table moving in
+#: the document does not silently rekey the section.
+REGISTER_TABLES = {
+    "13": "## §13",
+    "14d": "## §14: open decisions",
+    "14p": "## §14: preconditions to signing the freeze",
+}
+
+
+def register_rows(text: str) -> Dict[str, Dict[str, str]]:
+    """Every register table with a *Status* column, keyed by its first cell.
+
+    The status column is found **by its header** and never by its position, so
+    a column inserted before it does not silently start reporting the wrong
+    cell. A table with no `Status` header is skipped rather than guessed at.
+    """
+
+    out: Dict[str, Dict[str, str]] = {}
+    heading = ""
+    header: Optional[List[str]] = None
+    status_col: Optional[int] = None
+    for line in text.splitlines():
+        if line.startswith("## "):
+            heading, header, status_col = line.strip(), None, None
+            continue
+        if not line.startswith("|"):
+            header, status_col = None, None
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if all(set(c) <= set("-: ") for c in cells):
+            continue                      # the header rule
+        if header is None:
+            header = cells
+            status_col = (
+                header.index("Status") if "Status" in header else None
+            )
+            continue
+        if status_col is None or status_col >= len(cells):
+            continue
+        for key, prefix in REGISTER_TABLES.items():
+            if heading.startswith(prefix):
+                out.setdefault(key, {})[cells[0]] = cells[status_col]
+    return out
+
+
+def status_token(cell: str) -> str:
+    """The leading status token of a register status cell, verbatim.
+
+    Everything up to the first colon, with markdown emphasis stripped and a
+    trailing parenthetical note dropped. `**OPEN**: the traces of 26 and 27
+    August ...` yields `OPEN`; `**CLOSED for US**` yields `CLOSED for US`,
+    qualifier included, because dropping the qualifier is the failure this
+    whole function guards.
+    """
+
+    token = cell.split(":", 1)[0]
+    token = token.replace("*", "").replace("`", "").strip()
+    token = token.split(" *(")[0].strip()
+    return token
+
+
+def is_closed(token: str) -> bool:
+    """Whether a status token says the thing is done, whole.
+
+    `CLOSED` and `CLOSED 26 Aug 2026` are done. `PART CLOSED` and `CLOSED for
+    US` are not: **a step of the binding path is not settled by part of an
+    object being settled**, and a report that read them as done would say the
+    path had moved when the register says it has not.
+    """
+
+    words = token.lower().split()
+    if not words or words[0] != "closed":
+        return False
+    return not any(w in CLOSURE_QUALIFIERS for w in words)
+
+
+def binding_path_rows(register: Path) -> List[Tuple[str, str, str, str]]:
+    """(step, what it is, status, the register cells it is settled by).
+
+    Refuses rather than defaults. A register that cannot be read, or a row the
+    mapping names and the register does not carry, produces a status of
+    `CANNOT READ THE REGISTER` with the reason in the evidence cell. **It never
+    produces a status of NOT CLOSED by default**, because a step reported as
+    outstanding when in fact nothing was read is a refusal wearing a reading's
+    clothes.
+    """
+
+    try:
+        rows = register_rows(Path(register).read_text(encoding="utf-8"))
+    except OSError as exc:
+        return [
+            (n, what, "CANNOT READ THE REGISTER", f"`{register}`: {exc}")
+            for n, what, _ in BINDING_PATH
+        ]
+
+    out: List[Tuple[str, str, str, str]] = []
+    for n, what, cells in BINDING_PATH:
+        wanted: List[Tuple[str, str]] = []
+        for table, key in cells:
+            table_rows = rows.get(table, {})
+            if key == ALL_13:
+                wanted += [
+                    (f"§13 row {k}", v)
+                    for k, v in table_rows.items()
+                    if k not in ("n/a", "#")
+                ]
+            elif key in table_rows:
+                label = f"§13 row {key}" if table == "13" else f"§14 {key}"
+                wanted.append((label, table_rows[key]))
+            else:
+                wanted.append((f"{table}:{key}", ""))
+        missing = [lab for lab, cell in wanted if not cell]
+        if not wanted or missing:
+            out.append((
+                n, what, "CANNOT READ THE REGISTER",
+                "the mapping names "
+                + ", ".join(f"`{m}`" for m in missing or ["nothing"])
+                + " and the register does not carry it",
+            ))
+            continue
+        tokens = [(lab, status_token(cell)) for lab, cell in wanted]
+        unknown = [
+            lab for lab, t in tokens
+            if not any(t.upper().startswith(v) for v in REGISTER_STATUSES)
+        ]
+        if unknown:
+            out.append((
+                n, what, "CANNOT READ THE REGISTER",
+                "outside the register's status vocabulary: "
+                + ", ".join(f"`{u}`" for u in unknown),
+            ))
+            continue
+        closed = all(is_closed(t) for _, t in tokens)
+        if any(key == ALL_13 for _table, key in cells):
+            # Twenty-seven cells printed one by one is a paragraph nobody
+            # reads.  Grouped by token instead, which loses no token and so
+            # still moves in the diff when any single row's status moves; a
+            # bare count would not, and a step that stopped moving in the diff
+            # because its evidence was summarised is the failure this whole
+            # section exists against.
+            groups: Dict[str, List[str]] = {}
+            for lab, t in tokens:
+                groups.setdefault(t, []).append(lab.replace("§13 row ", ""))
+            n_closed = sum(1 for _, t in tokens if is_closed(t))
+            evidence = (
+                f"{n_closed} of {len(tokens)} §13 rows closed whole; "
+                + "; ".join(
+                    f"{t} ({', '.join(labs)})" for t, labs in sorted(groups.items())
+                )
+            )
+        else:
+            evidence = "; ".join(f"{lab}: {t}" for lab, t in tokens)
+        out.append((n, what, "CLOSED" if closed else "NOT CLOSED", evidence))
+    return out
+
+
+def report_sort_key(p: Path) -> Tuple[str, int]:
+    """`<date>_funnel[_NN].md` in the order `next_path` allocates it."""
+
+    stem = p.stem
+    on, _, rest = stem.partition("_funnel")
+    n = int(rest.lstrip("_")) if rest.lstrip("_").isdigit() else 1
+    return on, n
+
+
+def previous_report(runs_dir: Path) -> Optional[Path]:
+    """The latest report already in `runs_dir`, or None if there is none.
+
+    Called at render time, before this run's own file is written, so the latest
+    file present is the one this report follows. `next_path` allocates the next
+    number rather than overwriting, so the ordering is total.
+    """
+
+    try:
+        files = [p for p in Path(runs_dir).glob("*_funnel*.md") if p.is_file()]
+    except OSError:
+        return None
+    return max(files, key=report_sort_key) if files else None
+
+
+def binding_path_of(text: str) -> Dict[str, Tuple[str, str]]:
+    """The (status, evidence) of each step in a rendered report, by step.
+
+    Empty for a report written before this section existed, which is a
+    different thing from a report in which nothing moved and is reported as
+    such rather than as *no movement*.
+    """
+
+    parts = text.split(BINDING_PATH_HEADING)
+    if len(parts) < 2:
+        return {}
+    body = parts[1].split("\n## ")[0]
+    out: Dict[str, Tuple[str, str]] = {}
+    for line in body.splitlines():
+        if not line.startswith("|"):
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) != 4 or not cells[0].isdigit():
+            continue
+        out[cells[0]] = (cells[2].replace("*", ""), cells[3])
+    return out
+
+
+def movement_line(rows, runs_dir: Optional[Path]) -> str:
+    """What moved since the previous report in `runs_dir`, by diff.
+
+    **Computed against that file, never asserted.** The three outcomes are
+    distinct and the distinction is the point:
+
+    * no previous report: nothing was diffed, and that is said.
+    * a previous report with no binding path: nothing was diffed, and that is
+      said. It may NOT be reported as no movement, because a comparison that
+      did not happen cannot have come out equal.
+    * a previous report with one: the diff, or, where it is empty, the words
+      **no binding-path movement since <file>** and nothing softer.
+    """
+
+    if runs_dir is None:
+        return (
+            "**No runs directory was given, so nothing was diffed.** This line "
+            "states what moved by comparing against the previous report's own "
+            "text; with no directory to look in there is no previous report to "
+            "compare against and no movement is claimed either way."
+        )
+    prev = previous_report(Path(runs_dir))
+    if prev is None:
+        return (
+            f"**No previous report in `{runs_dir}`, so nothing was diffed.** "
+            "This is the first report written there. Nothing is claimed about "
+            "movement, because there is nothing to have moved from."
+        )
+    was = binding_path_of(prev.read_text(encoding="utf-8"))
+    if not was:
+        return (
+            f"**`{prev.name}` carries no binding path, so nothing was "
+            "diffed.** It was written before this section existed. **This is "
+            "not the same as no movement**: a comparison that did not happen "
+            "cannot have come out equal, and saying otherwise would be this "
+            "file asserting the thing it exists to compute."
+        )
+    moved = [
+        (n, was.get(n), (status, evidence))
+        for n, _what, status, evidence in rows
+        if was.get(n) != (status, evidence)
+    ]
+    if not moved:
+        return f"**no binding-path movement since {prev.name}**"
+    out = [f"**Moved since {prev.name}:**", ""]
+    for n, before, after in moved:
+        if before is None:
+            out.append(
+                f"- step {n} is new to this report; `{prev.name}` carries no "
+                "such step"
+            )
+            continue
+        out.append(
+            f"- step {n}: **{before[0]}** to **{after[0]}**"
+            + ("" if before[1] == after[1] else
+               f"; register cells were *{before[1]}*, now *{after[1]}*")
+        )
+    return "\n".join(out)
 
 
 # ---------------------------------------------------------------------------
@@ -199,8 +542,84 @@ class RunReport:
     commit: str
     on: date
     budget_abandoned: int = 0
+    #: `docs/OPEN_ITEMS.md`, the register the binding path is read out of, and
+    #: `docs/runs/`, the directory the previous report is diffed against. Both
+    #: default to None and **None produces a refusal, not a reading**: a report
+    #: that guessed at the register's location would print a binding path over
+    #: whatever happened to be at a relative path, and a wrong register read
+    #: silently is worse than none read loudly.
+    register: Optional[Path] = None
+    runs_dir: Optional[Path] = None
 
     # -- sections ----------------------------------------------------------
+
+    def _binding_path(self) -> List[str]:
+        """§9.2's first section: the five steps, their status, what moved.
+
+        **First in the report and above the provenance header**, because the
+        provenance header answers *under what was this run taken* and this
+        answers *has the project moved*. A reader who opens the file for the
+        second question should not have to find it under the first. Fourteen
+        specification versions, a linter, a reference implementation and a
+        discovery layer have been built and the score does not move, so a
+        report whose first page is not the score is a report that lets the
+        building read as progress.
+
+        **This measures nothing and adds nothing.** The five steps are the
+        register's own, in the register's own order; every status is read out
+        of `docs/OPEN_ITEMS.md`; the movement line is a diff against the
+        previous file in `docs/runs/`. Procedure by §0.6's test: no gate, no
+        family, no grammar row, no cost tier, no feed, no sizing input, and no
+        field the funnel reads at decision time.
+        """
+
+        out = [
+            BINDING_PATH_HEADING,
+            "",
+            "**The register's five steps, in the register's order, with every "
+            "status read out of `docs/OPEN_ITEMS.md` rather than stated here.** "
+            "The one judgement in this section is which register cells settle "
+            "which step, and it is printed in the last column so a reader who "
+            "disagrees can see it. A step is **CLOSED** only where every cell "
+            "it names is closed whole: `PART CLOSED` and `CLOSED for US` are "
+            "closures over part of an object and the path is not settled by "
+            "part of one.",
+            "",
+        ]
+        if self.register is None:
+            out += [
+                "**No register was given, so no status was read.** The five "
+                "steps are named below and none of them carries a status: a "
+                "step reported as outstanding when nothing was read would be a "
+                "refusal wearing a reading's clothes.",
+                "",
+                "| step | what it is |",
+                "|---|---|",
+            ]
+            out += [f"| {n} | {what} |" for n, what, _ in BINDING_PATH]
+            out += ["", movement_line([], self.runs_dir), ""]
+            return out
+
+        rows = binding_path_rows(self.register)
+        out += [
+            "| step | what it is | status | the register cells it is settled by |",
+            "|---|---|---|---|",
+        ]
+        for n, what, status, evidence in rows:
+            out.append(f"| {n} | {what} | **{status}** | {evidence} |")
+        closed = sum(1 for _n, _w, st, _e in rows if st == "CLOSED")
+        out += [
+            "",
+            f"**{closed} of {len(rows)} steps closed.** The order is not "
+            "negotiable and step 5 creates frozen design 1, which stands at "
+            "zero.",
+            "",
+            "### What moved since the previous report",
+            "",
+            movement_line(rows, self.runs_dir),
+            "",
+        ]
+        return out
 
     def _provenance(self) -> List[str]:
         reg = self.registration
@@ -213,7 +632,7 @@ class RunReport:
             }
         )
         out = [
-            "## 1. Provenance",
+            "## 2. Provenance",
             "",
             "| | |",
             "|---|---|",
@@ -255,7 +674,7 @@ class RunReport:
     def _funnel(self) -> List[str]:
         counts = self.ledger.counts()
         out = [
-            "## 2. Intake funnel",
+            "## 3. Intake funnel",
             "",
             f"- proposals raised: **{counts['proposals']}**",
             f"- refusals recorded: **{counts['refusals']}**",
@@ -371,7 +790,7 @@ class RunReport:
         by_code: Dict[str, int] = dict(self.ledger.code_distribution())
         queries = self.ledger.counts()["queries"]
         out = [
-            "## 3. Fence report",
+            "## 4. Fence report",
             "",
             "Four fences, four units. They are not summed: an import breach and "
             "an entity refusal are not two of the same thing, and a total over "
@@ -421,7 +840,7 @@ class RunReport:
         ready = [d for d in drafts if d.n_outstanding == 0]
         waiting = [d for d in drafts if d.n_outstanding]
         out = [
-            "## 4. The queue",
+            "## 5. The queue",
             "",
             "**Ordered by how many operator inputs each draft is still missing, "
             "ascending, and by nothing else.** Ties break on the directive "
@@ -488,7 +907,7 @@ class RunReport:
         n_min = reg.control_arm_n_min
         reached = n_min is not None and min(n_agent, n_control) >= n_min
         out = [
-            "## 5. Control arm (§13 rows 19 and 20)",
+            "## 6. Control arm (§13 rows 19 and 20)",
             "",
             "| | |",
             "|---|---|",
@@ -526,7 +945,7 @@ class RunReport:
         emitted = set(self.ledger.emitted_codes())
         never = sorted(set(codes.ALL_CODES) - emitted)
         out = [
-            "## 6. Reason-code coverage (§9.4)",
+            "## 7. Reason-code coverage (§9.4)",
             "",
             f"- codes defined: **{len(codes.ALL_CODES)}**",
             f"- codes emitted by this run: **{len(emitted)}**",
@@ -547,7 +966,7 @@ class RunReport:
 
     def _refutations(self) -> List[str]:
         out = [
-            "## 7. Refutations",
+            "## 8. Refutations",
             "",
             "**Rules this project's own instruments have falsified.** Kept here "
             "because a report whose refutation section is empty teaches its "
@@ -562,7 +981,7 @@ class RunReport:
 
     def _not_measured(self) -> List[str]:
         return [
-            "## 8. Not measured",
+            "## 9. Not measured",
             "",
             "Stated explicitly, because a section absent from a report reads as "
             "a question nobody asked.",
@@ -600,6 +1019,7 @@ class RunReport:
         ]
         body: List[str] = []
         for section in (
+            self._binding_path,
             self._provenance,
             self._funnel,
             self._fences,
