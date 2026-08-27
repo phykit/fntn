@@ -19,7 +19,7 @@ both IBKR entities publish byte-identical schedules — **and step 3 closed on a
 
 | # | Decision | Releases | Recommended | The cost of that |
 |---|---|---|---|---|
-| **1** | ***§13 row 31: the PROMOTION-TO-LIVE-CAPITAL predicate. Two blanks, since v1.0.*** | **1** | ***NONE. Refused, not prepared.*** | **Until it is filled, nothing in this document authorises capital and the gate can neither pass nor fail** |
+| **1** | ***§13 row 31: the PROMOTION-TO-LIVE-CAPITAL predicate. BLOCKED BY DECISION from 27 Aug 2026, not by omission.*** | **1** | ***NONE. Refused, not prepared, and the operator has decided the blanks stay empty.*** | **The objective is realistic backtesting, not deployment. The blanks REMAIN the blanks, so the day capital is contemplated the gate is met unfilled rather than met unnoticed** |
 | 2 | Pre-calibration fixings, **including the source roster** | **5** | Take the four decisions, retrieve the two free data items | Two deferrals, both stated |
 | 3 | The FX exposure budget | 1 | not made here | n/a |
 | 4 | Row 21b's ratification set | 1 | An hour's work. **The cheapest item here** | none |
@@ -27,6 +27,19 @@ both IBKR entities publish byte-identical schedules — **and step 3 closed on a
 | 6 | **§13 row 32**: the novelty roster coverage threshold | 1 | not made here | Needs an outlet population external to the corpus |
 | 7 | §13 row 1's **SCOPE**, and it has new evidence | n/a | **Answer it.** See below | Under option A the other cost components sit on no row at all |
 | — | **Set `SEC_CONTACT`.** Not a decision; an environment variable | **starts step 4** | Set it | none |
+
+***What changed in this revision.*** Three §0 operator decisions landed (no
+live capital, base currency USD, insider dealing retired) and **six more
+decisions were taken on delegated authority**, listed in §A. **Two were REFUSED
+under the Class I invariant and are reported rather than taken**: row 29's
+re-derivation, whose bracket straddles the registered value because §0 decision
+0b did not restate reference equity; and row 21a's `b`, whose offered derivation
+borrowed a quantity that does not cause the thing derived.
+
+**Two environment variables are now the largest single blockers on this board**,
+and neither is a decision: **`ANTHROPIC_API_KEY`** gates the sweep and therefore
+the deliverable, and **`SEC_CONTACT`** gates binding-path step 4 and P127's free
+survivorship route.
 
 ***Row 1's contracting entity is gone from this pack.*** It was item 3 and it is
 **retired, not answered**: the two entities publish identical figures for every
@@ -117,6 +130,10 @@ strategy**, and the operator can revise in one word.
 | **§14 δₘᵢₙ floor** | **17.0 bp, DERIVED** | **step 3**, the second. *A loosening: 25.0 carried 8 bp of margin nobody derived* | P117 |
 | **§13 row 1's election** | **FIXED**, reversing P112 | 0 outright. **Measured, not fitted** | P118 |
 | **§13 row 33**, day and fields | **daily, 21:30 UTC**, and the ten fields the intake points read | 0 outright; row 33 to PART CLOSED | P121 |
+| **§0.7(e) borrow snapshot** | ***n/a***, the account being cash and the grammar long-only | 0 outright; **one of step 2's five fixings removed** | P127 |
+| **Step 4's family** | **8-K Item 2.02**, over 13D/13G and Item 703 | 0 outright. **It is the only candidate exercising the MODEL-mediated extraction path** | P126 |
+| **Achievability** | nine criteria, each derived, landed as a **lens** | 0 outright; **the FENCE version is declared apparatus and waits** | P128 |
+| **The corpora** | three families, 22 documents, registered | 0 outright; `corpora/us` **deregistered** as well as retired | P129 |
 
 
 ---

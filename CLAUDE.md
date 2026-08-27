@@ -161,6 +161,14 @@ Every session BEGINS by reconciling the tree against the register: branch,
 dirty state, test count, and whether `docs/OPEN_ITEMS.md` matches what the code
 does. Write that reconciliation to a file before doing any work.
 
+**The reconciliation also enumerates the batch's FACTUAL PREMISES about this
+tree and marks each CHECKED or UNCHECKED.** Where an instruction asserts what a
+file contains, what a variable gates or what a step needs, that is a claim about
+the repository and it is checked before work proceeds on it. *Added 27 August
+2026 as part 4 of `docs/CORRECTIONS.md`'s Class I invariant, after a claim that
+retiring a family would take `SEC_CONTACT` off the critical path shaped a phase
+before anyone ran the two greps that refuted it.*
+
 Every session ENDS by pushing. An unpushed commit in a Codespace is not a
 record.
 

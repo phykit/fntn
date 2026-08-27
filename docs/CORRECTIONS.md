@@ -38,9 +38,9 @@ It makes three kinds, repeatedly.*
 
 | Class | Instances | Count | Invariant |
 |---|---|---|---|
-| **I. A conclusion acted on without checking the link it rests on** | A2, A5b, A8, A9, B8pre, B9 | **6** | **INSTALLED at P122, STRENGTHENED at P130 with a third clause after a sixth instance arrived** |
+| **I. A conclusion acted on without checking the link it rests on** | A2, A5b, A8, A9, B8pre, B9 | **6** | **INSTALLED at P122, STRENGTHENED at P130 and again at P131, to four clauses. **The installed version would NOT have caught A9**** |
 | **II. Material that decided something was not committed at the moment it decided it** | B3, B4, B5, and the registration chain's first object | **4** | **INSTALLED at P114**: `cmd_sweep` refuses over a corpus git cannot produce again, with `corpus_not_committed` |
-| **III. A population pooled, mis-scoped or miscounted** | B6 (itself three), B7, and the §13 table's two hand counts | **6** | **INSTALLED at P105**: the abort-position distribution splits by `origin`, and every §13 count is now taken by machine over the table |
+| **III. A population pooled, mis-scoped or miscounted** | B6 (itself three), B7, the §13 table's two hand counts, and `_unexercised` at P126 | **7** | **INSTALLED at P105 and WIDENED at P126**: the invariant was applied to a METHOD when the class was about a QUERY, so it now reads **every ledger read path carries the marker the fences rely on**, and phase 2 swept every `SELECT` in the package to hold it |
 | Singletons, which are not a class | A1, A3, A4, A5, A6, A7, B1, B2 | n/a | n/a, no invariant is owed: a row belonging to no class asserts no recurrence |
 
 ---
@@ -94,6 +94,32 @@ population in a different pipeline.
 the document, and its preparation states no caveat it then overrides. **It is a
 third way for the same class to produce an instance, and it needed its own
 clause.**
+
+***PART 4, added 27 August 2026 (P131), because the answer to "would the
+installed invariant have caught A9?" is NO.***
+
+> **4. A claim that changes what a phase is FOR is checked against the tree
+> before the phase runs.** Where an instruction, a preparation or a handover
+> asserts a fact about this repository — what a file contains, what a variable
+> gates, what a step needs — **that fact is checked before work proceeds on
+> it.**
+
+**Why parts 1 to 3 all missed A9.** A9 was **not a decision**. It was an
+assertion made in the framing of a task: *retiring insider dealing takes
+`SEC_CONTACT` off the critical path.* **Part 1 governs `§12.1` rows that take
+decisions. Part 2 governs decisions taken over caveats. Part 3 governs borrowed
+quantities.** ***A9 was a claim nothing was decided on, and all three clauses
+reach only decisions.***
+
+**And it was checkable in two greps**: `scripts_fetch_us_corpus.sh` fetches only
+`law.cornell.edu`, and `trace_filings.py` is the only thing that touches the SEC.
+*That is how it was refuted, after the claim had already shaped a phase.*
+
+***The mechanical support is in the session protocol, not in a test.***
+`CLAUDE.md`'s opening reconciliation now requires the batch's **factual premises
+about the tree** to be enumerated and each marked **checked or unchecked**.
+**A9 would have appeared on that list as unchecked, and checking it costs two
+greps.**
 
 **Part 2 is what B8pre needed and part 1 would not have caught.** P112 cited its
 preparation file, satisfying part 1 in full, **and its own text said 28.8% was
