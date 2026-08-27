@@ -470,6 +470,10 @@ def cmd_sweep(args) -> int:
     ledger = Ledger(args.ledger, parameter_hash=reg.hash())
     config = ScanConfig(
         parameter_hash=reg.hash(),
+        # §7.2's audit fraction comes from the registration and from nowhere
+        # else: it was a default in two places and registered in neither until
+        # 27 August 2026.
+        audit_fraction=reg.audit_fraction,
         default_scoring_mode=ScoringMode(reg.default_scoring_mode),
         exclusivity=exclusivity,
         corpus_modes=corpus_modes,

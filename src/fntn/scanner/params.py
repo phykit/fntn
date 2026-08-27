@@ -235,6 +235,27 @@ class Registration:
     #: weather rather than the idea. Every attempt is counted and recorded.
     budget_retry_max: int = 1
 
+    # -- §7.2: the audit fraction ------------------------------------------
+    #: Share of subjects that run the **full panel** regardless of early
+    #: failures, so that the reason-code distribution is not censored by
+    #: fail-fast. §7.2's antidote to that censoring, and **every attribution
+    #: statistic computes on the audit sample exclusively**.
+    #:
+    #: **Registered on 27 August 2026 because §7.2 already called it
+    #: "pre-registered" and it was not registered at all.** It was a default
+    #: argument in `ingest.py` and `run.py`, so two runs under one parameter
+    #: hash could audit different fractions and the difference would be
+    #: attributable to nothing on the record. That is the third instance of the
+    #: defect class that caused the `rulebook_stopwords`, `lexicon` and intake
+    #: budget re-stamps, and `docs/CORRECTIONS.md` records why closing three
+    #: instances did not close the class.
+    #:
+    #: **The sample was always replayable and the fraction was not.** The audit
+    #: draw is a hash of the subject identity and the parameter hash, so a given
+    #: fraction always selects the same subjects; nothing recorded which
+    #: fraction had been in force.
+    audit_fraction: float = 0.10
+
     # -- §13 row 29: the maximum tolerable fixed cost ----------------------
     #: Basis points of position, round trip, **excluding spread and market
     #: impact**, neither of which has a §13 row and both of which scale with

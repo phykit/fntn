@@ -91,7 +91,8 @@ blocks the freeze signature exactly as `recollection` does.
 | 3 | `b8dd61e7eea6898e` | 2026-08-27T06:51:39.473454 | `e955d2b` | `git show e955d2b:discovery_registration.json` | `verified_primary` | `rulebook_stopwords` |
 | 4 | `701adbd9d48015ed` | 2026-08-27T07:59:55.127137 | `d84fd5b` | `git show d84fd5b:discovery_registration.json` | `verified_primary` | `lexicon` |
 | 5 | `ce576a9fa04a7403` | 2026-08-27T09:06:19.906138 | `cac46f6` | `git show cac46f6:discovery_registration.json` | `verified_primary` | `intake_point_budget_s` |
-| 6 | `d47d1fe876dafe36` | 2026-08-27T09:06:19.906138 | **current** | `discovery_registration.json` | `verified_primary` | `max_tolerable_fixed_cost_bps` |
+| 6 | `d47d1fe876dafe36` | 2026-08-27T09:06:19.906138 | `2b571c0` | `git show 2b571c0:discovery_registration.json` | `verified_primary` | `max_tolerable_fixed_cost_bps` |
+| 7 | `61fafd4ac5c6e99b` | 2026-08-27T09:06:19.906138 | **current** | `discovery_registration.json` | `verified_primary` | `audit_fraction` |
 
 Each cell in the object column is the command or path that yields the bytes,
 and every one of them names `discovery_registration.json`, because that is what

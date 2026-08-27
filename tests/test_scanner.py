@@ -1117,6 +1117,9 @@ def test_end_to_end_scan_produces_a_legible_ledger():
     ledger = Ledger(parameter_hash="test")
     config = ScanConfig(
         parameter_hash="test",
+        # §7.2's fraction is registered from 27 Aug 2026 and ScanConfig no
+        # longer defaults it, so every caller states it, tests included.
+        audit_fraction=0.10,
         entity_fence=FENCE,
         exclusivity={
             "insider_dealing": ScoringMode.CROSS_MARKET,
@@ -1165,6 +1168,7 @@ def _scan_with(exclusivity, default=ScoringMode.CROSS_MARKET, control_ratio=0.25
     ledger = Ledger(parameter_hash="mode")
     config = ScanConfig(
         parameter_hash="mode",
+        audit_fraction=0.10,
         default_scoring_mode=default,
         entity_fence=FENCE,
         control_arm_ratio=control_ratio,
@@ -1196,6 +1200,39 @@ def test_a_sweep_without_a_control_arm_is_refused():
 
     with pytest.raises(ValueError, match="refute"):
         _scan_with({"insider_dealing": None}, control_ratio=0.0)
+
+
+def test_a_sweep_refuses_when_the_audit_fraction_is_unregistered():
+    """§7.2's fraction has one source, and an unset one is a refusal (P112).
+
+    It was a default on ScanConfig and a default again in ingest.py, and the
+    registration carried it in neither place, so two sweeps under one parameter
+    hash could audit different fractions and nothing on the record would say
+    which. Every attribution statistic in §7.2 computes on the audit sample
+    exclusively, so that is not a cosmetic gap.
+
+    The repair is the field, and this test is what stops the silent path being
+    left open beside the registered one: a ScanConfig that never received a
+    fraction must refuse rather than reach for 0.10.
+    """
+
+    ledger = Ledger(parameter_hash="unset-audit")
+    config = ScanConfig(parameter_hash="unset-audit", entity_fence=FENCE)
+    assert config.audit_fraction is None
+
+    with pytest.raises(ValueError) as caught:
+        scan(
+            StubClient([{}]),
+            [Corpus("c1", Partition.EXTERNAL, ["doc"])],
+            [GridCell("insider_dealing", "drawn population", "a drawn mechanism")],
+            config,
+            ledger,
+            now=NOW,
+        )
+    assert "audit_fraction is unset" in str(caught.value)
+    # And it says WHY, not merely that: a refusal whose reason a reader has to
+    # infer is the kind this project keeps refusing to write.
+    assert "attribution statistic" in str(caught.value)
 
 
 def test_per_class_override_beats_the_default():
