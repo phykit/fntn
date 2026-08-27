@@ -81,6 +81,52 @@ MIN_INDEX_BYTES = 4000
 FORM4_MARKER = "<ownershipDocument"
 INDEX_MARKER = "Form Type"
 
+# ---------------------------------------------------------------------------
+# 8-K Item 2.02, the RE-POINTED step-4 family (§12.1 P126, P137)
+# ---------------------------------------------------------------------------
+#
+# **Why this family and not Form 4 or Schedule 13D.** Step 4's primary catalyst
+# family is `earnings_event` and its live filing flow is 8-K Item 2.02. The
+# decisive reason is not the count of intake points it reaches: it is that
+# **an 8-K's furnished press release is PROSE**, so it is the only candidate
+# that exercises `extraction_schema_incomplete` against a model-mediated
+# extraction path. Form 4 and Schedule 13D are field-delimited, and CLAUDE.md's
+# first rule replaces the clerk with a parser wherever they are, so neither has
+# a model anywhere near its extraction. **The path rule 1 is written against is
+# the one this family is chosen to exercise.**
+#
+# **The route, and it is deterministic at every step.** The daily form index
+# gives every 8-K filed on a day, with its accession path. **The index does NOT
+# record which Items an 8-K carries**, so the item is read from the submission's
+# own SGML header, which is field-delimited: a parser, not a clerk.
+#
+# ***PROVENANCE OF THE HEADER FORMAT: `named, unread`.*** Two spellings are
+# accepted because both appear in EDGAR submissions, `ITEM INFORMATION:` in the
+# human-readable header and `<ITEM>` in the machine header. **Neither has been
+# read from a live response in this tree**, because `SEC_CONTACT` has never
+# carried a usable identity. `item_codes` therefore REFUSES a submission
+# carrying neither marker rather than concluding it is not an Item 2.02 filing:
+# **absence of the field is not absence of the item**, and reading it as such
+# would silently drop every filing whose header this parser does not understand.
+EIGHTK_FORM = "8-K"
+EIGHTK_ITEM = "2.02"
+
+#: A submission text file carries the whole filing, header and exhibits. The
+#: header alone runs to some hundreds of bytes and the furnished press release
+#: is the bulk. Set at 2,000 on the same reasoning as `MIN_FORM4_BYTES`: it
+#: catches the known 698-byte stub and nothing subtler, and the structural
+#: marker below is the guard.
+MIN_8K_BYTES = 2000
+
+#: The structural marker for a submission text file. `verify_response` refuses
+#: anything without it, so a login page, an error page or a stub cannot be
+#: mistaken for a filing.
+SUBMISSION_MARKER = "CONFORMED SUBMISSION TYPE"
+
+#: The two spellings of the item field. Both are accepted; NEITHER present is a
+#: refusal and never a negative answer.
+ITEM_MARKERS = ("ITEM INFORMATION:", "<ITEM>")
+
 SEC_HOST = "https://www.sec.gov"
 DATA_HOST = "https://data.sec.gov"
 
@@ -267,6 +313,98 @@ def form4_rows(index_text: str) -> List[Tuple[str, str, str]]:
     return out
 
 
+def eightk_rows(index_text: str) -> List[Tuple[str, str, str]]:
+    """(CIK, company, path) for every 8-K in a daily form index.
+
+    The same deterministic parser as `form4_rows` over the same fixed-width
+    file. Split on runs of whitespace **from the right**, because a company
+    name contains spaces and the three fields after it do not.
+
+    Amendments are excluded: a line beginning `8-K/A ` does not match `8-K `
+    plus a space, and an amendment restates a filing already ingested, which
+    **nothing in the item pipeline's eleven points addresses**
+    (`docs/PIPELINE_9_4_2026-08-27.md`). Including them would put an
+    undetermined object in a measured denominator.
+    """
+
+    prefix = EIGHTK_FORM + " "
+    out: List[Tuple[str, str, str]] = []
+    for line in index_text.splitlines():
+        if not line.startswith(prefix):
+            continue
+        parts = line.rsplit(None, 3)
+        if len(parts) != 4:
+            continue
+        company_field, cik, _filed, path = parts
+        company = company_field[len(EIGHTK_FORM):].strip()
+        if not cik.isdigit():
+            continue
+        out.append((cik, company, path))
+    return out
+
+
+def item_codes(submission_text: str) -> List[str]:
+    """The Item numbers an 8-K submission declares, from its own SGML header.
+
+    **A parser over a field-delimited header, never a model.** Two spellings
+    are accepted, `ITEM INFORMATION:` and `<ITEM>`, because both appear in
+    EDGAR submissions.
+
+    ***Refuses rather than answering "no" where the field is absent.*** A
+    submission carrying neither marker raises `ResponseNotTheDocument`. The
+    alternative — returning an empty list — would make *this parser does not
+    understand the header* indistinguishable from *this filing is not an Item
+    2.02 filing*, and the block would then quietly exclude every filing whose
+    header shape is unfamiliar. **That is a refusal to score, and the reason it
+    matters here is that the missing values would never appear in the
+    denominator to be counted.**
+    """
+
+    if not any(m in submission_text for m in ITEM_MARKERS):
+        raise ResponseNotTheDocument(
+            "the submission carries neither 'ITEM INFORMATION:' nor '<ITEM>', "
+            "so the Items it declares cannot be read.\n\n"
+            "This is REFUSED and not answered 'no items'. An unreadable header "
+            "and a filing with no matching item are different facts, and "
+            "treating the first as the second would drop every filing whose "
+            "header this parser does not understand, silently and out of the "
+            "denominator."
+        )
+
+    codes: List[str] = []
+    for line in submission_text.splitlines():
+        stripped = line.strip()
+        raw = ""
+        if stripped.startswith("<ITEM>"):
+            raw = stripped[len("<ITEM>"):]
+        elif stripped.startswith("ITEM INFORMATION:"):
+            raw = stripped[len("ITEM INFORMATION:"):]
+        else:
+            continue
+        # The human header spells the item as a title; the machine header as a
+        # number. Take the leading numeric token where there is one and record
+        # the field verbatim otherwise, so nothing is invented.
+        token = raw.strip().split()[0] if raw.strip() else ""
+        if token and token[0].isdigit():
+            codes.append(token.rstrip(".,"))
+        elif raw.strip():
+            codes.append(raw.strip())
+    return codes
+
+
+def declares_item(submission_text: str, item: str = EIGHTK_ITEM) -> bool:
+    """Whether the submission declares `item`, by its numeric code only.
+
+    The human header spells 2.02 as *Results of Operations and Financial
+    Condition*, which this does NOT match on: a title is prose and matching it
+    would be a string heuristic over language. Where only the title spelling is
+    present the numeric code is absent and the filing is not selected, which is
+    **under-selection and is stated as such** rather than repaired by pattern.
+    """
+
+    return any(c == item for c in item_codes(submission_text))
+
+
 @dataclass(frozen=True)
 class FetchedFiling:
     """One Form 4, raw and extracted, with everything the manifest records."""
@@ -317,6 +455,84 @@ def fetch_block(on: date, limit: int = BLOCK_SIZE) -> List[FetchedFiling]:
             digest=hashlib.sha256(body).hexdigest(),
             text=text,
         ))
+    return out
+
+
+def fetch_item_202_block(
+    on: date, limit: int = BLOCK_SIZE, scan_ceiling: int = 500
+) -> List[FetchedFiling]:
+    """One block of 8-K **Item 2.02** filings from one day's index.
+
+    **The re-pointed step-4 route** (`§12.1` P126). Refuses before it starts if
+    `SEC_CONTACT` does not carry a usable identity: the identity is checked
+    once here rather than per request, so the refusal arrives before anything
+    is written rather than part-way through a block.
+
+    **Two-stage, because the index does not carry the item.** The day's 8-K
+    rows come from the field-delimited daily index; each submission is then
+    fetched and its own SGML header read for the item. **`scan_ceiling` bounds
+    how many submissions may be opened** looking for `limit` matches, and
+    **exhausting it is a REFUSAL and not a short block**: a block of 61 items
+    reported as though it were the day's Item 2.02 population is a denominator
+    nobody chose.
+
+    ***What this function does NOT do.*** It does not retry against another
+    date, and it does not widen the item filter. *A day with too few Item 2.02
+    filings is a fact about the day; a date chosen because it produced a full
+    block is a sample chosen on its result.*
+    """
+
+    user_agent()  # refuse early, and loudly
+    _index_body, index_text = fetch(
+        daily_index_url(on), MIN_INDEX_BYTES, INDEX_MARKER
+    )
+    rows = eightk_rows(index_text)
+    if not rows:
+        raise TraceCorpusRefused(
+            f"{daily_index_url(on)} verified as an index and carries no 8-K "
+            "rows. That is a fact about the day, not a fetch failure, and it "
+            "is reported rather than retried against another date chosen to "
+            "produce a result."
+        )
+
+    out: List[FetchedFiling] = []
+    opened = 0
+    for cik, company, path in rows:
+        if len(out) >= limit:
+            break
+        if opened >= scan_ceiling:
+            raise TraceCorpusRefused(
+                f"{scan_ceiling} submissions were opened from "
+                f"{daily_index_url(on)} and {len(out)} carried Item "
+                f"{EIGHTK_ITEM}, short of the {limit} a block requires.\n\n"
+                "REFUSED rather than returning a short block. A block is the "
+                "unit §9.4's stopping rule reads a defect rate over, and a "
+                "partial one silently changes the denominator that rule "
+                "divides by.\n\n"
+                "Raise scan_ceiling deliberately, or fetch a second day and "
+                "record that the block spans two."
+            )
+        url = f"{SEC_HOST}/Archives/{path}"
+        body, text = fetch(url, MIN_8K_BYTES, SUBMISSION_MARKER)
+        opened += 1
+        if not declares_item(text):
+            continue
+        out.append(FetchedFiling(
+            url=url,
+            cik=cik,
+            company=company,
+            retrieved_at=datetime.now(timezone.utc).isoformat(),
+            raw_bytes=len(body),
+            digest=hashlib.sha256(body).hexdigest(),
+            text=text,
+        ))
+    if len(out) < limit:
+        raise TraceCorpusRefused(
+            f"{daily_index_url(on)} yielded {len(out)} Item {EIGHTK_ITEM} "
+            f"filings from {opened} 8-K submissions, short of {limit}.\n\n"
+            "REFUSED rather than returning a short block, for the reason "
+            "above: the block is the stopping rule's denominator."
+        )
     return out
 
 

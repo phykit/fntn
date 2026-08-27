@@ -4145,6 +4145,107 @@ def test_the_client_no_longer_claims_temperature_zero():
     assert "TranscriptClient" in doc and "registered seed" in doc
 
 
+EIGHTK_INDEX = """Description:           Daily Index of EDGAR Dissemination Feed
+Form Type   Company Name                                      CIK         Date Filed  File Name
+---------------------------------------------------------------------------------------------
+8-K         RESULTS REPORTING CO                              0000111111  2026-08-26  edgar/data/111111/a.txt
+8-K/A       AMENDED RESULTS CO                                0000222222  2026-08-26  edgar/data/222222/b.txt
+8-K         OTHER ITEM CO                                     0000333333  2026-08-26  edgar/data/333333/c.txt
+4           AN OWNER                                          0000444444  2026-08-26  edgar/data/444444/d.txt
+"""
+
+MACHINE_HEADER = """<SEC-HEADER>
+CONFORMED SUBMISSION TYPE: 8-K
+<ITEM>2.02
+<ITEM>9.01
+</SEC-HEADER>
+"""
+
+HUMAN_HEADER = """CONFORMED SUBMISSION TYPE: 8-K
+ITEM INFORMATION:      2.02 Results of Operations and Financial Condition
+ITEM INFORMATION:      9.01 Financial Statements and Exhibits
+"""
+
+TITLE_ONLY_HEADER = """CONFORMED SUBMISSION TYPE: 8-K
+ITEM INFORMATION:      Results of Operations and Financial Condition
+"""
+
+
+def test_the_8K_index_parser_takes_8K_and_leaves_amendments():
+    """P137. The re-pointed step-4 family, parsed and not classified.
+
+    An amendment restates a filing already ingested, and NOTHING in the item
+    pipeline's eleven points addresses a restatement, so including one would
+    put an undetermined object in a measured denominator.
+    """
+
+    rows = tf.eightk_rows(EIGHTK_INDEX)
+    assert [r[0] for r in rows] == ["0000111111", "0000333333"]
+    assert rows[0][1] == "RESULTS REPORTING CO"          # spaces survive
+    assert all("/A" not in r[2] for r in rows)
+    # And it does not take Form 4 rows, which is the other family's route.
+    assert "0000444444" not in [r[0] for r in rows]
+
+
+def test_an_unreadable_item_header_REFUSES_and_is_never_read_as_no_match():
+    """P137, and it is the whole reason `item_codes` is not a boolean.
+
+    Returning an empty list where the header carries no item field would make
+    *this parser does not understand the header* indistinguishable from *this
+    filing is not an Item 2.02 filing*. The block would then drop every filing
+    of an unfamiliar shape, silently, and out of the denominator.
+    """
+
+    assert tf.item_codes(MACHINE_HEADER) == ["2.02", "9.01"]
+    assert tf.item_codes(HUMAN_HEADER) == ["2.02", "9.01"]
+    assert tf.declares_item(MACHINE_HEADER) and tf.declares_item(HUMAN_HEADER)
+
+    # A well-formed 8-K carrying neither marker: present, plausible, and wrong.
+    # Class V's second clause is what asks for this case rather than an empty
+    # string.
+    with pytest.raises(ResponseNotTheDocument, match="REFUSED and not answered"):
+        tf.item_codes("CONFORMED SUBMISSION TYPE: 8-K\nno item field here\n")
+
+    # The title spelling with no numeric code is UNDER-selection, stated as
+    # such: matching a prose title would be a string heuristic over language.
+    assert tf.declares_item(TITLE_ONLY_HEADER) is False
+
+
+def test_the_8K_block_refuses_a_short_block_rather_than_shrinking_it(monkeypatch):
+    """P137. A block is the denominator §9.4's stopping rule divides by.
+
+    A block of 61 reported as though it were the day's Item 2.02 population is
+    a denominator nobody chose, so a short block is a refusal.
+    """
+
+    monkeypatch.setenv("SEC_CONTACT", "A Person a.person@a-real-domain.uk")
+
+    def _fetch(url, minimum, marker, timeout=30):
+        if "daily-index" in url:
+            return EIGHTK_INDEX.encode(), EIGHTK_INDEX
+        return MACHINE_HEADER.encode(), MACHINE_HEADER
+
+    monkeypatch.setattr(tf, "fetch", _fetch)
+    # Two 8-K rows, both Item 2.02, against a block of 100.
+    with pytest.raises(TraceCorpusRefused, match="short of 100"):
+        tf.fetch_item_202_block(date(2026, 8, 26))
+    # At a block of two it returns, and the amendment is not among them.
+    got = tf.fetch_item_202_block(date(2026, 8, 26), limit=2)
+    assert [f.cik for f in got] == ["0000111111", "0000333333"]
+
+    # A day with no 8-K at all is a fact about the day, reported as one and
+    # never retried against another date chosen because it produced a result.
+    form4_only = "\n".join(
+        line for line in EIGHTK_INDEX.splitlines() if not line.startswith("8-K")
+    ) + "\n"
+    monkeypatch.setattr(
+        tf, "fetch",
+        lambda u, m, k, timeout=30: (form4_only.encode(), form4_only),
+    )
+    with pytest.raises(TraceCorpusRefused, match="carries no 8-K rows"):
+        tf.fetch_item_202_block(date(2026, 8, 26), limit=1)
+
+
 def test_the_698_byte_stub_is_reported_and_never_worked_around():
     """The failure a previous session actually hit, asserted as itself.
 
