@@ -1202,6 +1202,43 @@ def test_a_sweep_without_a_control_arm_is_refused():
         _scan_with({"insider_dealing": None}, control_ratio=0.0)
 
 
+def test_a_sweep_refuses_over_a_corpus_that_is_not_committed(tmp_path):
+    """P114: the invariant against a fourth instance of one class.
+
+    Three times now a thing this project depended on turned out not to be
+    retrievable: the raw fetched pages were never retained, the object behind
+    `890a80e3a8566837` survives only as a reconstruction, and the corpus the
+    twelve queued drafts were swept from is in no commit at all. Each was
+    closed as an instance. The class stayed open.
+
+    The class is: **material that decided something was not committed at the
+    moment it decided it.** The invariant is the only closure that addresses
+    the class rather than an instance -- a sweep may not read a corpus that git
+    cannot produce again.
+
+    Written to fail first, against a corpus directory that exists on disk and
+    in no commit.
+    """
+
+    from fntn.scanner.corpusio import uncommitted_routes
+
+    loose = tmp_path / "corpora" / "loose"
+    loose.mkdir(parents=True)
+    (loose / "doc.txt").write_text("a document nothing can retrieve again")
+
+    problems = uncommitted_routes([str(loose)])
+    assert problems, "an uncommitted corpus must be reported, not swept"
+    route, reason = problems[0]
+    assert str(loose) in route
+    # The reason names WHICH failure, because "not committed" spans three very
+    # different states and a reader must not have to guess which.
+    assert "not a git" in reason or "untracked" in reason or "modified" in reason
+
+    # And the committed corpus in this very tree passes, so the check is
+    # discriminating rather than merely strict.
+    assert uncommitted_routes(["./corpora/us"]) == []
+
+
 def test_a_sweep_refuses_when_the_audit_fraction_is_unregistered():
     """§7.2's fraction has one source, and an unset one is a refusal (P112).
 
@@ -1397,6 +1434,28 @@ def test_every_defined_code_is_emitted(tmp_path):
         observation_runner()
         .run("itm-noobs", obs_ctx(_item(t_pub_observed=None)), mode=Mode.FULL_PANEL)
         .refusals
+    )
+
+    # -- provenance, both ends of the class (P114) -------------------------
+    # One refuses to CREATE an unreproducible record; one MARKS one that
+    # already is. Neither is reachable from the funnel, which is the point:
+    # they are the ledger's own hygiene and they still must be exercised.
+    ledger.write_refusal(
+        summaries.render(
+            "corpus_not_committed",
+            "corpus:./corpora/loose",
+            {"route": "./corpora/loose",
+             "detail": "holds untracked content that no commit carries: doc.txt"},
+        )
+    )
+    ledger.write_refusal(
+        summaries.render(
+            "population_not_replayable",
+            "prop-unreplayable",
+            {"subject_id": "prop-unreplayable",
+             "parameter_hash": "a06400ef28ebb54c",
+             "material": "ASX and ASIC documents"},
+        )
     )
 
     report = codes.coverage(ledger.emitted_codes())

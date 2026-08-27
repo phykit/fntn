@@ -20,13 +20,14 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import List, Optional, Sequence
 
+from . import summaries
 from .clients import AnthropicClient, ClientRefusal, TranscriptClient
 from .discovery import Corpus as SweepCorpus, GridCell
 from .fences import QueryFence
 from .ledger import Ledger
 from .markets import MARKETS, render as render_markets, resolve
 from .master import SecurityMaster
-from .corpusio import corpus_documents
+from .corpusio import uncommitted_routes, corpus_documents
 from .params import Registration, RegistrationIncomplete
 from .records import Partition, ScoringMode, SegmentSpan
 from .run import ScanConfig, scan
@@ -407,6 +408,23 @@ def cmd_sweep(args) -> int:
     except RegistrationIncomplete as exc:
         print(exc)
         return 2
+
+    # P114: a sweep may not read a corpus git cannot produce again. This runs
+    # BEFORE the master is loaded and before a document is opened, because a
+    # refusal that has already done the work it was refusing is not a refusal.
+    loose = uncommitted_routes([c.retrieval_route for c in reg.corpora])
+    if loose:
+        for route, detail in loose:
+            print(summaries.render(
+                "corpus_not_committed",
+                f"corpus:{route}",
+                {"route": route, "detail": detail},
+            ).summary)
+        print()
+        print("Nothing swept. Commit the corpus and re-run: a proposal raised")
+        print("over material no commit carries cannot be replayed from the")
+        print("parameter hash it would carry, and rule 1 requires that it can.")
+        return 6
 
     master, problems = _load_master(reg)
     for prob in problems:

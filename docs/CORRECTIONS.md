@@ -263,6 +263,34 @@ neither.
 *The lesson this register takes from a defect found three times: a correction
 applied to a published number does not travel to the code that produces it.*
 
+### B8. One class closed three times, which means it was never closed at all
+
+| | |
+|---|---|
+| **Believed** | that each of three retrievability failures had been closed |
+| **True** | **the same class recurred three times**: the raw fetched pages were never retained; `890a80e3a8566837`'s object is a reconstruction no commit carries; and the corpus the twelve queued drafts were swept from is in no commit at all |
+| **Refuted by** | the third instance, found in the phase 4 contamination check that was looking for something else entirely |
+| **Provenance** | `verified_primary` |
+
+***This is the register's first row about a PATTERN rather than an error, and
+that is why it is here.*** The first two repairs are both correct and **neither
+generalises**: retain the pages, record the hash. They answer *"how do we keep
+this particular artefact?"* when the question is *"what may a decision be taken
+over?"*
+
+**The tell was available and was not read.** After the second instance this
+project wrote `docs/REGISTRATION_HISTORY.md`, whose entire subject is that **a
+hash pointing at an object nobody can retrieve is not a record.** That is the
+general form of the class. **It was written about registrations and applied to
+registrations**, and the corpus stayed outside its scope for another day.
+
+**Closed at the class on 27 August 2026 (P114)**: `cmd_sweep` refuses over a
+corpus git cannot produce again, with `corpus_not_committed`. **The
+generalisation, stated so a fourth instance has to get past it: any input to a
+decision must be retrievable by commit at the moment the decision is taken, and
+the check belongs at the point of DECISION rather than at the point of storage.**
+*Retention is a hope about the future. A refusal is a fact about the present.*
+
 ### B7. Six floor sites, and there were seven
 
 | | |
