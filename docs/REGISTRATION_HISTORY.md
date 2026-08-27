@@ -95,7 +95,8 @@ blocks the freeze signature exactly as `recollection` does.
 | 7 | `61fafd4ac5c6e99b` | 2026-08-27T09:06:19.906138 | `9fe7e9f` | `git show 9fe7e9f:discovery_registration.json` | `verified_primary` | `audit_fraction` |
 | 8 | `fcfa57a15a011b33` | 2026-08-27T09:06:19.906138 | `e965230` | `git show e965230:discovery_registration.json` | `verified_primary` | `theta` |
 | 9 | `eb3bbe92c34d1e6f` | 2026-08-27T09:06:19.906138 | `0cabf9b` | `git show 0cabf9b:discovery_registration.json` | `verified_primary` | `delta_min_floor` |
-| 10 | `09e1e23c447edf92` | 2026-08-27T09:06:19.906138 | **current** | `discovery_registration.json` | `verified_primary` | `discoverable_classes` |
+| 10 | `09e1e23c447edf92` | 2026-08-27T09:06:19.906138 | `bb49304` | `git show bb49304:discovery_registration.json` | `verified_primary` | `discoverable_classes` |
+| 11 | `81e9b57128f9285a` | 2026-08-27T09:06:19.906138 | **current** | `discovery_registration.json` | `verified_primary` | `corpora` |
 
 Each cell in the object column is the command or path that yields the bytes,
 and every one of them names `discovery_registration.json`, because that is what
