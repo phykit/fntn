@@ -2886,6 +2886,59 @@ def test_the_control_arm_verdict_is_not_yet_run_and_not_undetermined():
     ledger.close()
 
 
+def test_row_23_splits_the_control_arm_from_the_agent_arm(tmp_path):
+    """P105: the third instance of one error, and the first found in code.
+
+    P77 and P79 found §13 row 21 pooling a drawn arm with an authored one; P95
+    found row 23 doing the same.  Both were readings published in a document.
+    This one was in `_abort_positions`, which selected every intake refusal with
+    no filter on `origin` and so added the random-mechanism control arm into the
+    distribution of the agent arm it exists to be compared against.
+
+    The fixture is built so that the two arms fail at DIFFERENT positions, which
+    is what the live ledger does and what pooling hides: a pooled table would
+    show both positions and attribute neither.
+    """
+
+    ledger = Ledger(parameter_hash="arm-split-test")
+    for i in range(3):
+        sid = f"prop-agent-{i}"
+        ledger.write_proposal(sid, clean_proposal(), "abandoned_at_ingestion")
+        ledger.write_refusal(
+            summaries.render("proposal_names_entity", sid, {"entity": "Acme plc"})
+        )
+    for i in range(2):
+        sid = f"prop-control-{i}"
+        ledger.write_proposal(
+            sid, clean_proposal(origin=Origin.RANDOM_CONTROL),
+            "abandoned_at_ingestion",
+        )
+        ledger.write_refusal(
+            summaries.render(
+                "duplicate_of_open_pointer", sid,
+                {"duplicate_ref": "dir-open", "population_key": "k"},
+            )
+        )
+
+    dist = _render(ledger).split("### Abort-position distribution")[1]
+    dist = dist.split("### Intake points")[0]
+
+    # One column per arm, and each arm's failures under its own heading.
+    assert "| pos | point | agent | random_control |" in dist
+    assert "| 3 | `proposal_names_entity` | 3 | 0 |" in dist
+    assert "| 7 | `duplicate_of_open_pointer` | 0 | 2 |" in dist
+
+    # Kill rates per arm, never one rate over the two.
+    assert "**agent**: intake kill rate 3/3 = **100.0%**" in dist
+    assert "**random_control**: intake kill rate 2/2 = **100.0%**" in dist
+
+    # The pooled figure survives as a comparison aid and says it is not a
+    # reading, because a reader holding a pre-P105 report needs to see what
+    # moved.
+    assert "The pooled figure, retained and NOT a reading." in dist
+    assert "total 5" in dist
+
+
 def test_the_budget_count_is_printed_even_at_zero_and_never_inside_row_23():
     ledger = _report_ledger()
     zero = _render(ledger)

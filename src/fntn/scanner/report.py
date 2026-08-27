@@ -722,58 +722,134 @@ class RunReport:
         return out
 
     def _abort_positions(self) -> List[str]:
-        """§13 row 23, first failures only, by position.
+        """§13 row 23, first failures only, by position, SPLIT BY ARM.
 
         The FIRST refusal per subject on the intake surface, which is what
         fail-fast makes the abort position. Later refusals on the same subject
         are counted in the table above and never here, because a point that
         fires behind an earlier one did not abort anything.
+
+        **Why this is split and no longer pooled (P105, 27 August 2026).** This
+        method selected every intake refusal with no filter on ``origin``, so it
+        pooled the **agent** arm, which is the thing under test, with the
+        **random-mechanism control** arm, which exists in order to be compared
+        against it.  Pooling the control into the treatment destroys the
+        comparison the control arm is for.
+
+        It is the third instance of one error.  P77 and P79 found §13 row 21
+        pooling a drawn arm with an authored one; P95 found row 23 doing the
+        same; this one differs in being **in code**, rendered from the ledger on
+        every run rather than published once in a document.
+
+        *The cost of the repair, stated:* a split distribution has smaller
+        denominators and each arm's reading is correspondingly weaker.  That is
+        the correct trade, because a pooled figure over two arms with disjoint
+        failure positions describes neither of them.
         """
 
         first: Dict[str, str] = {}
+        arm_of: Dict[str, str] = {}
         for r in self.ledger.conn.execute(
-            "SELECT subject_id, code FROM refusal WHERE surface = 'intake' "
-            "ORDER BY id"
+            "SELECT r.subject_id, r.code, p.origin FROM refusal r "
+            "LEFT JOIN proposal p ON p.subject_id = r.subject_id "
+            "WHERE r.surface = 'intake' ORDER BY r.id"
         ):
             first.setdefault(r["subject_id"], r["code"])
-        tally: Dict[str, int] = {}
+            # An origin the ledger does not carry is recorded as unattributed
+            # rather than folded into either arm: a subject whose arm is unknown
+            # is not evidence about either one.
+            arm_of.setdefault(r["subject_id"], r["origin"] or "unattributed")
+
+        sized = {
+            r["origin"]: r["n"]
+            for r in self.ledger.conn.execute(
+                "SELECT origin, COUNT(*) n FROM proposal GROUP BY origin"
+            )
+        }
+        # Every arm that RAISED a subject gets a column, refused or not: an arm
+        # that raised twelve and lost none is a reading, and a column of zeros
+        # is how it is reported.  The fallback column exists so that the twelve
+        # positions always print with a count beside them, including on a run
+        # that refused nothing at all.
+        arms = sorted({arm_of[s] for s in first} | set(sized)) or ["n"]
+        tallies: Dict[str, Dict[str, int]] = {a: {} for a in arms}
+        for subject, code in first.items():
+            arm = tallies[arm_of[subject]]
+            arm[code] = arm.get(code, 0) + 1
+        pooled: Dict[str, int] = {}
         for code in first.values():
-            tally[code] = tally.get(code, 0) + 1
+            pooled[code] = pooled.get(code, 0) + 1
 
         out = [
-            "### Abort-position distribution (§13 row 23)",
+            "### Abort-position distribution (§13 row 23), BY ARM",
             "",
             "First failures only, on the intake surface. A point firing behind "
             "an earlier one aborted nothing and is counted in the table above "
             "instead.",
             "",
-            "| pos | point | first failures |",
-            "|---|---|---|",
+            "**Split by `origin`, and never pooled.** The control arm exists to "
+            "be compared against the agent arm, so a distribution that adds "
+            "them together describes neither. This is the same correction P79 "
+            "and P95 made to §13 rows 21 and 23, made here to the code that "
+            "renders them.",
+            "",
         ]
+        header = "| pos | point | " + " | ".join(arms) + " |"
+        out += [header, "|---|---|" + "---|" * len(arms)]
         deepest = 0
         for pos, code in enumerate(codes.INTAKE_ORDER, start=1):
-            n = tally.get(code, 0)
-            if n:
+            cells = [tallies[a].get(code, 0) for a in arms]
+            if any(cells):
                 deepest = max(deepest, pos)
-            out.append(f"| {pos} | `{code}` | {n} |")
+            out.append(
+                f"| {pos} | `{code}` | " + " | ".join(str(c) for c in cells) + " |"
+            )
+        out.append("")
+        for arm in arms:
+            n = sum(tallies[arm].values())
+            raised = sized.get(arm)
+            rate = (
+                f"{n}/{raised} = **{100.0 * n / raised:.1f}%**"
+                if raised
+                else f"{n}, denominator unavailable"
+            )
+            out.append(f"- **{arm}**: intake kill rate {rate}")
         out += [
             "",
-            f"Deepest position reached by a failure: **{deepest} of "
+            f"Deepest position reached by a failure, any arm: **{deepest} of "
             f"{len(codes.INTAKE_ORDER)}**."
             if deepest
             else "No intake failure recorded, so no position was reached.",
             "",
+            "**The pooled figure, retained and NOT a reading.** "
+            + ", ".join(
+                f"`{c}` {n}" for c, n in sorted(pooled.items(), key=lambda kv: -kv[1])
+            )
+            + f", total {sum(pooled.values())}. It is printed so that a reader "
+            "comparing this report with one published before P105 can see what "
+            "moved, and for no other purpose.",
+            "",
         ]
-        if self.budget_abandoned:
-            out += [
-                f"**Beside this distribution and not inside it: "
-                f"{self.budget_abandoned} subject(s) abandoned to the intake "
-                "budget.** A subject that ran out of time did not fail the "
-                "point it was standing on, and counting it there would put a "
-                "clock's verdict in a check's column.",
-                "",
-            ]
-        return out
+        return out + self._budget_note()
+
+    def _budget_note(self) -> List[str]:
+        """The abandonment count, printed beside row 23's distribution.
+
+        Kept as its own method since P105 so that both exits from
+        `_abort_positions` render it: a run that refused nothing and abandoned
+        several subjects is precisely the run whose silence would mislead.
+        """
+
+        if not self.budget_abandoned:
+            return []
+        return [
+            f"**Beside this distribution and not inside it: "
+            f"{self.budget_abandoned} subject(s) abandoned to the intake "
+            "budget.** A subject that ran out of time did not fail the "
+            "point it was standing on, and counting it there would put a "
+            "clock's verdict in a check's column.",
+            "",
+        ]
 
     def _unexercised(self) -> List[str]:
         exercised = {
