@@ -239,14 +239,15 @@ THE ENTITY FENCE MEASURED AGAINST corpora/us
 
 WHAT THE FENCE REFUSES ON THE CORPUS ITSELF
   Method, stated so the figures are reproducible: the entity fence is run over
-  the raw text of each of the thirteen corpora/us documents as the sweep reads
-  them, Path.read_text on the whole file, and every hit is counted. The security
+  the text of each of the thirteen corpora/us documents as the sweep reads them,
+  Path.read_text on the whole file, and every hit is counted. The security
   master is reloaded for each state, because the loader filters the ticker set
   against the lexicon at load time and a lexicon row therefore changes what the
-  fence can see as well as what it ignores.
+  fence can see as well as what it ignores. Measured AFTER the fetch-time chrome
+  strip described below, which is the corpus now in the tree.
 
                                           distinct hits   total hits
-    v1.13, names and tickers as one set             44          308
+    v1.13, names and tickers as one set             39          226
     P76 ticker rule, lexicon unchanged              10           81
     P76 plus the five lexicon rows                   5           41
 
@@ -265,19 +266,47 @@ WHAT THE FENCE REFUSES ON THE CORPUS ITSELF
   remaining 40 hits of the 81.
 
   The residue is five tokens, and each is a different thing:
-    API             ticker half. A genuine US ticker, appearing in the fetched
-                    page's furniture rather than in the rule text.
-    BlackBerry      name half. Genuine issuer names, in the Cornell LII site
-    Opera           chrome that the corpus fetch included. Not a fence defect;
-                    a corpus-fetch defect, and it belongs to row 22.
+    API             ticker half. A genuine US ticker.
+    BlackBerry      name half. Genuine issuer names.
+    Opera
     Joint           name half. A one-word US issuer name that is also an
                     ordinary word, tripping on 'Joint and group filings' in
-                    Rule 16a-3. This one is a genuine fence false positive and
-                    is a lexicon-row candidate for the operator.
+                    Rule 16a-3. A genuine fence false positive.
     Trust Holdings  designator pattern, on the heading 'Trust Holdings and
                     Transactions' in Rule 16a-8. A rulebook heading, not an
-                    issuer. Also a genuine false positive, and the only one
-                    coming from a pattern rather than from a lookup.
+                    issuer. Also genuine, and the only one coming from a pattern
+                    rather than from a lookup.
+
+THE CHROME STRIP, AND WHAT IT DID NOT FIX
+  API, BlackBerry and Opera were diagnosed on 27 August as a corpus-fetch defect
+  belonging to §13 row 22 rather than a fence defect: issuer names sitting in
+  Cornell LII's page furniture, on thirteen documents that name no company at
+  all. scripts_fetch_us_corpus.sh now strips that furniture before the file is
+  written, removing <nav>, <header> and <footer> and any element whose class or
+  id contains nav, menu, sidebar, related, footer or breadcrumb, and the
+  manifest records raw_bytes beside bytes so what was discarded is on the
+  record. The strip removed 154,132 of 638,883 bytes, 24% of the corpus, across
+  all thirteen documents; the integrity check passes with the floor applied to
+  the stripped size, smallest document 17,387 bytes against a 4,000 floor.
+
+  It did not remove any of the three. Re-measured on the stripped corpus, the
+  fence still refuses API 13 times, BlackBerry 13 times and Opera 13 times, once
+  per document, and the residue is the same five tokens at the same 41 hits.
+
+  The reason is that none of the three is in the furniture the rule names.
+    API         an HTML comment in <head>: <!-- API url -->, labelling the
+                script that sets LII's search endpoint.
+    BlackBerry  string literals inside an inline <script> in <head>, in a
+    Opera       user-agent sniffer: /BlackBerry/i, /Opera Mini/i.
+  <head> is not <header>, a comment carries no class or id, and a <script> block
+  carries none either. The strip is doing what it was specified to do; the
+  specification did not reach these three.
+
+  What would reach them is removing <script>, <style> and HTML comments as well.
+  That is a wider rule than the one asked for and it changes what the agent is
+  shown, so it is left as an operator decision on row 22 rather than taken here.
+  Recorded so the next reader does not re-diagnose it: this is one line in
+  CHROME_TAGS plus a handle_comment that drops rather than emits.
 
   The rule takes on a false negative and names it: a bare ticker in lower or
   title case is now invisible. That cost was taken over the alternative, a
@@ -291,6 +320,9 @@ WHAT THIS DOES AND DOES NOT DISCHARGE
             and locked by tests: 0 of 36 refused on the drawn arm, and 5 of 6
             routes closed on the probe arm, the open one a title-case bare
             ticker.
+            §13 row 22 gains a fetch-time chrome strip with both byte counts
+            in the manifest, which removed 24% of the corpus and none of the
+            three chrome hits it was aimed at.
             §13 row 23 moves from "every failure at position 3" to two points
             exercised, four shown structurally unreachable, and a reason for
             each of the rest.
