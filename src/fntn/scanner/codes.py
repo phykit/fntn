@@ -39,6 +39,7 @@ class Surface(str, Enum):
     DIRECTIVE = "directive"
     REGISTRATION = "registration"
     SEGMENT = "segment"
+    SIZING = "sizing"
 
 
 @dataclass(frozen=True)
@@ -152,18 +153,50 @@ _INTAKE: List[ReasonCode] = [
         refuse_to_score=True,
     ),
     ReasonCode(
+        code="intake_budget_exhausted",
+        surface=Surface.INTAKE,
+        description=(
+            "Intake exceeded the registered time ceiling, at one point or "
+            "cumulatively over the subject, and the subject is abandoned "
+            "rather than held open. Not a verdict on the idea: a verdict on "
+            "how long looking at it took."
+        ),
+        summary_template=(
+            "Intake was abandoned at {point} after {elapsed_s}s against a "
+            "registered budget of {budget_s}s, on attempt {attempts}. The "
+            "ceiling is a ceiling on the cost of looking, not a judgement of "
+            "the idea, and the idea is neither refused nor accepted by it. "
+            "**This decision was taken once, when the work ran, and the "
+            "elapsed time above is the record of it**: a replay reads this "
+            "figure and does not re-time the work, so the same inputs produce "
+            "the same refusal on any machine. {resurrection}"
+        ),
+        resurrection=(
+            "Re-raise where EITHER the registered budget has been raised above "
+            "the elapsed time recorded here, which is a re-stamp with "
+            "intake_point_budget_s or intake_subject_budget_s named as the "
+            "causing field, OR a later attempt on the same source completed "
+            "within the budget in force, which the ledger's own budget rows "
+            "show as an unexhausted decision at the same point."
+        ),
+        refuse_to_score=True,
+    ),
+    ReasonCode(
         code="claim_provenance_recollection",
         surface=Surface.INTAKE,
         description=(
-            "A load-bearing claim carries recollection provenance, so the "
-            "consuming check refuses to score."
+            "A load-bearing claim carries a provenance tag the freeze "
+            "signature cannot stand on, so the consuming check refuses to "
+            "score. Named for its commonest case, recollection; the set is "
+            "Provenance.blocks_freeze_signature and reconstructed_hash_"
+            "verified is also in it."
         ),
         summary_template=(
-            "Field {failed_field} carried recollection provenance, so the "
-            "consuming check refused to score rather than guessing. The lane's "
-            "first intake found a recollected claim wrong in two places, which "
-            "is why this refusal exists and why it is not a nuisance. "
-            "{resurrection}"
+            "Field {failed_field} carried {provenance} provenance, which the "
+            "§14 signature cannot stand on, so the consuming check refused to "
+            "score rather than guessing. The lane's first intake found a "
+            "recollected claim wrong in two places, which is why this refusal "
+            "exists and why it is not a nuisance. {resurrection}"
         ),
         resurrection=(
             "Re-raise once the field is verified against the primary document "
@@ -796,12 +829,89 @@ _OBSERVATION: List[ReasonCode] = [
 
 
 # ---------------------------------------------------------------------------
+# Surface G -- sizing.  The derived clip floor (§13 rows 29 and 30).
+#
+# The clip was a chosen constant and is now DERIVED from a governance tolerance
+# (row 29) and the measured fixed round-trip cost (row 1).  Two of these three
+# codes fire because an input is absent, and the third because **no size
+# satisfies the tolerance at all**, which is a measured fact about a market and
+# not a missing input.  Keeping them apart is the whole point: an unreachable
+# market and an unset parameter look identical from outside and mean opposite
+# things.
+# ---------------------------------------------------------------------------
+
+_SIZING: List[ReasonCode] = [
+    ReasonCode(
+        code="clip_floor_tolerance_unset",
+        surface=Surface.SIZING,
+        description=(
+            "§13 row 29's maximum tolerable fixed cost is not set, so the clip "
+            "floor has no target to derive against."
+        ),
+        summary_template=(
+            "The clip floor for {market} could not be derived because §13 row "
+            "29, the maximum tolerable fixed cost in basis points of position, "
+            "is not set. Position size is therefore UNDETERMINED and no "
+            "position is taken. This is a refusal to score and not a size of "
+            "zero: a zero would say the position was evaluated and came out "
+            "small. {resurrection}"
+        ),
+        resurrection=(
+            "Resurrectable the moment §13 row 29 is set by operator governance."
+        ),
+        refuse_to_score=True,
+    ),
+    ReasonCode(
+        code="clip_floor_cost_unset",
+        surface=Surface.SIZING,
+        description=(
+            "§13 row 1's fixed round-trip cost is not established for this "
+            "market, so there is nothing to compare against the tolerance."
+        ),
+        summary_template=(
+            "The clip floor for {market} could not be derived because §13 row "
+            "1's fixed round-trip cost is not established for it: {missing} is "
+            "unset. Row 1 runs first precisely because every break-even "
+            "denominator inherits it. Position size is UNDETERMINED and no "
+            "position is taken. {resurrection}"
+        ),
+        resurrection=(
+            "Resurrectable when §13 row 1 closes for this market against a "
+            "cited, published schedule."
+        ),
+        refuse_to_score=True,
+    ),
+    ReasonCode(
+        code="clip_floor_unreachable_at_any_size",
+        surface=Surface.SIZING,
+        description=(
+            "The size-independent share of the round-trip cost already equals "
+            "or exceeds the tolerance, so no position size satisfies it."
+        ),
+        summary_template=(
+            "No position size in {market} satisfies §13 row 29's tolerance of "
+            "{tolerance_bps} bp. The size-INDEPENDENT share of the round trip "
+            "is {proportional_bps} bp, which does not fall as the position "
+            "grows, so the tolerance is exceeded at every size and there is no "
+            "floor to derive. This is a measured fact about the market's cost "
+            "structure, not a missing input. {resurrection}"
+        ),
+        resurrection=(
+            "Resurrectable if §13 row 29's tolerance is raised above the "
+            "size-independent share, or if a cost tier removes part of that "
+            "share for a subset of names (Annex A.1)."
+        ),
+    ),
+]
+
+
+# ---------------------------------------------------------------------------
 # Registry.
 # ---------------------------------------------------------------------------
 
 ALL_CODES: Dict[str, ReasonCode] = {
     rc.code: rc
-    for rc in (*_INTAKE, *_SCREEN, *_DIRECTIVE, *_REGISTRATION, *_SEGMENT, *_OBSERVATION)
+    for rc in (*_INTAKE, *_SCREEN, *_DIRECTIVE, *_REGISTRATION, *_SEGMENT, *_SIZING, *_OBSERVATION)
 }
 
 #: The ordered fail-fast sequence for each surface.  Stated explicitly rather
@@ -839,13 +949,31 @@ INTAKE_ORDER: List[str] = [
 #: before the schema-enforced extraction call, which is the expensive step.
 OBSERVATION_ORDER: List[str] = [rc.code for rc in _OBSERVATION]
 
-_declared = set(INTAKE_ORDER)
+#: Intake codes that are NOT positions in the panel, named exhaustively.
+#:
+#: The ordering invariant below exists so that a code cannot be defined without
+#: a place in the sequence, which would leave a refusal nothing could locate.
+#: ``intake_budget_exhausted`` is the one refusal that genuinely has no place in
+#: it: a ceiling on time is not a check that runs after the twelfth, it is an
+#: interruption that can fall at any of them, and giving it position 13 would
+#: say every budget abandonment happened after every other check passed. §13 row
+#: 23 counts abort positions, so that lie would land directly in a calibration.
+#: The set is named rather than the invariant relaxed, so adding a second
+#: non-positional code is a deliberate act with this comment in front of it.
+INTAKE_NON_POSITIONAL: frozenset = frozenset({"intake_budget_exhausted"})
+
+_declared = set(INTAKE_ORDER) | INTAKE_NON_POSITIONAL
 _defined = {rc.code for rc in _INTAKE}
 if _declared != _defined:
     raise RuntimeError(
         "INTAKE_ORDER and the intake code definitions disagree: "
         f"ordered-not-defined={sorted(_declared - _defined)}, "
         f"defined-not-ordered={sorted(_defined - _declared)}"
+    )
+if INTAKE_NON_POSITIONAL & set(INTAKE_ORDER):
+    raise RuntimeError(
+        "a code cannot be both a position and non-positional: "
+        + ", ".join(sorted(INTAKE_NON_POSITIONAL & set(INTAKE_ORDER)))
     )
 del _declared, _defined
 

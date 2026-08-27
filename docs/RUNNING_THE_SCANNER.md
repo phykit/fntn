@@ -46,8 +46,18 @@ python -m fntn.scanner markets   # profiles, constructions, master sources
 python -m fntn.scanner template  # a form prefilled for all five markets
 python -m fntn.scanner init      # or an empty one
 python -m fntn.scanner check     # report exactly what is still missing
+python -m fntn.scanner trace     # test the machinery; evidentially inert
 python -m fntn.scanner sweep     # runs only if the form is complete
 ```
+
+`trace` and `sweep` are different acts and are kept apart deliberately. A sweep
+is the layer running; a trace is the layer being tested, full panel on every
+subject regardless of the audit fraction, every row stamped `NON_EVIDENTIARY`,
+and the harness refusing to register or admit. It reads the labelled set at
+`docs/labelled_proposals.json` rather than proposals from a corpus, because what
+it measures is the machinery: §13 row 21's two fence error rates and §13 row 23's
+abort-position distribution. Neither is a fact about the market, so neither needs
+the archive and neither consumes the first sweep.
 
 `sweep` refuses an incomplete registration and names every gap. That refusal is
 why the command exists: a directive raised under a partial registration cannot

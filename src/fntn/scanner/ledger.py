@@ -90,6 +90,18 @@ CREATE TABLE IF NOT EXISTS query_log (
     text            TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS budget_decision (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    subject_id      TEXT NOT NULL,
+    parameter_hash  TEXT NOT NULL,
+    point           TEXT NOT NULL,
+    elapsed_s       REAL NOT NULL,
+    budget_s        REAL NOT NULL,
+    attempts        INTEGER NOT NULL,
+    exhausted       INTEGER NOT NULL,
+    at              TEXT NOT NULL
+);
+
 CREATE INDEX IF NOT EXISTS refusal_code_idx ON refusal(code);
 CREATE INDEX IF NOT EXISTS refusal_subject_idx ON refusal(subject_id);
 """
@@ -173,6 +185,60 @@ class Ledger:
             ),
         )
         self.conn.commit()
+
+    def write_budget_decisions(self, decisions: Iterable) -> None:
+        """The elapsed time, the budget in force, and the decision.
+
+        **This is what a replay reads instead of a clock.** The decision was
+        taken once, when the work ran; storing only the refusal would leave a
+        replay with nothing to read and a fresh clock to consult, and the run's
+        refusal set would then depend on the machine that replayed it.
+        """
+
+        rows = [
+            (
+                d.subject_id, self.parameter_hash, d.point, d.elapsed_s,
+                d.budget_s, d.attempts, int(d.exhausted), d.at,
+            )
+            for d in decisions
+        ]
+        if not rows:
+            return
+        self.conn.executemany(
+            "INSERT INTO budget_decision "
+            "(subject_id,parameter_hash,point,elapsed_s,budget_s,attempts,"
+            "exhausted,at) VALUES (?,?,?,?,?,?,?,?)",
+            rows,
+        )
+        self.conn.commit()
+
+    def budget_decisions(self, subject_id: str | None = None) -> List[Dict]:
+        sql = ("SELECT subject_id, point, elapsed_s, budget_s, attempts, "
+               "exhausted, at FROM budget_decision")
+        args: tuple = ()
+        if subject_id is not None:
+            sql += " WHERE subject_id = ?"
+            args = (subject_id,)
+        sql += " ORDER BY id"
+        return [
+            {
+                "subject_id": r["subject_id"], "point": r["point"],
+                "elapsed_s": r["elapsed_s"], "budget_s": r["budget_s"],
+                "attempts": r["attempts"], "exhausted": bool(r["exhausted"]),
+                "at": r["at"],
+            }
+            for r in self.conn.execute(sql, args)
+        ]
+
+    def budget_abandoned(self) -> int:
+        """Subjects abandoned to the ceiling. Printed in every report, at zero too."""
+
+        return int(
+            self.conn.execute(
+                "SELECT COUNT(DISTINCT subject_id) FROM budget_decision "
+                "WHERE exhausted = 1"
+            ).fetchone()[0]
+        )
 
     def write_declined_feed(self, subject_id: str, feed: str, code: str) -> None:
         self.conn.execute(

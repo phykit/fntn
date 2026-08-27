@@ -72,6 +72,22 @@ Four, and they are different kinds of object. Do not weaken any of them to make 
 - `test_every_defined_code_is_emitted` is the headline. Add a code, add its branch, add the test that reaches it, in one commit.
 - Test the *reason*, not just the behaviour. `test_fence_runs_before_retrieval` asserts an ordering property that a coverage number would not catch.
 - **Unit tests are the weaker instrument.** The pattern-only entity fence passed every unit test and refused 94% of real agent proposals. Before claiming a fence works, run `src/fntn/scanner/trace.py` over real material.
+- **Assert a collection is non-empty before iterating it.** Any test that loops over a glob, a directory listing, a parsed file, a fixture set or a computed result must first assert its size, and the assertion must be a *number*, not a truthiness check.
+
+```python
+# WRONG: passes loudest at the moment it stops testing anything
+for doc in sorted(Path("corpora/us").glob("*.htm")):
+    assert "Trust Holdings" not in entity_mentions(doc.read_text(), fence)
+
+# RIGHT: the size is the first thing asserted
+docs = [p for p in sorted(Path("corpora/us").glob("*"))
+        if p.is_file() and not p.name.startswith("_")]
+assert len(docs) == 13
+for doc in docs:
+    ...
+```
+
+  *This is not hypothetical.* That first form is the real one: when the corpus became extracted text and the files became `.txt`, the glob matched nothing, every assertion in the loop was satisfied by the empty set, and the test went green whilst measuring an empty corpus. The failure mode is specific to **negative** assertions, which is most of what this project asserts: a fence test says *this token is absent*, and nothing is absent from nothing. `assert any(...)` is safe, because an empty collection makes it false; `assert all(...)` and a bare `for` with asserts inside are not. A sweep on 27 August 2026 found seven such sites and guarded all seven.
 
 ## Ledger
 

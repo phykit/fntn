@@ -40,13 +40,64 @@ class EvidenceTier(str, Enum):
 
 
 class Provenance(str, Enum):
+    """§0.5's provenance vocabulary.
+
+    Two classifications hang off this enum and both are **total**: every member
+    must appear in each, and ``test_every_provenance_tag_is_classified`` fails
+    if one does not.  That is the point of putting them here rather than
+    leaving a string literal in each consumer.  Before it, the freeze-blocking
+    decision was ``tag == "recollection"``, a blacklist of one, so a tag added
+    to the vocabulary was read as harmless by every consumer that had never
+    heard of it.  A vocabulary that grows silently past its readers is worse
+    than no vocabulary.
+    """
+
     VERIFIED_PRIMARY = "verified_primary"
     VERIFIED_SECONDARY = "verified_secondary"
     RECOLLECTION = "recollection"
+    #: **Not the original artefact.**  The artefact it stands for is gone, and
+    #: what is tagged is a reconstruction that **reproduces the original's hash
+    #: under the dataclass of the commit the record names**.  Both halves are
+    #: required: a reconstruction that does not reproduce the hash is a guess,
+    #: and a hash reproduced under a different schema is a different question
+    #: answered.
+    #:
+    #: It is a positive verification and it is still not the artefact, so it
+    #: **blocks the freeze signature** exactly as ``recollection`` does whilst
+    #: meaning something quite different.  Introduced for
+    #: `890a80e3a8566837`, the first discovery-layer registration hash, whose
+    #: object was overwritten before it was ever committed;
+    #: ``docs/REGISTRATION_HISTORY.md`` carries it.
+    RECONSTRUCTED_HASH_VERIFIED = "reconstructed_hash_verified"
     #: Evidence produced by a directive this system raised.  Routes
     #: advisory-only under §3.6.3 check 5, exactly as ``single_study`` does.
     SELF_GENERATED = "self_generated"
     AGENT_GENERATED = "agent_generated"
+
+    @property
+    def counts_as_verified(self) -> bool:
+        """Whether a claim carrying this tag may make an intake quantified."""
+
+        return self in _VERIFIED
+
+    @property
+    def blocks_freeze_signature(self) -> bool:
+        """Whether a load-bearing claim carrying this tag stops §14 being signed."""
+
+        return self in _BLOCKS_FREEZE
+
+
+#: Read the paper's own tables.  Nothing else is verified.
+_VERIFIED = frozenset(
+    {Provenance.VERIFIED_PRIMARY, Provenance.VERIFIED_SECONDARY}
+)
+#: A claim the signature cannot stand on.  ``self_generated`` and
+#: ``agent_generated`` are absent deliberately: they are contained by routing
+#: advisory-only under §3.6.3 check 5 rather than by refusing at intake, and
+#: moving them here would be a rule change wearing a classification's clothes.
+_BLOCKS_FREEZE = frozenset(
+    {Provenance.RECOLLECTION, Provenance.RECONSTRUCTED_HASH_VERIFIED}
+)
 
 
 class StreamStatus(str, Enum):
@@ -136,6 +187,21 @@ _IDENTIFIER_PATTERNS: Sequence[re.Pattern] = (
     re.compile(r"\(\s*(?:ticker|symbol)\s*:?\s*[A-Z0-9.]{1,6}\s*\)", re.I),
 )
 
+#: Bare tickers in running prose.  A ticker is a *symbol*, and the shape a
+#: symbol takes on the page is the whole of what separates it from an ordinary
+#: word: three or more characters, all capitals.  Two characters is too short to
+#: carry the signal (``FR``, ``IT``, ``ON``), and any other case is a word
+#: (``Note``, ``All``, ``Now``).  Exchange-prefixed and explicitly labelled forms
+#: are already caught above, so this pattern carries only the bare case.
+_BARE_TICKER_PATTERN = re.compile(r"\b[A-Z]{3,6}\b")
+
+#: The shape a proper noun takes as the leading token of a designator span:
+#: an initial capital, at least two characters, and letters throughout.  A bare
+#: initial (``A Ltd``), a section number (``16a Holdings``) and punctuation are
+#: excluded.  It is a cheap guard rather than the discriminating test; the
+#: rulebook stopword set below is what actually separates a heading from a firm.
+_PROPER_NOUN_LEAD = re.compile(r"[A-Z][A-Za-z&.'-]*[A-Za-z]$")
+
 #: Corporate designators.  A designator is a strong signal because it is a
 #: legal-form suffix that only ever attaches to a named firm; a regulator, a
 #: rulebook and an exchange never carry one.
@@ -182,12 +248,52 @@ class EntityFence:
     a statutory deadline is doing its job.  Dates are therefore reported as
     context beside an entity hit and never as a hit on their own, which is what
     removes the largest single source of the false-positive rate.
+
+    **Tickers are held apart from names, because a symbol is not a word.**  A
+    trace over the US corpus put 257 hits across thirteen documents, essentially
+    all of them false, on ``Law``, ``Are``, ``For``, ``Help``, ``Note``, ``Any``,
+    ``Such``, ``When`` and the single letters ``B``, ``C``, ``D``, ``E``, ``F``,
+    ``H``, ``J``.  Every one came from the ticker half of the lookup: 7,268 of
+    the 10,388 US tickers are four characters or fewer, and the loader's
+    minimum-length and lexicon filters are applied to issuer names only, so the
+    ticker set entered the fence unfiltered and sentence-initial capitalisation
+    was enough to trip it.  A bare ticker therefore matches only in the shape a
+    symbol takes: **all capitals, three characters or more** (see
+    ``_BARE_TICKER_PATTERN``).  Names keep the span lookup unchanged, which is
+    why the two sets are separate fields rather than one: sixty-five US issuers
+    have a one-word name identical to their own ticker (``Ball``, ``Dole``,
+    ``Coty``, ``Angi``), and merging the sets would have made the stricter
+    ticker rule govern their names as well.
+
+    **The cost, stated rather than implied.**  A bare ticker written in lower
+    case or title case is now invisible to the fence: ``purchases at Aapl`` and
+    ``purchases at aapl`` pass where ``purchases at AAPL`` is refused.  That is
+    a false negative, and false negatives are the expensive direction, paid in
+    the exclusivity guarantee rather than in a re-raise.  It is accepted here
+    because the alternative measured worse: an unfiltered ticker set refuses
+    ordinary English at a rate that would silently shape the search to whatever
+    survived it, which is the §3.6.6 endogeneity arriving through the
+    containment.  The issuer's *name* remains matched in any case, so the
+    residual is confined to a proposal that names a ticker and never its issuer.
     """
 
     #: Issuer names and tickers, lower-cased, from the security master and the
     #: discovery markets' listing lists.  Empty means the lookup is unavailable,
     #: which ``entity_mentions`` treats as a refusal to score rather than a pass.
     security_master: frozenset = frozenset()
+    #: Ticker symbols, lower-cased, from the same sources.  Kept apart from
+    #: ``security_master`` rather than folded into it because the two are matched
+    #: by different rules: a name is a word and is matched as a span in any case,
+    #: a ticker is a symbol and is matched only in a symbol's shape.
+    tickers: frozenset = frozenset()
+    #: Rulebook nouns that may head a designator span without a firm being
+    #: named.  Consulted by the designator branch alone; see
+    #: ``RULEBOOK_STOPWORDS`` for why it is a separate set from the lexicon.
+    #: Empty by default, exactly as ``lexicon`` is: an empty set makes the
+    #: branch refuse more rather than less, which is the safe direction, and
+    #: the seed is supplied by the caller so the value in force is the value
+    #: the registration hashed.
+    rulebook_stopwords: frozenset = frozenset()
     #: Regulatory and market vocabulary that is *not* an issuer.  Seeded, and
     #: extended by operator mapping in the same idiom as §3.6.5's stream table:
     #: it grows by use rather than by anticipation, and each addition is
@@ -200,8 +306,24 @@ class EntityFence:
             hits.extend(m.group(0) for m in pattern.finditer(text))
         for m in _DESIGNATOR_PATTERN.finditer(text):
             phrase = m.group(0)
-            if phrase.split()[0].lower() not in self.lexicon:
-                hits.append(phrase)
+            lead = phrase.split()[0]
+            # Three conditions, and all three must hold.  A designator suffix
+            # alone is not enough: it also matched the Rule 16a-8 heading
+            # "Trust Holdings and Transactions", which names no firm.
+            if not _PROPER_NOUN_LEAD.match(lead):
+                continue
+            if lead.lower() in self.lexicon:
+                continue
+            if lead.lower() in self.rulebook_stopwords:
+                continue
+            hits.append(phrase)
+        for m in _BARE_TICKER_PATTERN.finditer(text):
+            symbol = m.group(0)
+            low = symbol.lower()
+            if low in self.lexicon:
+                continue
+            if low in self.tickers:
+                hits.append(symbol)
         # Multi-token names must be matched as spans, not as single tokens.
         # An earlier version tested one capitalised word at a time against the
         # master, which meant "Vodafone Group" could sit in the master and never
@@ -235,9 +357,21 @@ class EntityFence:
         return out
 
 
-#: Seed lexicon.  In the parameter object, so adding a row is a specification
-#: version; the operator-mapped additions are ledgered separately, exactly as
-#: §3.6.5's stream mappings are.
+#: Seed lexicon: tokens that are entity-shaped and are not entities.
+#:
+#: **This is the seed, and the registration is the value.**  ``Registration``
+#: defaults its ``lexicon`` field to this set and every run reads the
+#: registered list, so adding a row here is a re-stamp and a specification
+#: version, and the operator-mapped additions are ledgered separately exactly
+#: as §3.6.5's stream mappings are.  Until the 27 August re-stamp to
+#: `701adbd9d48015ed` the list lived here alone and reached no hash, which
+#: meant two runs under one hash could refuse two different sets of tokens; the
+#: constant survives as the seed and no longer as the authority.
+#:
+#: Consulted for two different jobs, which is why both consumers take it as a
+#: parameter: the fence ignores what is in it, and the master loader refuses to
+#: index it, so a lexicon row changes what the fence CAN SEE as well as what it
+#: passes over.
 SEED_LEXICON = frozenset(
     w.lower()
     for w in (
@@ -254,6 +388,14 @@ SEED_LEXICON = frozenset(
         "PDMR", "NCIB", "SOX", "ICB", "GICS", "NI", "RG", "GN", "UK", "US",
         "EU", "EEA", "IPO", "ADV", "ATR", "CEO", "CFO", "NAV", "NII", "FIX",
         "SME", "ETF", "AGM", "TR", "TRS", "CAR", "DTE",
+        # Legal-citation and hosting-site vocabulary that collides with real
+        # tickers.  Added by operator mapping on the trace of 27 August 2026,
+        # which found these five as the whole residue after the ticker rule:
+        # CFR and LII are the Code of Federal Regulations and Cornell's Legal
+        # Information Institute, ACT is the word in a statute's short title, and
+        # III and VII are roman numerals in section and title numbers.  Each is
+        # also a listed US ticker, which is why the fence saw them at all.
+        "CFR", "LII", "ACT", "III", "VII",
         # Ordinary capitalised prose that is not an entity
         "Appendix", "Article", "Articles", "Regulation", "Directive",
         "Instrument", "Rule", "Rules", "Notice", "Guide", "Guidance",
@@ -272,13 +414,42 @@ SEED_LEXICON = frozenset(
         "Interruption", "Aggregated", "Ad", "An", "A", "Where", "Read",
         "Related", "Membership", "Position", "Positions", "Issued",
         "Monthly", "Two", "Three", "Four", "Five", "Ten", "Twelve",
+        # Added by operator mapping on the trace of 27 August 2026: the fence
+        # refused "Joint and group filings" in Rule 16a-3, The Joint Corp being
+        # a listed US issuer whose one-word name is an ordinary English word.
+        "Joint",
     )
 )
+
+#: Rulebook vocabulary that may lead a **designator span** without the span
+#: naming a firm.  Separate from ``SEED_LEXICON`` and consulted by one branch
+#: only, because it answers a narrower question: not *is this token an entity*
+#: but *may this token head a legal-form span in a rulebook without a firm being
+#: named*.  ``Trust Holdings and Transactions`` is the heading of Rule 16a-8,
+#: and ``Trust Holdings`` matched the designator grammar exactly as
+#: ``Vodafone Group Holdings`` would.
+#:
+#: **Seeded from evidence, not from anticipation.**  One token, because one is
+#: what the 27 August trace over the thirteen US pre-archive documents actually
+#: produced: it is the only designator span in the corpus.  It grows by operator
+#: mapping in the same idiom as ``SEED_LEXICON`` and §3.6.5's stream table, by
+#: use rather than by guesswork, because every speculative row here is a false
+#: negative waiting to happen and false negatives are the expensive direction.
+#:
+#: **The cost, stated.**  A firm whose name *begins* with a stopword loses the
+#: designator branch: ``Trust Holdings Inc`` would not be flagged by it.  The
+#: name lookup still matches such a firm, and the span matcher is greedy, so
+#: ``Northern Trust Holdings`` leads on ``Northern`` and is unaffected.  The
+#: residual is confined to a firm whose first word is a rulebook noun and whose
+#: name is absent from the security master.
+RULEBOOK_STOPWORDS = frozenset({"trust"})
 
 #: Module-level default: lexicon seeded, security master empty.  A caller that
 #: has a master supplies one; a caller that does not gets designator and
 #: identifier detection only, and the refusal to score that goes with it.
-DEFAULT_FENCE = EntityFence(lexicon=SEED_LEXICON)
+DEFAULT_FENCE = EntityFence(
+    lexicon=SEED_LEXICON, rulebook_stopwords=RULEBOOK_STOPWORDS
+)
 
 
 def entity_mentions(text: str, fence: Optional[EntityFence] = None) -> List[str]:
@@ -381,13 +552,15 @@ class IntakeRecord:
     tradable_on: Optional[str] = None
 
     def compute_evidence_tier(self) -> EvidenceTier:
-        verified = {Provenance.VERIFIED_PRIMARY, Provenance.VERIFIED_SECONDARY}
+        # The verified set is read off the vocabulary rather than restated
+        # here. A tag added to `Provenance` and not classified fails a test;
+        # a tag added and classified is read by this the moment it lands.
         complete = (
             self.claimed_effect
             and self.claimed_horizon_sessions
             and self.measured_on
             and all(
-                self.claims[k].provenance in verified
+                Provenance(self.claims[k].provenance).counts_as_verified
                 for k in ("claimed_effect", "claimed_horizon_sessions", "measured_on")
                 if k in self.claims
             )

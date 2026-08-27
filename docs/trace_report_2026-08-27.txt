@@ -1,0 +1,420 @@
+From Narrative to Null: specification trace of the agent discovery layer
+Run 27 August 2026, against spec v1.14 (§3.7). NON-EVIDENTIARY.
+
+Command: python -m fntn.scanner trace
+
+Regenerated twice on 27 August. First after P79: an earlier issue divided both
+fence-audit arms by the 42-subject total, and a first correction divided the
+probe arm by its own six. Both framings are gone rather than annotated, the
+probe arm being a chosen set that carries no percentage at all, and the
+withdrawn figures are recorded in spec §12.1 rows P77 and P79 and in the banners
+§3.7.3, §12.2 and §13 carry.
+
+Then again after the corpus moved from stripped HTML to extracted text (§13 row
+22). What changed is the CORPUS reading, from three tokens refused 39 times to
+none. §13 row 21's two arms are measured against the labelled set rather than
+against the corpus and both are unmoved, at 0 of 36 on the drawn arm and 5 of 6
+routes closed on the probe arm. The registration re-stamped twice in between, to
+b8dd61e7eea6898e and then to 701adbd9d48015ed, as the fence's stopword set and
+then its lexicon entered the parameter object; docs/REGISTRATION_HISTORY.md
+carries the chain.
+
+WHAT RAN, AND WHAT COULD NOT
+  Requested: the trace over corpora/us, via TranscriptClient if possible and a
+  live sweep otherwise. Neither was available for that corpus.
+
+  TranscriptClient  refused. The only saved payload, docs/trace_corpus.json,
+                    holds 36 proposals read from ASX/ASIC, OSC/CSA/CIRO and
+                    EUR-Lex/ESMA. Host overlap with corpora/us/_manifest.tsv,
+                    which is entirely law.cornell.edu, is nil. Replaying it
+                    through a Corpus stamped corpus_id='us' would put US
+                    provenance on Australian, Canadian and EU material.
+  Live sweep        unavailable. No ANTHROPIC_API_KEY in the environment.
+
+  What ran instead: the 36 swept proposals under the US registration's own
+  configuration (US security master, the four declared discoverable classes),
+  attributed to the corpora they were actually read from, plus six authored
+  probes. Separately, the entity fence was measured directly against the
+  corpora/us document text, which is the one reading this corpus does support
+  without an agent.
+
+  Registration 701adbd9d48015ed. Labels docs/labelled_proposals.json.
+
+  On the two arms, because the report below keeps them apart. The 36 are DRAWN:
+  they are what the agents swept, so the share of them the fence refuses is a
+  rate. The 6 are AUTHORED PROBES, one per named route into the fence, so they
+  are chosen and not sampled and what they yield is coverage of those routes.
+  A percentage over a chosen set estimates nothing: doubling the probe set to
+  twelve routes would halve it whilst leaving the fence untouched. The term
+  'episode-level' is not used of them anywhere, because it implies a sample of
+  episode-level material and there is none.
+
+registration 701adbd9d48015ed stamped 2026-08-27T07:59:55.127137+00:00
+Security master (§13 row 25)
+  sources                      : 1
+  indexed names                : 14322
+  indexed tickers              : 10354
+    US                       rows=10388  coverage=100.0%   skipped_generic=111
+  every market clears the 95% coverage floor
+labelled set : docs/labelled_proposals.json, 42 subjects, labellers ['model_clerk']
+
+SPECIFICATION TRACE (§9.4 applied to §3.7)
+stamp: TRACE-NON-EVIDENTIARY. No row here may be counted as an observation, and the harness refuses to register or admit.
+
+Intake surface
+  subjects run (full panel)    : 42
+  cleared every point          : 29
+  refused at least one point   : 13
+
+Abort-position distribution (§13 row 23)
+   1. agent_overreached_schema           0 
+   2. security_master_unavailable        0 
+   3. proposal_names_entity              5 #####
+   4. discovery_partition_violation      0 
+   5. event_definition_absent            0 
+   6. measured_on_absent                 0 
+   7. duplicate_of_open_pointer          0 
+   8. registered_at_unstampable          0 
+   9. scoring_mode_unsatisfiable         8 ########
+  10. source_inaccessible                0 
+  11. provenance_tag_absent              0 
+  12. claim_provenance_recollection      0 
+  deepest position reached by a failure: 9 of 12
+  Points below the deepest failure were reached and passed, not skipped: the panel runs in full.
+
+Every refusal emitted, not only first failures
+     8  pos 9    scoring_mode_unsatisfiable
+     5  pos 3    proposal_names_entity
+  The distribution above counts first failures only. A point that fires behind an earlier one is invisible there and appears here, so the two are reported together.
+
+Entity-fence audit (§13 row 21)
+  labelled subjects               : 42 (36 drawn class-level, 6 authored probes)
+
+  drawn class-level              : 36
+    false positives (clean refused): 0 of 36 (0%)
+    A rate: this arm was drawn, and is divided by its own n.
+
+  authored probes                : 6
+    routes closed                : 5 of 6
+    route left open              : title-case bare ticker (plant-03)
+    NOT a rate: probes are chosen, not sampled.
+
+  PROVISIONAL: row 21 specifies 200 hand-labelled proposals; this is 42. Reported as a reading, not as the calibration.
+
+Reason-code coverage (§9.4)
+  defined: 36
+  emitted: 2  (6%)
+  defined but never emitted -- untested branches:
+    agent_overreached_schema
+    anchor_provenance_absent
+    catalyst_date_corroborated
+    catalyst_duration_below_floor
+    check_not_applicable_pointer_tier
+    claim_provenance_recollection
+    confound_unmeasurable
+    delta_min_absent
+    delta_min_below_floor
+    discovery_partition_violation
+    duplicate_of_open_pointer
+    event_definition_absent
+    extraction_class_suspended
+    extraction_schema_incomplete
+    ingestion_lag_exceeds_window
+    issuer_unresolved
+    item_source_inaccessible
+    literature_search_absent
+    manual_observation_capacity_exhausted
+    measured_on_absent
+    no_observable_stream
+    observation_anchor_absent
+    observation_precedes_registration
+    premortem_unratified
+    provenance_tag_absent
+    queued_behind_capacity
+    registered_at_unstampable
+    running_document_no_anchor
+    security_master_unavailable
+    segment_overlap_exceeds_theta
+    segment_reserved_for_calibration
+    source_inaccessible
+    stream_requires_new_subscription
+    stream_unmapped_pending_operator
+
+
+REACHABILITY OF THE TWELVE INTAKE POINTS
+  Two points fire on this material. Each of the other ten was probed with a
+  minimal subject built to trip it, and every branch fired when reached, so no
+  branch is dead code. What follows is whether the configured paths can build
+  that subject.
+
+  pos  point                          status
+   1   agent_overreached_schema       DEAD IN EVERY PATH. run.scan appends
+                                      (p, {}) and TraceHarness hardcodes
+                                      raw_payload={}. discovery.raw_payloads(),
+                                      written expressly to hand this fence the
+                                      untouched model output, is called from
+                                      nowhere in the package. The authority
+                                      fence has no input.
+   2   security_master_unavailable    Unreachable, and correctly so. cmd_sweep
+                                      and cmd_trace both refuse before running
+                                      when no master loads. An earlier refusal
+                                      does the same job.
+   3   proposal_names_entity          EXERCISED. 5 of 42, all six probes bar
+                                      one.
+   4   discovery_partition_violation  DEAD BY CONSTRUCTION. Corpus.__post_init__
+                                      raises PermissionError on any partition
+                                      outside READABLE_BY_DISCOVERY, and sweep
+                                      stamps the corpus's own partition on every
+                                      proposal. draw_control_mechanisms defaults
+                                      to EXTERNAL and scan never overrides.
+   5   event_definition_absent        Reachable, untripped. The schema requires
+                                      the field, but "" satisfies it and sweep
+                                      coerces a missing key to "". Awaits a
+                                      degenerate payload.
+   6   measured_on_absent             As above.
+   7   duplicate_of_open_pointer      Dead in the harness only. TraceHarness
+                                      passes open_pairs={} and never updates it.
+                                      run.scan populates it after
+                                      build_directive and before registration,
+                                      so a production sweep with a repeated
+                                      (class, population) does reach it.
+   8   registered_at_unstampable      DEAD IN EVERY PATH. The layer logs only
+                                      MECHANISM_LEVEL queries keyed corpus:<id>;
+                                      breach() reads only CONDITIONAL_RETURN on
+                                      event_class|measured_on. scan builds a
+                                      fresh QueryFence each run, and the query
+                                      log is written to SQLite with nothing
+                                      reading it back, so a contaminating query
+                                      cannot bite in a later run.
+   9   scoring_mode_unsatisfiable     EXERCISED. 8 of 42. It read zero on
+                                      26 August because that run used a wider
+                                      exclusivity map than the registration
+                                      declares: the agents emitted
+                                      index_reconstitution,
+                                      short_interest_disclosure and
+                                      clinical_procurement, and the registration
+                                      declares four classes.
+  10   source_inaccessible            DEAD IN EVERY PATH. The resolver defaults
+                                      to lambda ref: bool(ref) and neither
+                                      cmd_sweep nor the harness passes a real
+                                      one, so retrieval is never attempted. The
+                                      first costly point on this surface is
+                                      never paid.
+  11   provenance_tag_absent          Reachable, never as a first failure. Its
+                                      only trigger, a falsy source_ref, is also
+                                      position 10's trigger. Under FULL_PANEL
+                                      both codes emit and the abort is recorded
+                                      at 10; under FAIL_FAST position 11 never
+                                      fires at all.
+  12   claim_provenance_recollection  Dead for machine origins. _claims_for and
+                                      the harness equivalent emit
+                                      verified_primary or None, never
+                                      recollection. Nothing on the discovery
+                                      path can construct the input.
+
+  Four points (1, 4, 8, 10) cannot be reached by any configured path. One (2)
+  is unreachable because an earlier refusal is doing its work. One (7) is
+  unreachable through the harness but not through a sweep. One (11) can emit
+  but can never be a first failure. Two (5, 6) await material that trips them.
+
+THE ENTITY FENCE MEASURED AGAINST corpora/us
+  The corpus supports one reading without an agent: run entity_mentions over
+  the document text and count what the fence would refuse.
+
+                              before        after
+    distinct hits                 41           10
+    total hits                   257           68
+
+  Before, essentially every hit was false and every one came from the ticker
+  half of the lookup: Law, Are, For, Help, Note, Any, Such, When, and the
+  single letters B, C, D, E, F, H, J. 7,268 of the 10,388 US tickers are four
+  characters or fewer, and the loader applied its minimum-length and lexicon
+  filters to issuer names only, so the ticker set entered the fence unfiltered
+  and sentence-initial capitalisation was enough to trip it.
+
+  After, the ticker branch matches only all capitals of three characters or
+  more, and names and tickers are separate lookup sets. The residue is five
+  tokens: LII, CFR, ACT, III and VII, which are legal and site vocabulary
+  colliding with tickers and are candidates for a lexicon row. BlackBerry and
+  Opera are genuine issuer names appearing in the Cornell LII page furniture,
+  which is the corpus fetch including site chrome rather than a fence defect.
+
+  The rule takes on a false negative and names it: a bare ticker in lower or
+  title case is now invisible. That cost was taken over the alternative, a
+  common-word filter on the ticker set, which would have made at least 95 real
+  US issuers invisible in all capitals as well and would still have left CFR,
+  LII, III and VII needing a lexicon row.
+
+WHAT THE FENCE REFUSES ON THE CORPUS ITSELF
+  Method, stated so the figures are reproducible: the entity fence is run over
+  the text of each of the thirteen corpora/us documents as the sweep reads them,
+  Path.read_text on the whole file, and every hit is counted. The security
+  master is reloaded for each state, because the loader filters the ticker set
+  against the lexicon at load time and a lexicon row therefore changes what the
+  fence can see as well as what it ignores. The first three rows are measured on
+  the stripped-HTML corpus of 27 August, which is what those states were
+  measured against; the last is measured on the extracted-text corpus now in
+  the tree.
+
+                                          distinct hits   total hits
+    v1.13, names and tickers as one set             39          226
+    P76 ticker rule, lexicon unchanged              10           81
+    P76 plus the five lexicon rows                   5           41
+    P80, then the corpus stored as text              0            0
+
+  Before, essentially every hit was false and every one came from the ticker
+  half of the lookup: Law, Are, For, Help, Note, Any, Such, When, and the single
+  letters B, C, D, E, F, H, J. 7,268 of the 10,388 US tickers are four
+  characters or fewer, and the loader applied its minimum-length and lexicon
+  filters to issuer names only, so the ticker set entered the fence unfiltered
+  and sentence-initial capitalisation was enough to trip it.
+
+  The ticker rule removes 34 of the 44. It matches a bare ticker only in all
+  capitals of three characters or more, and holds names and tickers in separate
+  lookup sets. What it leaves behind is legal-citation vocabulary that survives
+  the shape test because it IS all capitals: ACT, CFR, III, LII and VII, each
+  also a listed US ticker. Those are the five lexicon rows, and they remove the
+  remaining 40 hits of the 81.
+
+  The residue is five tokens, and each is a different thing:
+    API             ticker half. A genuine US ticker.
+    BlackBerry      name half. Genuine issuer names.
+    Opera
+    Joint           name half. A one-word US issuer name that is also an
+                    ordinary word, tripping on 'Joint and group filings' in
+                    Rule 16a-3. A genuine fence false positive. CLOSED by P80,
+                    with a lexicon row.
+    Trust Holdings  designator pattern, on the heading 'Trust Holdings and
+                    Transactions' in Rule 16a-8. A rulebook heading, not an
+                    issuer. Also genuine, and the only one coming from a pattern
+                    rather than from a lookup. CLOSED by P80, by narrowing the
+                    designator branch to a proper-noun-shaped lead absent from a
+                    registered rulebook stopword set.
+
+  After P80, under registration b8dd61e7eea6898e: 3 distinct hits, 39 total.
+  Both genuine fence false positives were gone and the residue was exactly the
+  three chrome tokens below, which are row 22's decision and not the fence's.
+
+  UNDER 701adbd9d48015ed, ON THE CORPUS AS EXTRACTED TEXT: 0 distinct hits, 0
+  total. The residue is nil. Stated as a count, because that is what it is: it
+  is what the fence refuses on these thirteen documents, divided by nothing.
+  Zero refusals on material that names no company is the fence agreeing with
+  the corpus and is not an error rate, and it is not a reading of either arm of
+  §13 row 21, which are measured against the labelled set and are unmoved.
+  Nothing here says the fence would refuse nothing on material that DID name a
+  company: the drawn arm and the probe arm are what speak to that, and the
+  probe arm still reports one route open.
+
+THE CORPUS NOW STORES TEXT, AND THAT IS WHAT CLOSED THE THREE
+  API, BlackBerry and Opera were diagnosed on 27 August as a corpus-fetch defect
+  belonging to §13 row 22 rather than a fence defect: issuer names sitting in
+  Cornell LII's page furniture, on thirteen documents that name no company at
+  all. The first repair stripped the furniture, removing <nav>, <header> and
+  <footer> and any element whose class or id contains nav, menu, sidebar,
+  related, footer or breadcrumb. It removed 154,132 of 638,883 bytes, 24% of the
+  corpus, and it removed none of the three. The fence still refused API 13
+  times, BlackBerry 13 times and Opera 13 times, once per document.
+
+  The reason is that none of the three was in the furniture the rule names.
+    API         an HTML comment in <head>: <!-- API url -->, labelling the
+                script that sets LII's search endpoint.
+    BlackBerry  string literals inside an inline <script> in <head>, in a
+    Opera       user-agent sniffer: /BlackBerry/i, /Opera Mini/i.
+  <head> is not <header>, a comment carries no class or id, and a <script> block
+  carries none either. The strip was doing what it was specified to do; the
+  specification did not reach these three.
+
+  Naming <script>, <style> and comments as three further things to remove would
+  have closed those three and left the next member of the class to be discovered
+  by the fence again, which is the same repair a fourth time. The corpus
+  therefore stores EXTRACTED TEXT: <script> and <style> subtrees dropped entire,
+  comments dropped, the furniture rules still applied, and the text that
+  survives written to disk. A construct that carries no text cannot put a name
+  in the corpus, so the class is closed rather than three of its members.
+
+  Removed: 542,878 of 638,883 bytes, 85% of the corpus, against 24% before.
+  Fence hits on the corpus: 0 distinct, 0 total, against 3 and 39 before.
+  Files are now .txt rather than .htm, which is the warning to the next reader
+  that markup is gone and with it a table's structure and a link's target.
+
+  WHAT WAS FETCHED, AND WHEN. An earlier issue of this report said both that
+  the documents were not re-fetched and that all thirteen were fetched again.
+  Both describe something that happened and the two together describe nothing,
+  so here is the sequence.
+
+  THE NETWORK WAS HIT. Thirteen GETs to law.cornell.edu on 27 August 2026,
+  08:07 UTC, one per document. That is the fetch of record for the raw pages.
+
+  The corpus text in the tree was NOT produced by those GETs. It was produced
+  by running the fetch script's extractor over the chrome-stripped HTML already
+  committed, on the argument that element removal commutes with text
+  extraction. The 27 August GETs were the check on that argument: the pages
+  were put through the pipeline whole and compared, every raw size matched the
+  26 August manifest to the byte, and every extracted document came out
+  byte-identical to the one produced from the tree. The pages had not changed
+  between the two fetches.
+
+  THE RAW PAGES ARE NOW KEPT, at corpora/us/_raw, underscore-prefixed so both
+  the corpus reader and the integrity check skip them, with their digests in
+  corpora/us/_raw/_fetch.tsv. Extraction is destructive, and until this the
+  corpus could not be re-derived from anything: raw_bytes was a number with
+  nothing behind it and a change to the extractor could be tested only against
+  itself. test_raw_html_reextracts_to_the_stored_corpus now re-derives all
+  thirteen through the script's own extractor and compares byte-for-byte.
+
+  THE HONEST LIMIT. What is kept is the 27 AUGUST fetch, not the 26 August one.
+  The 26 August raw pages were overwritten by the chrome strip at fetch time
+  and are gone. The two fetches agree on every byte count and on every
+  extracted document, which is strong evidence they were the same pages, and it
+  is evidence rather than the pages themselves. The manifest's retrieved_at
+  still reads 26 August, because that is when the document in the corpus was
+  first retrieved; _raw/_fetch.tsv reads 27 August, because that is when the
+  page beside it was.
+
+  THE INTEGRITY FLOOR MOVED, from 4,000 bytes to 500. The standard has not
+  relaxed; the quantity has changed, a document as text being between a
+  twentieth and a quarter of its own markup. 4,000 applied to text would refuse
+  three of these thirteen, including Rule 16a-13, which is one sentence long,
+  complete, and 763 bytes. The floor is derived from both populations rather
+  than chosen: the smallest genuine document extracts to 763 bytes, and the two
+  non-documents to hand extract to 54 (LII's 404 page) and 377 (the sec.gov
+  stub this script already refuses). 500 is the round number in the gap. That
+  gap is a factor of two and is stated rather than smoothed. The byte floor is
+  no longer the main guard against a document that is not there: the extractor
+  now refuses an unclosed dropped element directly, which is the failure the old
+  four-fifths ratio test existed to catch and which no ratio can express once
+  the output is text.
+
+  Corpus integrity after the change: 13 documents, smallest 763 bytes against a
+  500-byte floor, no undersized and no duplicated documents, and the manifest
+  agreeing with the disk on every row.
+
+  The ticker rule's own false negative is unchanged and is restated here because
+  nothing above touches it: a bare ticker in lower or title case is invisible to
+  the fence. That cost was taken over the alternative, a common-word filter on
+  the ticker set, which would have made at least 95 real US issuers invisible in
+  all capitals as well and would still have left CFR, LII, III and VII needing a
+  lexicon row.
+
+WHAT THIS DOES AND DOES NOT DISCHARGE
+  Does      §13 row 21 moves from an unreproducible 0%/0% to a reading with two
+            arms of two kinds, against a labelled set that is now in the tree
+            and locked by tests: 0 of 36 refused on the drawn arm, and 5 of 6
+            routes closed on the probe arm, the open one a title-case bare
+            ticker. Neither arm moves when the corpus changes, because neither
+            is measured against the corpus.
+            §13 row 22 gains a fetch-time text extraction with both byte counts
+            in the manifest, which removed 85% of the corpus and all three of
+            the chrome hits the earlier strip was aimed at and missed. The
+            corpus reading is now 0 distinct hits and 0 total, which is a count
+            over thirteen documents and not a rate.
+            §13 row 23 moves from "every failure at position 3" to two points
+            exercised, four shown structurally unreachable, and a reason for
+            each of the rest.
+  Does not  The §14 precondition. This is a second block, still non-evidentiary,
+            still without the primary catalyst family's live filing flow, and
+            the labels are model_clerk rather than the hand labels row 21
+            specifies. Operator ratification is outstanding.
+            Nor does it give row 21 a second rate. The probe arm reports
+            coverage, and only a DRAWN episode-level sample can turn it into a
+            rate. Row 21's eventual 200 may supply one.

@@ -2,11 +2,11 @@
 
 Project memory for Claude Code. Read this before changing anything.
 
-**What this is.** A falsification-first architecture for trading ideas extracted from financial media, at ~£100,000 reference equity, long-only UK Main Market / AIM and US equities through IBKR. The governing document is `docs/spec/from_narrative_to_null_v1_13.md`. **The specification governs; this file is a summary of it and where the two disagree, the specification wins.**
+**What this is.** A falsification-first architecture for trading ideas extracted from financial media, at ~£100,000 reference equity, long-only UK Main Market / AIM and US equities through IBKR. The governing document is `docs/spec/from_narrative_to_null_v1_14.md`. **The specification governs; this file is a summary of it and where the two disagree, the specification wins.**
 
 **What the product is.** Not returns. The ledger: every unit of capital withheld was withheld for a stated reason, and the reason is machine-checkable. If the stream contains nothing exploitable, the correct output is an empty accepted book, visibly empty.
 
-**Where it stands.** Thirteen specification versions. **Zero frozen designs. Zero backtests. Zero trades.** No gate has been exercised against calibrated thresholds, so the absence of signals to date is structural, not evidential.
+**Where it stands.** Fourteen specification versions. **Zero frozen designs. Zero backtests. Zero trades.** No gate has been exercised against calibrated thresholds, so the absence of signals to date is structural, not evidential.
 
 ---
 
@@ -50,10 +50,10 @@ Concretely, in this codebase:
 
 ### 5. Counting is mechanical, because intent flatters the denominator
 
-- Any change to a grid, threshold, convention, gate membership, anchor assignment, cost tier, sizing rule, admissibility rule, input-source choice, extraction schema field, or estimation span **is a specification version**, however small. `docs/spec/` is currently the **thirteenth**.
+- Any change to a grid, threshold, convention, gate membership, anchor assignment, cost tier, sizing rule, admissibility rule, input-source choice, extraction schema field, or estimation span **is a specification version**, however small. `docs/spec/` is currently the **fourteenth**.
 - A correction to a *justification* is not a version. A correction to a *rule* is.
 - Frozen designs are counted separately and stand at **zero**. Results attribute to frozen designs, never to versions.
-- If you change a rule, add a `§12.1` change-log row in the spec in the same commit.
+- **A rule change must be recorded in the same commit as the rule change.** Where the version is already composed, that record is a `§12.1` change-log row. Where it is not, that record is a **pending block** in `docs/OPEN_ITEMS.md` naming the rule, the sections it touches and its kind, carried until the version is composed and then discharged into the row. What may not happen is a rule moving in one commit and being written down in another. *The earlier wording of this bullet demanded a `§12.1` row in the same commit, which is a stricter thing: it makes composing a whole specification version the price of landing one rule, and the predictable effect is that the rule lands unrecorded instead.*
 
 ---
 
@@ -65,7 +65,7 @@ Do not, without an explicit §0 decision from the operator recorded in the spec:
 - Let anything machine-raised supply `delta_min`, `n_min`, a registered sign, or a ratified pre-mortem. The scanner's steady state is a queue of drafts **blocked on the operator**, and that is the design working.
 - Let agent-origin material enter the §3.5 item pipeline. It would re-base §7.1's headline on an agent-selected population.
 - Fit a parameter on the archive and present it as a restriction. A restriction parameter fitted on the archive is a fitted parameter wearing a restriction's clothes.
-- Assume a value for any pending §13 row. **§13 row 1, the broker commission, is unverified and is the most leveraged number in the paper.** The clip stays £2,500 and the reachability figures stay as they are until it verifies.
+- Assume a value for any pending §13 row. **§13 row 1, the broker commission, is unverified and is the most leveraged number in the paper.** *Amended twice on 27 August 2026 by §0.11. The first amendment set the clip at £50,000 by decision; **that is WITHDRAWN**. The clip is now **DERIVED, not chosen**: `floor(market)` is the smallest position at which row 1's fixed round-trip cost falls at or below **§13 row 29's tolerance**, and row 29 is **OPEN**. So **position size is UNDETERMINED, `sizing.py` refuses to score with `clip_floor_tolerance_unset`, and the book takes no positions.* **That refusal is the point: a chosen floor produces the same empty book and §0.6 says why that is worse.** Reference equity confirmed at £100,000. Row 1 stays PROVISIONAL on three gaps the clip never touched. **Never quote a clip figure: there isn't one.** §6.7's participation cap (2% of median daily notional per session over ≤ 3 sessions) is **in force**; only the participation *gate* is deferred, and adding one needs a §0 decision because it is apparatus.
 - Weaken the import fence, the query fence, the entity fence or the authority fence.
 
 ---
@@ -82,12 +82,45 @@ src/fntn/scanner/  the agent discovery layer (spec §3.7)
   segment.py      design-segment reuse ledger, theta arithmetic, the queue
   discovery.py    agent protocol, schema, prompt, cache, control arm
                   ** UNDER THE IMPORT FENCE: no prices, no outcomes **
+  budget.py       §13 row 27 intake ceiling. THE DECISION IS TAKEN ONCE, AT
+                  CAPTURE. ReplayedBudget holds no clock; a replay that
+                  re-races one makes rule 1 false
   ledger.py       SQLite; nothing deleted, nothing overwritten
   summaries.py    §8 rejection summaries: rendered, never judged
   trace.py        §9.4 trace harness; evidentially inert by construction
+  ratify.py       §13 row 21a/21b ratification: twelve drawn by the
+                  registered seed, clerk labels withheld
+  corpusio.py     reading a corpus directory; ONE copy of the rule that
+                  underscore-prefixed names are bookkeeping, covering the
+                  route itself and not only the files inside it
+  sizing.py       §13 rows 29 and 30: the DERIVED clip floor. There is no
+                  clip constant. Refuses in three named ways and the third,
+                  clip_floor_unreachable_at_any_size, is NOT a refusal to
+                  score: it is the measured fact that no size satisfies the
+                  tolerance, which is the UK Main Market case
+  trace_filings.py  the §9.4 Form 4 trace corpus fetcher. FENCED: no
+                  registration route may resolve to corpora/_trace_filings,
+                  the sweep's loader will not read it, and discovery.py's
+                  import closure may not so much as name it. Refuses without
+                  SEC_CONTACT and never substitutes a placeholder
   run.py          one scan cycle and its report
+  report.py       the §9.2 run report; renders the ledger, measures nothing.
+                  The queue is ordered by outstanding-blocker count ONLY.
+                  Section 1 is the BINDING PATH, above the provenance header:
+                  the register's five steps with every status READ from
+                  docs/OPEN_ITEMS.md, and what moved since the previous report
+                  in docs/runs/, computed by diffing that file
 docs/spec/         the governing manuscript
 docs/OPEN_ITEMS.md   §13 calibrations, §14 decisions, Annex A.1 predicates
+docs/REGISTRATION_HISTORY.md  one row per registration hash ever stamped, the
+                     object each was taken over, its §0.5 provenance tag and
+                     the field that caused it. Registration.save() will not
+                     overwrite a stamped registration until the prior row is
+                     here; Registration.load() verifies the recorded hash, or
+                     says it cannot
+corpora/us/_raw/   the pages the server sent, kept because extraction is
+                     destructive. Underscore-prefixed, so every corpus reader
+                     skips them
 docs/CONVENTIONS.md  coding conventions derived from the spec
 tests/
 ```
@@ -96,7 +129,7 @@ tests/
 
 ```bash
 pip install -e ".[dev]"      # once: puts src/ on the path
-python -m pytest tests/ -q   # 128 tests
+python -m pytest tests/ -q   # 259 tests
 ```
 
 Without the editable install the package sits at `src/fntn` and is invisible to
@@ -106,6 +139,33 @@ install, prefix every command with `PYTHONPATH=src`.
 **The headline test is `test_every_defined_code_is_emitted`.** A code defined but never emitted is an untested branch, which is the defect class no amount of re-reading finds. If you add a reason code, add the branch that emits it *and* the test that reaches it, in the same commit.
 
 **Before claiming a fence works, trace it.** `src/fntn/scanner/trace.py` runs real material through the real machinery and reports coverage, not verdicts. The pattern-only entity fence passed every unit test and refused 94% of real agent proposals; the trace is what found that. Rules read against each other are the weaker instrument. Rules read against a world are the stronger one.
+
+### Session protocol
+
+Every session BEGINS by reconciling the tree against the register: branch,
+dirty state, test count, and whether `docs/OPEN_ITEMS.md` matches what the code
+does. Write that reconciliation to a file before doing any work.
+
+Every session ENDS by pushing. An unpushed commit in a Codespace is not a
+record.
+
+A finding is reported when it is written to `docs/OPEN_ITEMS.md` or to a dated
+file under `docs/` and committed, never when it is said in the session. If the
+session ends, anything that existed only in the transcript did not happen. A
+finding addressed to the operator as a decision is written as a pending block
+in `OPEN_ITEMS.md` with the options named, in the same commit as the code that
+surfaced it.
+
+*Why this is a rule and not advice.* A session on 27 August 2026 was
+disconnected with three commits made and none pushed, and the session that
+picked it up could not tell from the remote whether any of the work existed. It
+did; recovering that took a full reconciliation pass, and the pass found one
+real defect the first session had left behind (§13 rows 19, 20, 21a and 21b
+naming a superseded registration hash) which no amount of re-reading the
+transcript would have surfaced. **The cost, stated:** every session pays a
+reconciliation it usually does not need, to make the sessions that do need one
+survivable. `docs/_reconciliation_2026-08-27.md` is the worked example of the
+shape.
 
 ## Style
 
