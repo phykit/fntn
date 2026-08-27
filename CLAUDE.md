@@ -123,6 +123,33 @@ install, prefix every command with `PYTHONPATH=src`.
 
 **Before claiming a fence works, trace it.** `src/fntn/scanner/trace.py` runs real material through the real machinery and reports coverage, not verdicts. The pattern-only entity fence passed every unit test and refused 94% of real agent proposals; the trace is what found that. Rules read against each other are the weaker instrument. Rules read against a world are the stronger one.
 
+### Session protocol
+
+Every session BEGINS by reconciling the tree against the register: branch,
+dirty state, test count, and whether `docs/OPEN_ITEMS.md` matches what the code
+does. Write that reconciliation to a file before doing any work.
+
+Every session ENDS by pushing. An unpushed commit in a Codespace is not a
+record.
+
+A finding is reported when it is written to `docs/OPEN_ITEMS.md` or to a dated
+file under `docs/` and committed, never when it is said in the session. If the
+session ends, anything that existed only in the transcript did not happen. A
+finding addressed to the operator as a decision is written as a pending block
+in `OPEN_ITEMS.md` with the options named, in the same commit as the code that
+surfaced it.
+
+*Why this is a rule and not advice.* A session on 27 August 2026 was
+disconnected with three commits made and none pushed, and the session that
+picked it up could not tell from the remote whether any of the work existed. It
+did; recovering that took a full reconciliation pass, and the pass found one
+real defect the first session had left behind (§13 rows 19, 20, 21a and 21b
+naming a superseded registration hash) which no amount of re-reading the
+transcript would have surfaced. **The cost, stated:** every session pays a
+reconciliation it usually does not need, to make the sessions that do need one
+survivable. `docs/_reconciliation_2026-08-27.md` is the worked example of the
+shape.
+
 ## Style
 
 - Formal British English. **No em-dashes**, in prose or in table cells; empty cells read `n/a`.
