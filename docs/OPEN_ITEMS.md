@@ -44,7 +44,9 @@ A rule change is recorded in the same commit that lands it. Where the specificat
 
 ---
 
-## §13: twenty-five calibrations
+## §13: twenty-nine numbered rows, thirty entries
+
+*The heading read **twenty-five calibrations** until 27 August 2026 (P103) and had been wrong since row 27 was added. **Counted mechanically:** numbers 1 to 25, then 27, 28, 29 and 30, which is **twenty-nine numbers**; row 21 is split into 21a and 21b, which is **thirty entries**. **Number 26 was never issued** and no commit in this tree has ever carried one, so the gap is a numbering skip and not a lost row. A second count elsewhere in this file read **twenty-seven numbered rows** and was wrong in the other direction; both are corrected, and the disagreement between two counts of the same table is why rule 5 says counting is mechanical.*
 
 | # | Quantity | Status | Scope | What unblocks it |
 |---|---|---|---|---|
@@ -75,9 +77,60 @@ A rule change is recorded in the same commit that lands it. Where the specificat
 | 24 | Cross-market generalisability | BLOCKED | n/a | Design segment; classes present in both markets |
 | 25 | **Security master and lexicon coverage** | **PART CLOSED** | US | 10,388 issuers from the SEC's own file, 100% by construction. Other markets outstanding |
 | 27 | **Intake budget** | **CLOSED** | n/a | **Closed 27 August 2026.** `intake_point_budget_s` = 20 s, `intake_subject_budget_s` = 120 s, `budget_retry_max` = 1, registered under the stamp `docs/REGISTRATION_HISTORY.md` records them as causing. A ceiling on the cost of looking, not a judgement of the idea: a subject exceeding either is abandoned with `intake_budget_exhausted`, which refuses to score. **The decision is taken once, at capture**, and the ledger records the elapsed time, the budget in force and the verdict; a replay reads that record and never re-times the work, `ReplayedBudget` holding no clock at all. **Abandonments are reported beside row 23's abort-position distribution and never inside it**, a subject that ran out of time not having failed the point it was standing on, and the count is printed in every report including when it is zero. **The honest limit: a ceiling that refuses, not a timeout that interrupts.** A check is run and then measured, so a point that blocks forever is never caught. The three values are governance and were set before any sweep at scale; they are not calibrated against an observed distribution of intake times, because none exists yet, and the first run at scale is what would justify moving them |
+| 28 | **§9.4 trace stopping threshold, and its block size** *(new, 27 Aug 2026, P103)* | **BLOCKED** | n/a | **The rule exists and its parameter does not, which is worse than either alone.** §9.4 stops tracing when the marginal defect rate per hundred items *"falls below a stated threshold for two consecutive blocks"*. **The specification does not state the threshold, and until this row it had no §13 row**, so **binding-path step 4 is undischargeable at any *n***: ten thousand traced items with no defect do not satisfy a predicate that names no number. *That is a defect in the rule, not a shortfall in the tracing*, and it is why the row is opened before the value is available rather than after. **Blocked in the same shape as row 21a.** The required precision is **not a property of the harness**; it is set by how much residual must-class defect rate §14's freeze signature can carry, and **§14 has never been approached**. **Two numbers, not one, and they are not independent.** The threshold and the block size *n* are joined by the rule of three: two consecutive blocks at zero must-class defects is `2n` items at zero, and zero events does not estimate zero. The 95% upper bound on the residual rate is **`3/(2n)`**, so **choosing *n* IS choosing the precision of the stop**: `n` = 100 supports **1.5 per hundred**, `n` = 150 supports **1.0**, `n` = 300 supports **0.5**, `n` = 1,500 supports **0.1**. Inverting, `n = 150/b` per block for a bound of `b` per hundred. **A threshold above zero is a different instrument.** Stopping at *fewer than b observed defects per hundred* stops while the harness is still finding defects, and the rule of three does not apply to it at all; it is a budget wearing a stopping rule's clothes, which is the inversion §9.4 warns of. **Prepared in `docs/DECISION_PACK.md` item 5: mirror §9.5 and stop at zero MUST-CLASS defects, not zero defects.** The distinction is what makes the rule satisfiable at all, `undecidable` findings being §9.4's *product*, and §9.5 already draws it. **The cost of the recommendation, stated:** at `n` = 100 the freeze is signed over a residual must-class rate that could be as high as **1.5 per hundred**, and the project's whole current trace is well under one block. **No value is set here.** What unblocks it: a stated tolerance for residual must-class defects at the freeze, which is §14 governance | 
 | 29 | **Maximum tolerable fixed cost** *(new, 27 Aug 2026, P98)* | **OPEN** | n/a | **Operator governance. The one free parameter the clip-floor derivation cannot eliminate.** Basis points of position, round trip, **excluding spread and market impact**, both of which scale with participation and have no row. **Why it sits here and not in a per-market clip:** it is **dimensionless**, so one number governs a USD and a GBP trade with no FX rate entering a governance decision; **comparable across markets**, which is the substance, row 30's whole output being which markets clear the same bar; **readable against the break-even table**, §5.2.2 and §0.5 already being in basis points so a tolerance can be set beside a documented effect and read off; and **set once instead of guessed per venue**, a per-market clip being one guess per market, each drifting separately and none recording what it was for. **One tolerance is one decision and every floor beneath it is arithmetic.** Prepared context in `docs/DECISION_sizing_collision.md` ***PREPARED IN FULL, 27 August 2026 (P102): `docs/DECISION_row29.md`.*** **It releases TEN things**, counted and listed there. **Both ends of the defensible range are now DERIVED rather than argued: 2.4 bp to 12.5 bp.** The lower end is `104/p` at the calibration share price, below which no position size of any kind reaches the tolerance. **The upper end is the finding**: §5.2.2's cheapest break-even of 22.5 bp was computed at a £6.25 round trip on £5,000, that is a **12.5 bp** fixed cost, so a tolerance above 12.5 bp permits a trade whose fixed cost alone exceeds the one Gate 1's ceiling was calibrated on. ***The withdrawn implicit rule was therefore never coherent***: the clip was defined at **25 bp**, which is double it, and the incoherence was invisible for fourteen versions precisely because the tolerance was implicit. **The universe consequence, stated as a cost:** at every coherent tolerance UK Main Market is out **with certainty**, so the book is **US-only** unless the AIM exemption applies and the tolerance sits in the narrow **11.4 to 12.5 bp** window. **Recommended 10 bp, and it is a recommendation.** The row stays **OPEN** |
 | 30 | **Derived clip floor, per market** *(new, 27 Aug 2026, P99)* | **BLOCKED** | n/a | **BLOCKED on row 29, and inherits row 1's PROVISIONAL.** **A function, not a number:** `floor(market) = absolute / ((tolerance_bps − proportional_bps) / 10,000)`, the smallest position at which row 1's fixed round-trip cost falls at or below row 29's tolerance. Implemented in `src/fntn/scanner/sizing.py`, which **refuses in three named ways rather than returning a number it cannot justify**: `clip_floor_tolerance_unset`, `clip_floor_cost_unset`, and `clip_floor_unreachable_at_any_size`, the last of which is **not a missing input** but a measured fact that no size satisfies the tolerance. **US: a floor exists**, the cost decaying from two fixed minimums; at USD 6.00 round trip a 10 bp tolerance implies **USD 6,000**, a 5 bp tolerance **USD 12,000**. **UK: no floor exists at any size**, stamp duty being a percentage that dominates, so the cost is **flat at ~61.4 bp from £2,500 to £50,000** and **a clip floor is a US concept that does not transfer**. **Two claims of different strength:** any tolerance below **~61.4 bp** excludes UK Main Market *(PROVISIONAL, inherits row 1's gaps)*; any tolerance below **50 bp** excludes it **with certainty**, stamp duty alone being 50 bp, statutory, a percentage, and independent of every one of row 1's open gaps. **A disagreement recorded, not smoothed:** row 1's two US readings solve for absolute ≈ USD 5.39 and proportional ≈ **2.16 bp**, against the stated model's USD 6.00 and none; if the proportional term is real a **2 bp tolerance is unreachable in the US too**, and row 1's citation is what settles it ***US finding, 27 Aug 2026 (P101): THE US HARD FLOOR IS NOT A CONSTANT. It is `104/p` bp (fixed) or `74/p` bp (tiered), a function of SHARE PRICE.*** No position size gets a name below it, so **a tight tolerance excludes low-priced US stocks at any position size, in the same way and for the same reason stamp duty excludes UK Main Market at any size.** Minimum share price: **2 bp → USD 52.00 fixed / USD 37.00 tiered; 5 bp → USD 20.80 / USD 14.80; 10 bp → USD 10.40 / USD 7.40.** **Every figure is a LOWER bound**, FINRA's activity fee and the SEC fee being unread and both pushing the floor up. **This is the project's first screening rule DERIVED from the cost table rather than chosen.** ***One figure in this row CORRECTED, 27 August 2026 (P102), and the superseded value is retained beside it.*** This row records that "at USD 6.00 round trip a 10 bp tolerance implies USD 6,000, a 5 bp tolerance **USD 12,000**". **The 10 bp figure survives** at USD 6,055 once the clearing term is carried. **The 5 bp figure does not.** At 5 bp the commission **rate** regime binds and this row's model had no rate term, so the correct floor is **USD 15,238**, and USD 12,000 is **too low by 27%, in the direction that flatters the floor**. The full two-regime derivation and the universe table are in `docs/DECISION_row29.md`. *An internal check that was not arranged: the same model puts the 3 bp floor at USD 63,997 against row 1's own reading of 3.00 bp at USD 64,000.* |
 | n/a | FX exposure budget (§0 decision) | OPEN | n/a | Governance judgement in a stated range. **Materially larger from 27 August 2026 (§0.11): a 50% single-name position in a US name is 50% of the book in USD.** At the £2,500 clip the same position was 2.5%, so a judgement that could be deferred as second-order is now a judgement about half the book. **The status has not moved and what it decides has**, and the two are not the same thing |
+
+### PENDING, and addressed to the operator: `audit_fraction` is called pre-registered and is not registered
+
+**Opened 27 August 2026 (P103), by the undefined-referent sweep in
+`docs/UNDEFINED_REFERENTS_2026-08-27.md`. Nothing is changed by this block. The
+repair is prepared and deliberately not taken, for a reason stated at the end.**
+
+**The finding.** §7.2's antidote to fail-fast censoring reads: *"a pre-registered
+audit fraction runs the **full panel** regardless of early failures, and every
+attribution statistic computes there exclusively."*
+
+`audit_fraction = 0.10` is a **default argument** in `src/fntn/scanner/ingest.py`
+and `src/fntn/scanner/run.py`. **It is not a field of the registration object.**
+`discovery_registration.json` does not contain it and
+`src/fntn/scanner/params.py` does not define it.
+
+**Why this is not cosmetic.** The audit *sample* is drawn deterministically from
+a hash of the subject identity and the parameter hash, so a given fraction is
+replayable. **The fraction itself is not.** Two runs under one parameter hash can
+audit different fractions and the difference is attributable to nothing, which
+is **word for word** the reason three prior re-stamps were taken, for
+`rulebook_stopwords`, for `lexicon` and for the intake budget, each of which is
+rows 3, 4 and 5 of `docs/REGISTRATION_HISTORY.md` and is named there with the
+hash it caused. **This is the same defect class, third
+instance, still live.** It bites harder than the other two, because every
+attribution statistic in §7.2 computes on the audit sample **exclusively**.
+
+**The repair, in full, because it has been made twice and is not in doubt.**
+
+1. Add `audit_fraction` to `Registration`, remove the default from `ingest.py`
+   and `run.py` so nothing can run on an unregistered value.
+2. Re-stamp. The hash moves.
+3. **Complete `docs/REGISTRATION_HISTORY.md` row 5's object commit with its SHA
+   before `save` will overwrite it**, which is what that column is for.
+4. Take a `§12.1` row naming `audit_fraction` as the causing field.
+
+**Why it is NOT taken in this phase, and this is the operator's call rather than
+a session's.** A re-stamp **moves the current hash**, and §13 rows 21a and 21b
+name the hash their readings were taken under. A hash moving during a
+diagnostic pass is precisely the operation that produced the superseded-hash
+defect the reconciliation of 27 August 2026 had to repair, and this batch is a
+resume from a cancellation, which is the worst moment to move a hash. **The
+finding is worth more on the register than the repair is worth in this commit.**
+
+**What the operator is being asked.** Take the re-stamp now, or take it in the
+next batch with the other pending registration work. **Not whether to take it:**
+the specification already says the fraction is pre-registered, so the only
+question is when the code is made to agree with the document.
+
+---
 
 ### PENDING, and addressed to the operator: is AIM priced WITH or WITHOUT stamp duty?
 
@@ -191,7 +244,7 @@ schedule at whatever granularity the answer turns out to require.
 
 **Those seven are the whole of it at this stage**, and neither group waits on data, a purchase, a client or a corpus. Both wait on a person, which is why no amount of further building moves them.
 
-**What lies behind them, so the seven are not mistaken for the end.** Of the twenty-seven numbered §13 rows, **twenty are BLOCKED, three are CLOSED whole (19, 20 and 27), one is PART CLOSED (22), one is a closure over the US only (25) and two are PROVISIONAL (21b and 23)**. The commonest unblocker named in the blocked rows is a design segment that does not exist, and **§13 row 1 runs first** because every break-even denominator inherits it. Of the six §14 freeze preconditions, five are **OPEN**. So the seven decisions above unblock registration; they do not on their own produce a measurement, and nothing in this register claims they do.
+**What lies behind them, so the seven are not mistaken for the end.** Of the **thirty entries** across twenty-nine numbered §13 rows, **twenty-one are BLOCKED, three are CLOSED whole (19, 20 and 27), two are PART CLOSED (22 and 25), three are PROVISIONAL (1, 21b and 23) and one is OPEN (29)**. *Corrected 27 August 2026 (P103), counted by machine over the table itself rather than by hand. The previous reading was **twenty BLOCKED, three CLOSED, one PART CLOSED, one US-only closure and two PROVISIONAL**, which totals twenty-seven and omitted **row 1**, PROVISIONAL since P91, and **row 29**, OPEN since P98: that is, it omitted the two rows the whole cost derivation now turns on. Row 28 adds the twenty-first BLOCKED. **A count maintained by hand drifted away from the table it counts, in the direction that made the register look smaller and more settled than it is.*** The commonest unblocker named in the blocked rows is a design segment that does not exist, and **§13 row 1 runs first** because every break-even denominator inherits it. Of the six §14 freeze preconditions, five are **OPEN**. So the seven decisions above unblock registration; they do not on their own produce a measurement, and nothing in this register claims they do.
 
 **One limit, stated rather than implied.** Nothing checks the date of each document in a `pre_archive` corpus folder. The guarantee rests on the operator putting only pre-boundary material there. That is a curation control, not a mechanical one.
 
