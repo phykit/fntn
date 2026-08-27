@@ -1,145 +1,181 @@
 # Decision pack: everything waiting on the operator, in one file
 
-**27 August 2026, re-ordered and re-counted.** Every decision this project owes
-a person, prepared so it can be answered without further analysis. **Ordered by
-what each releases, descending, with the count against the heading.**
+**27 August 2026, after the delegated-authority batch.** Every decision this
+project owes a person, prepared so it can be answered without further analysis.
 
-**Nothing here is resolved.** Where a recommendation is given it is argued and
-it is still a recommendation. Where a figure could not be verified, the gap is
-stated rather than filled.
+***Six decisions were TAKEN on delegated authority in this batch and are moved
+to §A below, with what each released.*** What remains is ordered by **what each
+releases, descending, with one stated exception at the top.**
 
-***What changed in this revision, stated because a re-ordered pack is easy to
-mistake for a re-worded one.*** **The old item 1**, whether §0.11's £50,000 was
-a floor or a position size, **is TAKEN**: §0.11's P97 withdrew the fixed clip
-and derived the floor instead, so the question no longer exists and **most of
-its nine releases transferred to §13 row 29**, which is why row 29 is now first.
-**The old item 3 claimed to release 13 and does not**, and the error is
-instructive: it bundled three separate decisions under one heading and counted
-the union of their releases, and *any bundle beats any single decision if you
-sum inside it*. Worse, the twelve drafts it claimed to release each carry
-**three** blockers, of which the bundle contains **one**. Its true count is
-**1**. **Three new items** are added at the bottom carrying **zero** releases
-and a reason to read them anyway.
+**Nothing outstanding here is resolved.** Where a recommendation is given it is
+argued and it is still a recommendation.
 
 ---
 
 ## THE ONE PAGE
 
-**If you read nothing else.** Each line is *the decision*, *what it releases*,
-*the recommendation*, and *the cost of the recommendation*.
+**If you read nothing else.**
 
 | # | Decision | Releases | Recommended | The cost of that |
 |---|---|---|---|---|
-| **1** | **§13 row 29, maximum tolerable fixed cost, in bp** | **10** | **10 bp** | **The book becomes US-only.** UK Main Market is excluded with certainty at anything below 50 bp, and 10 bp misses AIM by 1.4 bp |
-| 2 | §13 row 1's three gaps: FX route, **tiered-or-fixed**, contracting entity | 8 | Take the entity first; elect **tiered**; leave the FX term open | The election is no longer a convenience: it moves the minimum admissible US share price by 29% |
-| 3 | Pre-calibration fixings | 5 | Take the four decisions, retrieve the two free data items | Two deferrals, both stated |
-| 4 | §14 governance: θ, δₘᵢₙ floor, account type | **1** *(not 13)* | θ = 0.2; account type now; δₘᵢₙ waits on row 1 | Slower accumulation, deliberately |
-| 5 | **§13 row 28**, §9.4's stopping threshold and its block size | 1 | Zero **must-class** defects, not zero defects | At *n* = 100 the freeze is signed over a residual rate that could be 1.5 per hundred |
-| 6 | The FX exposure budget | 1 | not made here | n/a |
-| 7 | Row 21b's ratification set | 1 | An hour's work. **The cheapest item here** | none |
-| ~~8~~ | ~~The **P96 rename**~~ | ~~0~~ | **TAKEN 27 Aug 2026, P108** | Done as prose. It would have cost a registry migration after row 29 |
-| 9 | Register **`audit_fraction`** | 0 | Take the re-stamp in the next batch | The current hash moves, and rows 21a and 21b name it |
-| 10 | The **seven other undefined referents** | 0 | Two are live; five sit behind things nothing can reach | Reading time |
+| **1** | ***§13 row 31: the PROMOTION-TO-LIVE-CAPITAL predicate. Two blanks, since v1.0.*** | **1** | ***NONE. Refused, not prepared.*** | **Until it is filled, nothing in this document authorises capital and the gate can neither pass nor fail** |
+| 2 | Pre-calibration fixings | 5 | Take the four decisions, retrieve the two free data items | Two deferrals, both stated |
+| 3 | §13 row 1's **contracting entity**, the last gap | 2 | Read it off the account statement | Not delegable: it is a fact, not a recommendation |
+| ~~4~~ | ~~§14 governance: θ and account type~~ | 1 | **TAKEN 27 Aug 2026 (P116): θ = 0.20, account type CASH.** *The δₘᵢₙ floor remains, and it waits on row 1* | Slower accumulation and idle days between rotations, both deliberate |
+| 5 | The FX exposure budget | 1 | not made here | n/a |
+| 6 | Row 21b's ratification set | 1 | An hour's work. **The cheapest item here** | none |
+| 7 | **§13 row 33**: §3.6.5's day, source pages and fields | 1 | Write the three down | An hour, and it is governance not measurement |
+| 8 | **§13 row 32**: the novelty roster coverage threshold | 1 | not made here | Needs a measurement first |
+| 9 | §13 row 1's SCOPE | n/a | already with the operator | n/a |
 
-**Row 29 is first because most of the withdrawn item 1's releases moved to it.**
-If it were not first, the release counting would be wrong.
-
-**The two things on this page that are not decisions and change what the
-decisions mean.** *(i)* The manuscript **prices AIM without stamp duty in three
-places** and P92 says it does not price it that way anywhere. Until that is
-settled, row 29's universe table has two AIM columns. *(ii)* **§13 row 1 stays
-PROVISIONAL** on three gaps, so every figure in item 1 is a lower bound.
+***Row 31 is first by CONSEQUENCE and not by release count, and the exception is
+stated rather than hidden by inflating its count.*** It releases **one** thing.
+It heads the pack because **it is the gate on real money and it has two blanks
+in it**, and a pack ordered purely by releases would file the capital gate
+eighth. *The ordering principle is not abandoned; an exception to it is
+declared, once, at the top.*
 
 ---
 
-## 1. §13 row 29: the maximum tolerable fixed cost — releases **10**
+## THE COUNTING METHOD, so the numbers can be disagreed with
 
-*Releases: §13 row 30; §4.4's ATR bounds; §4.4's reachability zero cells;
-§5.4.4's intersection; §0.7(c)'s two withdrawn columns; §0.10's microcap
-break-even table; §13 rows 8, 9 and 14 by inheritance; and `sizing.py` ceasing
-to refuse, which gives §5.1's explore arm a size.*
+**Two rules, and the second is the one that caught the earlier error.**
 
-**Prepared in full in `docs/DECISION_row29.md`.** Summarised here because it is
-now the largest release on the board and a reader of this pack alone should not
-miss it.
+1. **No bundling.** A count is per **decision**, never per heading. Summing
+   inside a bundle makes any bundle beat any single decision. *The old item 3
+   claimed 13 by bundling three §14 decisions; its true count is 1.*
+2. **A record blocked on N things is released by none of them until the last.**
+   It may be recorded as **advanced once against each** of the N, and **never as
+   released against any one of them**.
 
-**What it governs.** Basis points of position, round trip, **excluding spread
-and market impact**. It is the one free parameter the clip-floor derivation
-cannot eliminate, and every per-market floor beneath it is arithmetic.
+***Applied to the twelve queued drafts, rule 2 gives a sharper answer than the
+old count did, and it is not the one anybody expected.*** Each draft carries
+`delta_min_absent`, `premortem_unratified` and `literature_search_absent`.
+**None of the three is cleared by any §13 or §14 row.** `delta_min_absent`'s own
+resurrection predicate reads: *"Registration proceeds once the operator states
+`delta_min` **in the units the measurement reports**, at or above the §14
+floor"* — **per directive**. Setting the floor constrains a value the operator
+must still supply twelve times.
 
-**The defensible range, and BOTH ENDS ARE DERIVED. 2.4 bp to 12.5 bp.**
-
-- **Lower end, 2.375 bp.** Below `104/p` bp no position size of any kind reaches
-  the tolerance, `p` being the share price. At the calibration price that is
-  2.375 bp, and it is the same number on both schedules because both were solved
-  against the same reading.
-- **Upper end, 12.5 bp, and this is the finding.** §5.2.2's cheapest break-even,
-  **22.5 bp conservative** at £5,000 notional, was computed at a **£6.25 round
-  trip, that is 12.5 bp** of fixed cost, leaving 10 bp of spread. **A tolerance
-  above 12.5 bp permits a trade whose fixed cost alone exceeds the fixed cost
-  Gate 1's own ceiling was calibrated on.**
-
-***So the withdrawn implicit rule was never coherent.*** The clip was *defined
-as* the notional at which fixed costs fall below **25 bp**, which is **double**
-the 12.5 bp embedded in the table it feeds. **The incoherence was invisible for
-fourteen versions precisely because the tolerance was implicit. Writing it down
-is what exposed it, and that is the case for row 29 existing at all.**
-
-**What each end implies, and it is a universe question.**
-
-| Tolerance | US minimum share price *(fixed / tiered)* | US clip floor | UK Main Market | AIM |
-|---|---|---|---|---|
-| 2 bp | USD 52.00 / 37.00 | **none at any size** | out, certain | out |
-| 5 bp | USD 20.80 / 14.80 | USD 15,238 | out, certain | out |
-| **10 bp** | **USD 10.40 / 7.40** | **USD 6,055** | out, certain | out |
-| 12.5 bp | USD 8.32 / 5.92 | USD 4,835 | out, certain | **in**, if exempt |
-| 25 bp | USD 4.16 / 2.96 | USD 2,409 | out, certain | in, if exempt |
-| 61.5 bp | USD 1.69 / 1.20 | USD 977 | **in**, provisional | in |
-
-**Row 29 CANNOT be derived, and this is what would derive it.** It is a ratio
-question wearing an absolute number's clothes: how much fixed cost is tolerable
-relative to the edge that survives everything else. That needs **the post-decay
-realised net effect per family measured on the design segment** (§7.1's
-association, never run) and **measured effective spreads by ADV bucket** (§13
-row 14's input, BLOCKED). With both it falls out and nothing is left to choose.
-Without them the alternative is **prohibited**: a tolerance fitted on the archive
-is a restriction parameter fitted on the archive. **What is derivable today is
-the range, and it has been derived.**
-
-**Recommendation: 10 bp, fixed schedule assumed pending item 2's election.** It
-sits inside the derived range with headroom below the coherence ceiling; the
-clip floor of USD 6,055 is about **4.5% of a £100,000 book**, sizable under §6.7
-and inside §4.4's regime cap; and the minimum share price of USD 10.40 retains
-essentially the whole liquid US universe.
-
-**The cost of 10 bp, stated rather than the benefit.** It puts **AIM out under
-both readings, by 1.4 bp**, and the UK sleeve disappears entirely. **A tolerance
-of 12 bp keeps AIM in under the exemption reading**, at a floor of USD 5,038 and
-a minimum share price of USD 8.67, and is still inside the coherent range. *If
-the UK sleeve matters, 12 bp is the defensible choice and item 1a must be
-settled first.*
-
-### 1a. A PRECONDITION, not a separate decision: is AIM priced with or without stamp duty?
-
-**The manuscript contradicts itself and row 29's universe table cannot be read
-until it does not.** §0.5, §0.10 and **§5.2.2's own column heading** all price
-AIM **without** stamp duty. `§12.1` row **P92** defers the AIM growth-market
-tier as apparatus and states that *"neither is applied to any figure in this
-paper"*. **That sentence is false as written.**
-
-**It cannot be tidied**, because applying the exemption is a cost tier that
-makes a subset of names cheaper, and a cheaper subset admits names the
-conservative tier refuses. **That is capability by §0.6's test**, which is
-P92's own argument. **Either repair direction changes the admissible universe.**
-
-**The narrowness is the whole of it.** AIM's answer differs from UK Main
-Market's **only** between ~11.4 bp and the 12.5 bp ceiling. Outside that window
-AIM is out either way and the question is free. Inside it, it decides whether
-the UK sleeve exists. Prepared as a pending block in `docs/OPEN_ITEMS.md`.
+***So the twelve drafts are not blocked on any register row at all. They are
+blocked on three per-directive operator acts, and no decision in this pack
+releases a single one of them.*** *That is the scanner's designed steady state,
+not a defect, and no item below may claim them.*
 
 ---
 
-## 2. §13 row 1's three gaps: FX route, tiered-or-fixed, contracting entity — releases **8**
+## §A. TAKEN on delegated authority, 27 August 2026
+
+**With the operator's standing right to revise.** Each is closed in the register
+and carries a `§12.1` row.
+
+| What | Value taken | Released | Row |
+|---|---|---|---|
+| **§14 θ**, overlap tolerance | **0.20** | 0 outright. **Two of step 3's three cells now read CLOSED; step 3 stays NOT CLOSED, the δₘᵢₙ floor waiting on row 1** | P116 |
+| **§14 account type** | **cash** | 0 outright. **Does not enter the parameter object: nothing in the code reads it** | P116 |
+| **§13 row 29**, maximum tolerable fixed cost | **10 bp** | **10.** Row 30; §4.4's ATR bounds and zero cells; §5.4.4; §0.7(c)'s two columns; §0.10's table; rows 8, 9 and 14 unblocked or shortened; `sizing.py`'s refusal and §5.1's explore arm | P109, P110 |
+| **§13 row 28**, §9.4's stopping threshold | **zero must-class defects, two blocks, *n* = 100** | **1.** Binding-path step 4 becomes dischargeable, which it was not at any *n* | P112 |
+| **§13 row 1**, pricing election | **tiered** | 0 outright. **The cost is recorded: 28.8% is `74/104` restated, not a measurement** | P112 |
+| **§13 row 1**, FX route | **manual spot** | 0 outright. The rate stays uncited and the decision survives the gap | P112 |
+| **P96's rename** | `position_below_clip_floor` | 0. **Taken before row 29 landed, when it was still prose** | P108 |
+| **`audit_fraction`** | registered at 0.10 | 0. Third instance of a class closed twice | P112 |
+
+***What row 29 cost, restated here because a pack that only lists releases reads
+as progress:*** **10 bp is a US-only decision.** UK Main Market is excluded with
+certainty; **AIM is excluded on COMMISSION, not on tax**, IBKR's UK schedule
+being 0.05% a side. **12.5 bp is the value at which AIM becomes reachable, so
+the choice between 10 and 12.5 is the choice of whether the UK exists in this
+strategy**, and the operator can revise in one word.
+
+---
+
+## 1. §13 row 31: the promotion-to-live-capital predicate — releases **1**, and it is FIRST
+
+***REFUSED, not prepared. The delegation does not reach it and no recommendation
+exists to take.***
+
+**What it says**, in §0.10 and again in §7.6, nearly word for word:
+
+> *"Promotion to live capital is pre-registered: the shadow cohort's realised
+> net expectancy, after spreads measured on the design segment, must exceed its
+> measured break-even by **a stated margin** over **a stated minimum sample**."*
+
+**It calls itself pre-registered. It is not registered at all, and has not been
+in any of fourteen versions.**
+
+**What it governs.** **The gate on real capital.** §0.10 routes sub-floor
+candidates to the shadow cohort at **zero** capital; **this predicate is the only
+route by which they leave it**, and therefore the only route in the whole
+specification by which a candidate that **failed a hard floor** later receives
+money.
+
+***The state it is actually in, stated plainly because it will be misread.***
+Until the two terms are filled, **nothing in this document authorises capital,
+and the gate cannot be evaluated either way. It cannot pass and it cannot
+fail.** A predicate with an unstated margin is **not a strict gate that nothing
+clears. It is not a gate.** *A reader who met it and assumed the first would be
+wrong in the direction that matters.*
+
+**The defensible range: not offered.** Both terms are quantities about **live
+capital deployment**, and this file's whole discipline is that a recommendation
+is argued from something. **There is nothing to argue from**: no design segment,
+no measured spread, no realised expectancy, and §7.5's placebo has never run.
+**A margin recommended today would be a number chosen to fill a blank.**
+
+**What each end implies, in the only terms available.** A **small** margin
+promotes on noise, and the shadow cohort exists precisely because sub-floor
+candidates are the ones whose costs are least well measured. A **large** margin
+makes the shadow cohort a permanent holding pen, which is the honest outcome if
+the evidence never arrives and is **not** a failure of the design.
+
+**The containment, so this is not read as an active hazard.** Nothing can reach
+it today. The shadow cohort requires a design segment; there is none; there are
+**zero backtests, zero frozen designs and zero trades**.
+
+**What the operator is being asked.** Fill both terms in an explicit §0 decision
+recorded in the specification, **or** state that promotion is deferred entire
+and the shadow cohort takes no capital under any circumstances until it is
+reopened. ***Either is an answer. The present state is neither.***
+
+---
+
+## 2. Pre-calibration fixings — releases **5**
+
+*Releases: binding-path step 2, §13 rows 22 and 25 beyond the US, §0.7(a)'s
+partition boundaries, §0.7(b)'s benchmark gap, and the archive the design
+segment is cut from.*
+
+**For each: decision or data acquisition, and if data, what it costs and where
+it comes from.**
+
+| Fixing | Kind | What it needs |
+|---|---|---|
+| **Archive identity and span** | **DECISION** | Already partly taken: `archive_opens` is set to **2023-01-01** in the registration and has been since 26 August. What remains is the **closing** boundary and whether the span is the one the design segment is cut from. **No purchase.** |
+| **Partition boundaries** | **DECISION**, with a documented search | §0.7(a) requires boundaries at *observable structural breaks in the corpus*, and proportional points **only where a documented search finds none**. *"We looked and found no break" and "we did not look" are different claims*, so the deliverable is the search, not the boundary. **No purchase; it costs reading time over the corpus.** |
+| **Universe constituents** | **DATA**, largely acquired | §13 row 25 is CLOSED for the US: **10,388 issuers from the SEC's own file, 100% by construction**, free. **UK, AU, EU and NZ each need a listing file with a known total** and are outstanding. LSE and AIM listing files are published; the others are per-venue. **Cost: nil to low, and it is retrieval rather than purchase.** |
+| **Source roster** | **DECISION** | Which sources are in, at which §3.1 regulatory rank. §0.7(g) already fixes the *rule* (regulatory status, not delivery channel); what is missing is the enumerated list. **No purchase.** |
+| **Borrow snapshot date** | **DATA**, and **currently not binding** | §0.7(e): a timestamped broker snapshot, erring in both directions with the anti-conservative direction likely dominant. **The insider family is long-only by grammar, so this binds nothing today.** It becomes a real dependency only alongside item 3c's margin question and a short-side family. **Cost: a broker report, free, but it must be taken forward from today rather than reconstructed.** |
+
+**One acquisition that IS a purchase and is not in the list above**, recorded
+so it is not mistaken for a fixing: §0.7(d)'s **ICB point-in-time vintage
+vendor**. Until procured, peer sets are not point-in-time and every pooled
+estimate carries that qualification. **It is a §14 open decision with a price
+attached and it is the only one of these that costs money.**
+
+**Recommendation: take the four decisions, retrieve the two free data items,
+defer the borrow snapshot and the ICB vendor.** None of the four decisions
+waits on anything, and step 2 is the second-cheapest step on the binding path.
+
+---
+
+## 3. §13 row 1's LAST gap: the contracting entity — releases **2**
+
+*Releases: binding-path step 1, and §13 row 30 from PROVISIONAL to CLOSED.*
+
+***Two of this section's three gaps were TAKEN on 27 August 2026 (P112) and are in §A above: the election is TIERED and the FX route is MANUAL SPOT. The sub-items below are kept as the record of what was decided and on what grounds, and 3b is the one still open.***
+
+***3b is NOT DELEGABLE and this is a category difference rather than caution.*** It is **a fact about the operator's account, not a recommendation**, and there is **no conservative direction**: assuming UK when it is Ireland and the reverse are equally silent errors that show up as a failure **nowhere in the funnel**. **Row 1 therefore stays PROVISIONAL on one gap.** *A row with two of three gaps decided is not two thirds closed.*
+
 
 *Releases: §13 rows 8, 9, 12 and 14, §5.2.2's break-even table, §0.5's
 economics block, §0.10's microcap table, and binding-path step 1.*
@@ -148,7 +184,7 @@ economics block, §0.10's microcap table, and binding-path step 1.*
 it.** It is PROVISIONAL: a reading exists (UK tiered 61.5 bp; US ~3 bp at an
 illustrative USD 64,000) and the calibration does not.
 
-### 2a. Tiered or fixed IBKR pricing — PROMOTED: it is a universe question now
+### 3a. Tiered or fixed IBKR pricing — PROMOTED: it is a universe question now
 
 ***Reclassified 27 August 2026 (P101), and it is the reason this sub-item moved
 to the head of item 2.*** It was a convenience question about which schedule
@@ -224,7 +260,7 @@ term the §13 row 1 scope question already before the operator is about**.
 read off the cited schedule. **A recommendation here would be a guess wearing a
 recommendation's clothes.**
 
-### 2b. Which IBKR contracting entity
+### 3b. Which IBKR contracting entity
 
 **What it governs.** Which regulator, which investor-compensation scheme, which
 client-money regime, and which schedule applies at all. **It also decides
@@ -261,7 +297,7 @@ anywhere in the funnel.**
 **Recommendation: establish it from the account statement, not from inference.**
 It is a one-look fact and it gates 2a and 2c.
 
-### 2c. The FX route: manual spot versus automatic conversion
+### 3c. The FX route: manual spot versus automatic conversion
 
 **What it governs.** The FX term of row 1, on every US trade, in both
 directions. **Under §0.11 a US position is 50% of the book, so this term is
@@ -327,35 +363,6 @@ below **0.0031%** to beat manual at USD 64,000, which is a tenth of the figure
 reported. **The recommendation does not rest on the unverified number, only on
 its order of magnitude**, and that is why it can be made whilst the row's FX
 term stays open.
-
----
-
-## 3. Pre-calibration fixings — releases **5**
-
-*Releases: binding-path step 2, §13 rows 22 and 25 beyond the US, §0.7(a)'s
-partition boundaries, §0.7(b)'s benchmark gap, and the archive the design
-segment is cut from.*
-
-**For each: decision or data acquisition, and if data, what it costs and where
-it comes from.**
-
-| Fixing | Kind | What it needs |
-|---|---|---|
-| **Archive identity and span** | **DECISION** | Already partly taken: `archive_opens` is set to **2023-01-01** in the registration and has been since 26 August. What remains is the **closing** boundary and whether the span is the one the design segment is cut from. **No purchase.** |
-| **Partition boundaries** | **DECISION**, with a documented search | §0.7(a) requires boundaries at *observable structural breaks in the corpus*, and proportional points **only where a documented search finds none**. *"We looked and found no break" and "we did not look" are different claims*, so the deliverable is the search, not the boundary. **No purchase; it costs reading time over the corpus.** |
-| **Universe constituents** | **DATA**, largely acquired | §13 row 25 is CLOSED for the US: **10,388 issuers from the SEC's own file, 100% by construction**, free. **UK, AU, EU and NZ each need a listing file with a known total** and are outstanding. LSE and AIM listing files are published; the others are per-venue. **Cost: nil to low, and it is retrieval rather than purchase.** |
-| **Source roster** | **DECISION** | Which sources are in, at which §3.1 regulatory rank. §0.7(g) already fixes the *rule* (regulatory status, not delivery channel); what is missing is the enumerated list. **No purchase.** |
-| **Borrow snapshot date** | **DATA**, and **currently not binding** | §0.7(e): a timestamped broker snapshot, erring in both directions with the anti-conservative direction likely dominant. **The insider family is long-only by grammar, so this binds nothing today.** It becomes a real dependency only alongside item 3c's margin question and a short-side family. **Cost: a broker report, free, but it must be taken forward from today rather than reconstructed.** |
-
-**One acquisition that IS a purchase and is not in the list above**, recorded
-so it is not mistaken for a fixing: §0.7(d)'s **ICB point-in-time vintage
-vendor**. Until procured, peer sets are not point-in-time and every pooled
-estimate carries that qualification. **It is a §14 open decision with a price
-attached and it is the only one of these that costs money.**
-
-**Recommendation: take the four decisions, retrieve the two free data items,
-defer the borrow snapshot and the ICB vendor.** None of the four decisions
-waits on anything, and step 2 is the second-cheapest step on the binding path.
 
 ---
 
@@ -491,53 +498,7 @@ it under the pressure §0.11 created.
 
 ---
 
-## 5. §13 row 28: §9.4's stopping threshold and its block size — releases **1**, and it is step 4
-
-*Releases: binding-path step 4 and §14's trace precondition.*
-
-**This item is here because phase 3 found that step 4 cannot be discharged by
-any amount of work.** §9.4 says tracing stops when the marginal defect rate per
-hundred items *"falls below a stated threshold for two consecutive blocks"*.
-**The specification does not state the threshold.** *It had no §13 row when this item was written; **§13 row 28 was opened on 27 August 2026 (P103)** to hold it, so the gap is now on the register rather than only in this pack.*
-
-**The threshold and the block size are ONE decision, by the rule of three §13 row 21a already uses.** Two consecutive blocks at zero must-class defects is `2n` items at zero, and **zero events does not estimate zero**: the 95% upper bound on the residual rate is **`3/(2n)`**. So **choosing the block size chooses the precision of the stop** — `n` = 100 supports **1.5 per hundred**, `n` = 300 supports **0.5**, `n` = 1,500 supports **0.1**, and inverting, `n = 150/b`. **A threshold above zero is not a stopping rule at all**: the rule of three does not apply to it, and it is a budget in a stopping rule's clothes, which is the inversion §9.4 warns of.
-
-**The second half of the same precondition, and it has no row.** §14 requires
-the harness be run *"across a stated count of items spanning source classes and
-catalyst types"*, and **no count is stated** anywhere. It is one of the seven
-undefined referents item 8c names.
-
-**What each governs.** The threshold decides when tracing is finished. The
-count decides how much tracing is enough breadth.
-
-**The defensible range for the threshold.** The unit is **defects per hundred
-items**. **Zero** is the review harness's own standard (§9.5 stops at *two
-consecutive passes at zero must-class defects*) and is defensible here by
-analogy. **Above about 5 per hundred** the rule stops a harness that is still
-finding a defect every twenty items, which is not a stopping rule so much as a
-budget.
-
-**Cost of choosing wrongly, each way.** **Too low**, and especially zero on
-*all* defect classes rather than must-class only, makes the rule unsatisfiable
-for a harness whose product is `undecidable` findings: §9.4 says *"`undecidable`
-is the harness's product; every instance is a candidate register entry"*, so a
-harness working correctly generates findings indefinitely. **Too high** stops
-tracing while the instrument is still productive, which is the *"indefinite
-improvement cycle wearing a test harness's clothes"* §9.4 warns of, inverted.
-
-**Recommendation: mirror §9.5 and set the threshold at zero MUST-CLASS defects
-per hundred items, not zero defects.** The distinction is what makes it
-satisfiable, and §9.5 already draws it. **This makes the threshold a rule
-change and it takes a §13 row and a §12.1 row when taken.**
-
-**For the count: no recommendation.** It is a breadth judgement over source
-classes and catalyst types, and the current corpus covers three non-US classes
-and **zero US filings**, so any count stated today would be stated over a span
-that does not include the primary family.
-
----
-
-## 6. The FX exposure budget (§0, OPEN) — releases **1**, and it now governs half the book
+## 5. The FX exposure budget (§0, OPEN) — releases **1**, and it now governs half the book
 
 *Releases: §6.9's currency treatment.*
 
@@ -578,7 +539,7 @@ answering them apart risks answering them inconsistently.
 
 ---
 
-## 7. Row 21b ratification — releases **1 row, outright. The cheapest item here**
+## 6. Row 21b ratification — releases **1 row, outright. The cheapest item here**
 
 *Releases: §13 row 21b, from PROVISIONAL to CLOSED. It waits on nothing but an
 hour's reading.*
@@ -638,64 +599,57 @@ hour into a closed row, and it is the only one whose cost is bounded and known.
 
 ---
 
-## 8. Three items that release NOTHING, and a reason to read each
+## 7. §13 row 33: §3.6.5's day, source pages and fields — releases **1**, and it is the second cheapest thing here
 
-**They are last because the ordering is by release count and honest. They are
-here because two of them are live defects and the third has a closing window.**
+*Releases: §3.6.5's collection protocol becomes stateable, and with it the
+§13 row 22 replay observation stops recurring.*
 
-### 8a. The P96 rename — **TAKEN 27 August 2026 on delegated authority (P108)**
+**What it governs.** §3.6.5 requires collection cadence to be *calendar-driven
+and pre-registered*, naming **"a stated day, a stated source page, stated
+fields"**, so that *"collection when something interesting happened"* cannot
+masquerade as collection. **None of the three is stated.**
 
-***Closed.*** `position_below_clip_floor` replaces `capital_exceeds_clip_floor` in the operative rule text; the old name is retained where §4.4 is quoted, and does **not** enter `codes.py` until §4.4's matrix is implemented. **The window argument below is why it was taken before row 29 rather than after.**
+**It is GOVERNANCE and not measurement.** Nothing needs to be observed before
+the three can be written down, which is why the row opens **OPEN** rather than
+BLOCKED and why it sits above item 8.
 
-**`capital_exceeds_clip_floor` marks a ZERO cell**, one where the position
-**fails to reach** the floor, and **the name reads as the passing case**.
+***This batch met its consequence.*** Phase 4 found the twelve queued drafts
+were swept over **ASX and ASIC documents no commit in this repository carries**,
+so that population cannot be replayed from its parameter hash. **A protocol with
+no stated source page cannot say which pages it read.**
 
-**P96 declined to rename it because *"renaming a reason code is a change to the
-registry"*. It is not in the registry.** `ALL_CODES` holds forty codes and none
-is this one; the string appears in **three documents and no Python file**.
+**Phase 7's invariant closes the hole from the other end** by refusing a sweep
+over an uncommitted corpus. *It does not state the cadence, and the two are
+different repairs: one stops the next instance, the other stops the practice
+that produces instances.*
 
-**So the decision is a window, not a preference.** Renaming **today** is a find
-and replace over prose. Renaming **once row 29 sets the floor** and the code
-enters `codes.py` costs a registry entry, an emitting branch, a test, a §8
-template, a resurrection predicate, **and every ledger row already stamped with
-the old string, which rule 4 forbids overwriting** — leaving two names for one
-state for ever.
+**No recommendation on the specific day or pages**, those being a judgement
+about which registers the operator will actually read on a schedule they will
+actually keep. **The deliverable is three lines in the registration.**
 
-**Recommended: `position_below_clip_floor`, now.** `clip_floor_unreached` is
-rejected because it collides in the eye with `clip_floor_unreachable_at_any_size`,
-a **market-level** fact against a **cell-level** one, which is how the original
-defect was made.
+---
 
-### 8b. `audit_fraction` is called pre-registered and is not registered
+## 8. §13 row 32: the novelty roster coverage threshold — releases **1**
 
-**§7.2's antidote to fail-fast censoring depends on it, and every attribution
-statistic computes on the audit sample exclusively.** `audit_fraction = 0.10` is
-a **default argument** in `ingest.py` and `run.py` and is **not a field of the
-registration object**. Two runs under one parameter hash can audit different
-fractions and the difference is attributable to nothing.
+*Releases: §3.4's first-mention flag becomes operative.*
 
-**This is the third live instance of a defect class this project has closed
-twice**, for `rulebook_stopwords` and for `lexicon`, both recorded in
-`docs/REGISTRATION_HISTORY.md` with the hash each caused.
+**What it governs.** §3.4: *"A first-mention claim from a roster below a stated
+coverage threshold is flagged rather than trusted."* **No threshold is stated,
+so the rule flags nothing.**
 
-**The repair is not in doubt and its timing is.** A re-stamp **moves the current
-hash**, and §13 rows 21a and 21b name the hash their readings were taken under.
-**Recommended: take it in the next batch, with the other registration work, not
-during a resume.**
+**Not cosmetic.** Novelty feeds the **sizing multiplier**, and §3.4 records the
+error as **systematic rather than random**: first-mention share **over-credits
+relay sources in proportion to how thin the roster is**, which is exactly the
+early-life condition the multiplier operates in.
 
-### 8c. Seven other undefined referents
+**No recommendation, and the row is BLOCKED rather than OPEN.** The threshold is
+a **share of an outlet population**, and **no roster coverage has ever been
+measured**. A value set today would be a chosen parameter with **no denominator
+behind it**, which is the shape §0.6 exists against.
 
-`docs/UNDEFINED_REFERENTS_2026-08-27.md` swept the manuscript and found **eight**
-values the specification demands and never supplies. One became §13 row 28.
-**Of the remaining seven, five sit behind sections nothing can reach and are
-cheap to leave. Two are not:**
-
-- **§0.10 and §7.6's shadow-cohort promotion predicate** calls itself
-  *pre-registered* and contains **two** blanks, *"a stated margin over a stated
-  minimum sample"*. **It is the only route in the specification by which a
-  candidate that failed a hard floor later receives money.**
-- **§14's trace-exercise breadth**, *"a stated count of items"*, which sits
-  beside item 5's threshold and is the other half of the same precondition.
+**What unblocks it:** a measurement of roster coverage against an enumerated
+outlet population. *That is a §13 row 22-shaped piece of work and it has not
+been started.*
 
 ---
 
@@ -714,27 +668,29 @@ act on it. Nothing here does.**
 **Ordered by cost to the operator, not by release count.** The release count
 orders the pack; this orders the afternoon.
 
-1. **Item 7**, the ratification worksheet. **An hour, and it closes a row
+1. **Item 6**, the ratification worksheet. **An hour, and it closes a row
    outright.** Still the cheapest thing on the board.
-2. **Item 1a**, the AIM question. It is a reading of two sentences and it
-   decides which column of item 1's table you are answering from.
-3. **Item 1**, row 29 itself. **Ten things wait on it**, and several other items
-   in this pack change shape once it is answered.
-4. **Item 2b**, the contracting entity. One look at a statement, and it gates
-   2a and 2c.
-5. ~~**Item 8a**, the rename~~ — **taken, P108**.
-6. **Item 3**'s four decisions and two free retrievals.
-7. **Item 2c**, the FX route, on the asymmetry argument, leaving the row's FX
-   term open.
-8. **Items 4a and 4c**, θ and account type.
-9. **Item 5**, the §9.4 stopping threshold, now that §13 row 28 exists to hold
-   it.
+2. **Item 3**, the contracting entity. **One look at an account statement**, and
+   it is the last gap on the row every break-even denominator inherits.
+3. **Item 7**, §3.6.5's day, pages and fields. **Three lines**, and it stops the
+   practice that produced a population nobody can replay.
+4. **Item 1**, the live-capital predicate. **It is not urgent and it is the most
+   consequential thing here**, and those two facts are exactly why it has gone
+   fourteen versions without numbers in it. *Nothing can reach it, so it will
+   never announce itself.*
+5. **Item 2**'s four decisions and two free retrievals.
+6. ~~**Items 4a and 4c**, θ and account type~~ — **taken, P116.** What remains under item 4 is **4b, the δₘᵢₙ floor**, deferred on purpose until row 1 closes.
 
 **Deferred on purpose, each with its blocker named:** **item 4b** (δₘᵢₙ waits on
-row 1), **item 6** (the FX budget), **item 2a** (waits on the cited schedule),
-**item 8b** (the re-stamp waits for a batch that is not a resume), and **item 9**
-(row 1's scope, already with the operator).
+row 1), **item 5** (the FX budget), **item 8** (waits on a roster measurement),
+and **item 9** (already with the operator).
 
-**One thing this pack does not claim.** Every item above unblocks
-*registration*. **None of them produces a measurement**, and §7.1 and §7.5 still
-return no verdict when all ten are answered.
+**Two things this pack does not claim.**
+
+**None of these produces a measurement.** Every item unblocks *registration*, and
+§7.1 and §7.5 still return no verdict when all nine are answered.
+
+***And none of them releases a single one of the twelve queued drafts.*** Those
+are blocked on three per-directive operator acts and on no register row at all,
+which is the scanner's designed steady state and not a queue this pack can
+shorten.
