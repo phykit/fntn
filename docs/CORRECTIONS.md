@@ -38,7 +38,7 @@ It makes three kinds, repeatedly.*
 
 | Class | Instances | Count | Invariant |
 |---|---|---|---|
-| **I. A conclusion acted on without checking the link it rests on** | A2, A5b, A8, A9, B8pre, B9 | **6** | **INSTALLED at P122, and RE-EXAMINED at P133 after a sixth instance arrived** |
+| **I. A conclusion acted on without checking the link it rests on** | A2, A5b, A8, A9, B8pre, B9 | **6** | **INSTALLED at P122, STRENGTHENED at P130 with a third clause after a sixth instance arrived** |
 | **II. Material that decided something was not committed at the moment it decided it** | B3, B4, B5, and the registration chain's first object | **4** | **INSTALLED at P114**: `cmd_sweep` refuses over a corpus git cannot produce again, with `corpus_not_committed` |
 | **III. A population pooled, mis-scoped or miscounted** | B6 (itself three), B7, and the §13 table's two hand counts | **6** | **INSTALLED at P105**: the abort-position distribution splits by `origin`, and every §13 count is now taken by machine over the table |
 | Singletons, which are not a class | A1, A3, A4, A5, A6, A7, B1, B2 | n/a | n/a, no invariant is owed: a row belonging to no class asserts no recurrence |
@@ -72,6 +72,28 @@ acted on.***
 > Where the preparation names the thing that would refute it, ***that thing is
 > checked before the decision, or the decision waits.*** A stated caveat is not
 > a discharged one.
+
+***PART 3, added 27 August 2026 (P130) after the invariant fired twice in one
+batch and a sixth instance arrived in the same batch.***
+
+> **3. A borrowed quantity is a DERIVATION only where it CAUSES the thing
+> derived.** Where it merely shares a unit, a name or a page, it is a
+> **coincidence**, and adopting it is a preference wearing a derivation's
+> clothes.
+
+**Why part 3 was needed.** The four derivations that have worked all borrowed a
+**causal** quantity: §6.7's risk budget **sizes** the position §4.4's bound
+constrains; §5.2.2's break-even **is what an effect must clear**; Gate 1's lag
+rule **is what kills a stale item**; row 1's schedule **is the cost**.
+**Phase 8's offered derivation borrowed §9.4's tracing block size to fix the
+precision of a fence's false-positive rate**, and *nothing connects them*:
+tracing 100 items does not make 3% the right bound on a rate about a different
+population in a different pipeline.
+
+***Parts 1 and 2 would both have passed it.*** It cites an artefact already in
+the document, and its preparation states no caveat it then overrides. **It is a
+third way for the same class to produce an instance, and it needed its own
+clause.**
 
 **Part 2 is what B8pre needed and part 1 would not have caught.** P112 cited its
 preparation file, satisfying part 1 in full, **and its own text said 28.8% was
