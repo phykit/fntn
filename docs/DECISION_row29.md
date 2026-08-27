@@ -60,6 +60,18 @@ been read. **The conclusion is unaffected**, both readings exceeding 10 bp, and
 
 ### 8.4 US: reachable above about USD 10.40 a share
 
+***SUPERSEDED 27 August 2026 (P118) and retained rather than replaced.*** The
+election reversed to **fixed** on measured components, and the model beneath
+this table was a fit. **The recomputed figures: the cost minimum share price is
+USD 10.42, and the floors are USD 6,155 at USD 43.79, USD 8,522 at USD 20 and
+USD 13,363 at USD 15.** ***And the binding screen is not the cost at all:*** below
+**USD 13.20** a share the floor exceeds §6.7's largest position of about USD
+19,350, so between USD 10.42 and USD 13.20 a name is **cost-reachable and
+size-unreachable**. Worked in `docs/ELECTION_MEASURED_2026-08-27.md`. The table
+below is the record of what the fitted model produced.
+
+#### The superseded table
+
 `104/p < 10` requires `p > 10.40` on fixed pricing, `74/p < 10` requires
 `p > 7.40` on tiered. **The clip floor rises steeply as price falls toward that
 bound**, because the floor is `40,000 / (10 - 104/p)` in the rate regime.

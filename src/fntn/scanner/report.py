@@ -47,6 +47,7 @@ from typing import Dict, List, Optional, Sequence, Tuple
 
 from . import codes
 from .ledger import Ledger
+from .records import Origin
 from .params import Registration
 
 #: The four inputs only the operator may supply (§3.6.8 step 4, CLAUDE.md's
@@ -488,15 +489,43 @@ def corpus_digest(routes: Sequence[str]) -> List[Tuple[str, str]]:
 
 @dataclass(frozen=True)
 class Draft:
-    """One directive waiting on a person, and what it waits for."""
+    """One directive waiting on a person, and what it waits for.
+
+    **`origin` is not decoration (P119).** `CLAUDE.md` forbids agent-origin
+    material entering the §3.5 item pipeline, because it would re-base §7.1's
+    headline on an agent-selected population. The import fences cover module
+    imports in both directions and **cannot cover this one**: the discovery
+    layer and the item pipeline share a ledger, so the crossing is a SELECT,
+    and a SELECT is not an import.
+
+    `queue_from_ledger` did not select `origin`, so every consumer built on it
+    received a directive list with the marker already stripped and could not
+    have refused agent material if it wanted to. **The field is carried here so
+    that a consumer can refuse what it can see**, which is the only place a
+    refusal can live once the two pipelines share a table.
+    """
 
     directive_id: str
     event_class: str
     outstanding: Tuple[str, ...]
+    #: `agent`, `operator` or `random_control`, straight off the record.
+    origin: str = "unrecorded"
 
     @property
     def n_outstanding(self) -> int:
         return len(self.outstanding)
+
+    @property
+    def is_discovery_origin(self) -> bool:
+        """Whether §3.7's agent selected this, in one place.
+
+        Named once so each consumer does not invent its own test and drift
+        from the others. `unrecorded` counts as discovery-origin: a directive
+        whose origin the ledger cannot state must not be admitted to the item
+        pipeline on the strength of a blank.
+        """
+
+        return self.origin != Origin.OPERATOR.value
 
 
 def queue_from_ledger(ledger: Ledger) -> List[Draft]:
@@ -510,7 +539,10 @@ def queue_from_ledger(ledger: Ledger) -> List[Draft]:
     rows = list(
         ledger.conn.execute(
             "SELECT directive_id, event_class, delta_min, registered_sign, "
-            "registered_at FROM directive"
+            # `origin` travels with every directive read out of this ledger.
+            # See Draft: the §3.5 prohibition is unenforceable once the marker
+            # has been dropped, and dropping it is a SELECT away.
+            "registered_at, origin FROM directive"
         )
     )
     by_subject: Dict[str, set] = {}
@@ -532,7 +564,12 @@ def queue_from_ledger(ledger: Ledger) -> List[Draft]:
             if code in seen:
                 outstanding.append(name)
         drafts.append(
-            Draft(r["directive_id"], r["event_class"], tuple(outstanding))
+            Draft(
+                r["directive_id"],
+                r["event_class"],
+                tuple(outstanding),
+                r["origin"] or "unrecorded",
+            )
         )
     # The count, then the identifier. The identifier ranks nothing; it exists
     # so the order is total and the file is diffable between runs.
@@ -957,13 +994,22 @@ class RunReport:
             ]
         out += ["", f"### Waiting: {len(waiting)} draft(s)", ""]
         if waiting:
-            out += ["| outstanding | directive | class | awaiting |",
-                    "|---|---|---|---|"]
+            out += ["| outstanding | directive | class | origin | awaiting |",
+                    "|---|---|---|---|---|"]
             for d in waiting:
                 out.append(
                     f"| {d.n_outstanding} | `{d.directive_id}` | {d.event_class} "
+                    f"| `{d.origin}` "
                     f"| {', '.join(f'`{o}`' for o in d.outstanding)} |"
                 )
+            out += [
+                "",
+                "**`origin` is printed because the §3.5 prohibition cannot be "
+                "enforced downstream of a read that dropped it (P119).** The "
+                "discovery layer and the item pipeline share this ledger, so "
+                "the crossing CLAUDE.md forbids is a SELECT rather than an "
+                "import, and no import fence reaches it.",
+            ]
         out += [
             "",
             "**`registered_sign` is read off the directive and not off a "

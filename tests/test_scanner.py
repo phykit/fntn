@@ -1202,6 +1202,56 @@ def test_a_sweep_without_a_control_arm_is_refused():
         _scan_with({"insider_dealing": None}, control_ratio=0.0)
 
 
+def test_no_ledger_read_path_hands_out_a_directive_without_its_origin():
+    """P119: the crossing CLAUDE.md forbids is not an import, so no import fence catches it.
+
+    `CLAUDE.md`: agent-origin material may not enter the §3.5 item pipeline, or
+    §7.1's headline is re-based on an agent-selected population.
+    `assert_import_fence` and `assert_reverse_import_fence` between them cover
+    module imports in both directions. **They cannot cover this one**, because
+    the discovery layer and the item pipeline share a ledger: the crossing is a
+    SELECT, and a SELECT is not an import.
+
+    The hole found by looking: `queue_from_ledger` selected `directive_id`,
+    `event_class`, `delta_min`, `registered_sign` and `registered_at`, and NOT
+    `origin`. Every consumer built on it therefore received a directive list
+    with the marker already stripped, and the §3.5 prohibition is unenforceable
+    at the point where the information is gone. That is the same shape as the
+    underscore-directory hole: the rule was right and the read path walked
+    round it.
+
+    This test is the fence for the ledger direction. Any function returning a
+    directive out of the ledger must carry its origin, so that a consumer can
+    refuse agent material rather than being unable to see it.
+    """
+
+    ledger = Ledger(parameter_hash="origin-fence")
+    for did, origin in (("dir-agent", Origin.AGENT),
+                        ("dir-operator", Origin.OPERATOR),
+                        ("dir-control", Origin.RANDOM_CONTROL)):
+        d = _directive(origin=origin)
+        d.directive_id = did
+        ledger.write_directive(d, "blocked_on_operator")
+
+    drafts = {d.directive_id: d for d in queue_from_ledger(ledger)}
+    assert set(drafts) == {"dir-agent", "dir-operator", "dir-control"}
+
+    # Every draft names its origin, and the agent one is identifiable as such.
+    for did, expected in (("dir-agent", "agent"),
+                          ("dir-operator", "operator"),
+                          ("dir-control", "random_control")):
+        assert drafts[did].origin == expected, (
+            f"{did} came out of the ledger without its origin; a consumer "
+            "cannot refuse what it cannot see"
+        )
+
+    # And the discovery-origin set is nameable in one place rather than by
+    # each consumer inventing its own test.
+    assert drafts["dir-agent"].is_discovery_origin
+    assert not drafts["dir-operator"].is_discovery_origin
+    ledger.close()
+
+
 def test_the_import_fence_now_runs_in_both_directions(monkeypatch):
     """P115: the existing fence covered one direction of a two-way prohibition.
 
@@ -2714,6 +2764,68 @@ def test_the_worksheet_states_the_bound_and_never_the_point_estimate():
 OPEN_ITEMS = REPO_ROOT / "docs" / "OPEN_ITEMS.md"
 
 
+CORRECTIONS = REPO_ROOT / "docs" / "CORRECTIONS.md"
+
+
+def test_every_recurring_correction_class_has_an_invariant():
+    """P122: what turns the corrections register from a list into an instrument.
+
+    A register that only lists instances is a list. The rule this file imposes
+    on itself is that a class with THREE OR MORE instances must carry an
+    invariant, and this test is what holds it: adding a fourth instance to a
+    class with no invariant fails here, at the moment the class is written down,
+    rather than at the moment somebody notices the pattern two batches later.
+
+    It is deliberately a test over the DOCUMENT. The classes are a judgement
+    about what went wrong, and a judgement cannot be computed; what can be
+    computed is that a judgement recording a recurrence has also recorded what
+    would stop the next one.
+    """
+
+    text = CORRECTIONS.read_text()
+    header = "| Class | Instances | Count | Invariant |"
+    assert header in text, "the classes table is the instrument; it must exist"
+
+    body = text.split(header, 1)[1].split("\n\n", 1)[0]
+    rows = [
+        [c.strip() for c in line.strip().strip("|").split("|")]
+        for line in body.splitlines()
+        if line.startswith("|") and not set(line.strip().strip("|")) <= set("-| ")
+    ]
+    assert rows, "the classes table has no rows"
+
+    checked = 0
+    for name, instances, count, invariant in rows:
+        digits = re.sub(r"[^0-9]", "", count)
+        if not digits:
+            # A row with no count is not a class: it is the catch-all for rows
+            # that belong to none. It owes no invariant and asserts no
+            # recurrence, and treating it as a class would demand one.
+            continue
+        n = int(digits)
+        # The count must match the instance list, or the table is asserting a
+        # recurrence it has not enumerated.
+        listed = len([i for i in instances.split(",") if i.strip()])
+        assert n == listed or "itself" in instances or "and" in instances, (
+            f"{name}: count {n} against {listed} listed instances"
+        )
+        if n < 3:
+            continue
+        checked += 1
+        bare = invariant.replace("*", "").strip().lower()
+        assert bare and bare not in {"n/a", "none", "tbd", "pending"}, (
+            f"{name} has {n} instances and no invariant. A class that has "
+            "recurred three times and carries no invariant is a class that "
+            "will recur a fourth time."
+        )
+        assert "installed" in bare, (
+            f"{name}: the invariant cell must say INSTALLED and where, so a "
+            "reader can go and read the thing rather than take the word for it"
+        )
+    assert checked >= 1, "no recurring class found; the table cannot be right"
+
+
+
 def _open_items_row(n: str):
     """(status cell, note cell) for a §13 row, so a status is read as a status.
 
@@ -2941,8 +3053,21 @@ def test_the_report_carries_no_ranking_key_other_than_the_count():
         assert word not in prose, word
 
     # The only numeric column in the waiting table is the outstanding count.
+    # `origin` joined the header at P119; it is a provenance marker and not a
+    # ranking key, and the check below is what holds that distinction rather
+    # than the header literal alone.
     header = [l for l in queue.splitlines() if l.startswith("| outstanding |")]
-    assert header == ["| outstanding | directive | class | awaiting |"]
+    assert header == ["| outstanding | directive | class | origin | awaiting |"]
+    for row in queue.splitlines():
+        if not row.startswith("| ") or row.startswith("| outstanding |"):
+            continue
+        cells = [c.strip() for c in row.strip().strip("|").split("|")]
+        if len(cells) != 5 or set(cells[0]) <= set("-"):
+            continue
+        # Every cell after the first must be non-numeric: a second number
+        # beside the count is a second ordering the reader can impose.
+        for cell in cells[1:]:
+            assert not cell.replace(".", "", 1).isdigit(), cell
     ledger.close()
 
 
@@ -3111,6 +3236,26 @@ def test_the_refutations_section_is_seeded_with_the_three_to_date():
 # ---------------------------------------------------------------------------
 
 
+def _flip(row: str):
+    """A status for ``row`` that DIFFERS from the one the register holds today.
+
+    Returns ``(cell, from_token, to_token)``.
+
+    **Why this exists (P117).** Two fixtures below edited §13 row 1 to
+    ``**CLOSED**`` to simulate binding-path movement. Row 1 closed on 27 August
+    2026, so the edit became a **no-op** and the fixtures went on passing whilst
+    testing nothing, until the movement assertions failed for the right reason
+    and exposed it. A fixture that silently stops changing anything is the
+    failure class this suite exists against, so the flip is computed from the
+    register rather than written as a literal.
+    """
+
+    live = report_mod.status_token(_open_items_row(row)[0])
+    if live == "CLOSED":
+        return "**BLOCKED**", "CLOSED", "NOT CLOSED"
+    return "**CLOSED**", "NOT CLOSED", "CLOSED"
+
+
 def _register_copy(tmp_path, edits) -> Path:
     """`docs/OPEN_ITEMS.md` with named §13 rows' status cells replaced."""
 
@@ -3120,6 +3265,12 @@ def _register_copy(tmp_path, edits) -> Path:
         for i, line in enumerate(lines):
             if line.startswith(f"| {row} |"):
                 cells = line.strip().strip("|").split("|")
+                # Refuse a no-op. An edit that changes nothing makes every
+                # assertion downstream vacuous, and it does so silently.
+                assert cells[2].strip() != status.strip(), (
+                    f"row {row} already reads {status}, so this edit changes "
+                    "nothing and the fixture would assert nothing"
+                )
                 cells[2] = f" {status} "
                 lines[i] = "|" + "|".join(cells) + "|"
                 hit += 1
@@ -3157,11 +3308,10 @@ def test_every_binding_path_status_is_read_from_the_register(tmp_path):
     assert before[0][3] == f"§13 row 1: {row1}"
     assert before[0][2] == ("CLOSED" if row1 == "CLOSED" else "NOT CLOSED")
 
-    after = report_mod.binding_path_rows(
-        _register_copy(tmp_path, {"1": "**CLOSED**"})
-    )
-    assert after[0][2] == "CLOSED"
-    assert after[0][3] == "§13 row 1: CLOSED"
+    cell, _, to_token = _flip("1")
+    after = report_mod.binding_path_rows(_register_copy(tmp_path, {"1": cell}))
+    assert after[0][2] == to_token
+    assert after[0][3] == f"§13 row 1: {cell.strip('*')}"
     # Row 1 is also one of the twenty-seven step 5 waits on, so step 5's
     # evidence moves too whilst its status does not.
     assert after[4][2] == "NOT CLOSED"
@@ -3260,13 +3410,14 @@ def test_the_movement_line_names_the_step_that_moved(tmp_path):
     runs = tmp_path / "runs"
     runs.mkdir()
     (runs / "2026-08-27_funnel.md").write_text(_render(ledger, runs_dir=runs))
+    cell, from_token, to_token = _flip("1")
     moved = _render(
         ledger, runs_dir=runs,
-        register=_register_copy(tmp_path, {"1": "**CLOSED**"}),
+        register=_register_copy(tmp_path, {"1": cell}),
     )
     assert "no binding-path movement" not in moved
     assert "**Moved since 2026-08-27_funnel.md:**" in moved
-    assert "- step 1: **NOT CLOSED** to **CLOSED**" in moved
+    assert f"- step 1: **{from_token}** to **{to_token}**" in moved
     # Step 5's status held and its evidence moved, and both are said.
     assert "- step 5: **NOT CLOSED** to **NOT CLOSED**; register cells were" in moved
     ledger.close()
