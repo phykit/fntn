@@ -1,8 +1,17 @@
 # Prepared decision: the §0.11 sizing collision
 
-**Status: PREPARED, NOT RESOLVED.** Nothing here picks a resolution, and §4.4
-and §5.4.4 are not restored. Written 27 August 2026 under the batch rule that
-where an operator decision is found it is prepared and handed over, not taken.
+**Status: RESOLVED 27 August 2026. The operator took resolution (i).** The
+fixed £50,000 is **withdrawn**; the clip floor is **derived** against §13 row
+29's tolerance and row 1's fixed cost (§13 row 30). §0.11 is rewritten as the
+withdrawal, and **§4.4 and §5.4.4 are restored as derivations rather than
+reinstated as constants**, which removes a rule instead of adding one.
+
+*The analysis below is left standing as written, because it is the record the
+decision was taken on. Three things are added: §1.1a, the seven-site audit
+performed as part of taking the decision; the resolution note in §1.4(i); and
+the applied marker in §1.3a. Nothing already written is altered.*
+
+**Reference equity is confirmed at £100,000.**
 
 **Read §1.0 first.** The collision the instruction names is real, and the
 arithmetic below found a **prior question** that has to be answered before any
@@ -54,6 +63,42 @@ meaning, and **nothing downstream can tell the two apart**.
 
 **The operator must say which reading §0.11 intended.** Everything below is
 computed both ways where the reading changes the answer.
+
+---
+
+## 1.1a The floor audit: SEVEN sites, not six, and they agree
+
+**Performed 27 August 2026 as part of taking the decision. The earlier count of
+six was wrong and is corrected here: there are seven.** §0.1 was missed.
+
+| # | Section | Quoted | Reads as |
+|---|---|---|---|
+| 1 | **§0.1** *(missed in the earlier count)* | *"At £100,000, h = 63 and 3% daily ATR, no stop both preserves the thesis and **clears the minimum clip**."* | **FLOOR.** *Clears* is a threshold word |
+| 2 | **§4.4** | *"zero cells carry `capital_exceeds_clip_floor`"* | **FLOOR.** The code names one. *See the naming defect below* |
+| 3 | **§5.1** | *"accepted at the **minimum clip**"* | **FLOOR, and additionally sized AT it.** The explore arm elects the smallest permissible size |
+| 4 | **§5.2** | *"a floored product still below the clip → `advisory_haircut_below_clip`, counted as a kill"* | **FLOOR.** Unambiguous: below the clip kills |
+| 5 | **§5.9** | *"Partial fills: below 60% of clip within the window → close"* | **FLOOR, on the fill.** Consistent with either reading of the clip itself |
+| 6 | **§0.10** | *"the clip cannot simply shrink: at £1,000 the fixed cost is 62.5 bps, which breaks the 25 bps rule the clip is **defined** by"* | **FLOOR.** Defines it as the notional at which cost falls to a threshold |
+| 7 | **§6.7** | *"Clip £2,500, **defined as** the notional where fixed round-trip cost falls below 25 bps"* | **FLOOR.** Same definition |
+
+**They agree. No site reads the clip as a target or as a ceiling.** §5.1 is the
+only one that additionally *sizes at* the floor, and that is a **dual use, not
+a contradiction**: the explore arm elects the smallest size the rules permit,
+which is the floor by definition. **So there is no disagreement defect and no
+§12.1 row is taken for one.**
+
+**One defect WAS found, and it is a legibility defect in a reason code.**
+`capital_exceeds_clip_floor` marks a **zero** cell, that is one where the
+position **fails to reach** the floor. **The name asserts the opposite**:
+*capital exceeds the clip floor* is the passing case. Rule 4 makes a code's
+legibility a first-class concern, so this is recorded with its own §12.1 row
+(**P96**) and **is not renamed here**, because renaming a reason code is a
+change to the registry and takes its own decision.
+
+**One consequence of §5.1's dual use, which the decision inherits.** While the
+derived floor is undetermined, **the explore arm has no size**, so the
+below-floor region the funnel-depth association otherwise never observes is
+unobserved as well.
 
 ---
 
@@ -196,6 +241,12 @@ gate refuses it and names the reason. Decision (b) stands as the operator took
 it. **The claim that no participation constraint exists does not stand**, and
 §0.11 and the Annex A.1 row are corrected in this commit to say so.
 
+***APPLIED 27 August 2026 as §12.1 row P93.*** The correction is carried into
+§0.11, §0.10 and the Annex A.1 row in both the specification and
+`docs/OPEN_ITEMS.md`. **The record now says what §6.7 has always said**, and
+the participation *cap* is in force whilst the participation *gate* stays
+deferred.
+
 **This changes what (b) costs.** At £50,000 the participation cap requires
 **median daily notional of £833,333** before a position can be filled inside
 three sessions. That is not an unbounded exposure. It is a screen most of the
@@ -207,6 +258,17 @@ rather than as a named liquidity refusal.
 ## 1.4 The three resolutions, each with its consequence as a cost
 
 ### (i) §4.4 binds. §0.11 becomes a target that never reaches.
+
+> ***TAKEN, 27 August 2026, and taken in a stronger form than this section
+> proposed.*** The operator did not merely let §4.4 bind: **the fixed clip is
+> withdrawn outright and the floor is derived** (§13 rows 29 and 30). That
+> answers Cost 1 below, which observed that (i) alone would empty §4.4 rather
+> than restore it, because a capped position of £7,500 could never clear a
+> £50,000 floor. **With the floor derived rather than chosen, the second
+> decision Cost 1 demanded is the setting of row 29, and it is a governance
+> number rather than a structural question.** §4.4 and §5.4.4 are restored as
+> derivations; their ATR bounds return by arithmetic once row 29 is set and row
+> 1 closes.
 
 **The effective clip is the cap: £7,500 at full size, £3,750 at the multiplier
 floor.**

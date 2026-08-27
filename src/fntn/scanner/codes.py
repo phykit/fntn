@@ -39,6 +39,7 @@ class Surface(str, Enum):
     DIRECTIVE = "directive"
     REGISTRATION = "registration"
     SEGMENT = "segment"
+    SIZING = "sizing"
 
 
 @dataclass(frozen=True)
@@ -828,12 +829,89 @@ _OBSERVATION: List[ReasonCode] = [
 
 
 # ---------------------------------------------------------------------------
+# Surface G -- sizing.  The derived clip floor (§13 rows 29 and 30).
+#
+# The clip was a chosen constant and is now DERIVED from a governance tolerance
+# (row 29) and the measured fixed round-trip cost (row 1).  Two of these three
+# codes fire because an input is absent, and the third because **no size
+# satisfies the tolerance at all**, which is a measured fact about a market and
+# not a missing input.  Keeping them apart is the whole point: an unreachable
+# market and an unset parameter look identical from outside and mean opposite
+# things.
+# ---------------------------------------------------------------------------
+
+_SIZING: List[ReasonCode] = [
+    ReasonCode(
+        code="clip_floor_tolerance_unset",
+        surface=Surface.SIZING,
+        description=(
+            "§13 row 29's maximum tolerable fixed cost is not set, so the clip "
+            "floor has no target to derive against."
+        ),
+        summary_template=(
+            "The clip floor for {market} could not be derived because §13 row "
+            "29, the maximum tolerable fixed cost in basis points of position, "
+            "is not set. Position size is therefore UNDETERMINED and no "
+            "position is taken. This is a refusal to score and not a size of "
+            "zero: a zero would say the position was evaluated and came out "
+            "small. {resurrection}"
+        ),
+        resurrection=(
+            "Resurrectable the moment §13 row 29 is set by operator governance."
+        ),
+        refuse_to_score=True,
+    ),
+    ReasonCode(
+        code="clip_floor_cost_unset",
+        surface=Surface.SIZING,
+        description=(
+            "§13 row 1's fixed round-trip cost is not established for this "
+            "market, so there is nothing to compare against the tolerance."
+        ),
+        summary_template=(
+            "The clip floor for {market} could not be derived because §13 row "
+            "1's fixed round-trip cost is not established for it: {missing} is "
+            "unset. Row 1 runs first precisely because every break-even "
+            "denominator inherits it. Position size is UNDETERMINED and no "
+            "position is taken. {resurrection}"
+        ),
+        resurrection=(
+            "Resurrectable when §13 row 1 closes for this market against a "
+            "cited, published schedule."
+        ),
+        refuse_to_score=True,
+    ),
+    ReasonCode(
+        code="clip_floor_unreachable_at_any_size",
+        surface=Surface.SIZING,
+        description=(
+            "The size-independent share of the round-trip cost already equals "
+            "or exceeds the tolerance, so no position size satisfies it."
+        ),
+        summary_template=(
+            "No position size in {market} satisfies §13 row 29's tolerance of "
+            "{tolerance_bps} bp. The size-INDEPENDENT share of the round trip "
+            "is {proportional_bps} bp, which does not fall as the position "
+            "grows, so the tolerance is exceeded at every size and there is no "
+            "floor to derive. This is a measured fact about the market's cost "
+            "structure, not a missing input. {resurrection}"
+        ),
+        resurrection=(
+            "Resurrectable if §13 row 29's tolerance is raised above the "
+            "size-independent share, or if a cost tier removes part of that "
+            "share for a subset of names (Annex A.1)."
+        ),
+    ),
+]
+
+
+# ---------------------------------------------------------------------------
 # Registry.
 # ---------------------------------------------------------------------------
 
 ALL_CODES: Dict[str, ReasonCode] = {
     rc.code: rc
-    for rc in (*_INTAKE, *_SCREEN, *_DIRECTIVE, *_REGISTRATION, *_SEGMENT, *_OBSERVATION)
+    for rc in (*_INTAKE, *_SCREEN, *_DIRECTIVE, *_REGISTRATION, *_SEGMENT, *_SIZING, *_OBSERVATION)
 }
 
 #: The ordered fail-fast sequence for each surface.  Stated explicitly rather

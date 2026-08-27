@@ -1328,6 +1328,16 @@ def test_every_defined_code_is_emitted(tmp_path):
     ledger.write_refusal(wide.admit(second))
     ledger.write_refusal(wide.enqueue(second))
 
+    # -- sizing, the derived clip floor (§13 rows 29 and 30) --------------
+    # All three fire here rather than in the funnel, because the funnel has no
+    # sizing path: the derivation is a calculator that refuses, and a code
+    # defined and never emitted is an untested branch whichever surface it is
+    # on.
+    from fntn.scanner.sizing import FixedCost as _FC, derive_clip_floor as _floor
+    ledger.write_refusal(_floor(_FC("US", "USD", 6.00, 0.0), None))
+    ledger.write_refusal(_floor(_FC("UK", "GBP", None, None), 10.0))
+    ledger.write_refusal(_floor(_FC("UK Main Market", "GBP", 1.00, 61.4), 10.0))
+
     # -- observation, full panel over a maximally defective item ----------
     d = _registered(_directive())
     d.registered_at = NOW + timedelta(days=10)
@@ -3571,3 +3581,138 @@ def test_the_manifest_retains_raw_and_carries_the_non_evidentiary_stamp(tmp_path
     from fntn.scanner.corpusio import corpus_documents, is_fenced_path
     assert is_fenced_path(manifest.parent)
     assert corpus_documents(manifest.parent) == []
+
+
+# ---------------------------------------------------------------------------
+# The derived clip floor (§13 rows 29 and 30).
+#
+# The clip was a chosen constant; §0.11 withdrew the number and replaced it
+# with a derivation.  These tests exercise the three refusals first, because
+# under the register as it stands the derivation REFUSES for every market and
+# the refusal is the product.
+# ---------------------------------------------------------------------------
+
+from fntn.scanner.records import Refusal
+from fntn.scanner.sizing import ClipFloor, FixedCost, cost_at, derive_clip_floor
+
+
+def test_the_floor_refuses_when_row_29_is_unset():
+    """Row 29 is the one free parameter the derivation cannot eliminate."""
+
+    cost = FixedCost("US", "USD", 6.00, 0.0, "operator_model")
+    r = derive_clip_floor(cost, None)
+    assert isinstance(r, Refusal)
+    assert r.code == "clip_floor_tolerance_unset"
+    assert r.surface == "sizing"
+    assert codes.ALL_CODES[r.code].refuse_to_score
+    # A refusal to score, not a size of zero. The distinction is the point.
+    assert "UNDETERMINED" in r.summary and "not a size of zero" in r.summary
+
+
+def test_the_floor_refuses_when_row_1_is_unset_for_the_market():
+    """Row 1 runs first because every break-even denominator inherits it."""
+
+    for cost in (
+        FixedCost("UK", "GBP", None, 61.4),
+        FixedCost("UK", "GBP", 1.00, None),
+        FixedCost("UK", "GBP", None, None),
+    ):
+        r = derive_clip_floor(cost, 10.0)
+        assert isinstance(r, Refusal) and r.code == "clip_floor_cost_unset"
+        assert codes.ALL_CODES[r.code].refuse_to_score
+    # The missing field is named, not merely counted.
+    r = derive_clip_floor(FixedCost("UK", "GBP", None, 61.4), 10.0)
+    assert "absolute_round_trip" in r.summary
+
+
+def test_no_size_satisfies_a_tolerance_below_the_proportional_share():
+    """The UK result, and it is a measured fact rather than a missing input.
+
+    Stamp duty is a percentage. A percentage does not decay as the position
+    grows, so where it alone meets the tolerance there is no floor to derive
+    and returning a very large number instead would say the market was
+    reachable at a price.
+    """
+
+    uk = FixedCost("UK Main Market", "GBP", 1.00, 61.4, "row1_provisional")
+    for tolerance in (2.0, 10.0, 25.0, 50.0, 61.0, 61.4):
+        r = derive_clip_floor(uk, tolerance)
+        assert isinstance(r, Refusal), tolerance
+        assert r.code == "clip_floor_unreachable_at_any_size"
+        # NOT a refusal to score: nothing is missing.
+        assert not codes.ALL_CODES[r.code].refuse_to_score
+    assert "does not fall as the position grows" in r.summary
+    # Above it, a floor exists again.
+    above = derive_clip_floor(uk, 62.0)
+    assert isinstance(above, ClipFloor) and above.floor == pytest.approx(16666.7, rel=1e-3)
+
+
+def test_stamp_duty_alone_excludes_uk_main_market_below_50_bp_with_certainty():
+    """The robust half of the claim, separated from the provisional half.
+
+    Stamp duty is 50 bp by statute and does not depend on row 1's three open
+    gaps. The 61.4 bp total does. So one claim survives row 1 closing any way
+    at all and the other does not, and they are asserted separately.
+    """
+
+    statutory = FixedCost("UK Main Market", "GBP", 0.0, 50.0, "statutory")
+    for tolerance in (2.0, 10.0, 25.0, 49.9, 50.0):
+        r = derive_clip_floor(statutory, tolerance)
+        assert isinstance(r, Refusal)
+        assert r.code == "clip_floor_unreachable_at_any_size"
+
+
+def test_the_us_floor_derives_and_falls_as_the_tolerance_rises():
+    """Two fixed minimums applied twice: the cost decays, so a floor exists."""
+
+    us = FixedCost("US", "USD", 6.00, 0.0, "operator_model")
+    floors = {}
+    for tolerance in (2.0, 5.0, 10.0, 20.0):
+        r = derive_clip_floor(us, tolerance)
+        assert isinstance(r, ClipFloor)
+        floors[tolerance] = r.floor
+    assert floors == {2.0: 30000.0, 5.0: 12000.0, 10.0: 6000.0, 20.0: 3000.0}
+    # Monotone: a looser tolerance never demands a larger position.
+    assert list(floors.values()) == sorted(floors.values(), reverse=True)
+    # And the floor is the size at which the cost EQUALS the tolerance.
+    assert cost_at(us, floors[10.0]) == pytest.approx(10.0)
+
+
+def test_a_derived_floor_carries_the_provenance_of_the_cost_it_came_from():
+    """A number that has lost its provenance gets quoted under a hash it was
+    never taken under, which is the defect §13 rows 19 to 21b are annotated
+    against."""
+
+    us = FixedCost("US", "USD", 6.00, 0.0, "row1_provisional")
+    r = derive_clip_floor(us, 10.0)
+    assert r.provenance == "row1_provisional"
+    assert r.cost is us and r.tolerance_bps == 10.0
+
+
+def test_the_two_recorded_us_readings_imply_a_proportional_term():
+    """The disagreement this phase found, asserted so it cannot be lost.
+
+    §13 row 1 records ~19 bp at about USD 3,200 and ~3 bp at USD 64,000. The
+    operator's model, USD 1.00 commission and USD 2.00 FX each applied twice,
+    reproduces the first and gives 0.94 bp for the second. The residual is the
+    signature of a term that does NOT decay.
+    """
+
+    stated = FixedCost("US", "USD", 6.00, 0.0)
+    assert cost_at(stated, 3200) == pytest.approx(18.75)
+    assert cost_at(stated, 64000) == pytest.approx(0.9375)
+
+    # Solve the two recorded points for (absolute, proportional).
+    absolute = (19.0 - 3.0) / (1e4 * (1 / 3200 - 1 / 64000))
+    proportional = 3.0 - 1e4 * absolute / 64000
+    assert absolute == pytest.approx(5.39, abs=0.01)
+    assert proportional == pytest.approx(2.16, abs=0.01)
+
+    implied = FixedCost("US", "USD", absolute, proportional)
+    assert cost_at(implied, 3200) == pytest.approx(19.0)
+    assert cost_at(implied, 64000) == pytest.approx(3.0)
+
+    # And the consequence that matters: under the implied model a 2 bp
+    # tolerance is unreachable in the US too.
+    r = derive_clip_floor(implied, 2.0)
+    assert isinstance(r, Refusal) and r.code == "clip_floor_unreachable_at_any_size"

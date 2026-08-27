@@ -169,7 +169,7 @@ What the lane *produces* is governed, not exempt: extensions and new families ta
 | £5.00 | £10.00 | £4,000 | 1.97% | 7.5% |
 | £7.50 | £15.00 | £6,000 | 1.32% | 5.0% |
 
-***Superseded as a derivation, 27 August 2026 (§0.11, P90 and P91). The table is annotated rather than rewritten, per §12.7.*** **The clip no longer follows from this table.** §0.11 set it at **£50,000** by decision, so the arrow that ran commission → clip now runs in no direction at all: the commission still determines the fixed-cost share of a round trip, and the clip is an input beside it rather than an output of it. **Every figure in the three rows above is retained as the record of what was derived under the old definition and none of them is now the operative clip.** The two right-hand columns are **withdrawn and not replaced**; see §4.4 for why they are not recomputable here.
+***Superseded as a derivation, 27 August 2026 (§0.11, P90, P91 and P97). Annotated rather than rewritten, per §12.7.*** **The arrow still runs commission → clip, and it now runs through a stated tolerance.** The table above derived the clip from a fixed 25 bps rule written into the definition. §0.11 briefly replaced it with a chosen £50,000, which derived from nothing; **that number is withdrawn.** The clip floor is now derived from **§13 row 1's fixed cost and §13 row 29's tolerance**, which is the same arrow with the 25 bps made explicit, governed and per-market instead of implicit and universal. **Every figure in the three rows above is retained as the record of what the old definition produced**, and the two right-hand columns are **withdrawn until row 29 is set**, at which point they return by arithmetic (§4.4).
 
 This row runs **first** in §13.
 
@@ -211,7 +211,7 @@ IR ≈ IC·√breadth (Grinold, 1989). Sixteen positions at h = 63 is **64 bets 
 
 *Erratum B, v1.13: this table is computed on the **£2,500 minimum clip**, at which the fixed round-trip cost is 25 bps; §5.2.2's break-even table is computed on **£5,000 notional**. The two sets of figures are therefore not comparable line for line, and no number in either table is changed by this erratum.*
 
-***Invalidated as a live reading, 27 August 2026 (§0.11, P91).*** The clip is **£50,000** and this table is computed on £2,500, so its break-even column no longer describes what a microcap trade costs this system. **It is not recomputed**: the spread assumptions are illustrative and marked as such, and the fixed-cost share is now a smaller part of a round trip whilst **market impact, which this table never had a column for, is the term that grows**. *A recomputation that shrank the break-even column whilst leaving impact out would make microcaps look cheaper at a clip that makes them dearer to trade*, and the reachability caveat below is now the operative one. **The opening sentence of this section is also superseded:** at £2,500 the participation cap needed about £42,000 of median daily notional; at £50,000 it needs twenty times that, **£833,333**, which most of the universe does not carry. *Corrected 27 August 2026 (P93): this sentence continued "and §0.11 resolved to (b), so there is no participation rule that refuses when the depth is absent", which was false. The cap in §6.7 is in force; what (b) declined was a participation gate. The consequence is that names failing it are killed by `advisory_haircut_below_clip` for being sized below the clip, rather than refused by name for want of depth.*
+***Invalidated as a live reading, 27 August 2026 (§0.11, P91 and P97).*** This table is computed on a £2,500 clip. **The clip is no longer a number at all**: it is derived per market from §13 rows 1 and 29, and until row 29 is set it does not derive. So the break-even column describes a clip the system no longer has, and **it cannot be recomputed either**, there being nothing to recompute it at. *The £50,000 that briefly stood here is withdrawn with the rest.* **What does not change with the clip, and is the operative point for microcaps: market impact, which this table has never had a column for, scales with participation and grows with size**, so any recomputation that shrank the break-even column whilst leaving impact out would make microcaps look cheaper at a size that makes them dearer to trade. **The opening sentence of this section is also superseded**: at £2,500 the participation cap needed about £42,000 of median daily notional, and it scales with whatever the derived floor turns out to be. *Corrected 27 August 2026 (P93): this sentence continued "and §0.11 resolved to (b), so there is no participation rule that refuses when the depth is absent", which was false. §6.7's cap is in force; what (b) declined was a participation gate.*
 
 Against 115 bps after the 50% post-publication rung, every row fails. **The break-even ceiling (§13) is the operative gate, not the liquidity floor**, so lowering the floor alone produces candidates Gate 1's other component rejects immediately. Reachability compounds it: at h = 5 the stop is 2.5 × ATR against a 30% feasibility bound, so ATR above 12% zeroes the position irrespective of liquidity, and many microcaps sit above that. And the clip cannot simply shrink: at £1,000 the fixed cost is 62.5 bps, which breaks the 25 bps rule the clip is *defined* by.
 
@@ -221,44 +221,75 @@ Against 115 bps after the 50% post-publication rung, every row fails. **The brea
 
 A reader who wants live microcap capital now reverses this and takes the ceiling relaxation as a §0 decision with its arithmetic on the record.
 
-### 0.11 The clip moves to £50,000, taken 27 August 2026 over a stated objection
+### 0.11 The fixed clip is WITHDRAWN and replaced by a derived floor
 
-**Operator decision, 27 August 2026.** The minimum clip moves from **£2,500 to £50,000**. Reference equity is unchanged at approximately **£100,000**, so the single-name position moves from **2.5% to 50%** of the book. This is a §0 decision and not a parameter edit: the clip was *defined as* the notional at which fixed round-trip cost falls below 25 bps (§6.7, §0.7(c)), and a clip set by fiat is a clip that no longer inherits that definition. **The definition is what changes, and the number follows it.**
+**Operator decision, 27 August 2026, superseding the decision this section
+first carried.** Reference equity is confirmed at **£100,000**.
 
-**The costs, each as a fact.** The benefit is not restated here, in this section's own idiom.
+***What this section said before, recorded because it is the reason the
+replacement is written as it is, per §12.7.*** It moved the minimum clip from
+£2,500 to £50,000 and stated that the single-name position moved from 2.5% to
+50% of the book. **That number is withdrawn in full.** The arithmetic prepared
+in `docs/DECISION_sizing_collision.md` established that §4.4's two regime
+constants **are** §6.7's own sizing arithmetic evaluated at a 10% stop, so two
+of the three rules in the collision were one rule written twice and **£50,000
+was the outlier by between 3.3 and 13.3 times**. The operator has taken
+**resolution (i)**.
 
-**1. The fixed-cost saving is bounded, small, and in one venue negative.** Twenty times the notional does not buy twenty times less cost, because fixed cost was already a small share of a round trip:
+**The decision. The clip floor is DERIVED and is no longer chosen.**
 
-| Venue and schedule | Fixed-cost saving at £50,000 versus £2,500 |
-|---|---|
-| US names | approximately **16 bp** |
-| UK, tiered schedule | approximately **0.5 bp** |
-| UK, fixed schedule | approximately **14 bp** |
+> **The clip floor for a market is the smallest position at which §13 row 1's
+> fixed round-trip cost falls at or below §13 row 29's maximum tolerable fixed
+> cost.**
 
-**On the UK tiered schedule the total round-trip cost RISES, from 61.4 bp to 61.5 bp**, because the PTM levy crosses its **£10,000 threshold** and becomes payable where at a £2,500 clip it was not. A levy with a threshold is not a rate and does not behave like one: the twentyfold notional walks the trade across a boundary the smaller clip sat below. **The venue where this system's UK evidence lives is the venue where the change costs money.**
+**One free parameter survives and the derivation cannot eliminate it**: row
+29's tolerance, which is governance and is **OPEN**. Everything else follows
+from a measurement. Row 30 carries the derived floor per market, **BLOCKED** on
+row 29 and inheriting row 1's **PROVISIONAL** status.
 
-**2. Market impact scales with participation and has no ceiling.** Fixed cost is bounded below by zero and the saving above by the figures in the table. Impact is bounded by neither, rises with the share of daily traded value the order takes, and **rises hardest in the small and mid-caps where the documented effects live** (§0.5, §0.10). **It is unmeasured, it has no §13 row, and this decision does not create one.** So the one cost that can grow without limit is the one cost this system cannot currently refuse on, and the ledger has no column for it.
+**The cost, in the house style, and it is not small.**
 
-**3. Single-name concentration rises twentyfold**, from 2.5% to 50% of the book. Two positions fill the book. **This collides with constraints already in the manuscript and the collision is recorded, not resolved:** §4.4 caps notional below **7.5% / 3.75%** in the regime dimension, which a 50% position exceeds by factors of roughly 6.7 and 13; §6.7's base unit is **75 bps of current equity at risk** under a full cap stack. Which of the clip and the caps binds is **not settled by this decision**, and a reader must not take the clip as having quietly repealed them.
+**Until the floor derives, position size is UNDETERMINED. The funnel refuses to
+score on size, and the book takes no positions.** Row 29 is OPEN and row 1 is
+PROVISIONAL, so this is the state today, for every market. `sizing.py` returns
+`clip_floor_tolerance_unset` and not a number, and it is a **refusal to
+score**: *a size of zero would say the position was evaluated and came out
+small.*
 
-**4. The analysis brought to the operator argued against the change, and the operator took it.** That is recorded because **a decision taken over a stated objection and a decision taken without one are different records**, and only the first tells a later reader that the costs above were on the table at the time rather than discovered afterwards. The objection was the four paragraphs above.
+**That refusal is the POINT, and it is the whole gain from the decision.** A
+£50,000 floor would have produced **the same empty book**: §6.7 sizes between
+£1,875 and £15,000 across the stop range, every one of which falls below
+£50,000, so every candidate would have been killed for being too small.
+**§0.6 names exactly why that would have been worse:** *"a funnel calibrated to
+reject everything returns a null indistinguishable from **there is nothing
+here**"*. **The two empty books are not the same artefact.** One is empty
+because a constant was set too high and says so nowhere; the other is empty
+because a named parameter is unset, carries a reason code that names it, and
+carries a resurrection predicate saying what would fill it. **The emptiness is
+now legible, and legibility is the product.**
 
-**The §0.6 consequence, stated and resolved rather than left to silence.** A £50,000 clip requires a **participation constraint against daily traded value**: at 2.5% of a £100,000 book the participation cap needed only about £42,000 of median daily notional (§0.10), and at twenty times the notional the same reasoning needs twenty times the depth or a rule that refuses when it is absent. **A participation constraint is a gate. A gate is apparatus. §0.6 is armed, so it is blocked.** The decision therefore had to authorise one of two things, and the choice is written down because silence resolves to the second by default:
+**A second cost, stated rather than left to be discovered.** §5.1's explore arm
+is *"accepted at the minimum clip"*, which sizes that arm **at** the floor.
+While the floor is undetermined the explore arm has no size either, so **the
+below-floor region the association otherwise never observes is unobserved
+too.** That is a consequence of the decision and not an objection to it.
 
-- **(a)** the participation gate lands alongside the clip, as a **named exception to §0.6** with its own §12.1 row; or
-- **(b)** the clip runs with **no participation constraint**, recorded as a **known unbounded exposure with no refusing mechanism**.
+**What this decision does NOT do.**
 
-**This decision takes (b).** The operator authorised the clip and did not authorise an exception to §0.6, and an exception to the armed rule is exactly the thing that may not be inferred from what a decision did not say.
+- **It does not close §13 row 1**, which remains PROVISIONAL on three gaps the
+  clip never touched: the FX route absent from any published schedule, the
+  tiered-or-fixed election unmade, and the contracting entity unestablished.
+- **It does not resolve the participation question.** §0.11's earlier text
+  claimed the clip ran with *"nothing in the funnel that refuses on
+  participation"*; **that was false and was corrected by P93.** §6.7's cap
+  stack has always carried **participation at 2% of median daily notional per
+  session over ≤ 3 sessions**, and §0.10 quantifies it. What decision (b)
+  declined was a participation **gate**, which remains deferred in Annex A.1.
+- **It adds no apparatus.** Row 29 and row 30 **remove** a chosen sizing input
+  and replace it with a derived one. The set of admissible positions is
+  narrower, not wider, so this is a **restriction** and §0.6 does not block it.
 
-***Corrected 27 August 2026 (P93), and the correction is material. The sentence that stood here read: "the system may size a position at 50% of the book with nothing in the funnel that refuses on participation, no ceiling on impact, and no reason code that fires when an order is large relative to the depth available to fill it. That is an unbounded exposure and it is uninstrumented." It is annotated rather than rewritten silently, per §12.7. **It was false.*** §6.7's cap stack has carried **participation 2% of median daily notional per session over ≤ 3 sessions** throughout, §0.10 quantifies it, and Annex A.1's market-impact row is predicated on the book outgrowing it. A position capped by participation below the clip is killed by `advisory_haircut_below_clip`, which is a reason code firing on exactly that condition.
-
-**What (b) declined is a participation GATE, and a cap and a gate are different instruments.** A gate refuses a candidate at Gate 1 and names the reason; a cap shrinks the position and leaves the clip floor to kill it. **Decision (b) stands as taken. The claim that no participation constraint exists does not.** **What (b) costs, restated correctly:** at £50,000 the existing cap requires **median daily notional of at least £833,333** before a position can be filled inside three sessions, computed as £50,000 ÷ (2% × 3) and reproducing §0.10's own £42,000 at the old clip. Most of the §0.7(f) universe fails that, and the failures arrive as `advisory_haircut_below_clip` kills rather than as a named liquidity refusal, which is a legibility cost and not an absence of instrumentation. It is not mitigated by the fixed-cost saving in the table above, which is bounded and, on the UK tiered schedule, negative.
-
-***A prior question, opened 27 August 2026 (P93) and NOT resolved here.*** This section's first sentence says the **minimum clip** moves to £50,000 and its third says the **position** moves to 50% of the book. **Those are different claims**, and the manuscript reads the clip as a **floor** in six places, §4.4's `capital_exceeds_clip_floor`, §5.2's `advisory_haircut_below_clip`, §5.9's partial-fill rule, §5.1's explore arm, §0.10's clip definition and §6.7's own layout. Under the floor reading, §6.7 sizes a position between **£1,875 and £15,000** across the stop range, **every one of which is below a £50,000 floor**, so every candidate that reaches sizing is killed for being too small and **the book takes no positions at all** — which is the reverse of the exposure this section records, and is the state §0.6 warns of when it says *a funnel calibrated to reject everything returns a null indistinguishable from there is nothing here*. **The arithmetic, the three resolutions and what each unblocks are prepared in `docs/DECISION_sizing_collision.md`. Nothing is applied and §4.4 and §5.4.4 stay withdrawn.**
-
-**(a) remains available and is not taken here.** Taking it requires an explicit §0 decision naming §0.6's exception, its own §12.1 row, and the gate's threshold as a §13 row with a sample and a rule. **The participation GATE is registered as deferred capability in Annex A.1 behind the standing predicate**, which is where apparatus waits under the armed rule; a row in Annex A.1 is a record that something is *not* being done, and it does not soften (b). *The participation CAP in §6.7 is not deferred and never was: it is in force, and the Annex row is about the gate alone.*
-
-*This section is the explicit §0 operator decision that `CLAUDE.md`'s standing prohibition on assuming a value for a pending §13 row reserves. §13 row 1 remains unverified and remains PROVISIONAL: the clip did not move because the commission resolved, and nothing here closes that row.*
+---
 
 ---
 
@@ -710,13 +741,22 @@ Entries and signal exits fill at the **open of the session after signal completi
 
 **Feasibility** (position = 0 where the stop exceeds 30% at full size, 15% at the multiplier floor) and **regime** (notional-capped below 7.5% / 3.75%), published separately. The matrix is indexed (exit family × ATR decile × multiplier regime) over the §0.7(f) universe; zero cells carry `capital_exceeds_clip_floor`. At the assumed commission, fixed-horizon exits are sizable to ATR ≈ 12.0% / 5.45% / 3.16% at full size; all four boundary constants inherit §0.7(c)'s verification.
 
-***Invalidated and NOT recomputed, 27 August 2026 (§0.11, P91).*** **The three ATR bounds above are withdrawn as readings at the £50,000 clip and are not replaced with new ones.** They are not derivable, and the reason is not arithmetic difficulty:
+***RESTORED as a derivation, 27 August 2026 (§0.11, P100). The §0 decision that blocked this section has been taken, and restoring it removes a rule rather than reinstating one.***
 
-- **The clip floor is twenty times higher**, so strictly fewer cells clear `capital_exceeds_clip_floor` and the reachable set shrinks. *That direction is derivable and is all that is.*
-- **The sizing rule and the clip now disagree.** §6.7 sizes from 75 bps of equity at risk; §0.11 fixes a notional at 50% of the book. A position cannot simultaneously be both unless the stop happens to reconcile them, and **§0.11 explicitly did not resolve which binds**. A boundary constant computed under either reading would be a number derived from a rule the manuscript has not chosen.
-- **§13 row 1 is still unverified**, so the commission the old bounds were taken at is still assumed.
+**The two regime constants are withdrawn as constants and are not replaced by new constants.** They were never independent of §6.7:
 
-**Publishing a recomputed bound here would be a fitted parameter wearing a restriction's clothes**: it would pick the sizing rule that produced the more workable matrix. The matrix stays **BLOCKED**, and it is blocked on a §0 decision rather than on data.
+```
+§6.7 at 75.0 bps of £100,000 and a 10% stop  =  £750 / 0.10  =  £7,500  =  7.50%
+§6.7 at 37.5 bps of £100,000 and a 10% stop  =  £375 / 0.10  =  £3,750  =  3.75%
+```
+
+**7.5% and 3.75% ARE §6.7's arithmetic evaluated at a 10% stop**, once at full risk and once at the cap floor. Carrying them here as separate numbers stated one rule twice and invited the two copies to drift. **This section now states the derivation and §6.7 states the rule**, which is one rule and a derivation where there were two rules.
+
+**The regime cap is therefore:** `notional_cap = risk_budget / stop_distance`, with `risk_budget` from §6.7's base unit and cap stack, evaluated at the regime's stop. **Feasibility is unchanged and was never clip-dependent:** position = 0 where the stop exceeds 30% at full size, 15% at the multiplier floor.
+
+**What is still withdrawn, and now for a stated reason rather than an undecidable one.** The three ATR bounds **12.0% / 5.45% / 3.16%** were computed against a clip floor of £2,500 and an assumed commission. **The floor is now derived (§13 row 30) and does not derive today**, so `capital_exceeds_clip_floor` has no threshold to test against and the matrix's zero cells cannot be located. **The bounds return the moment §13 row 29 is set and row 1 closes**, by arithmetic and with no further decision, which is precisely what was not true before this decision was taken.
+
+***A naming defect recorded and deliberately not repaired here (P96).*** `capital_exceeds_clip_floor` marks a **zero** cell, that is one where the position **fails to reach** the floor, and the name reads as the opposite: *capital exceeds the floor* is the passing case. The name is left alone because renaming a reason code is a change to the registry and takes its own decision; it is recorded so the next reader meets the defect rather than the behaviour.
 
 ---
 
@@ -819,7 +859,7 @@ Headline categories cannot decide any of these (§2), so the body parse is manda
 
 **§5.4.3 Concert-party accumulation.** An aggregate concert-party holding crossing a stated band below the mandatory-offer threshold is a **control-accumulation signal**, mechanically unrelated to insider conviction. Detected deterministically and routed to `event-driven (other)`. A family built around it is capability and sits in Annex A.
 
-**§5.4.4 The admissibility × reachability intersection** (at the assumed commission). ***Invalidated and NOT recomputed, 27 August 2026 (§0.11, P91): every cell below inherits §4.4's boundary constants, which are withdrawn at the £50,000 clip and not replaced. The table is retained as the record of what was published under the £2,500 clip and no cell in it is now a reading. It stays BLOCKED with §4.4, on the same §0 decision.***
+**§5.4.4 The admissibility × reachability intersection** (at the assumed commission). ***Restored to a derivation and still not to numbers, 27 August 2026 (§0.11, P100).*** Every cell is the intersection of an admissibility class with §4.4's bounds, so **this table has no independent content and needs no decision of its own.** §4.4's regime cap is now derived from §6.7 rather than carried as a constant, and its ATR bounds return when §13 rows 29 and 1 resolve. **Until then the cells below are retained as the record of what was published under the £2,500 clip and no cell in it is a reading.** *The blocker is no longer a §0 decision; it is one governance number and one citation.*
 
 | Class | Full size | Multiplier floor |
 |---|---|---|
@@ -894,7 +934,9 @@ IR ≈ IC·√breadth. **Each figure below states the set it was measured on**, 
 
 ### 6.7 The allocation rule
 
-**Base unit** 75 bps of current equity at risk. **Clip £50,000** *(§0.11, 27 August 2026; previously **£2,500**)*. **The definition changed with the number.** The clip was *defined as* the notional where fixed round-trip cost falls below 25 bps, recomputed when §0.7(c) resolved and not reducible without redefining that rule; it is now **set by §0 decision** and derives from nothing. **The base unit and the clip are not reconciled.** 75 bps of a £100,000 book is £750 at risk; a £50,000 notional is 50% of the book, and the two agree only where the stop happens to reconcile them. §0.11 recorded that collision and did not resolve it, and it is not resolved here, because choosing the reading that makes the cap stack work would be choosing a sizing rule by its output.
+**Base unit** 75 bps of current equity at risk. **Clip floor: DERIVED, per market, §13 row 30** *(§0.11, 27 August 2026; the fixed £50,000 is withdrawn, and £2,500 before it)*. **It is not a constant and there is no number here to quote.** The floor for a market is the smallest position at which §13 row 1's fixed round-trip cost falls at or below §13 row 29's tolerance. **Row 29 is OPEN and row 1 is PROVISIONAL, so the floor does not derive today for any market, position size is UNDETERMINED, and the book takes no positions.** The refusal carries `clip_floor_tolerance_unset` and names the parameter, which is the difference between an empty book that is legible and one that is not (§0.11, §0.6).
+
+**The clip is a FLOOR and never a target.** Seven places in this manuscript read it so, audited on 27 August 2026 and listed in `docs/DECISION_sizing_collision.md` §1.1a. §5.1's explore arm is the one place that additionally *sizes at* the floor, which is a dual use rather than a contradiction, and it means **the explore arm has no size while the floor is undetermined**.
 
 **Four coarse multipliers, product floored at 0.5, shrink-only:**
 - **Decay**: 1.0 / 0.75 / 0.5.
@@ -1152,6 +1194,11 @@ There is nothing further to specify. The remaining questions (whether the base r
 | P93 | **Two false claims in §0.11 corrected, and a prior question opened rather than answered.** *This row changes no rule. It takes a row because it changes what a §0 decision asserts, and a decision whose record is wrong is worse than one whose record is missing: the second invites a reader to check.* **What was false.** §0.11 recorded that the £50,000 clip runs with *"nothing in the funnel that refuses on participation"* and *"no reason code that fires when an order is large relative to the depth available to fill it"*, and called the result *"an unbounded exposure"* that is *"uninstrumented"*. **§6.7's cap stack has carried participation at 2% of median daily notional per session over ≤ 3 sessions throughout**, §0.10 quantifies it at about £42,000 of depth for the old clip, Annex A.1's market-impact row is predicated on the book outgrowing it, and a position capped below the clip is killed by `advisory_haircut_below_clip`. **What decision (b) declined is a participation GATE, and a cap and a gate are different instruments**: a gate refuses at Gate 1 and names depth; a cap shrinks the position and leaves the clip floor to kill it. **(b) stands as the operator took it.** Restated correctly, the cap requires **£833,333** of median daily notional at £50,000, computed as 50,000 ÷ (2% × 3) and reproducing §0.10's own figure at the old clip; the cost is **legibility, not instrumentation**. **The prior question, opened and NOT resolved.** §0.11's first sentence moves the **minimum clip** and its third moves the **position**, and the manuscript reads the clip as a **floor** in six places. Under the floor reading §6.7 sizes between **£1,875 and £15,000** across the stop range, **every one below a £50,000 floor**, so every candidate is killed for being too small and **the book takes no positions at all**, which is the reverse of what §0.11 records and is the state §0.6 names when it says *a funnel calibrated to reject everything returns a null indistinguishable from there is nothing here*. **Computed, not asserted: §4.4's two constants ARE §6.7's arithmetic at a 10% stop**, 750 ÷ 0.10 = 7,500 and 375 ÷ 0.10 = 3,750, so the two are one rule written twice and **§0.11 is the outlier by 6.67× and 13.33×**. **§0.6: no gate, no family, no grammar row, no cost tier, no feed, no sizing input and no field the funnel reads at decision time. It corrects prose and opens a question.** Prepared in `docs/DECISION_sizing_collision.md`; §4.4 and §5.4.4 stay withdrawn | n/a, correction | §0.11, §0.10, §4.4, §6.7, Annex A.1 | no |
 | P94 | **The §9.4 trace corpus fenced, and a live containment defect closed.** `corpora/_trace_filings/` will hold SEC Form 4 filings for the trace harness. **A Form 4 names an issuer, a reporting owner and a transaction date, which is exactly the material the entity fence exists to keep out of a proposal**, so the fences were built and tested **before anything was fetched**: eleven tests were written to fail first against a deliberately mis-registered route, and all eleven did. **The rule that changed.** `Corpus.__post_init__` now **refuses** any `retrieval_route` with an underscore-prefixed component, at construction rather than in `missing()`, *because `missing()` returns advice and advice is not a fence*: a registration file naming the route will not load at all. Any component is checked, not merely the last, `_trace_filings/2026` reaching the same material one level down. **The defect this found, and it was live.** `cmd_sweep` skipped underscore-prefixed **files inside** a route and read everything else, so **a route pointed AT an underscore directory had its contents read in full**, and `corpora/us/_raw` was reachable that way by a one-line registration edit. The skip now covers the route itself and lives once, in `corpusio`. `fences.discovery_import_closure` is extracted so a second fence uses the same walk: **no module reachable from `discovery.py` may contain the string `_trace_filings`**, and the fetcher is outside the closure and does contain it, so the test tests something. **§0.6 APPLIED EXPLICITLY, and the answer recorded.** *Does it add a gate, a family, a grammar row, a cost tier, a sizing input, a feed, or a field the funnel reads at decision time?* **No, and the containment is what makes the answer no rather than a description of intent.** The corpus feeds `trace.py`, which is evidentially inert by construction and refuses to register or admit; everything produced carries `TRACE-NON-EVIDENTIARY`; and the funnel **cannot** read it, by a refusal at construction, a refusal in the loader and an import-closure assertion. ***The honest condition, stated rather than glossed: remove those three and the classification flips to apparatus.*** A fetcher whose output can become the funnel's feed by configuration is a production ingestion adapter, which §3.7.7 and P72 already class as apparatus. This one cannot be, and the tests are the reason. **A rule that refuses more than it did is a restriction, and a restriction may land under the armed rule** | restriction | §3.7.2, §9.4, §13 row 22 | no |
 | P95 | **§13 row 23 re-based off a pooled population; rows 11 and 15 given their derivations and their gaps.** **The correction is the one P79 made on row 21, live one row along.** Row 23's published distribution, 5 at position 3 and 8 at position 9 over 42 subjects, **pooled a drawn arm with an authored one**. Split on the labelled set's own `origin` field: the **36 drawn** give **8 first failures, all at position 9**, an intake kill rate of **22.2%**, deepest **9 of 12**, and **position 3 never fires**; the **6 authored probes** give all five position-3 refusals. **A probe is authored to trip a named route, so its abort position is a property of the probe and not of the flow.** Pooling put a 12% position-3 rate into a funnel whose drawn material produced **none**, and *doubling the probe set to twelve routes would double it whilst the funnel stood still*, which is word for word P79's argument about row 21's denominator. **On drawn material ELEVEN of twelve intake points are unexercised, not nine**, and they are named rather than counted. `intake_budget_exhausted` is reported beside the distribution and never inside it: **0 abandonments**. **Row 11 stays BLOCKED and names its missing input.** The derivation is shown, `n = (z[1-α/2] + z[1-β])² · 2·p̄·(1-p̄) / δ²`, giving **n = 2.7132 / δ²** from `p̄ = 8/36` at α = 0.05 and power 0.80. **δ, *the smallest actionable per-gate difference*, appears in row 11's rule and nowhere else in this specification**, with no definition, no row and no stated basis, so **a sample size derived against it would be a number chosen and presented as derived**. A sensitivity table is published so the cost of choosing δ is visible **without this paper choosing it**, with two stated limits that both push n up. **Row 15 stays BLOCKED**: the lag has not been measured once at any n, and **no source class dominates the sample because the US class has ZERO drawn subjects**, the 36 being 12 ASX, 12 TSX/SEDI and 12 MAR, so a threshold generalised from them to Form 4 would generalise across exactly the classes the sample does not cover. **Row 21a is unchanged and nothing was pooled into it.** **Binding-path step 4 is NOT discharged and is not marked closed to make a movement line look better**, and the fourth of its five outstanding items is the one that matters: **§9.4 requires the marginal defect rate to fall below *"a stated threshold"* and the specification does not state it and it has no §13 row**, so the rule cannot be discharged by any amount of tracing. That is a defect in the rule and not a shortfall in the work. **§0.6: no gate, no family, no grammar row, no cost tier, no feed, no sizing input, no field the funnel reads at decision time.** It re-bases a reading over the population it was always about | restriction | §9.4, §13 rows 11, 15, 21a and 23, §14 | no |
+| P96 | **The floor audit: SEVEN sites, not six, and they agree.** Performed as part of taking §0.11's decision, because a decision that rests on how the manuscript reads a word should not rest on a count made from memory. **The earlier count of six was wrong**; §0.1's *"no stop both preserves the thesis and clears the minimum clip"* was missed. The seven are §0.1, §4.4, §5.1, §5.2, §5.9, §0.10 and §6.7, quoted in `docs/DECISION_sizing_collision.md` §1.1a. **All seven read the clip as a FLOOR. None reads it as a target or a ceiling, so there is no disagreement defect and no row is taken for one.** §5.1's explore arm additionally *sizes at* the floor, which is a **dual use and not a contradiction**, the arm electing the smallest size the rules permit; its consequence is inherited by §0.11 and stated there, namely that **while the floor is undetermined the explore arm has no size** and the below-floor region the association otherwise never observes is unobserved too. **One defect WAS found and it is a legibility defect in a reason code.** `capital_exceeds_clip_floor` marks a **zero** cell, one where the position **fails to reach** the floor, and **the name asserts the opposite**: *capital exceeds the clip floor* is the passing case. Rule 4 makes a code's legibility first-class, so it is recorded. **It is NOT renamed here**, because renaming a reason code is a change to the registry and takes its own decision rather than riding in on another. **§0.6: no gate, no family, no grammar row, no cost tier, no feed, no sizing input, no field the funnel reads at decision time. It counts and quotes.** | n/a, audit | §0.1, §0.10, §4.4, §5.1, §5.2, §5.9, §6.7 | no |
+| P97 | **§0 operator decision, 27 August 2026: the fixed clip is WITHDRAWN and replaced by a derived floor.** Supersedes P90's £50,000, which is withdrawn in full, and P90's £2,500 predecessor with it. Reference equity **confirmed at £100,000**. **What settled it.** The arithmetic prepared under P93 established that **§4.4's two regime constants ARE §6.7's sizing arithmetic evaluated at a 10% stop**, 750 ÷ 0.10 = 7,500 and 375 ÷ 0.10 = 3,750, so two of the three rules in the collision were **one rule written twice** and £50,000 was the outlier by between 3.3 and 13.3 times. The operator took **resolution (i)**, in a stronger form than it was prepared: not merely letting §4.4 bind, but **withdrawing the chosen number outright** so that the floor derives from a measurement and one governance parameter. **The rule: the clip floor for a market is the smallest position at which §13 row 1's fixed round-trip cost falls at or below §13 row 29's tolerance.** **The cost, and it is the whole of the near-term effect.** Row 29 is OPEN and row 1 is PROVISIONAL, so **the floor does not derive for any market, position size is UNDETERMINED, and the book takes no positions.** `sizing.py` returns `clip_floor_tolerance_unset`, a **refusal to score**, because *a size of zero would say the position was evaluated and came out small.* **That refusal is the point.** A £50,000 floor would have produced **the same empty book** — §6.7 sizes between £1,875 and £15,000 across the stop range, all below it — and **§0.6 names why that would have been worse**: *a funnel calibrated to reject everything returns a null indistinguishable from **there is nothing here***. **The two empty books are not the same artefact:** one is empty because a constant was set too high and says so nowhere; the other names the unset parameter and carries the predicate that would fill it. **A second cost, stated:** §5.1's explore arm sizes *at* the floor, so while the floor is undetermined the explore arm has no size. **What it does not do:** it does not close §13 row 1, whose three gaps the clip never touched; it does not resolve the participation question, §6.7's cap being in force and only the *gate* deferred (P93). **§0.6: it REMOVES a chosen sizing input and replaces it with a derived one, so the admissible set is narrower, not wider. A restriction, and a restriction may land under the armed rule** | **§0 decision, restriction** | §0.11, §0.1, §0.7(c), §0.10, §4.4, §5.1, §5.4.4, §6.7, §13 rows 1, 8, 9, 14, 29 and 30 | yes, the clip constant is removed |
+| P98 | **§13 row 29: maximum tolerable fixed cost. OPEN, operator governance.** Basis points of position, round trip, **excluding spread and market impact**. **The one free parameter the clip-floor derivation cannot eliminate**, and it is named as such rather than buried. **Why it sits here and not in a per-market clip**, four properties of the quantity and not preferences: it is **dimensionless**, so one number governs a USD and a GBP trade without an FX rate entering a governance decision; it is **comparable across markets**, which is the substance rather than a convenience, row 30's entire output being which markets clear the same bar; it is **readable against the break-even table**, §5.2.2 and §0.5 already being in basis points so a tolerance can be set beside a documented effect and read off, which a clip in pounds cannot; and it is **set once instead of guessed per venue**, a per-market clip being one guess per market, each drifting separately and none recording what it was trying to achieve. **One tolerance is one decision and every floor beneath it is arithmetic.** **The exclusions are load-bearing:** spread and market impact are not fixed, scale with participation and have no row, and *a tolerance that silently included impact would be a tolerance nobody could check against a schedule*. **§0.6: it does not add a sizing input, it REPLACES one.** The chosen clip is removed in the same version; the count of free sizing parameters falls from one chosen number per market to one governance number in total. **Restriction** | restriction | §13 rows 1 and 30, §6.7, §0.11 | yes, as the clip's replacement |
+| P99 | **§13 row 30: derived clip floor, per market. BLOCKED on row 29, inheriting row 1's PROVISIONAL.** **A function and never a number:** `floor(market) = absolute ÷ ((tolerance_bps − proportional_bps) ÷ 10,000)`. Implemented in `src/fntn/scanner/sizing.py`, which **refuses in three named ways rather than returning a number it cannot justify**: `clip_floor_tolerance_unset` and `clip_floor_cost_unset` are refusals to score, and **`clip_floor_unreachable_at_any_size` is not**, being the measured fact that the size-independent share alone meets the tolerance so **no size satisfies it**. *Keeping the third apart from the first two is the substance: an unreachable market and an unset parameter look identical from outside and mean opposite things.* **US, a floor exists**: two fixed minimums, USD 1.00 commission and USD 2.00 FX each applied twice, give USD 6.00 round trip with no proportional term, so a 10 bp tolerance implies **USD 6,000** and a 5 bp tolerance **USD 12,000**. **UK, no floor exists at any size**: stamp duty is a percentage and dominates, the cost is **flat at ~61.4 bp from £2,500 to £50,000** and moves by a tenth of a basis point across a twentyfold range, **upward**, because the PTM levy crosses its £10,000 threshold. **NO SIZE MAKES A UK MAIN MARKET POSITION CHEAPER IN BASIS POINTS, AND A CLIP FLOOR IS A US CONCEPT THAT DOES NOT TRANSFER.** **Two claims of different strength and the difference is the point:** any tolerance below **~61.4 bp** excludes UK Main Market *(PROVISIONAL: it inherits row 1's three open gaps)*; any tolerance below **50 bp** excludes it **WITH CERTAINTY**, stamp duty alone being 50 bp, statutory, a percentage, and independent of every one of row 1's gaps. **So any tolerance in the 2 to 20 bp range the US table makes sensible excludes UK Main Market with certainty.** **A disagreement with §13 row 1 recorded rather than smoothed:** the USD 6.00 model reproduces row 1's small-clip reading, 18.75 bp against ~19 bp at USD 3,200, and gives **0.94 bp at USD 64,000 where row 1 records ~3 bp**; the two recorded readings solve uniquely for **absolute ≈ USD 5.39 and proportional ≈ 2.16 bp**, and *the residual is the signature of a term that does not decay*. If it is real the **US has a hard floor near 2.16 bp and a 2 bp tolerance is unreachable there too.** This paper does not choose between the models; it records that they disagree by 2 bp on the most leveraged number in it, and that **row 1's citation is what settles it.** **Consequence for Annex A.1, recorded and NOT acted on:** at 11.4 bp the AIM growth-market tier now decides **whether the UK is reachable at all** under a tight tolerance rather than making a reachable market cheaper. **The predicate is unchanged and the row is not taken. A capability becoming more valuable is not a reason to take it early; it is the reason the armed rule exists.** **§0.6: no gate, no family, no grammar row, no cost tier, no feed. It replaces a chosen sizing input with a derived one and adds three refusals. Restriction** | restriction | §13 rows 1, 29, 8, 9 and 14, §6.7, §4.4, Annex A.1 | yes, as the clip's replacement |
+| P100 | **§4.4 and §5.4.4 RESTORED as derivations, and the restoration removes a rule rather than reinstating one.** They were withdrawn under P91 because the blocker was a §0 decision; **P97 took it**, so they return. **§4.4's two regime constants are withdrawn as constants and not replaced by new constants**, because they were never independent: **7.5% and 3.75% ARE §6.7's arithmetic at a 10% stop**, once at 75.0 bps of risk and once at the 37.5 bps cap floor. *Carrying them here as separate numbers stated one rule twice and invited the two copies to drift.* §4.4 now states `notional_cap = risk_budget ÷ stop_distance` and §6.7 states the rule, **which is one rule and a derivation where there were two rules**. Feasibility is unchanged and was never clip-dependent. **What remains withdrawn, and now for a stated reason rather than an undecidable one:** the ATR bounds **12.0% / 5.45% / 3.16%** were computed against a £2,500 clip floor and an assumed commission, and **`capital_exceeds_clip_floor` has no threshold to test against until §13 row 30 derives**, so the matrix's zero cells cannot be located. **They return by arithmetic once row 29 is set and row 1 closes, with no further decision**, which is exactly what was not true before P97. **§5.4.4 has no independent content**: every cell is the intersection of an admissibility class with §4.4's bounds, so it is restored with §4.4 and needs no decision of its own. **The blocker on both is no longer a §0 decision; it is one governance number and one citation.** **§0.6: no gate, no family, no grammar row, no cost tier, no feed, no sizing input. It deletes two constants and states the derivation that always produced them** | restriction | §4.4, §5.4.4, §6.7, §13 rows 1, 29 and 30 | no |
 
 **What v1.14 does not do.** It adds no gate, no family, no grammar row, no cost tier, no feed, no sizing input and no field the funnel reads at decision time. It closes no §13 row, ratifies no label, and moves nothing into the item pipeline. It does not make row 21 a calibration; it makes row 21's reading reproducible, and says which half of it is a rate and which half is coverage. Both are smaller claims than a calibration. §0.6 remains armed.
 
@@ -1323,7 +1370,124 @@ From v1.12, **the manuscript is the register**. The authoritative specification 
 | 23 | **Intake abort-position distribution** | Audit stream, full panel | Distribution of first-failure position per surface. A surface whose failures cluster at position one is a surface whose later points have never been exercised, which is §9.4's failure class on a new surface | Design segment |
 | 24 | **Cross-market generalisability** *(new, P74)* | Design segment, classes present in both the discovery market and §0.7(f)'s universe | Sign agreement and magnitude ratio of the same mechanism measured on each market, reported per class. **Coverage is partial by construction**: it is computable only where the class occurs in both, so a class absent from the home market leaves the assumption untested and the directive says so. Kill criterion written before the data is examined; sign disagreement at Gate 6's minimum count refuses `cross_market` for that class and routes it to `disjoint_partition` or `forward_only` | Design segment |
 | 25 | **Security master and lexicon coverage** *(new, P75)* | Discovery-market listing lists | Share of listed entities in each discovery market present in the master, since the fence's binding layer is a lookup and an absent issuer is an undetectable episode. Below a stated floor the market is not readable for discovery | Before the first sweep |
+| 29 | **Maximum tolerable fixed cost** *(new, P98)* | n/a, governance | Basis points of position, round trip, **excluding spread and market impact**. The one free parameter the clip-floor derivation cannot eliminate | **With row 30, before any position is sized** |
+| 30 | **Derived clip floor, per market** *(new, P99)* | Row 1's fixed cost per market | **A function, not a number**: the smallest position at which row 1's fixed round-trip cost falls at or below row 29's tolerance. Refuses where either input is unset, and refuses separately where **no size** satisfies the tolerance | **BLOCKED on row 29; inherits row 1's PROVISIONAL** |
 | n/a | **FX exposure budget** *(§0 decision, consumed by §6.9)* | n/a | Governance judgement in a stated range; recipe format deliberately withheld | Before any non-sterling position |
+
+### Rows 29 and 30: the clip floor, derived
+
+**Row 29, the maximum tolerable fixed cost. Why it sits here and not in a
+per-market clip.** The alternative was a clip per venue, and it was rejected
+for four reasons, each of which is a property of the quantity rather than a
+preference:
+
+- **Dimensionless.** Basis points of position carry no currency, so the same
+  number governs a USD and a GBP trade without an FX rate entering the
+  governance decision.
+- **Comparable across markets.** A per-market clip in pounds and dollars
+  cannot be compared without converting; a tolerance in basis points can, and
+  **the comparison is the substance**: §13 row 30's whole output is which
+  markets clear the same bar.
+- **Readable against the break-even table.** §5.2.2 and §0.5 are already in
+  basis points. A tolerance in the same unit can be set beside a documented
+  effect and read off; a clip in pounds cannot.
+- **Set once instead of guessed per venue.** A per-market clip is one guess per
+  market, each of which drifts separately and none of which records what it was
+  trying to achieve. **One tolerance is one decision, and every floor beneath it
+  is arithmetic.**
+
+**Scope, stated because the exclusions are load-bearing.** It covers **fixed**
+round-trip cost only: commission, per-order minimums, levies, transfer taxes
+and FX conversion. **It excludes spread and market impact**, which are not
+fixed, scale with participation and have no row (§0.11). *A tolerance that
+silently included impact would be a tolerance nobody could check against a
+schedule.*
+
+**Row 30, the derivation.** As a function and never a number:
+
+```
+absolute      = every per-order and per-conversion charge over the round trip,
+                in the market's currency, which DECAYS as a share of position
+proportional  = every charge that scales with the position, in basis points,
+                which does NOT decay at any size
+
+floor(market) = absolute / ((tolerance_bps - proportional_bps) / 10,000)
+```
+
+**Implemented in `src/fntn/scanner/sizing.py`, which refuses in three named
+ways rather than returning a number it cannot justify:**
+`clip_floor_tolerance_unset` (row 29 absent), `clip_floor_cost_unset` (row 1
+absent for that market), and `clip_floor_unreachable_at_any_size`. **The third
+is not a missing input**: where the proportional share alone meets the
+tolerance, no size satisfies it and there is no floor to return.
+
+#### What the derivation produces, and one figure this paper disagrees with
+
+**US: the cost decays, so a floor exists.** Two fixed minimums, **USD 1.00
+commission and USD 2.00 FX, each applied twice**, give a round trip of **USD
+6.00** with no proportional term.
+
+| Row 29 tolerance | Floor at USD 6.00, no proportional | Floor under the implied model below |
+|---|---|---|
+| 2 bp | USD 30,000 | **no size satisfies it** |
+| 3 bp | USD 20,000 | USD 64,000 |
+| 4 bp | USD 15,000 | USD 29,257 |
+| 5 bp | USD 12,000 | USD 18,963 |
+| 6 bp | USD 10,000 | USD 14,027 |
+| 8 bp | USD 7,500 | USD 9,225 |
+| 10 bp | USD 6,000 | USD 6,872 |
+| 12 bp | USD 5,000 | USD 5,476 |
+| 15 bp | USD 4,000 | USD 4,197 |
+| 20 bp | USD 3,000 | USD 3,021 |
+
+***The disagreement, recorded rather than smoothed.*** The USD 6.00 model
+reproduces row 1's small-clip reading almost exactly, giving **18.75 bp at USD
+3,200** against the **~19 bp** implied by row 1's own figures. **At USD 64,000
+it gives 0.94 bp, and row 1 records ~3 bp.** The two recorded readings solve
+uniquely for a different pair:
+
+```
+19 bp at USD 3,200  and  3 bp at USD 64,000
+   →  absolute ≈ USD 5.39   and   proportional ≈ 2.16 bp
+```
+
+**The residual is the signature of a term that does not decay**, and if it is
+real the US has a **hard floor of about 2.16 bp** below which no position size
+qualifies, which the right-hand column above shows: **a 2 bp tolerance is
+unreachable in the US as well as in the UK.** This paper does not choose
+between the two models. **It records that they disagree, that the disagreement
+is 2 bp on the most leveraged number in the paper, and that §13 row 1's
+citation is what settles it.**
+
+**UK: the cost is FLAT, so no size helps and there is no floor to find.**
+
+| Position | UK Main Market, round-trip fixed cost |
+|---|---|
+| £2,500 | 61.4 bp |
+| £10,000 | ~61.4 bp |
+| £50,000 | 61.5 bp |
+| £500,000 | ~61.4 bp |
+
+**Stamp duty is a percentage and dominates**, so the UK figure does not fall as
+the position grows; it moves by a tenth of a basis point across a twentyfold
+range, and **upward**, because the PTM levy crosses its £10,000 threshold.
+**NO SIZE MAKES A UK MAIN MARKET POSITION CHEAPER IN BASIS POINTS. A clip floor
+is a US concept and it does not transfer.**
+
+**The consequence, in two claims of different strength, and the difference is
+the point.**
+
+- ***PROVISIONAL:*** any row 29 tolerance below **~61.4 bp** excludes UK Main
+  Market at every size. *This inherits row 1's three open gaps and moves if any
+  of them resolves differently.*
+- ***CERTAIN:*** any row 29 tolerance below **50 bp** excludes UK Main Market
+  **with certainty**. **Stamp duty alone is 50 bp, it is statutory, it is a
+  percentage, and it depends on none of row 1's open gaps.** No citation, FX
+  route or contracting entity can move it.
+
+**So a tolerance anywhere in the range the US table above makes sensible, 2 to
+20 bp, excludes UK Main Market with certainty and not merely on present
+figures.**
 
 **Recomputed at the £50,000 clip, 27 August 2026 (§0.11, P91).** Each clip-dependent row was **invalidated and re-derived, or invalidated and left blocked.** No figure anywhere was edited in place, and where a value could not be derived that is said rather than filled.
 
@@ -1376,7 +1540,7 @@ From v1.12, **the manuscript is the register**. The authoritative specification 
 
 | Capability | Predicate |
 |---|---|
-| **UK growth-market cost tier: the AIM stamp-duty exemption** *(added 27 Aug 2026, P92)* | The §0.6 instruments report. **A cost tier, therefore apparatus, therefore blocked.** **Basis:** s.99(4B) Finance Act 1986, effective 28 April 2014; AIM appears on HMRC's recognised growth market list at STSM041330. **The condition has two limbs and both bind:** the security must be admitted to trading on a **recognised growth market** *and* **not be listed on that or any other market**, so a **dual-listed AIM company does not qualify** and a tier keyed on *AIM membership alone* would be wrong for exactly those names. **Worth, at the £2,500 clip:** 61.4 bp falls to **11.4 bp**, a factor of **5.4**. *The equivalent at the £50,000 clip is not published here: the base is now 61.5 bp and §13 row 1 is PROVISIONAL, so subtracting a component from a provisional base would mint a figure with a precision the base does not carry.* **Provenance `verified_secondary`.** The statute section and the manual reference are named and **have not been read against their sources in this tree**; `verified_primary` requires reading s.99(4B) and STSM041330 themselves. **The reachability caveat:** at a £50,000 clip this tier may be **largely unreachable**, most AIM names lacking the depth to fill it. A participation constraint would exclude them; **§0.11 took (b), so there is no such constraint**, and the consequence is therefore not an exclusion but an exposure. **Expiry:** the two-limb condition is a *status*, so a name's qualification can lapse on a later listing and a tier assignment fixed once would go stale |
+| **UK growth-market cost tier: the AIM stamp-duty exemption** *(added 27 Aug 2026, P92)* | The §0.6 instruments report. **A cost tier, therefore apparatus, therefore blocked.** **Basis:** s.99(4B) Finance Act 1986, effective 28 April 2014; AIM appears on HMRC's recognised growth market list at STSM041330. **The condition has two limbs and both bind:** the security must be admitted to trading on a **recognised growth market** *and* **not be listed on that or any other market**, so a **dual-listed AIM company does not qualify** and a tier keyed on *AIM membership alone* would be wrong for exactly those names. **Worth, at the £2,500 clip:** 61.4 bp falls to **11.4 bp**, a factor of **5.4**. *The equivalent at the £50,000 clip is not published here: the base is now 61.5 bp and §13 row 1 is PROVISIONAL, so subtracting a component from a provisional base would mint a figure with a precision the base does not carry.* **Provenance `verified_secondary`.** The statute section and the manual reference are named and **have not been read against their sources in this tree**; `verified_primary` requires reading s.99(4B) and STSM041330 themselves. ***What this row governs CHANGED on 27 August 2026 (P99), and the change is not a refinement.*** The fixed £50,000 clip is withdrawn and the floor is derived against §13 row 29's tolerance. **At 11.4 bp, this tier now decides whether the UK is reachable AT ALL under a tight tolerance, rather than making a reachable market cheaper.** UK Main Market is **excluded with certainty at any tolerance below 50 bp**, stamp duty alone being statutory, a percentage, and independent of row 1's open gaps. **So for any tolerance between roughly 11.4 bp and 50 bp, AIM under this exemption is the ONLY reachable UK venue and without it the UK is not reachable at any size.** *The predicate is UNCHANGED and the row is not taken*: it remains a cost tier, therefore apparatus, therefore blocked on the §0.6 instruments report. **A capability becoming more valuable is not a reason to take it early; it is the reason the armed rule exists.** The earlier note that the tier might be unreachable at a £50,000 clip on depth is withdrawn with the clip; participation is a separate cap (§6.7) and is unaffected by this row. **Expiry:** the two-limb condition is a *status*, so a name's qualification can lapse on a later listing and a tier assignment fixed once would go stale |
 | **UK new-listing SDRT relief** *(added 27 Aug 2026, P92)* | The §0.6 instruments report, **and** the provenance upgraded to a primary source. **A cost tier, therefore apparatus, therefore blocked**, and blocked twice over. **Basis:** Autumn Budget 2025. Relief from the **0.5% SDRT charge** for companies **newly listed on a UK regulated market on or after 27 November 2025**, running **three years from listing**. It **does not touch existing Main Market shares** and **does not apply to the 1.5% clearance-system charge**, so a tier that read it as "UK Main Market becomes cheap" would be wrong on both counts. **Provenance: CORROBORATION ONLY, and this is the row's main limitation.** The source is **law-firm commentary, not HMRC**, and no legislation is named; in §0.7(c)'s idiom, corroboration is not the citation. **Promoting it to a citation requires the HMRC guidance or the legislation itself**, and that promotion is part of the predicate rather than a tidying task afterwards. **Expiry, and here it is structural:** the relief is **time-limited by construction**, three years from listing, so **a name that qualifies today may not in two years** and a cost tier assigned once and cached would silently under-cost the trade after expiry. Any implementation carries the listing date, not a flag |
 | **Participation GATE against daily traded value** *(added 27 Aug 2026, §0.11; corrected P93)* | The §0.6 instruments report. **A gate, therefore apparatus, therefore blocked.** §0.11 resolved to **(b)**: no participation *gate*. ***Corrected 27 August 2026: this row previously said the clip runs with "no participation constraint" and that "nothing in the funnel refuses on depth". Both were false.*** §6.7's cap stack carries **participation 2% of median daily notional per session over ≤ 3 sessions** and it is in force. **What is deferred is the gate and only the gate**, which would refuse a candidate at Gate 1 and name depth as the reason, where the cap instead shrinks the position and leaves `advisory_haircut_below_clip` to kill it. The difference is legibility, not instrumentation. Taking the gate early requires an explicit §0 exception to §0.6, its own §12.1 row, and a threshold as a §13 row with a sample and a rule |
 | Short-term reversal family | Intraday data sufficient to estimate the T+1 fill shortfall against the reversal window |
