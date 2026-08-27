@@ -100,7 +100,7 @@ tests/
 
 ```bash
 pip install -e ".[dev]"      # once: puts src/ on the path
-python -m pytest tests/ -q   # 162 tests
+python -m pytest tests/ -q   # 163 tests
 ```
 
 Without the editable install the package sits at `src/fntn` and is invisible to

@@ -419,19 +419,57 @@ def test_the_stopword_set_is_registered_so_it_reaches_the_hash():
     assert Registration().rulebook_stopwords == sorted(RULEBOOK_STOPWORDS)
 
 
+def _corpus_documents():
+    """The corpus as the sweep reads it: every file that is not a manifest.
+
+    Globbed by exclusion rather than by extension. An earlier version of this
+    test globbed `*.htm`, and when the corpus became extracted text it matched
+    nothing and passed on an empty set, which is the way a corpus test fails
+    silently: the assertions below are all negative, so zero documents satisfies
+    every one of them.
+    """
+
+    docs = [p for p in sorted(Path("corpora/us").glob("*"))
+            if p.is_file() and not p.name.startswith("_")]
+    assert len(docs) == 13, f"expected the thirteen US documents, found {len(docs)}"
+    return docs
+
+
+def _corpus_hits():
+    reg = Registration.load(REPO_ROOT / REGISTRATION_FILE)
+    m = SecurityMaster(lexicon=frozenset(reg.lexicon))
+    m.load_sec_tickers("./master/us.json", market="US")
+    fence = m.as_fence(stopwords=frozenset(reg.rulebook_stopwords))
+    hits = []
+    for doc in _corpus_documents():
+        hits.extend(entity_mentions(
+            doc.read_text(encoding="utf-8", errors="replace"), fence
+        ))
+    return hits
+
+
 def test_the_corpus_no_longer_trips_the_designator_branch():
     """The reading this repair was raised against, locked against the corpus."""
 
-    m = SecurityMaster()
-    m.load_sec_tickers("./master/us.json", market="US")
-    fence = m.as_fence()
-    hits = set()
-    for doc in sorted(Path("corpora/us").glob("*.htm")):
-        hits.update(entity_mentions(
-            doc.read_text(encoding="utf-8", errors="replace"), fence
-        ))
+    hits = set(_corpus_hits())
     assert "Trust Holdings" not in hits
     assert "Joint" not in hits
+
+
+def test_the_corpus_produces_no_fence_hits_at_all():
+    """§13 row 22's residual, locked.
+
+    `API`, `BlackBerry` and `Opera` were page furniture rather than fence
+    defects: an HTML comment and a user-agent sniffer in `<head>`, refused once
+    per document on thirteen documents that name no company. Storing extracted
+    text rather than HTML removed the constructs they lived in.
+
+    This is a COUNT over the corpus, not a rate: it is what the fence refuses
+    on this material, divided by nothing. §13 row 21's two arms are measured
+    against the labelled set and are untouched by it.
+    """
+
+    assert _corpus_hits() == []
 
 
 def test_no_security_master_refuses_to_score():

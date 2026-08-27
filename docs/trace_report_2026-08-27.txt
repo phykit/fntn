@@ -3,13 +3,21 @@ Run 27 August 2026, against spec v1.14 (§3.7). NON-EVIDENTIARY.
 
 Command: python -m fntn.scanner trace
 
-Regenerated after P79. An earlier issue of this report divided both fence-audit
-arms by the 42-subject total, and a first correction divided the probe arm by
-its own six. Both framings are gone rather than annotated: the probe arm is a
-chosen set, so it carries no percentage at all, and a second supersession banner
-over a hand-written section would have been harder to read than the run it
-describes. The withdrawn figures are recorded in spec §12.1 rows P77 and P79 and
-in the banners §3.7.3, §12.2 and §13 carry.
+Regenerated twice on 27 August. First after P79: an earlier issue divided both
+fence-audit arms by the 42-subject total, and a first correction divided the
+probe arm by its own six. Both framings are gone rather than annotated, the
+probe arm being a chosen set that carries no percentage at all, and the
+withdrawn figures are recorded in spec §12.1 rows P77 and P79 and in the banners
+§3.7.3, §12.2 and §13 carry.
+
+Then again after the corpus moved from stripped HTML to extracted text (§13 row
+22). What changed is the CORPUS reading, from three tokens refused 39 times to
+none. §13 row 21's two arms are measured against the labelled set rather than
+against the corpus and both are unmoved, at 0 of 36 on the drawn arm and 5 of 6
+routes closed on the probe arm. The registration re-stamped twice in between, to
+b8dd61e7eea6898e and then to 701adbd9d48015ed, as the fence's stopword set and
+then its lexicon entered the parameter object; docs/REGISTRATION_HISTORY.md
+carries the chain.
 
 WHAT RAN, AND WHAT COULD NOT
   Requested: the trace over corpora/us, via TranscriptClient if possible and a
@@ -30,7 +38,7 @@ WHAT RAN, AND WHAT COULD NOT
   corpora/us document text, which is the one reading this corpus does support
   without an agent.
 
-  Registration a06400ef28ebb54c. Labels docs/labelled_proposals.json.
+  Registration 701adbd9d48015ed. Labels docs/labelled_proposals.json.
 
   On the two arms, because the report below keeps them apart. The 36 are DRAWN:
   they are what the agents swept, so the share of them the fence refuses is a
@@ -41,12 +49,12 @@ WHAT RAN, AND WHAT COULD NOT
   'episode-level' is not used of them anywhere, because it implies a sample of
   episode-level material and there is none.
 
-registration a06400ef28ebb54c stamped 2026-08-26T22:54:01.850224+00:00
+registration 701adbd9d48015ed stamped 2026-08-27T07:59:55.127137+00:00
 Security master (§13 row 25)
   sources                      : 1
-  indexed names                : 14323
+  indexed names                : 14322
   indexed tickers              : 10354
-    US                       rows=10388  coverage=100.0%   skipped_generic=110
+    US                       rows=10388  coverage=100.0%   skipped_generic=111
   every market clears the 95% coverage floor
 labelled set : docs/labelled_proposals.json, 42 subjects, labellers ['model_clerk']
 
@@ -243,13 +251,16 @@ WHAT THE FENCE REFUSES ON THE CORPUS ITSELF
   Path.read_text on the whole file, and every hit is counted. The security
   master is reloaded for each state, because the loader filters the ticker set
   against the lexicon at load time and a lexicon row therefore changes what the
-  fence can see as well as what it ignores. Measured AFTER the fetch-time chrome
-  strip described below, which is the corpus now in the tree.
+  fence can see as well as what it ignores. The first three rows are measured on
+  the stripped-HTML corpus of 27 August, which is what those states were
+  measured against; the last is measured on the extracted-text corpus now in
+  the tree.
 
                                           distinct hits   total hits
     v1.13, names and tickers as one set             39          226
     P76 ticker rule, lexicon unchanged              10           81
     P76 plus the five lexicon rows                   5           41
+    P80, then the corpus stored as text              0            0
 
   Before, essentially every hit was false and every one came from the ticker
   half of the lookup: Law, Are, For, Help, Note, Any, Such, When, and the single
@@ -281,55 +292,97 @@ WHAT THE FENCE REFUSES ON THE CORPUS ITSELF
                     registered rulebook stopword set.
 
   After P80, under registration b8dd61e7eea6898e: 3 distinct hits, 39 total.
-  Both genuine fence false positives are gone and the residue is exactly the
+  Both genuine fence false positives were gone and the residue was exactly the
   three chrome tokens below, which are row 22's decision and not the fence's.
 
-THE CHROME STRIP, AND WHAT IT DID NOT FIX
+  UNDER 701adbd9d48015ed, ON THE CORPUS AS EXTRACTED TEXT: 0 distinct hits, 0
+  total. The residue is nil. Stated as a count, because that is what it is: it
+  is what the fence refuses on these thirteen documents, divided by nothing.
+  Zero refusals on material that names no company is the fence agreeing with
+  the corpus and is not an error rate, and it is not a reading of either arm of
+  §13 row 21, which are measured against the labelled set and are unmoved.
+  Nothing here says the fence would refuse nothing on material that DID name a
+  company: the drawn arm and the probe arm are what speak to that, and the
+  probe arm still reports one route open.
+
+THE CORPUS NOW STORES TEXT, AND THAT IS WHAT CLOSED THE THREE
   API, BlackBerry and Opera were diagnosed on 27 August as a corpus-fetch defect
   belonging to §13 row 22 rather than a fence defect: issuer names sitting in
   Cornell LII's page furniture, on thirteen documents that name no company at
-  all. scripts_fetch_us_corpus.sh now strips that furniture before the file is
-  written, removing <nav>, <header> and <footer> and any element whose class or
-  id contains nav, menu, sidebar, related, footer or breadcrumb, and the
-  manifest records raw_bytes beside bytes so what was discarded is on the
-  record. The strip removed 154,132 of 638,883 bytes, 24% of the corpus, across
-  all thirteen documents; the integrity check passes with the floor applied to
-  the stripped size, smallest document 17,387 bytes against a 4,000 floor.
+  all. The first repair stripped the furniture, removing <nav>, <header> and
+  <footer> and any element whose class or id contains nav, menu, sidebar,
+  related, footer or breadcrumb. It removed 154,132 of 638,883 bytes, 24% of the
+  corpus, and it removed none of the three. The fence still refused API 13
+  times, BlackBerry 13 times and Opera 13 times, once per document.
 
-  It did not remove any of the three. Re-measured on the stripped corpus, the
-  fence still refuses API 13 times, BlackBerry 13 times and Opera 13 times, once
-  per document, and the residue is the same five tokens at the same 41 hits.
-
-  The reason is that none of the three is in the furniture the rule names.
+  The reason is that none of the three was in the furniture the rule names.
     API         an HTML comment in <head>: <!-- API url -->, labelling the
                 script that sets LII's search endpoint.
     BlackBerry  string literals inside an inline <script> in <head>, in a
     Opera       user-agent sniffer: /BlackBerry/i, /Opera Mini/i.
   <head> is not <header>, a comment carries no class or id, and a <script> block
-  carries none either. The strip is doing what it was specified to do; the
+  carries none either. The strip was doing what it was specified to do; the
   specification did not reach these three.
 
-  What would reach them is removing <script>, <style> and HTML comments as well.
-  That is a wider rule than the one asked for and it changes what the agent is
-  shown, so it is left as an operator decision on row 22 rather than taken here.
-  Recorded so the next reader does not re-diagnose it: this is one line in
-  CHROME_TAGS plus a handle_comment that drops rather than emits.
+  Naming <script>, <style> and comments as three further things to remove would
+  have closed those three and left the next member of the class to be discovered
+  by the fence again, which is the same repair a fourth time. The corpus
+  therefore stores EXTRACTED TEXT: <script> and <style> subtrees dropped entire,
+  comments dropped, the furniture rules still applied, and the text that
+  survives written to disk. A construct that carries no text cannot put a name
+  in the corpus, so the class is closed rather than three of its members.
 
-  The rule takes on a false negative and names it: a bare ticker in lower or
-  title case is now invisible. That cost was taken over the alternative, a
-  common-word filter on the ticker set, which would have made at least 95 real
-  US issuers invisible in all capitals as well and would still have left CFR,
-  LII, III and VII needing a lexicon row.
+  Removed: 542,878 of 638,883 bytes, 85% of the corpus, against 24% before.
+  Fence hits on the corpus: 0 distinct, 0 total, against 3 and 39 before.
+  Files are now .txt rather than .htm, which is the warning to the next reader
+  that markup is gone and with it a table's structure and a link's target.
+
+  THE DOCUMENTS WERE NOT RE-FETCHED, and the manifest's raw_bytes still record
+  what the server sent on 26 August. The extraction was run over the documents
+  already in the tree, which is sound because element removal commutes with
+  text extraction, and it was checked rather than asserted: all thirteen were
+  fetched again into a scratch directory, put through the new pipeline whole,
+  and compared. Every raw size matched the manifest to the byte and every
+  extracted document was byte-identical to the one in the tree. The pages have
+  not changed since 26 August.
+
+  THE INTEGRITY FLOOR MOVED, from 4,000 bytes to 500. The standard has not
+  relaxed; the quantity has changed, a document as text being between a
+  twentieth and a quarter of its own markup. 4,000 applied to text would refuse
+  three of these thirteen, including Rule 16a-13, which is one sentence long,
+  complete, and 763 bytes. The floor is derived from both populations rather
+  than chosen: the smallest genuine document extracts to 763 bytes, and the two
+  non-documents to hand extract to 54 (LII's 404 page) and 377 (the sec.gov
+  stub this script already refuses). 500 is the round number in the gap. That
+  gap is a factor of two and is stated rather than smoothed. The byte floor is
+  no longer the main guard against a document that is not there: the extractor
+  now refuses an unclosed dropped element directly, which is the failure the old
+  four-fifths ratio test existed to catch and which no ratio can express once
+  the output is text.
+
+  Corpus integrity after the change: 13 documents, smallest 763 bytes against a
+  500-byte floor, no undersized and no duplicated documents, and the manifest
+  agreeing with the disk on every row.
+
+  The ticker rule's own false negative is unchanged and is restated here because
+  nothing above touches it: a bare ticker in lower or title case is invisible to
+  the fence. That cost was taken over the alternative, a common-word filter on
+  the ticker set, which would have made at least 95 real US issuers invisible in
+  all capitals as well and would still have left CFR, LII, III and VII needing a
+  lexicon row.
 
 WHAT THIS DOES AND DOES NOT DISCHARGE
   Does      §13 row 21 moves from an unreproducible 0%/0% to a reading with two
             arms of two kinds, against a labelled set that is now in the tree
             and locked by tests: 0 of 36 refused on the drawn arm, and 5 of 6
             routes closed on the probe arm, the open one a title-case bare
-            ticker.
-            §13 row 22 gains a fetch-time chrome strip with both byte counts
-            in the manifest, which removed 24% of the corpus and none of the
-            three chrome hits it was aimed at.
+            ticker. Neither arm moves when the corpus changes, because neither
+            is measured against the corpus.
+            §13 row 22 gains a fetch-time text extraction with both byte counts
+            in the manifest, which removed 85% of the corpus and all three of
+            the chrome hits the earlier strip was aimed at and missed. The
+            corpus reading is now 0 distinct hits and 0 total, which is a count
+            over thirteen documents and not a rate.
             §13 row 23 moves from "every failure at position 3" to two points
             exercised, four shown structurally unreachable, and a reason for
             each of the rest.
