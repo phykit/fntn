@@ -1,5 +1,7 @@
 # Open items
 
+**Every decision waiting on the operator is prepared in `docs/DECISION_PACK.md`**, ordered by what each releases, with the count against each heading. The two that needed more room than a pack entry have their own files: `docs/DECISION_sizing_collision.md` and, for row 21b, the worksheet at `docs/ratification_draw_2026-08-27.md`.
+
 The live register. §13 holds every quantity requiring measurement or lookup; §14 holds the decisions and the freeze preconditions; Annex A.1 holds deferred capability behind predicates. **Nothing pends elsewhere**, and the spec's own linter tests that claim mechanically.
 
 **Status vocabulary, five values and no others**, in every table here that carries a Status column: `OPEN` not started; `BLOCKED` waiting on a named dependency; `PROVISIONAL` a reading exists but not the calibration; `PART CLOSED` closed over the scope in the Scope column and open elsewhere; `CLOSED` done, whole, and recorded in the spec.
