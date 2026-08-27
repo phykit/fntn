@@ -150,6 +150,29 @@ the ~19 bp recorded, having never been shown it.
 *The correction's own limit, kept:* the **mechanism** is confirmed and the
 **share price is not**, row 1's working recording no share price at all.
 
+### A7. Two break-even tables computed against assumed costs, one of them recovered backwards from the thing it was supposed to justify
+
+| | |
+|---|---|
+| **Asserted** | §5.2.2's break-evens (cheapest 22.5 / 19.5 bp) and §0.10's microcap break-evens (225 / 425 / 625 bp) |
+| **True** | both rest on **assumed** fixed costs: §5.2.2 on an assumed £6.25 round trip on £5,000, and §0.10 on the 25 bp implied by the withdrawn £2,500 clip. **§0.7(c) records that the £6.25 was *"recovered backwards from the clip definition"***, and the clip was *defined as* the notional at which fixed costs fall below 25 bp |
+| **Caught by** | §13 row 29 being set, which replaced the assumption with a bound and made the recomputation possible |
+| **Provenance** | `verified_primary` |
+
+**The circularity is the point.** The commission justified the clip and the clip
+justified the commission, and the pair then justified a break-even table that
+Gate 1's ceiling reads. **Nothing in that loop was ever measured.** It took
+fourteen versions and an explicit tolerance to break it, and what broke it was
+not a better estimate but a **bound**: row 29 caps the fixed cost of any
+admissible position at 10 bp by construction, so the table can be published as
+an upper bound that depends on no assumption at all.
+
+**Recomputed 27 August 2026 (P111): §5.2.2 falls by 2.5 bp everywhere, §0.10 by
+15 bp, and no conclusion moves.** *A check run and passed is a different record
+from a check not run.*
+
+---
+
 ---
 
 ## B. Errors made by this project, and what refuted each
