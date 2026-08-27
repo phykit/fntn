@@ -144,7 +144,7 @@ tests/
 
 ```bash
 pip install -e ".[dev]"      # once: puts src/ on the path
-python -m pytest tests/ -q   # 273 tests
+python -m pytest tests/ -q   # 285 tests
 ```
 
 Without the editable install the package sits at `src/fntn` and is invisible to
@@ -179,6 +179,20 @@ than read**, whose other instance is B8pre's fitted fee schedule. It is NOT a
 new class, Class I part 1 already saying a decision is taken on an artefact,
 but **part 1 governs decisions and this was a line of code**, which is the same
 gap part 4 closed for claims, one layer further out.*
+
+**And where the batch will RUN a code path for the first time, the enumeration
+covers the contracts THAT PATH depends on, not only the ones the batch is about
+to write.** *Strengthened 27 August 2026 after `docs/CORRECTIONS.md` B16, the
+class's THIRD instance, which is what made it Class VI with a compulsory
+invariant. B16 got past the first form of this rule: the batch enumerated four
+contracts correctly and the one that broke was in `discovery.sweep`'s loader,
+code the batch was RUNNING rather than writing. That loader assumed a FORCED
+tool call validates its arguments; `tool_choice` compels the call and `strict`
+validates the arguments, and 8 of 14 live calls returned `proposals` as a JSON
+string. **The cost, stated: on a batch that first-runs a large module this is a
+real reading task**, and it is the reading that would have turned up `strict`
+in `docs/DECISION_structured_outputs_2026-08-27.md`, written the day before and
+sitting unread.*
 
 Every session ENDS by pushing. An unpushed commit in a Codespace is not a
 record.
