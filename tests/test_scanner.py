@@ -4145,6 +4145,58 @@ def test_the_client_no_longer_claims_temperature_zero():
     assert "TranscriptClient" in doc and "registered seed" in doc
 
 
+def test_a_blank_market_cell_is_not_attributed_to_the_filename(tmp_path):
+    """P137. Found by Class V's own sweep, one commit after the invariant.
+
+    `load_csv` read the market column as
+    `(row.get(mkt_col) or "").strip() or default_market`, and `default_market`
+    is the FILE STEM where the operator names no market. So a row with a blank
+    exchange cell was counted into a market that never claimed it, and
+    `coverage = rows / listed_total` rose accordingly.
+
+    The comment eight lines above that line already stated the rule it broke:
+    an earlier version collapsed markets and reported a figure that "looks like
+    a measurement", which is worse than none.
+
+    Class V's second clause is what asks for the case below: material that is
+    PRESENT and well-formed and wrong, not absent.
+    """
+
+    from fntn.scanner.master import SecurityMaster
+
+    csv_path = tmp_path / "asx.csv"
+    csv_path.write_text(
+        "name,ticker,exchange\n"
+        "Attributed Holdings,AAA,ASX\n"
+        "Also Attributed Ltd,BBB,ASX\n"
+        "Blank Cell Corp,CCC,\n",          # present, well-formed, unattributed
+        encoding="utf-8",
+    )
+
+    m = SecurityMaster()
+    m.load_csv(csv_path)                     # no market named: the live shape
+
+    assert m.per_market["ASX"].rows == 2, (
+        "only the rows that named ASX may be counted as ASX coverage"
+    )
+    assert "asx (unattributed)" in m.per_market
+    assert m.per_market["asx (unattributed)"].rows == 1
+
+    # The blank row is NOT counted into the file-stem market.
+    assert "asx" not in m.per_market or m.per_market["asx"].rows == 0
+
+    # An unattributed bucket has no population to be measured against, so it
+    # reports coverage UNKNOWN rather than passing a floor it never met.
+    unreadable = m.unreadable_markets(0.95)
+    assert "asx (unattributed)" in unreadable
+    assert "coverage unknown" in unreadable["asx (unattributed)"]
+
+    # AND THE FENCE IS UNWEAKENED: the blank row's issuer still binds, because
+    # names and tickers are global. Only the coverage ATTRIBUTION changed.
+    assert "ccc" in m.tickers
+    assert any("blank cell" in n for n in m.names)
+
+
 def test_the_698_byte_stub_is_reported_and_never_worked_around():
     """The failure a previous session actually hit, asserted as itself.
 

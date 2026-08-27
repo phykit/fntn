@@ -144,7 +144,28 @@ class SecurityMaster:
             for row in reader:
                 row_market = default_market
                 if mkt_col and not market:
-                    row_market = (row.get(mkt_col) or "").strip() or default_market
+                    # **No `or default` here, and there was one until 27 August
+                    # 2026 (P137).** A row whose market cell is blank was
+                    # attributed to `default_market`, which is the FILE STEM
+                    # when the operator names no market, so blank rows were
+                    # counted into a market that never claimed them and
+                    # `coverage = rows / listed_total` rose accordingly.
+                    #
+                    # The comment eight lines above already states the rule
+                    # this broke -- a wrong coverage figure "looks like a
+                    # measurement" -- so the rule was written and the code did
+                    # something weaker, which is the shape of Class V.
+                    #
+                    # Unattributable rows now go to a bucket of their own. Its
+                    # `listed_total` is None, so its `coverage` is None and
+                    # `unreadable_markets` reports it as unknown rather than
+                    # letting it pass a floor it was never measured against.
+                    # **The FENCE is unweakened**: names and tickers index into
+                    # `self.names` and `self.tickers`, which are global, so
+                    # every issuer in the file still binds. What changes is
+                    # only which market may CLAIM the row as coverage.
+                    cell = (row.get(mkt_col) or "").strip()
+                    row_market = cell or f"{default_market} (unattributed)"
                 cov = bucket(row_market)
                 cov.rows += 1
                 if name_col:
