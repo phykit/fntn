@@ -4046,6 +4046,8 @@ Form Type   Company Name                                       CIK         Date 
 4           NORTHERN TRUST HOLDINGS PLC                        0000222222  2026-08-27  edgar/data/222222/c.txt
 4/A         AMENDED FILER LTD                                  0000333333  2026-08-27  edgar/data/333333/d.txt
 8-K         SOMETHING ELSE CO                                  0000444444  2026-08-27  edgar/data/444444/e.txt
+8-K         BOREALIS MINING PLC                                0000555555  2026-08-27  edgar/data/555555/f.txt
+8-K/A       AMENDED EIGHT K CO                                 0000666666  2026-08-27  edgar/data/666666/g.txt
 """
 
 
@@ -4335,18 +4337,48 @@ def test_the_698_byte_stub_is_reported_and_never_worked_around():
     stub = b"<html><body>Your request has been identified as automated.</body></html>"
     stub += b" " * (698 - len(stub))
     with pytest.raises(ResponseNotTheDocument, match="698 bytes"):
-        tf.verify_response("http://x", stub, tf.MIN_FORM4_BYTES, tf.FORM4_MARKER)
+        tf.verify_response("http://x", stub, tf.MIN_HEADER_BYTES + 1000,
+                           tf.HEADER_MARKER)
+    # And on the prose path, which has no structural marker to fall back on:
+    # the floor is the only size check there is, so it must still catch this.
+    with pytest.raises(ResponseNotTheDocument, match="698 bytes"):
+        tf.verify_prose_response("http://x", stub, tf.MIN_RELEASE_BYTES)
 
 
 def test_a_plausible_size_without_the_marker_is_still_not_the_document():
     """The size catches one stub; the marker catches the class it belongs to."""
 
     body = ("<html>" + "x" * 4000 + "</html>").encode()
-    with pytest.raises(ResponseNotTheDocument, match="ownershipDocument"):
-        tf.verify_response("http://x", body, tf.MIN_FORM4_BYTES, tf.FORM4_MARKER)
-    good = ("<ownershipDocument>" + "x" * 4000 + "</ownershipDocument>").encode()
-    assert tf.FORM4_MARKER in tf.verify_response(
-        "http://x", good, tf.MIN_FORM4_BYTES, tf.FORM4_MARKER)
+    with pytest.raises(ResponseNotTheDocument, match="ACCESSION-NUMBER"):
+        tf.verify_response("http://x", body, tf.MIN_HEADER_BYTES,
+                           tf.HEADER_MARKER)
+    good = ("<ACCESSION-NUMBER>0001-26-1" + "x" * 4000).encode()
+    assert tf.HEADER_MARKER in tf.verify_response(
+        "http://x", good, tf.MIN_HEADER_BYTES, tf.HEADER_MARKER)
+
+
+def test_the_prose_path_states_what_it_cannot_establish_and_still_catches_the_stub():
+    """B17's honest half: a free-form release has NO structural marker.
+
+    A Form 4 carries `<ownershipDocument`. An earnings release carries nothing
+    every instance has and no error page could, so inventing a marker would be
+    a check that passes on EDGAR's error page or fails on a valid release.
+    **The compensating control is that the filename came from the regulator's
+    own manifest for that accession**, and what remains is a floor plus the
+    stub markers this project has actually observed.
+    """
+
+    release = ("<html><body>" + "Third quarter results. " * 200
+               + "</body></html>").encode()
+    assert "Third quarter" in tf.verify_prose_response(
+        "http://x", release, tf.MIN_RELEASE_BYTES)
+
+    # EDGAR's own throttle page is large enough to clear any floor.
+    throttled = ("<html><head><title>SEC.gov | Request Rate Threshold "
+                 "Exceeded</title></head><body>" + "x" * 4000
+                 + "</body></html>").encode()
+    with pytest.raises(ResponseNotTheDocument, match="error page"):
+        tf.verify_prose_response("http://x", throttled, tf.MIN_RELEASE_BYTES)
 
 
 def test_the_index_is_parsed_deterministically_and_amendments_are_excluded():
@@ -4358,11 +4390,72 @@ def test_the_index_is_parsed_deterministically_and_amendments_are_excluded():
     so the next reader finds the reason rather than the behaviour.
     """
 
-    rows = tf.form4_rows(INDEX_FIXTURE)
-    assert [r[0] for r in rows] == ["0000320193", "0000222222"]
-    assert [r[1] for r in rows] == ["ACME CORP", "NORTHERN TRUST HOLDINGS PLC"]
-    assert rows[0][2] == "edgar/data/320193/b.txt"
+    rows = tf.eight_k_rows(INDEX_FIXTURE)
+    assert [r[0] for r in rows] == ["0000444444", "0000555555"]
+    assert [r[1] for r in rows] == ["SOMETHING ELSE CO", "BOREALIS MINING PLC"]
+    assert rows[0][2] == "edgar/data/444444/e.txt"
+    # `8-K/A` is excluded: an amendment's ingestion lag is measured against the
+    # amendment's own date and says nothing about how promptly the ORIGINAL
+    # reached this system, which is what §13 row 15 is short of.
     assert not [r for r in rows if "AMENDED" in r[1]]
+    # Form 4 is no longer taken at all: step 4 was RE-POINTED (§12.1 P126) and
+    # the fetcher followed it a batch late (B17).
+    assert not [r for r in rows if r[0] == "0000320193"]
+
+
+def test_the_header_view_yields_item_numbers_and_the_document_manifest():
+    """B17. The daily index has no items, so the header view is what filters.
+
+    Item NUMBERS and not titles: the full submission writes
+    `ITEM INFORMATION: Results of Operations and Financial Condition`, which is
+    a wording that can drift, and `<ITEMS>2.02`, which cannot.
+    """
+
+    header = """<HTML><HEAD><TITLE>SEC EDGAR Submission</TITLE>
+<!--
+<ACCESSION-NUMBER>0001213900-26-093981
+<TYPE>8-K
+<ITEMS>2.02
+<ITEMS>9.01
+-->
+<PRE>&lt;DOCUMENT&gt;
+&lt;TYPE&gt;8-K
+&lt;FILENAME&gt;body-8k.htm
+&lt;DESCRIPTION&gt;CURRENT REPORT
+&lt;/DOCUMENT&gt;
+&lt;DOCUMENT&gt;
+&lt;TYPE&gt;EX-99.1
+&lt;FILENAME&gt;release.htm
+&lt;DESCRIPTION&gt;PRESS RELEASE
+&lt;/DOCUMENT&gt;
+</PRE></HTML>"""
+
+    items, documents = tf.parse_header(header)
+    assert items == ["2.02", "9.01"]
+    assert documents == [
+        ("8-K", "body-8k.htm", "CURRENT REPORT"),
+        ("EX-99.1", "release.htm", "PRESS RELEASE"),
+    ]
+
+    # The exhibit wins over the body, and that is the substantive choice:
+    # Item 2.02 furnishes the release as an exhibit and the body typically
+    # incorporates it by reference, so taking the body would retain a
+    # cross-reference where the corpus needs prose with figures in it.
+    assert tf.select_release(documents) == "release.htm"
+    assert tf.select_release([("8-K", "body-8k.htm", "")]) == "body-8k.htm"
+
+    # A filing with nothing takeable is REFUSED, never skipped: a filing
+    # dropped without a record is a filing missing from a denominator.
+    with pytest.raises(tf.TraceCorpusRefused, match="missing from a denominator"):
+        tf.select_release([("GRAPHIC", "logo.jpg", "")])
+
+
+def test_the_header_url_is_derived_and_never_guessed():
+    assert tf.header_url("edgar/data/2064314/0001213900-26-093981.txt") == (
+        "https://www.sec.gov/Archives/edgar/data/2064314/"
+        "000121390026093981/0001213900-26-093981-index-headers.html")
+    with pytest.raises(tf.TraceCorpusRefused, match="not a submission text path"):
+        tf.header_url("edgar/data/2064314/index.html")
 
 
 def test_the_endpoints_are_edgar_structured_not_screen_scraped():
@@ -4380,20 +4473,28 @@ def test_the_manifest_retains_raw_and_carries_the_non_evidentiary_stamp(tmp_path
     nothing behind it until the pages were retained.
     """
 
-    body = "<ownershipDocument>ACME</ownershipDocument>"
+    body = "<html><body>Third quarter results.</body></html>"
     f = tf.FetchedFiling(
-        url="https://www.sec.gov/Archives/edgar/data/320193/b.txt",
-        cik="0000320193", company="ACME CORP",
+        url="https://www.sec.gov/Archives/edgar/data/444444/000.../release.htm",
+        cik="0000444444", company="SOMETHING ELSE CO",
         retrieved_at="2026-08-27T00:00:00+00:00",
         raw_bytes=len(body), digest=hashlib.sha256(body.encode()).hexdigest(),
-        text=body,
+        text=body, items="2.02,9.01", accession="0000444444-26-000001",
+        scanned=37, candidates=161,
     )
     manifest = tf.write_manifest([f], root=tmp_path / "_trace_filings")
     text = manifest.read_text()
     assert text.startswith(f"# {tf.NON_EVIDENTIARY}")
-    assert "url\tcik\tcompany\tretrieved_at\traw_bytes\tdigest" in text
+    assert ("url\tcik\tcompany\taccession\titems\tretrieved_at\traw_bytes\t"
+            "digest") in text
     assert f.digest in text
-    kept = (tmp_path / "_trace_filings" / "_raw" / f"{f.stem}.xml").read_text()
+    # Every item is recorded, not only the one filtered on: a filing furnishing
+    # 2.02 alongside 9.01 is a different object from one furnishing 2.02 alone.
+    assert "2.02,9.01" in text
+    # And the yield carries its denominator. A rate over items kept, with the
+    # number examined unrecorded, is a rate nobody can reconstruct.
+    assert "37 of 161" in text
+    kept = (tmp_path / "_trace_filings" / "_raw" / f"{f.stem}.html").read_text()
     assert kept == body
     # Re-extraction: the retained response reproduces the recorded digest.
     assert hashlib.sha256(kept.encode()).hexdigest() == f.digest

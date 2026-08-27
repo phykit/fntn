@@ -1,14 +1,26 @@
-"""The §9.4 trace corpus: SEC Form 4 filings, fetched and verified.
+"""The §9.4 trace corpus: SEC **8-K Item 2.02** filings, fetched and verified.
 
 **What this is for.** §14's trace precondition requires §9.4's harness run to
 its stopping rule *"including a minimum sample of the primary catalyst family's
-live filing flow"*. The primary catalyst family is insider dealing, so the flow
-is Form 4. `corpora/us` is rule text and exercises the machinery; only the
-family's own flow exercises the family.
+live filing flow"*. **The primary catalyst family is `earnings_event` and the
+flow is 8-K Item 2.02**, *Results of Operations and Financial Condition*.
+`corpora/us` is rule text and exercises the machinery; only the family's own
+flow exercises the family.
 
-**What this is NOT for, and the containment is the point.** A Form 4 names an
-issuer, a reporting owner and a transaction date. **That is precisely the
-material the entity fence exists to keep out of a proposal.** This corpus is
+***RE-POINTED 27 August 2026 from Form 4, and the module said so of itself
+before it did so.*** §0 decision retired `insider_dealing`, `§12.1` P126
+re-pointed binding-path step 4 at Item 2.02, and **this module went on fetching
+Form 4 for a day and a batch.** *Its own docstring carried the reason step 4
+rejected Form 4* -- **"Form 4 is a field-delimited regulatory form, so even the
+clerk is replaced by a parser"** -- *and the whole ground for choosing Item 2.02
+is that it is the ONLY candidate exercising the model-mediated extraction path,
+which is the path rule 1 is written against.* **A fetcher pointed at the form
+its own docstring gives the reason for rejecting is `docs/CORRECTIONS.md` B17.**
+
+**What this is NOT for, and the containment is the point.** An 8-K names an
+issuer and a period of report, and its release carries dated figures. **That is
+precisely the material the entity fence exists to keep out of a proposal.**
+This corpus is
 therefore fenced three ways and none of them is a convention:
 
 1. It lives at ``corpora/_trace_filings/``, underscore-prefixed, and
@@ -23,9 +35,21 @@ therefore fenced three ways and none of them is a convention:
 **Everything produced from it is stamped ``TRACE-NON-EVIDENTIARY``** and
 inherits ``trace.py``'s refusal to register or admit a directive.
 
-**The clerk is not involved.** Form 4 is a field-delimited regulatory form, so
-per CLAUDE.md's first rule *even the clerk is replaced by a parser*: nothing
-here calls a model.
+***THE CLERK IS NOT INVOLVED IN THE FETCH, AND IS THE WHOLE POINT OF THE
+CORPUS.*** Nothing in this module calls a model: the daily index, the
+submission header and the document manifest are all field-delimited, so per
+CLAUDE.md's first rule they are read by a parser. **What the corpus is FOR is
+the step after this one**, where §3.5's extraction reads free-form prose with a
+schema-enforced model call. *Item 2.02 was chosen because that step is the
+weakest part of the machinery and a trace belongs where the machinery is
+weakest.*
+
+**The cost of that choice, restated here so a reader of the results meets it
+first:** Item 2.02 is **furnished, not filed**; the release is free-form, so
+**the refusal rate at `extraction_schema_incomplete` will be higher than a
+field-delimited form's and must not be read as a machinery defect**; and
+Regulation G's non-GAAP reconciliation makes the extraction genuinely hard.
+***That difficulty is the reason for choosing it and will look like a fault.***
 """
 
 from __future__ import annotations
@@ -73,13 +97,35 @@ BLOCK_SIZE = 100
 #: cheap first check. Set at 1,500 because the smallest plausible ownership
 #: document carries a schema declaration, an issuer block, a reporting-owner
 #: block and at least one transaction table, and the known stub is 698.
-MIN_FORM4_BYTES = 1500
 MIN_INDEX_BYTES = 4000
+#: The submission header is a small SGML block. Below this it is not one.
+MIN_HEADER_BYTES = 500
+#: A press release below this is not a press release. **Weaker than the Form 4
+#: floor was, and it has to be**: see `verify_prose_response`.
+MIN_RELEASE_BYTES = 1000
 
 #: The structural markers. A response without its marker is **reported as the
 #: failure it is** and never worked around.
-FORM4_MARKER = "<ownershipDocument"
 INDEX_MARKER = "Form Type"
+HEADER_MARKER = "<ACCESSION-NUMBER>"
+
+#: The form and the item. **Both are registered decisions and neither is a
+#: default**: the family is §13 row 22's `earnings_event` and the flow is fixed
+#: by `§12.1` P126.
+FORM_TYPE = "8-K"
+TARGET_ITEM = "2.02"
+#: Item 2.02's title as EDGAR writes it in the full submission's
+#: ``ITEM INFORMATION`` lines. **Carried but NOT used as the filter**: the
+#: `-index-headers.html` view gives item NUMBERS, which cannot drift with a
+#: wording change, and a number is the stabler key.
+TARGET_ITEM_TITLE = "Results of Operations and Financial Condition"
+
+#: Document types that carry the release, most preferred first. **An 8-K body
+#: is the last resort and not the first choice**: Item 2.02 furnishes the
+#: release as an exhibit and the body typically incorporates it by reference,
+#: so taking the body would retain a cross-reference where the corpus needs
+#: prose with figures in it.
+RELEASE_TYPES = ("EX-99.1", "EX-99", "EX-99.2", "8-K")
 
 SEC_HOST = "https://www.sec.gov"
 DATA_HOST = "https://data.sec.gov"
@@ -218,13 +264,66 @@ def fetch(url: str, minimum: int, marker: str, timeout: int = 30) -> Tuple[bytes
     })
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
-            body = response.read()
+            body = _decoded(response.read(), response.headers.get("Content-Encoding"))
     except urllib.error.HTTPError as exc:
         raise ResponseNotTheDocument(
             f"{url} returned HTTP {exc.code} {exc.reason}. Reported rather "
             f"than retried into a placeholder."
         ) from exc
     return body, verify_response(url, body, minimum, marker)
+
+
+def _decoded(body: bytes, content_encoding: Optional[str]) -> bytes:
+    """Undo the transfer encoding the request asked for.
+
+    ***This did not exist until 27 August 2026, and its absence meant the
+    fetcher had never worked.*** The request has always sent
+    ``Accept-Encoding: gzip, deflate`` and `urllib` **does not decompress**:
+    unlike `curl` and unlike `requests`, it hands back the compressed bytes and
+    leaves `Content-Encoding` on the response for the caller to act on. So the
+    daily index arrived as 102,195 bytes of gzip, the structural marker was
+    absent from it, and `verify_response` correctly reported *the response was
+    not the document*.
+
+    **The guard was right and the transport was wrong**, which is the harder
+    version of this failure to diagnose: nothing was broken at the point the
+    error named.
+
+    ***Why it survived to the first live run.*** `SEC_CONTACT` was unset for the
+    whole life of this module, so `user_agent()` refused before a single
+    request was made, and **every test of the fetch path supplied bytes
+    directly to `verify_response`.** *The transport had never been exercised
+    against a server at all.* It is `docs/CORRECTIONS.md` B17's second half and
+    the same class as the first: **a dependency's contract assumed rather than
+    read**, here `urllib`'s, and found by running the thing.
+
+    *Refusing an encoding the caller cannot undo, rather than decompressing it,
+    was considered and rejected: it would push the cost of this module's
+    convenience onto a regulator's bandwidth for a hundred requests a block.*
+    """
+
+    if not content_encoding:
+        return body
+    encoding = content_encoding.strip().lower()
+    if encoding == "gzip":
+        import gzip
+        return gzip.decompress(body)
+    if encoding == "deflate":
+        import zlib
+        try:
+            return zlib.decompress(body)
+        except zlib.error:
+            # Raw deflate without a zlib wrapper: a documented variant, and
+            # distinguished here rather than caught and returned as-is.
+            return zlib.decompress(body, -zlib.MAX_WBITS)
+    if encoding == "identity":
+        return body
+    raise ResponseNotTheDocument(
+        f"the response carries Content-Encoding {content_encoding!r}, which "
+        "this module cannot undo. Reported rather than returned undecoded: "
+        "undecoded bytes would fail the structural marker and the error would "
+        "name the document when the fault is the transport."
+    )
 
 
 def daily_index_url(on: date) -> str:
@@ -243,33 +342,182 @@ def submissions_url(cik: str) -> str:
     return f"{DATA_HOST}/submissions/CIK{int(cik):010d}.json"
 
 
-def form4_rows(index_text: str) -> List[Tuple[str, str, str]]:
-    """(CIK, company, path) for every Form 4 in a daily form index.
+def eight_k_rows(index_text: str) -> List[Tuple[str, str, str]]:
+    """(CIK, company, path) for every 8-K in a daily form index.
 
     A deterministic parser over a field-delimited file, per CLAUDE.md's first
     rule. The index is fixed-width with a dashed rule under the header; rows
     are split on runs of whitespace from the right, because a company name
     contains spaces and the three fields after it do not.
+
+    **`8-K/A` is excluded and that is a decision.** An amendment restates or
+    corrects an earlier furnishing, so its ingestion lag is measured against
+    the amendment's own date and says nothing about how promptly the ORIGINAL
+    reached this system, which is what §13 row 15 is short of. *Including them
+    would put a second population in the same denominator.*
     """
 
     out: List[Tuple[str, str, str]] = []
     for line in index_text.splitlines():
-        if not line.startswith("4 "):
-            continue
         parts = line.rsplit(None, 3)
         if len(parts) != 4:
             continue
-        company_field, cik, _filed, path = parts
-        company = company_field[1:].strip()
-        if not cik.isdigit():
+        head, cik, _filed, path = parts
+        if not cik.isdigit() or not path.endswith(".txt"):
             continue
-        out.append((cik, company, path))
+        # The form type is the first whitespace-delimited token; an exact
+        # match excludes `8-K/A` without a second rule.
+        form, _, company = head.partition(" ")
+        if form.strip() != FORM_TYPE:
+            continue
+        out.append((cik, company.strip(), path))
     return out
+
+
+def header_url(path: str) -> str:
+    """The submission's own header view, from its `.txt` path in the index.
+
+    **Why this and not the full submission.** The `.txt` carries every document
+    in the filing and runs to megabytes; the header view is a few kilobytes and
+    carries **the item numbers and the document manifest**, which is everything
+    the filter and the release selection need. *`Range` requests were probed
+    against sec.gov and are not honoured: the server returns 200 with the whole
+    body, so a range would have downloaded the megabytes and discarded them.*
+
+    ``edgar/data/2064314/0001213900-26-093981.txt`` becomes
+    ``edgar/data/2064314/000121390026093981/0001213900-26-093981-index-headers.html``.
+    """
+
+    stem = path.rsplit("/", 1)[-1]
+    if not stem.endswith(".txt"):
+        raise TraceCorpusRefused(
+            f"{path!r} is not a submission text path, so no header view can be "
+            "derived from it. Refused rather than guessed at."
+        )
+    accession = stem[: -len(".txt")]
+    directory = path.rsplit("/", 1)[0]
+    return (
+        f"{SEC_HOST}/Archives/{directory}/{accession.replace('-', '')}/"
+        f"{accession}-index-headers.html"
+    )
+
+
+def parse_header(header_text: str) -> Tuple[List[str], List[Tuple[str, str, str]]]:
+    """(item numbers, documents) from a submission header view.
+
+    Returns item numbers such as ``2.02`` and documents as
+    ``(type, filename, description)``. **Both sections are SGML tags**, the
+    document list HTML-escaped because the header view wraps the raw header in
+    a comment and then repeats it inside a ``<PRE>`` block.
+
+    *A parser and not a model, because both are field-delimited.*
+    """
+
+    text = header_text.replace("&lt;", "<").replace("&gt;", ">")
+    items = [
+        line[len("<ITEMS>"):].strip()
+        for line in text.splitlines()
+        if line.startswith("<ITEMS>")
+    ]
+    documents: List[Tuple[str, str, str]] = []
+    current: dict = {}
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped == "<DOCUMENT>":
+            current = {}
+        elif stripped == "</DOCUMENT>":
+            if current.get("FILENAME"):
+                documents.append((
+                    current.get("TYPE", ""),
+                    current["FILENAME"],
+                    current.get("DESCRIPTION", ""),
+                ))
+            current = {}
+        else:
+            for tag in ("TYPE", "FILENAME", "DESCRIPTION"):
+                if stripped.startswith(f"<{tag}>") and tag not in current:
+                    current[tag] = stripped[len(tag) + 2:].strip()
+    # De-duplicate: the header view carries the manifest twice, once in the
+    # leading comment and once inside <PRE>. Order-preserving, first wins.
+    seen = set()
+    unique = []
+    for doc in documents:
+        if doc[1] in seen:
+            continue
+        seen.add(doc[1])
+        unique.append(doc)
+    return items, unique
+
+
+def select_release(documents: List[Tuple[str, str, str]]) -> str:
+    """The filename of the document carrying the release. **Refuses.**
+
+    Preference order is `RELEASE_TYPES`. **An 8-K with no exhibit and no body
+    is refused rather than skipped silently**: the corpus records what it could
+    not take, because a filing quietly dropped is a filing missing from a
+    denominator §9.4 computes a rate over.
+    """
+
+    for wanted in RELEASE_TYPES:
+        for doc_type, filename, _desc in documents:
+            if doc_type.upper() == wanted:
+                return filename
+    raise TraceCorpusRefused(
+        "this filing's manifest carries no document of any type in "
+        f"{RELEASE_TYPES}, so there is nothing to take as the release. "
+        "Reported rather than skipped: a filing dropped without a record is a "
+        "filing missing from a denominator."
+    )
+
+
+def verify_prose_response(url: str, body: bytes, minimum: int) -> str:
+    """A byte floor and a stub check, and **NO positive structural marker.**
+
+    ***This guarantee is weaker than `verify_response`'s and the difference is
+    stated rather than papered over.*** A Form 4 carries
+    ``<ownershipDocument``; an earnings release is free-form prose and **has no
+    structural token that every instance carries and no error page could**.
+    Inventing one -- a `<html` tag, a keyword such as *earnings* -- would be a
+    check that passes on EDGAR's own error page or fails on a valid release,
+    and either is worse than saying what is and is not established.
+
+    **What IS established, and it is a real control rather than a shrug:** the
+    filename was read from **the regulator's own document manifest for this
+    accession**, so a 200 on that exact path is the document by construction
+    unless the server substituted something. *The floor and the stub markers
+    catch the substitution this project has actually observed.*
+
+    **What is NOT established:** that the prose is a Results-of-Operations
+    release rather than some other exhibit. **That is the item filter's job**,
+    and the item filter reads item NUMBERS from the header, which is
+    field-delimited and cannot drift.
+    """
+
+    if len(body) < minimum:
+        raise ResponseNotTheDocument(
+            f"{url} returned {len(body)} bytes, below the {minimum}-byte floor. "
+            "A previous session recorded sec.gov serving a 698-byte stub with "
+            "a 200 status, which is this failure. It is reported rather than "
+            f"worked around.\n\nFirst 200 bytes: {body[:200]!r}"
+        )
+    text = body.decode("utf-8", errors="replace")
+    lowered = text[:4000].lower()
+    for stub in ("<title>sec.gov | request rate threshold exceeded",
+                 "your request rate has exceeded",
+                 "<title>sec.gov | file not found"):
+        if stub in lowered:
+            raise ResponseNotTheDocument(
+                f"{url} returned {len(body)} bytes of EDGAR's own error page, "
+                f"not the document. Matched {stub!r}. Reported, and the block "
+                "stops rather than continuing at a rate the server has already "
+                "refused."
+            )
+    return text
 
 
 @dataclass(frozen=True)
 class FetchedFiling:
-    """One Form 4, raw and extracted, with everything the manifest records."""
+    """One filing, raw and extracted, with everything the manifest records."""
 
     url: str
     cik: str
@@ -278,36 +526,78 @@ class FetchedFiling:
     raw_bytes: int
     digest: str
     text: str
+    #: Every item the filing declares, not only the one filtered on. A filing
+    #: furnishing 2.02 alongside 9.01 is a different object from one furnishing
+    #: 2.02 alone, and §9.4 stratifies.
+    items: str = ""
+    accession: str = ""
+    #: How many 8-Ks were examined to reach this one, and how many the day
+    #: carried. **A yield with no denominator is not a yield.**
+    scanned: int = 0
+    candidates: int = 0
 
     @property
     def stem(self) -> str:
         return self.digest[:16]
 
 
-def fetch_block(on: date, limit: int = BLOCK_SIZE) -> List[FetchedFiling]:
-    """One block of Form 4 filings from one day's index.
+def fetch_block(on: date, limit: int = BLOCK_SIZE,
+                pause_s: float = 0.15) -> List[FetchedFiling]:
+    """One block of 8-K **Item 2.02** filings from one day's index.
 
     Refuses before it starts if ``SEC_CONTACT`` is unset: the identity is
     checked once here rather than per request, so the refusal arrives before
     anything is written rather than part-way through a block.
+
+    **Three fetches per kept filing and one per candidate**, which is the cost
+    of filtering on the item: the daily index does not carry item numbers, so
+    every 8-K's header is read and most are discarded. *`pause_s` is a
+    courtesy to a regulator's server and not a rate limit this code enforces
+    against itself; the SEC publishes a ceiling and this sits well under it.*
+
+    **`scanned` is returned on every filing** so the manifest records how many
+    8-Ks were examined to yield the block. A rate over items 2.02 computed
+    against the number kept, with the number examined unrecorded, is a rate
+    whose denominator nobody can reconstruct.
     """
 
+    import time
+
     user_agent()  # refuse early, and loudly
-    index_body, index_text = fetch(
+    _body, index_text = fetch(
         daily_index_url(on), MIN_INDEX_BYTES, INDEX_MARKER
     )
-    rows = form4_rows(index_text)[:limit]
+    rows = eight_k_rows(index_text)
     if not rows:
         raise TraceCorpusRefused(
-            f"{daily_index_url(on)} verified as an index and carries no Form 4 "
-            "rows. That is a fact about the day, not a fetch failure, and it "
-            "is reported rather than retried against another date chosen to "
-            "produce a result."
+            f"{daily_index_url(on)} verified as an index and carries no "
+            f"{FORM_TYPE} rows. That is a fact about the day, not a fetch "
+            "failure, and it is reported rather than retried against another "
+            "date chosen to produce a result."
         )
+
     out: List[FetchedFiling] = []
+    scanned = 0
     for cik, company, path in rows:
-        url = f"{SEC_HOST}/Archives/{path}"
-        body, text = fetch(url, MIN_FORM4_BYTES, FORM4_MARKER)
+        if len(out) >= limit:
+            break
+        scanned += 1
+        header_body, header_text = fetch(
+            header_url(path), MIN_HEADER_BYTES, HEADER_MARKER
+        )
+        items, documents = parse_header(header_text)
+        if TARGET_ITEM not in items:
+            time.sleep(pause_s)
+            continue
+        filename = select_release(documents)
+        directory = path.rsplit("/", 1)[0]
+        accession = path.rsplit("/", 1)[-1][: -len(".txt")]
+        url = (
+            f"{SEC_HOST}/Archives/{directory}/"
+            f"{accession.replace('-', '')}/{filename}"
+        )
+        body = fetch_raw(url)
+        text = verify_prose_response(url, body, MIN_RELEASE_BYTES)
         out.append(FetchedFiling(
             url=url,
             cik=cik,
@@ -316,8 +606,53 @@ def fetch_block(on: date, limit: int = BLOCK_SIZE) -> List[FetchedFiling]:
             raw_bytes=len(body),
             digest=hashlib.sha256(body).hexdigest(),
             text=text,
+            items=",".join(items),
+            accession=accession,
+            scanned=scanned,
+            candidates=len(rows),
         ))
-    return out
+        time.sleep(pause_s)
+    if not out:
+        raise TraceCorpusRefused(
+            f"{scanned} {FORM_TYPE} filings were examined on {on} and none "
+            f"carried Item {TARGET_ITEM}. Reported as a fact about the day. "
+            "Nothing is retried against another date chosen to produce a "
+            "result, and nothing is written."
+        )
+    # **Stamp the FINAL scan count on every filing, not the count at the moment
+    # each was kept.** Each row carried the running total as at its own append,
+    # so the first row held the smallest of them, and the manifest reported the
+    # yield of the whole block against the denominator of its first hit: on the
+    # smoke run, *8 of 161 examined to yield 3*, when 8 was where the first hit
+    # landed. **A denominator that is a prefix of itself is worse than none**,
+    # because it reads as a measurement.
+    import dataclasses
+    return [dataclasses.replace(f, scanned=scanned) for f in out]
+
+
+def fetch_raw(url: str, timeout: int = 30) -> bytes:
+    """One GET, identified, with NO structural verification. See its caller.
+
+    Split out from `fetch` deliberately: `fetch` takes a marker because every
+    document it retrieves has one, and a prose release does not. **Rather than
+    passing a marker that would be a lie, the verification is a separate call
+    the caller makes explicitly**, so a reader can see which of the two
+    guarantees any given document carries.
+    """
+
+    request = urllib.request.Request(url, headers={
+        "User-Agent": user_agent(),
+        "Accept-Encoding": "gzip, deflate",
+        "Host": url.split("/")[2],
+    })
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            return _decoded(response.read(), response.headers.get("Content-Encoding"))
+    except urllib.error.HTTPError as exc:
+        raise ResponseNotTheDocument(
+            f"{url} returned HTTP {exc.code} {exc.reason}. Reported rather "
+            "than retried into a placeholder."
+        ) from exc
 
 
 def write_manifest(filings: List[FetchedFiling], root: Path = CORPUS_ROOT) -> Path:
@@ -333,13 +668,21 @@ def write_manifest(filings: List[FetchedFiling], root: Path = CORPUS_ROOT) -> Pa
     lines = [
         f"# {NON_EVIDENTIARY}",
         "# Fenced corpus. No registration route may resolve here.",
-        "url\tcik\tcompany\tretrieved_at\traw_bytes\tdigest",
+        f"# form {FORM_TYPE}, item {TARGET_ITEM} ({TARGET_ITEM_TITLE})",
+        f"# {filings[0].scanned if filings else 0} of "
+        f"{filings[0].candidates if filings else 0} {FORM_TYPE} filings on the "
+        f"day were examined to yield {len(filings)}. A yield with no "
+        f"denominator is not a yield.",
+        "url\tcik\tcompany\taccession\titems\tretrieved_at\traw_bytes\tdigest",
     ]
     for f in filings:
-        (raw_root / f"{f.stem}.xml").write_text(f.text, encoding="utf-8")
+        # `.html`, not `.xml`. The retained raw is a press release, and naming
+        # it after the form the fetcher used to take would be a filename
+        # asserting a shape the bytes do not have.
+        (raw_root / f"{f.stem}.html").write_text(f.text, encoding="utf-8")
         lines.append(
-            f"{f.url}\t{f.cik}\t{f.company}\t{f.retrieved_at}\t"
-            f"{f.raw_bytes}\t{f.digest}"
+            f"{f.url}\t{f.cik}\t{f.company}\t{f.accession}\t{f.items}\t"
+            f"{f.retrieved_at}\t{f.raw_bytes}\t{f.digest}"
         )
     root.mkdir(parents=True, exist_ok=True)
     manifest = root / "_manifest.tsv"

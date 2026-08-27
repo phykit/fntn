@@ -51,7 +51,7 @@ repair does not need a third instance to be believed.**
 | **III. A population pooled, mis-scoped or miscounted** | B6 (itself three), B7, the §13 table's two hand counts, and `_unexercised` at P126 | **7** | **INSTALLED at P105 and WIDENED at P126**: the invariant was applied to a METHOD when the class was about a QUERY, so it now reads **every ledger read path carries the marker the fences rely on**, and phase 2 swept every `SELECT` in the package to hold it |
 | **IV. A quantity validated against something computed from that quantity** | A7, B10 | **2** | **INSTALLED at P133, and deliberately at two instances rather than three**: *a bound may not be validated against a table computed from that bound*, and a table recomputed against a registered value carries that value's name from then on |
 | **V. A guard implemented WEAKER than the rule its own docstring states** | B1, B5, B11, B12, B13 | **5** | **INSTALLED at P136**: *a presence check is not a content check*, and **every guard carries a test that supplies material it must REFUSE, present and well-formed, not merely absent** |
-| **VI. A dependency's contract assumed rather than read** | B8pre, B12, B16 | **3** | **INSTALLED in the session protocol at P137 and STRENGTHENED at P139**: the reconciliation enumerates the dependency contracts a batch writes against, naming the reference READ for each — **and where a batch will run a code path for the first time, the contracts THAT PATH depends on as well.** *B16 got past the first form because the loader was code the batch ran rather than code it wrote* |
+| **VI. A dependency's contract assumed rather than read** | B8pre, B12, B16, B17 (twice) | **4** | **INSTALLED in the session protocol at P137 and STRENGTHENED at P139**: the reconciliation enumerates the dependency contracts a batch writes against, naming the reference READ for each — **and where a batch will run a code path for the first time, the contracts THAT PATH depends on as well.** *B16 got past the first form because the loader was code the batch ran rather than code it wrote* |
 | Singletons, which are not a class | A1, A3, A4, A5, A6, B2 | n/a | n/a, no invariant is owed: a row belonging to no class asserts no recurrence |
 
 ---
@@ -934,6 +934,77 @@ versions. The character-counting defect was found by **reading the funnel's own
 output**, where 8,484 proposals raised over 22 documents is absurd on its face.
 *Neither was found by re-reading, and the first repair passed every test in the
 suite at the moment it shipped.*
+
+---
+
+### B17. A fetcher pointed at the form its own docstring gives the reason for rejecting, and a transport that had never run
+
+**Two defects in one module, and neither was findable by reading it.**
+
+#### First: it was still fetching Form 4
+
+| | |
+|---|---|
+| **Believed** | that binding-path step 4 was blocked only on `SEC_CONTACT`. `docs/STEP4_REPOINTED_2026-08-27.md` closes with *"Everything up to the fetch is built. The fetch refuses."* |
+| **True** | **`trace_filings.py` was still fetching Form 4**, a day and a batch after `§12.1` P126 re-pointed step 4 at **8-K Item 2.02**. Its constants were `FORM4_MARKER` and `MIN_FORM4_BYTES`; its parser was `form4_rows` |
+| **The link not checked** | **the module, against the decision that had re-pointed it.** *And the module said so of itself*: its docstring carried **"Form 4 is a field-delimited regulatory form, so even the clerk is replaced by a parser"** — which is **verbatim the reason step 4 rejected Form 4**, the whole ground for Item 2.02 being that it is the only candidate exercising the model-mediated extraction path |
+| **Provenance** | `verified_primary`. The module at `91bd685` |
+
+***Everything up to the fetch was built, and it was built for the wrong form.***
+*The sentence was true about the fetch and false about everything before it.*
+
+#### Second, and it is the one that shows the class: the transport had never run
+
+**The first live fetch returned this:**
+
+```
+...form.20260826.idx returned 102195 bytes with no 'Form Type'.
+First 200 bytes: b"\x1f\x8b\x08\x00..."
+```
+
+`\x1f\x8b` is a gzip magic number. **The request had always sent
+`Accept-Encoding: gzip, deflate`, and `urllib` does not decompress**: unlike
+`curl` and unlike `requests`, it returns the compressed bytes and leaves
+`Content-Encoding` on the response for the caller. ***So the fetcher had never
+worked, for any form, since it was written.***
+
+> **The guard was right and the transport was wrong**, which is the harder
+> version of this to diagnose: *nothing was broken at the point the error
+> named.* `verify_response` reported, correctly, that the response was not the
+> document.
+
+***Why it survived to the first live run, and this is the general lesson.***
+`SEC_CONTACT` was unset for the module's whole life, so `user_agent()` refused
+before a single request was made. **Every test of the fetch path supplied bytes
+directly to `verify_response`.** *The transport had never been exercised against
+a server at all, and a test that hands bytes to a verifier tests the verifier.*
+
+#### Both halves are Class VI, and the second is why the invariant was strengthened
+
+**Class VI is *a dependency's contract assumed rather than read*.** The second
+half assumed `urllib`'s: that a library which lets you ask for gzip will undo
+it. **It is the fourth instance**, and it arrived in the same batch as the
+third, `strict` on a forced tool call.
+
+*Both were found by running the thing. Neither was findable by reading the
+module, which reads correctly in both cases, and* ***both were in code the batch
+was RUNNING rather than writing*** *, which is the gap the strengthened
+enumeration now covers.*
+
+**Repaired:** the fetcher takes 8-K, filters on item **numbers** read from the
+submission header view rather than on item titles that can drift, prefers the
+`EX-99.1` exhibit over the 8-K body because Item 2.02 furnishes the release as
+an exhibit and the body incorporates it by reference, and **decodes the
+transfer encoding it asked for**. *Refusing the encoding instead was considered
+and rejected: it pushes this module's convenience onto a regulator's bandwidth
+for a hundred requests a block.*
+
+**And one honesty point recorded rather than smoothed:** the prose path has
+**no structural marker**. A Form 4 carries `<ownershipDocument`; a free-form
+release carries nothing every instance has and no error page could.
+`verify_prose_response` states what it establishes — a byte floor, EDGAR's own
+observed stub markers, and a filename taken **from the regulator's own document
+manifest for that accession** — and states what it does not.
 
 ---
 

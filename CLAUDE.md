@@ -104,7 +104,9 @@ src/fntn/scanner/  the agent discovery layer (spec §3.7)
                   score: it is the measured fact that no size satisfies the
                   tolerance, which is the UK Main Market case, the AIM case,
                   and the US case below USD 10.40 a share
-  trace_filings.py  the §9.4 Form 4 trace corpus fetcher. FENCED: no
+  trace_filings.py  the §9.4 trace corpus fetcher: 8-K ITEM 2.02, re-pointed
+                    from Form 4 at P140 because Item 2.02 is the only
+                    candidate exercising extraction against PROSE. FENCED: no
                   registration route may resolve to corpora/_trace_filings,
                   the sweep's loader will not read it, and discovery.py's
                   import closure may not so much as name it. Refuses without

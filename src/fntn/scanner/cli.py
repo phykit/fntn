@@ -371,7 +371,12 @@ def cmd_trace_filings(args) -> int:
     from . import trace_filings as tfm
 
     on = date.fromisoformat(args.on) if args.on else date.today()
-    print(f"§9.4 trace corpus: one block of {tfm.BLOCK_SIZE} Form 4 filings")
+    print(f"§9.4 trace corpus: one block of {tfm.BLOCK_SIZE} "
+          f"{tfm.FORM_TYPE} Item {tfm.TARGET_ITEM} filings")
+    print(f"  item    : {tfm.TARGET_ITEM_TITLE}")
+    print( "            RE-POINTED from Form 4 (§12.1 P126). Item 2.02 is the")
+    print( "            only candidate exercising extraction against PROSE,")
+    print( "            which is the one place a model still touches a number.")
     print(f"  index   : {tfm.daily_index_url(on)}")
     print(f"  corpus  : {tfm.CORPUS_ROOT}  (fenced, {tfm.NON_EVIDENTIARY})")
     print(f"  block   : {tfm.BLOCK_SIZE}, because §9.4's stopping rule computes")
@@ -393,6 +398,18 @@ def cmd_trace_filings(args) -> int:
         return 5
     manifest = tfm.write_manifest(filings)
     print(f"fetched {len(filings)} filings; manifest {manifest}")
+    print(f"  examined {filings[0].scanned} {tfm.FORM_TYPE} filings of "
+          f"{filings[0].candidates} on the day")
+    wanted = args.limit or tfm.BLOCK_SIZE
+    if len(filings) < wanted:
+        print()
+        print(f"  SHORT OF A BLOCK: {len(filings)} against {wanted}. The day")
+        print( "  did not carry enough Item 2.02 filings, which is a fact about")
+        print( "  the day and not a fetch failure. §9.4's stopping rule reads a")
+        print( "  defect rate PER HUNDRED, so a short block cannot be read as a")
+        print( "  block: take further days until the hundred is made, and record")
+        print( "  every date taken. Nothing here is retried against a date")
+        print( "  chosen to produce a result.")
     return 0
 
 
