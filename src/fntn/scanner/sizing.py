@@ -158,3 +158,151 @@ def cost_at(cost: FixedCost, position: float) -> Optional[float]:
     if position <= 0:
         return None
     return cost.proportional_bps + BPS * cost.absolute_round_trip / position
+
+
+# ---------------------------------------------------------------------------
+# The US per-share schedule, and why the "residual" was never a residual.
+# ---------------------------------------------------------------------------
+#
+# §13 row 1 records ~19 bp at about USD 3,200 and ~3 bp at USD 64,000. Fitting
+# a single (absolute, proportional) pair to those two points gave absolute
+# ~USD 5.39 and proportional ~2.16 bp, and the proportional part looked like a
+# term nobody could name.
+#
+# **It is the per-share commission, and the reason it looked mysterious is a
+# REGIME CHANGE rather than a missing term.** A per-share commission is
+# proportional to trade value at a fixed share price, so it never decays; but
+# it carries a per-order minimum, and below the size where the rate overtakes
+# that minimum it behaves as a fixed cost and decays like one. The small
+# reading sits in the minimum regime and the large one in the rate regime, and
+# a single linear model cannot straddle the boundary.
+#
+# **The consequence is the valuable part: the US hard floor is not a constant.
+# It is a function of share price**, and a tight tolerance therefore excludes
+# low-priced US stocks at any position size, in the same way and for the same
+# reason that stamp duty excludes UK Main Market at any position size. That is
+# the project's first screening rule DERIVED from the cost table rather than
+# chosen.
+
+
+@dataclass(frozen=True)
+class PerShareSchedule:
+    """A US commission schedule expressed per share, with its order minimum.
+
+    ``clearing_per_share`` is the NSCC/DTC charge, applied on both sides.
+    Per-share regulatory terms that this does not name (FINRA's trading
+    activity fee on the sell leg, the SEC fee on sell value) are **left out
+    rather than guessed**: neither rate was read from a published schedule in
+    this tree. They are small and they push every figure below in the same
+    direction, so **every minimum share price here is a LOWER bound.**
+    """
+
+    name: str
+    per_share: float
+    order_minimum: float = 1.00
+    clearing_per_share: float = 0.0002
+
+
+#: The two elections §13 row 1's tiered-or-fixed gap is between.
+US_FIXED = PerShareSchedule("US fixed", 0.005)
+US_TIERED = PerShareSchedule("US tiered", 0.0035)
+
+#: Manual spot conversion, both legs: USD 2.00 minimum against 0.20 bp.
+FX_ABSOLUTE_ROUND_TRIP = 4.00
+
+
+def hard_floor_bps(schedule: PerShareSchedule, share_price: float) -> float:
+    """The basis-point cost NO position size can get below, at this price.
+
+    ``(2 * per_share + 2 * clearing) / share_price``, in basis points. Both
+    terms are per share, so both are proportional to trade value at a fixed
+    price and **neither decays as the position grows.**
+    """
+
+    per_share_total = 2 * (schedule.per_share + schedule.clearing_per_share)
+    return BPS * per_share_total / share_price
+
+
+def minimum_share_price(schedule: PerShareSchedule, tolerance_bps: float) -> float:
+    """The lowest share price at which the tolerance is achievable at all.
+
+    Inverts ``hard_floor_bps``. **Below this price no position size in this
+    name satisfies the tolerance**, which is a screening rule on the universe
+    and not a sizing rule.
+    """
+
+    per_share_total = 2 * (schedule.per_share + schedule.clearing_per_share)
+    return BPS * per_share_total / tolerance_bps
+
+
+def us_round_trip_bps(
+    schedule: PerShareSchedule,
+    trade_value: float,
+    share_price: float,
+    fx_absolute: float = FX_ABSOLUTE_ROUND_TRIP,
+) -> float:
+    """Round-trip fixed cost in basis points, across BOTH regimes.
+
+    Below ``order_minimum * share_price / per_share`` the minimum binds and the
+    cost decays like a fixed charge; above it the rate binds and the cost is
+    flat in size. **A model that straddles that boundary linearly is the model
+    that produced the unexplained residual.**
+    """
+
+    shares = trade_value / share_price
+    commission = 2 * max(schedule.order_minimum, schedule.per_share * shares)
+    clearing = 2 * schedule.clearing_per_share * shares
+    return BPS * (commission + clearing + fx_absolute) / trade_value
+
+
+def rate_regime_from(schedule: PerShareSchedule, share_price: float) -> float:
+    """The trade value at which the per-share rate overtakes the minimum."""
+
+    return schedule.order_minimum * share_price / schedule.per_share
+
+
+def us_clip_floor(
+    schedule: PerShareSchedule,
+    share_price: float,
+    tolerance_bps: Optional[float],
+    subject_id: str = "clip-floor-us",
+) -> Union[ClipFloor, Refusal]:
+    """The US floor at a given share price, or the refusal that no size works.
+
+    **`clip_floor_unreachable_at_any_size` fires wherever the tolerance sits at
+    or below the hard floor for that price**, which is the requirement that its
+    distinction from a refusal to score survives: an unreachable name and an
+    unset parameter look identical from outside and mean opposite things.
+    """
+
+    if tolerance_bps is None:
+        return summaries.render(
+            "clip_floor_tolerance_unset", subject_id, {"market": schedule.name}
+        )
+    hard = hard_floor_bps(schedule, share_price)
+    if hard >= tolerance_bps:
+        return summaries.render(
+            "clip_floor_unreachable_at_any_size",
+            subject_id,
+            {
+                "market": f"{schedule.name} at USD {share_price:g} per share",
+                "tolerance_bps": f"{tolerance_bps:g}",
+                "proportional_bps": f"{hard:.2f}",
+            },
+        )
+    lo, hi = 1.0, 1e9
+    for _ in range(200):
+        mid = (lo + hi) / 2
+        if us_round_trip_bps(schedule, mid, share_price) > tolerance_bps:
+            lo = mid
+        else:
+            hi = mid
+    return ClipFloor(
+        market=f"{schedule.name} at USD {share_price:g} per share",
+        currency="USD",
+        floor=hi,
+        tolerance_bps=tolerance_bps,
+        cost=FixedCost(
+            schedule.name, "USD", FX_ABSOLUTE_ROUND_TRIP, hard, "row1_provisional"
+        ),
+    )

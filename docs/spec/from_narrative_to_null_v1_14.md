@@ -1199,6 +1199,7 @@ There is nothing further to specify. The remaining questions (whether the base r
 | P98 | **§13 row 29: maximum tolerable fixed cost. OPEN, operator governance.** Basis points of position, round trip, **excluding spread and market impact**. **The one free parameter the clip-floor derivation cannot eliminate**, and it is named as such rather than buried. **Why it sits here and not in a per-market clip**, four properties of the quantity and not preferences: it is **dimensionless**, so one number governs a USD and a GBP trade without an FX rate entering a governance decision; it is **comparable across markets**, which is the substance rather than a convenience, row 30's entire output being which markets clear the same bar; it is **readable against the break-even table**, §5.2.2 and §0.5 already being in basis points so a tolerance can be set beside a documented effect and read off, which a clip in pounds cannot; and it is **set once instead of guessed per venue**, a per-market clip being one guess per market, each drifting separately and none recording what it was trying to achieve. **One tolerance is one decision and every floor beneath it is arithmetic.** **The exclusions are load-bearing:** spread and market impact are not fixed, scale with participation and have no row, and *a tolerance that silently included impact would be a tolerance nobody could check against a schedule*. **§0.6: it does not add a sizing input, it REPLACES one.** The chosen clip is removed in the same version; the count of free sizing parameters falls from one chosen number per market to one governance number in total. **Restriction** | restriction | §13 rows 1 and 30, §6.7, §0.11 | yes, as the clip's replacement |
 | P99 | **§13 row 30: derived clip floor, per market. BLOCKED on row 29, inheriting row 1's PROVISIONAL.** **A function and never a number:** `floor(market) = absolute ÷ ((tolerance_bps − proportional_bps) ÷ 10,000)`. Implemented in `src/fntn/scanner/sizing.py`, which **refuses in three named ways rather than returning a number it cannot justify**: `clip_floor_tolerance_unset` and `clip_floor_cost_unset` are refusals to score, and **`clip_floor_unreachable_at_any_size` is not**, being the measured fact that the size-independent share alone meets the tolerance so **no size satisfies it**. *Keeping the third apart from the first two is the substance: an unreachable market and an unset parameter look identical from outside and mean opposite things.* **US, a floor exists**: two fixed minimums, USD 1.00 commission and USD 2.00 FX each applied twice, give USD 6.00 round trip with no proportional term, so a 10 bp tolerance implies **USD 6,000** and a 5 bp tolerance **USD 12,000**. **UK, no floor exists at any size**: stamp duty is a percentage and dominates, the cost is **flat at ~61.4 bp from £2,500 to £50,000** and moves by a tenth of a basis point across a twentyfold range, **upward**, because the PTM levy crosses its £10,000 threshold. **NO SIZE MAKES A UK MAIN MARKET POSITION CHEAPER IN BASIS POINTS, AND A CLIP FLOOR IS A US CONCEPT THAT DOES NOT TRANSFER.** **Two claims of different strength and the difference is the point:** any tolerance below **~61.4 bp** excludes UK Main Market *(PROVISIONAL: it inherits row 1's three open gaps)*; any tolerance below **50 bp** excludes it **WITH CERTAINTY**, stamp duty alone being 50 bp, statutory, a percentage, and independent of every one of row 1's gaps. **So any tolerance in the 2 to 20 bp range the US table makes sensible excludes UK Main Market with certainty.** **A disagreement with §13 row 1 recorded rather than smoothed:** the USD 6.00 model reproduces row 1's small-clip reading, 18.75 bp against ~19 bp at USD 3,200, and gives **0.94 bp at USD 64,000 where row 1 records ~3 bp**; the two recorded readings solve uniquely for **absolute ≈ USD 5.39 and proportional ≈ 2.16 bp**, and *the residual is the signature of a term that does not decay*. If it is real the **US has a hard floor near 2.16 bp and a 2 bp tolerance is unreachable there too.** This paper does not choose between the models; it records that they disagree by 2 bp on the most leveraged number in it, and that **row 1's citation is what settles it.** **Consequence for Annex A.1, recorded and NOT acted on:** at 11.4 bp the AIM growth-market tier now decides **whether the UK is reachable at all** under a tight tolerance rather than making a reachable market cheaper. **The predicate is unchanged and the row is not taken. A capability becoming more valuable is not a reason to take it early; it is the reason the armed rule exists.** **§0.6: no gate, no family, no grammar row, no cost tier, no feed. It replaces a chosen sizing input with a derived one and adds three refusals. Restriction** | restriction | §13 rows 1, 29, 8, 9 and 14, §6.7, §4.4, Annex A.1 | yes, as the clip's replacement |
 | P100 | **§4.4 and §5.4.4 RESTORED as derivations, and the restoration removes a rule rather than reinstating one.** They were withdrawn under P91 because the blocker was a §0 decision; **P97 took it**, so they return. **§4.4's two regime constants are withdrawn as constants and not replaced by new constants**, because they were never independent: **7.5% and 3.75% ARE §6.7's arithmetic at a 10% stop**, once at 75.0 bps of risk and once at the 37.5 bps cap floor. *Carrying them here as separate numbers stated one rule twice and invited the two copies to drift.* §4.4 now states `notional_cap = risk_budget ÷ stop_distance` and §6.7 states the rule, **which is one rule and a derivation where there were two rules**. Feasibility is unchanged and was never clip-dependent. **What remains withdrawn, and now for a stated reason rather than an undecidable one:** the ATR bounds **12.0% / 5.45% / 3.16%** were computed against a £2,500 clip floor and an assumed commission, and **`capital_exceeds_clip_floor` has no threshold to test against until §13 row 30 derives**, so the matrix's zero cells cannot be located. **They return by arithmetic once row 29 is set and row 1 closes, with no further decision**, which is exactly what was not true before P97. **§5.4.4 has no independent content**: every cell is the intersection of an admissibility class with §4.4's bounds, so it is restored with §4.4 and needs no decision of its own. **The blocker on both is no longer a §0 decision; it is one governance number and one citation.** **§0.6: no gate, no family, no grammar row, no cost tier, no feed, no sizing input. It deletes two constants and states the derivation that always produced them** | restriction | §4.4, §5.4.4, §6.7, §13 rows 1, 29 and 30 | no |
+| P101 | **The 1e residual closed: it was a regime change, not a term, and the US hard floor is a function of share price.** P99 published two cost models side by side because a single (absolute, proportional) pair fitted to §13 row 1's two US readings gave **~USD 5.39 and ~2.16 bp**, and the proportional part did not decay and could not be named. **It is the per-share commission.** A per-share commission is proportional to trade value at a fixed share price and so never decays, **but it carries a per-order minimum**, and below the size at which the rate overtakes the minimum it behaves as a fixed charge and decays like one. **The two readings sit on opposite sides of that boundary**, and a linear model fitted across it splits the difference, which is exactly what produced the 2.16 bp. **The test, and it is a test rather than a fit.** The share price is solved from the **USD 64,000 reading alone**, so reproducing that reading is not evidence; **the model then predicts 18.84 bp at USD 3,200, against the ~19 bp row 1 records, having never been shown it.** One free parameter fitted to one point predicts a second point to within a fifth of a basis point. At USD 3,200 the commission is USD 0.37 a side and the **USD 1.00 minimum binds**; at USD 64,000 it is USD 7.31 a side and the **rate binds**. **What is confirmed and what is not.** The *mechanism* is confirmed. The *share price* is not: **row 1's working records no share price at all**, only two trade values and two readings, so `p ≈ 43.79` is derived from the readings under the schedule's structure and is not read from an assumption row 1 made. *That is a third outcome and it is recorded as itself rather than forced into either branch.* **THE CONSEQUENCE IS THE PROJECT'S FIRST DERIVED SCREENING RULE.** The US hard floor is `104/p` bp on fixed pricing and `74/p` on tiered, so **no position size gets a name below it and a tight tolerance excludes low-priced US stocks at ANY size, in the same way and for the same reason stamp duty excludes UK Main Market at any size.** At 2 bp the minimum share price is **USD 52.00 fixed / USD 37.00 tiered**; at 10 bp, USD 10.40 / USD 7.40. **Every one is a LOWER bound**: FINRA's activity fee and the SEC fee were not read from a published schedule and both push the floor up. **Second consequence, and it reclassifies an open gap.** Row 1's **tiered-or-fixed election moves the hard floor by about 29%** and therefore the admissible universe with it: at 5 bp it is the difference between names above USD 20.80 and names above USD 14.80. *It was a convenience question about which schedule costs less; it is now a question about which names exist*, and it is promoted in the decision pack. **`clip_floor_unreachable_at_any_size` fires for the US wherever the tolerance sits at or below the hard floor at that price**, and its distinction from a refusal to score survives, which is the requirement: **an unreachable name and an unset parameter look identical from outside and mean opposite things.** **§0.6: no gate, no family, no grammar row, no cost tier, no feed, no sizing input. It replaces two published models with one and names the mechanism** | restriction | §13 rows 1, 29 and 30, §0.11, Annex A.1 | no |
 
 **What v1.14 does not do.** It adds no gate, no family, no grammar row, no cost tier, no feed, no sizing input and no field the funnel reads at decision time. It closes no §13 row, ratifies no label, and moves nothing into the item pipeline. It does not make row 21 a calibration; it makes row 21's reading reproducible, and says which half of it is a rate and which half is coverage. Both are smaller claims than a calibration. §0.6 remains armed.
 
@@ -1440,24 +1441,85 @@ commission and USD 2.00 FX, each applied twice**, give a round trip of **USD
 | 15 bp | USD 4,000 | USD 4,197 |
 | 20 bp | USD 3,000 | USD 3,021 |
 
-***The disagreement, recorded rather than smoothed.*** The USD 6.00 model
-reproduces row 1's small-clip reading almost exactly, giving **18.75 bp at USD
-3,200** against the **~19 bp** implied by row 1's own figures. **At USD 64,000
-it gives 0.94 bp, and row 1 records ~3 bp.** The two recorded readings solve
-uniquely for a different pair:
+***The two models are now ONE. The residual was never a term; it was a regime
+change (P101, 27 August 2026).***
+
+**The hypothesis, and it was mechanical rather than a fit.** A **per-share
+commission is proportional to trade value at a fixed share price**, so it never
+decays. **But it carries a per-order minimum**, and below the size at which the
+rate overtakes that minimum it behaves as a fixed charge and decays like one.
+**The two recorded readings sit on opposite sides of that boundary**, and a
+single linear model cannot straddle it: fitted across the boundary it splits
+the difference, which is precisely the 2.16 bp nobody could name.
+
+**Round-trip commission in basis points, at share price `p`:**
 
 ```
-19 bp at USD 3,200  and  3 bp at USD 64,000
-   →  absolute ≈ USD 5.39   and   proportional ≈ 2.16 bp
+fixed   2 × 0.0050 / p  = 100/p bp        tiered  2 × 0.0035 / p  =  70/p bp
+NSCC/DTC clearing       =   4/p bp        (0.0002 per share, both sides)
+so the HARD FLOOR is    = 104/p bp  (fixed)   or   74/p bp  (tiered)
 ```
 
-**The residual is the signature of a term that does not decay**, and if it is
-real the US has a **hard floor of about 2.16 bp** below which no position size
-qualifies, which the right-hand column above shows: **a 2 bp tolerance is
-unreachable in the US as well as in the UK.** This paper does not choose
-between the two models. **It records that they disagree, that the disagreement
-is 2 bp on the most leveraged number in the paper, and that §13 row 1's
-citation is what settles it.**
+**Solved against the readings, and the test is the point.** The share price is
+solved from the **USD 64,000 reading alone**, so reproducing that reading is
+not evidence. **The evidence is the other point, which the model was never
+shown:**
+
+| Schedule | Implied share price | At USD 64,000 | At USD 3,200 | §13 row 1 records |
+|---|---|---|---|---|
+| **fixed** | **USD 43.79** | 3.00 bp *(fitted)* | **18.84 bp** *(predicted)* | ~19 bp |
+| **tiered** | **USD 31.16** | 3.00 bp *(fitted)* | **18.88 bp** *(predicted)* | ~19 bp |
+
+**One free parameter fitted to one reading predicts a second reading it was not
+fitted to, to within a fifth of a basis point. The residual is explained.** At
+USD 3,200 the per-share commission is **USD 0.37 a side** and the **USD 1.00
+minimum binds**; at USD 64,000 it is **USD 7.31 a side** and the **rate binds**.
+
+***What is confirmed and what is not, kept apart.*** The **mechanism** is
+confirmed: the regime change accounts for the residual exactly. The **share
+price is not**, because **§13 row 1's working records no share price at all**,
+only the two trade values and the two readings. So `p ≈ 43.79` is **derived
+from the readings under the schedule's structure**, not read from an assumption
+row 1 made. *This is a third outcome, and it is recorded as itself rather than
+forced into either "reconciled against row 1's assumption" or "unexplained".*
+
+*Terms deliberately left out and their direction stated: FINRA's trading
+activity fee on the sell leg and the SEC fee on sell value were not read from a
+published schedule in this tree. Both are per-share or per-value and both push
+the hard floor UP, so **every minimum share price below is a LOWER bound.***
+
+#### The consequence, and it is the project's first DERIVED screening rule
+
+**THE US HARD FLOOR IS NOT A CONSTANT. IT IS A FUNCTION OF SHARE PRICE.** No
+position size gets a name below `104/p` bp (fixed) or `74/p` bp (tiered), so
+**a tight tolerance excludes low-priced US stocks at any position size, in the
+same way and for the same reason that stamp duty excludes UK Main Market at any
+position size.**
+
+| Row 29 tolerance | Minimum share price, fixed | Minimum share price, tiered |
+|---|---|---|
+| 2 bp | **USD 52.00** | USD 37.00 |
+| 3 bp | USD 34.67 | USD 24.67 |
+| 4 bp | USD 26.00 | USD 18.50 |
+| 5 bp | USD 20.80 | USD 14.80 |
+| 6 bp | USD 17.33 | USD 12.33 |
+| 8 bp | USD 13.00 | USD 9.25 |
+| 10 bp | USD 10.40 | USD 7.40 |
+| 12 bp | USD 8.67 | USD 6.17 |
+| 15 bp | USD 6.93 | USD 4.93 |
+| 20 bp | USD 5.20 | USD 3.70 |
+
+**This is a screening rule derived from the cost table rather than chosen, and
+it is the first one the project has.** Every other threshold in §13 waits on a
+measurement; this one falls out of arithmetic over a published schedule.
+
+**The second consequence, and it reclassifies an open gap.** §13 row 1's
+**tiered-or-fixed election moves the hard floor by 104 → 74, about 29%**, and
+therefore moves the minimum admissible share price by the same proportion. **At
+a 5 bp tolerance the election is the difference between a universe priced above
+USD 20.80 and one priced above USD 14.80.** *It was a convenience question
+about which schedule costs less. It is now a question about which names exist.*
+It is promoted accordingly in `docs/DECISION_PACK.md`.
 
 **UK: the cost is FLAT, so no size helps and there is no floor to find.**
 

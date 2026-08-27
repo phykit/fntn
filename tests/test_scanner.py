@@ -3716,3 +3716,90 @@ def test_the_two_recorded_us_readings_imply_a_proportional_term():
     # tolerance is unreachable in the US too.
     r = derive_clip_floor(implied, 2.0)
     assert isinstance(r, Refusal) and r.code == "clip_floor_unreachable_at_any_size"
+
+
+# ---------------------------------------------------------------------------
+# The 1e residual: a regime change, not a mystery term.
+# ---------------------------------------------------------------------------
+
+from fntn.scanner.sizing import (
+    US_FIXED, US_TIERED, hard_floor_bps, minimum_share_price,
+    rate_regime_from, us_clip_floor, us_round_trip_bps,
+)
+
+
+def test_one_model_fitted_to_one_reading_predicts_the_other():
+    """The test that makes this a reconciliation rather than a fit.
+
+    The share price is solved from the USD 64,000 reading alone. Hitting that
+    reading is therefore not evidence. **The evidence is the other point**: the
+    model then predicts ~18.8 bp at USD 3,200, against the ~19 bp §13 row 1
+    records, having never been shown it.
+    """
+
+    for schedule, implied in ((US_FIXED, 43.79), (US_TIERED, 31.16)):
+        assert us_round_trip_bps(schedule, 64000, implied) == pytest.approx(3.0, abs=0.01)
+        predicted = us_round_trip_bps(schedule, 3200, implied)
+        assert predicted == pytest.approx(18.85, abs=0.1)
+        assert abs(predicted - 19.0) < 0.2
+
+
+def test_the_residual_is_the_per_share_commission_crossing_its_minimum():
+    """Why one linear model could not straddle the two readings.
+
+    At USD 3,200 the per-share commission is well under the USD 1.00 order
+    minimum, so it behaves as a fixed charge and decays. At USD 64,000 the rate
+    binds and it does not decay at all. A single (absolute, proportional) pair
+    fitted across that boundary splits the difference, which is what produced
+    the 2.16 bp nobody could name.
+    """
+
+    p = 43.79
+    boundary = rate_regime_from(US_FIXED, p)
+    assert 3200 < boundary < 64000
+    assert US_FIXED.per_share * 3200 / p < US_FIXED.order_minimum
+    assert US_FIXED.per_share * 64000 / p > US_FIXED.order_minimum
+    # The asymptote the fit was groping at.
+    assert hard_floor_bps(US_FIXED, p) == pytest.approx(2.375, abs=0.01)
+
+
+def test_the_us_hard_floor_is_a_function_of_share_price_not_a_constant():
+    """The finding: a tight tolerance excludes low-priced US stocks at ANY size,
+    in the same way and for the same reason stamp duty excludes UK Main."""
+
+    assert hard_floor_bps(US_FIXED, 100) == pytest.approx(1.04)
+    assert hard_floor_bps(US_FIXED, 10) == pytest.approx(10.4)
+    assert hard_floor_bps(US_FIXED, 2) == pytest.approx(52.0)
+    # Halving the price doubles the floor. It is 1/p, exactly.
+    assert hard_floor_bps(US_FIXED, 20) == pytest.approx(2 * hard_floor_bps(US_FIXED, 40))
+    # Minimum share price inverts it, and tiered is ~30% cheaper.
+    assert minimum_share_price(US_FIXED, 2.0) == pytest.approx(52.0)
+    assert minimum_share_price(US_TIERED, 2.0) == pytest.approx(37.0)
+    assert minimum_share_price(US_TIERED, 5.0) / minimum_share_price(US_FIXED, 5.0) \
+        == pytest.approx(74 / 104, rel=1e-9)
+
+
+def test_unreachable_fires_for_the_us_below_the_hard_floor(): 
+    """1e's requirement: the distinction from a refusal to score must survive."""
+
+    r = us_clip_floor(US_FIXED, 10.0, 2.0)        # floor 10.4 bp > 2 bp
+    assert isinstance(r, Refusal)
+    assert r.code == "clip_floor_unreachable_at_any_size"
+    assert not codes.ALL_CODES[r.code].refuse_to_score
+    assert "USD 10 per share" in r.summary
+    # Above the hard floor a floor exists again.
+    ok = us_clip_floor(US_FIXED, 10.0, 20.0)
+    assert isinstance(ok, ClipFloor) and ok.floor > 0
+    assert us_round_trip_bps(US_FIXED, ok.floor, 10.0) == pytest.approx(20.0, abs=0.01)
+    # And an unset tolerance is still the OTHER refusal.
+    assert us_clip_floor(US_FIXED, 10.0, None).code == "clip_floor_tolerance_unset"
+
+
+def test_the_election_moves_the_us_hard_floor_by_about_thirty_percent():
+    """Row 1's tiered-or-fixed gap was a convenience question. It is now a
+    universe question: 100/p against 70/p before clearing charges."""
+
+    for p in (10.0, 25.0, 50.0, 100.0):
+        ratio = hard_floor_bps(US_TIERED, p) / hard_floor_bps(US_FIXED, p)
+        assert ratio == pytest.approx(74 / 104, rel=1e-9)
+        assert 0.70 < ratio < 0.72
