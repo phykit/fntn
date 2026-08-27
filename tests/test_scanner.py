@@ -2952,7 +2952,11 @@ def test_every_binding_path_status_is_read_from_the_register(tmp_path):
 
     before = report_mod.binding_path_rows(OPEN_ITEMS)
     assert [r[0] for r in before] == ["1", "2", "3", "4", "5"]
-    assert before[0][2] == "NOT CLOSED" and "BLOCKED" in before[0][3]
+    # Read against the register's own cell rather than a literal, so this test
+    # asserts the reading and not today's value of row 1.
+    row1 = report_mod.status_token(_open_items_row("1")[0])
+    assert before[0][3] == f"§13 row 1: {row1}"
+    assert before[0][2] == ("CLOSED" if row1 == "CLOSED" else "NOT CLOSED")
 
     after = report_mod.binding_path_rows(
         _register_copy(tmp_path, {"1": "**CLOSED**"})
