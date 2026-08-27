@@ -212,13 +212,15 @@ class ImportFenceBreach(RuntimeError):
     pass
 
 
-def assert_import_fence(module_name: str = "fntn.scanner.discovery") -> None:
-    """Assert the discovery module reaches no price or outcome data.
+def discovery_import_closure(
+    module_name: str = "fntn.scanner.discovery",
+) -> Set[str]:
+    """The transitive import closure of ``module_name``, as actually loaded.
 
-    Walks the transitive import closure of ``module_name`` as actually loaded
-    and raises on the first forbidden prefix.  Run in the test suite and again
-    at process start in ``run.py``: a fence checked only in tests is a fence
-    that holds only in tests.
+    Extracted from ``assert_import_fence`` so a second fence can be built over
+    the same closure without a second walk of it. The first fence forbids
+    modules that carry prices and outcomes; the second forbids modules that
+    **name the trace-filings corpus**, naming being the first step of reading.
     """
 
     try:
@@ -242,7 +244,18 @@ def assert_import_fence(module_name: str = "fntn.scanner.discovery") -> None:
             )
             if isinstance(candidate, str) and candidate not in seen:
                 frontier.append(candidate)
+    return seen
 
+
+def assert_import_fence(module_name: str = "fntn.scanner.discovery") -> None:
+    """Assert the discovery module reaches no price or outcome data.
+
+    Raises on the first forbidden prefix in the closure.  Run in the test suite
+    and again at process start in ``run.py``: a fence checked only in tests is
+    a fence that holds only in tests.
+    """
+
+    seen = discovery_import_closure(module_name)
     for name in sorted(seen):
         for forbidden in FORBIDDEN_TO_DISCOVERY:
             if name == forbidden or name.startswith(forbidden + "."):

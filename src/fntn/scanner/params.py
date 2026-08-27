@@ -23,7 +23,7 @@ import hashlib
 import json
 from dataclasses import asdict, dataclass, field, fields as dc_fields
 from datetime import datetime, timezone
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import ClassVar, Dict, List, Optional
 
 from .markets import CorpusInvalid, validate_corpus
@@ -118,6 +118,39 @@ class Corpus:
     #: corpus is pre_archive. An earlier version keyed this on the class, which
     #: made the guarantee unstateable for any class read from both.
     scoring_mode: Optional[str] = None
+
+    def __post_init__(self) -> None:
+        """Refuse a route into an underscore-prefixed directory.
+
+        **Underscore-prefixed means bookkeeping or fenced material, never
+        corpus.** `corpora/us/_raw` holds the pages the server sent;
+        `corpora/_trace_filings` holds SEC Form 4 filings for the §9.4
+        harness, which **name issuers and dates and are exactly what the
+        entity fence exists to keep out of a proposal**.
+
+        **Refused here and not in `missing()`, because `missing()` returns
+        advice and advice is not a fence.** A registration naming such a route
+        must be *unconstructible*, so that a file naming it will not load at
+        all rather than loading with a warning nobody reads. Any component of
+        the path is checked, not merely the last: `corpora/_trace_filings/2026`
+        reaches the same material one level down.
+        """
+
+        parts = PurePosixPath(str(self.retrieval_route).strip()).parts
+        for part in parts:
+            if part.startswith("_"):
+                raise CorpusInvalid(
+                    f"corpus {self.corpus_id!r} names retrieval_route "
+                    f"{self.retrieval_route!r}, whose component {part!r} is "
+                    "underscore-prefixed. Underscore-prefixed directories are "
+                    "bookkeeping or fenced material and are never corpus: "
+                    "corpora/us/_raw holds raw pages, and "
+                    "corpora/_trace_filings holds filings that name issuers "
+                    "and dates, which is the material the entity fence exists "
+                    "to keep out of a proposal. A corpus is what the agent is "
+                    "shown, so a route that can reach either is a fence with "
+                    "a door in it."
+                )
 
 
 @dataclass

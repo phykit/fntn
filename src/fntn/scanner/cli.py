@@ -26,6 +26,7 @@ from .fences import QueryFence
 from .ledger import Ledger
 from .markets import MARKETS, render as render_markets, resolve
 from .master import SecurityMaster
+from .corpusio import corpus_documents
 from .params import Registration, RegistrationIncomplete
 from .records import Partition, ScoringMode, SegmentSpan
 from .run import ScanConfig, scan
@@ -358,6 +359,42 @@ def cmd_report(args) -> int:
     return 0
 
 
+def cmd_trace_filings(args) -> int:
+    """Fetch one block of Form 4 filings into the fenced trace corpus (§9.4).
+
+    Refuses before writing anything if SEC_CONTACT is unset. The corpus is
+    fenced: no registration route may resolve to it, the sweep's loader will
+    not read it, and discovery.py's import closure does not name it.
+    """
+
+    from . import trace_filings as tfm
+
+    on = date.fromisoformat(args.on) if args.on else date.today()
+    print(f"§9.4 trace corpus: one block of {tfm.BLOCK_SIZE} Form 4 filings")
+    print(f"  index   : {tfm.daily_index_url(on)}")
+    print(f"  corpus  : {tfm.CORPUS_ROOT}  (fenced, {tfm.NON_EVIDENTIARY})")
+    print(f"  block   : {tfm.BLOCK_SIZE}, because §9.4's stopping rule computes")
+    print( "            the marginal defect rate PER HUNDRED ITEMS. Two")
+    print( "            consecutive blocks below threshold are required, so one")
+    print( "            block cannot discharge it and does not claim to.")
+    print()
+    try:
+        filings = tfm.fetch_block(on, limit=args.limit or tfm.BLOCK_SIZE)
+    except tfm.TraceCorpusRefused as exc:
+        print("REFUSED, and nothing was fetched or written:")
+        print()
+        print(exc)
+        return 4
+    except tfm.ResponseNotTheDocument as exc:
+        print("THE RESPONSE WAS NOT THE DOCUMENT. Reported, not worked around:")
+        print()
+        print(exc)
+        return 5
+    manifest = tfm.write_manifest(filings)
+    print(f"fetched {len(filings)} filings; manifest {manifest}")
+    return 0
+
+
 def cmd_sweep(args) -> int:
     try:
         reg = Registration.load(args.registration)
@@ -395,15 +432,10 @@ def cmd_sweep(args) -> int:
         if c.market in unreadable:
             print(f"skipping corpus {c.corpus_id!r}: {unreadable[c.market]}")
             continue
-        docs = []
-        route = Path(c.retrieval_route)
-        for path in sorted(route.glob("*")) if route.is_dir() else []:
-            # Underscore-prefixed files are corpus bookkeeping, not corpus. The
-            # manifest records what was fetched; feeding it to the agent as
-            # material would put source URLs and filenames in front of it.
-            if path.name.startswith("_") or not path.is_file():
-                continue
-            docs.append(path.read_text(encoding="utf-8", errors="replace")[:20000])
+        # One copy of the skip rule, in corpusio, covering the route itself as
+        # well as the files inside it. This loop had the second and not the
+        # first, so a route pointed at an underscore directory was read whole.
+        docs = corpus_documents(c.retrieval_route)
         if not docs and not args.transcript:
             print(f"skipping corpus {c.corpus_id!r}: no documents at {c.retrieval_route}")
             continue
@@ -541,6 +573,15 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     p_rep.add_argument("--open-items", default="docs/OPEN_ITEMS.md",
                        help="the register the binding path is read out of")
     p_rep.set_defaults(func=cmd_report)
+
+    p_tf = sub.add_parser(
+        "trace-filings",
+        help="fetch one block of Form 4 filings into the fenced §9.4 corpus",
+    )
+    p_tf.add_argument("--on", help="index date, ISO. Defaults to today")
+    p_tf.add_argument("--limit", type=int, default=None,
+                      help="override the block size; normally left alone")
+    p_tf.set_defaults(func=cmd_trace_filings)
 
     p_sweep = sub.add_parser("sweep", help="run a sweep, if registration is complete")
     p_sweep.add_argument("--transcript", help="replay a saved payload instead of calling the model")

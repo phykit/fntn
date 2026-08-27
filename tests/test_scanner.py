@@ -13,6 +13,7 @@ Two obligations, and the second is the one that matters:
 from __future__ import annotations
 
 import dataclasses
+import hashlib
 import itertools
 import json
 import os
@@ -3319,3 +3320,254 @@ def test_the_budget_summary_renders_from_the_records_own_fields():
     assert "against a registered budget of 20.000s" in summary
     assert "on attempt 2" in summary
     assert "a replay reads this figure and does not re-time the work" in summary
+
+
+# ---------------------------------------------------------------------------
+# The trace-filings corpus fence (§9.4, phase 2a).
+#
+# `corpora/_trace_filings/` holds SEC Form 4 filings for the trace harness.
+# It names issuers and dates, which is exactly the material the entity fence
+# exists to keep OUT of a proposal.  **It must not be reachable by the
+# discovery agent under any code path**, and the containment is asserted here
+# before anything is fetched into it.
+#
+# These tests were written to FAIL first, against a deliberately mis-registered
+# route, and the refusals were added afterwards.  A fence written after the
+# code it fences is a fence shaped to let the code through.
+# ---------------------------------------------------------------------------
+
+from fntn.scanner.markets import CorpusInvalid
+
+TRACE_FILINGS = "corpora/_trace_filings"
+
+
+@pytest.mark.parametrize("route", [
+    TRACE_FILINGS,
+    "./corpora/_trace_filings",
+    "corpora/_trace_filings/",
+    "corpora/_trace_filings/2026",          # a subdirectory of it
+    "corpora/us/_raw",                       # the existing underscore store
+    "/abs/path/corpora/_trace_filings",
+    "corpora/_anything_at_all",
+])
+def test_no_registration_route_can_resolve_to_an_underscore_directory(route):
+    """The deliberately mis-registered route, refused at construction.
+
+    Refused in `Corpus.__post_init__` rather than in `missing()`, because
+    `missing()` returns advice and advice is not a fence: a registration
+    naming this route must be **unconstructible**, so a file naming it will
+    not load at all.
+    """
+
+    with pytest.raises(CorpusInvalid, match="underscore"):
+        RegCorpus(
+            corpus_id="mis-registered",
+            market="us",
+            partition="discovery",
+            retrieval_route=route,
+            scoring_mode="pre_archive",
+        )
+
+
+def test_a_registration_file_naming_the_trace_corpus_will_not_load(tmp_path):
+    """Not merely refused when built by hand: refused when read off disk."""
+
+    p = tmp_path / REGISTRATION_FILE
+    (tmp_path / "docs").mkdir()
+    _complete_registration().save(p)
+    raw = json.loads(p.read_text())
+    raw["corpora"].append({
+        "corpus_id": "trace-filings",
+        "market": "us",
+        "partition": "discovery",
+        "retrieval_route": TRACE_FILINGS,
+        "scoring_mode": "pre_archive",
+    })
+    p.write_text(json.dumps(raw))
+    with pytest.raises(CorpusInvalid, match="underscore"):
+        Registration.load(p)
+
+
+def test_the_corpus_loader_skips_underscore_directories_at_the_top_level(tmp_path):
+    """Within one was already skipped. The top level was not.
+
+    `cmd_sweep` skipped underscore-prefixed *files inside* a route and read
+    everything else, so a route pointed AT an underscore directory had its
+    contents read in full. The skip now applies to the route itself.
+    """
+
+    from fntn.scanner.corpusio import corpus_documents
+
+    ordinary = tmp_path / "us"
+    ordinary.mkdir()
+    (ordinary / "doc.txt").write_text("a filing-free rule text")
+    (ordinary / "_manifest.tsv").write_text("bookkeeping\tnot corpus")
+    assert corpus_documents(ordinary) == ["a filing-free rule text"]
+
+    fenced = tmp_path / "_trace_filings"
+    fenced.mkdir()
+    (fenced / "form4.txt").write_text("ACME CORP  2026-08-27  purchase")
+    assert corpus_documents(fenced) == []
+
+    nested = tmp_path / "_trace_filings" / "2026"
+    nested.mkdir()
+    (nested / "form4.txt").write_text("ACME CORP  2026-08-27  purchase")
+    assert corpus_documents(nested) == []
+
+
+def test_discovery_reaches_no_module_that_names_the_trace_corpus():
+    """An import fence over a path, not over a package.
+
+    The existing fence forbids modules carrying prices and outcomes. This one
+    forbids the *string*: no module in `discovery.py`'s transitive import
+    closure may name the trace corpus, because naming it is the first step of
+    reading it.
+    """
+
+    from fntn.scanner.fences import discovery_import_closure
+
+    src = REPO_ROOT / "src"
+    named = []
+    for name in sorted(discovery_import_closure()):
+        if not name.startswith("fntn."):
+            continue
+        path = src / (name.replace(".", "/") + ".py")
+        if path.exists() and "_trace_filings" in path.read_text():
+            named.append(name)
+    assert named == [], named
+
+
+def test_the_fetcher_is_outside_the_discovery_import_closure():
+    """The instrument that writes the corpus is not reachable from the agent."""
+
+    from fntn.scanner.fences import discovery_import_closure
+
+    closure = discovery_import_closure()
+    assert "fntn.scanner.trace_filings" not in closure
+    # And it does name the corpus, so the test above is testing something.
+    src = REPO_ROOT / "src" / "fntn" / "scanner" / "trace_filings.py"
+    assert "_trace_filings" in src.read_text()
+
+
+# ---------------------------------------------------------------------------
+# The trace-filings fetcher (§9.4, phase 2b).
+# ---------------------------------------------------------------------------
+
+from fntn.scanner import trace_filings as tf
+from fntn.scanner.trace_filings import ResponseNotTheDocument, TraceCorpusRefused
+
+INDEX_FIXTURE = """Description:           Daily Index of EDGAR Dissemination Feed
+Last Data Received:    August 27, 2026
+
+Form Type   Company Name                                       CIK         Date Filed  File Name
+---------------------------------------------------------------------------------------------------
+3           EXAMPLE HOLDINGS INC                               0000111111  2026-08-27  edgar/data/111111/a.txt
+4           ACME CORP                                          0000320193  2026-08-27  edgar/data/320193/b.txt
+4           NORTHERN TRUST HOLDINGS PLC                        0000222222  2026-08-27  edgar/data/222222/c.txt
+4/A         AMENDED FILER LTD                                  0000333333  2026-08-27  edgar/data/333333/d.txt
+8-K         SOMETHING ELSE CO                                  0000444444  2026-08-27  edgar/data/444444/e.txt
+"""
+
+
+def test_the_fetch_refuses_when_SEC_CONTACT_is_unset(monkeypatch):
+    """Refused, not defaulted, and deliberately not substitutable.
+
+    A placeholder User-Agent is a false statement made to a regulator's server
+    in order to obtain data, and it would be recorded on every manifest row as
+    though it were the contact.
+    """
+
+    monkeypatch.delenv("SEC_CONTACT", raising=False)
+    with pytest.raises(TraceCorpusRefused, match="THE OPERATOR MUST SET IT"):
+        tf.user_agent()
+    monkeypatch.setenv("SEC_CONTACT", "   ")
+    with pytest.raises(TraceCorpusRefused, match="SEC_CONTACT is not set"):
+        tf.user_agent()
+    # And the block refuses before it writes anything, not part-way through.
+    monkeypatch.delenv("SEC_CONTACT", raising=False)
+    with pytest.raises(TraceCorpusRefused):
+        tf.fetch_block(date(2026, 8, 27))
+
+
+def test_the_user_agent_carries_the_operator_contact(monkeypatch):
+    monkeypatch.setenv("SEC_CONTACT", "A Person a.person@example.com")
+    assert "A Person a.person@example.com" in tf.user_agent()
+
+
+def test_the_698_byte_stub_is_reported_and_never_worked_around():
+    """The failure a previous session actually hit, asserted as itself.
+
+    A 200 carrying a stub looks like success, which is why it cost real time.
+    Filing it as a transport error would put it under the heading nobody
+    re-reads.
+    """
+
+    stub = b"<html><body>Your request has been identified as automated.</body></html>"
+    stub += b" " * (698 - len(stub))
+    with pytest.raises(ResponseNotTheDocument, match="698 bytes"):
+        tf.verify_response("http://x", stub, tf.MIN_FORM4_BYTES, tf.FORM4_MARKER)
+
+
+def test_a_plausible_size_without_the_marker_is_still_not_the_document():
+    """The size catches one stub; the marker catches the class it belongs to."""
+
+    body = ("<html>" + "x" * 4000 + "</html>").encode()
+    with pytest.raises(ResponseNotTheDocument, match="ownershipDocument"):
+        tf.verify_response("http://x", body, tf.MIN_FORM4_BYTES, tf.FORM4_MARKER)
+    good = ("<ownershipDocument>" + "x" * 4000 + "</ownershipDocument>").encode()
+    assert tf.FORM4_MARKER in tf.verify_response(
+        "http://x", good, tf.MIN_FORM4_BYTES, tf.FORM4_MARKER)
+
+
+def test_the_index_is_parsed_deterministically_and_amendments_are_excluded():
+    """A field-delimited form gets a parser, not a clerk (CLAUDE.md rule 1).
+
+    **Amendments are excluded and that is a choice, not an accident.** A `4/A`
+    restates a filing already in the flow, so including it would count one
+    event twice in any distribution taken over the corpus. It is stated here
+    so the next reader finds the reason rather than the behaviour.
+    """
+
+    rows = tf.form4_rows(INDEX_FIXTURE)
+    assert [r[0] for r in rows] == ["0000320193", "0000222222"]
+    assert [r[1] for r in rows] == ["ACME CORP", "NORTHERN TRUST HOLDINGS PLC"]
+    assert rows[0][2] == "edgar/data/320193/b.txt"
+    assert not [r for r in rows if "AMENDED" in r[1]]
+
+
+def test_the_endpoints_are_edgar_structured_not_screen_scraped():
+    assert tf.daily_index_url(date(2026, 8, 27)) == (
+        "https://www.sec.gov/Archives/edgar/daily-index/2026/QTR3/form.20260827.idx")
+    assert tf.daily_index_url(date(2026, 2, 3)).endswith("QTR1/form.20260203.idx")
+    assert tf.submissions_url("320193") == (
+        "https://data.sec.gov/submissions/CIK0000320193.json")
+
+
+def test_the_manifest_retains_raw_and_carries_the_non_evidentiary_stamp(tmp_path):
+    """Extraction is destructive, so the response is kept beside the record.
+
+    `corpora/us` learned this the hard way: `raw_bytes` was a number with
+    nothing behind it until the pages were retained.
+    """
+
+    body = "<ownershipDocument>ACME</ownershipDocument>"
+    f = tf.FetchedFiling(
+        url="https://www.sec.gov/Archives/edgar/data/320193/b.txt",
+        cik="0000320193", company="ACME CORP",
+        retrieved_at="2026-08-27T00:00:00+00:00",
+        raw_bytes=len(body), digest=hashlib.sha256(body.encode()).hexdigest(),
+        text=body,
+    )
+    manifest = tf.write_manifest([f], root=tmp_path / "_trace_filings")
+    text = manifest.read_text()
+    assert text.startswith(f"# {tf.NON_EVIDENTIARY}")
+    assert "url\tcik\tcompany\tretrieved_at\traw_bytes\tdigest" in text
+    assert f.digest in text
+    kept = (tmp_path / "_trace_filings" / "_raw" / f"{f.stem}.xml").read_text()
+    assert kept == body
+    # Re-extraction: the retained response reproduces the recorded digest.
+    assert hashlib.sha256(kept.encode()).hexdigest() == f.digest
+    # And the whole store is fenced.
+    from fntn.scanner.corpusio import corpus_documents, is_fenced_path
+    assert is_fenced_path(manifest.parent)
+    assert corpus_documents(manifest.parent) == []

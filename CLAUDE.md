@@ -90,6 +90,14 @@ src/fntn/scanner/  the agent discovery layer (spec §3.7)
   trace.py        §9.4 trace harness; evidentially inert by construction
   ratify.py       §13 row 21a/21b ratification: twelve drawn by the
                   registered seed, clerk labels withheld
+  corpusio.py     reading a corpus directory; ONE copy of the rule that
+                  underscore-prefixed names are bookkeeping, covering the
+                  route itself and not only the files inside it
+  trace_filings.py  the §9.4 Form 4 trace corpus fetcher. FENCED: no
+                  registration route may resolve to corpora/_trace_filings,
+                  the sweep's loader will not read it, and discovery.py's
+                  import closure may not so much as name it. Refuses without
+                  SEC_CONTACT and never substitutes a placeholder
   run.py          one scan cycle and its report
   report.py       the §9.2 run report; renders the ledger, measures nothing.
                   The queue is ordered by outstanding-blocker count ONLY.
@@ -116,7 +124,7 @@ tests/
 
 ```bash
 pip install -e ".[dev]"      # once: puts src/ on the path
-python -m pytest tests/ -q   # 234 tests
+python -m pytest tests/ -q   # 252 tests
 ```
 
 Without the editable install the package sits at `src/fntn` and is invisible to
