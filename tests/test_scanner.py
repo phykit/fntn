@@ -3213,6 +3213,66 @@ def test_the_budget_count_is_printed_even_at_zero_and_never_inside_row_23():
     ledger.close()
 
 
+def test_the_achievability_lens_reports_and_refuses_nothing():
+    """P128: a LENS, not a fence, and the third state is not a pass.
+
+    Every criterion is derived from a registered decision, so the lens reads the
+    parameter object rather than holding numbers of its own. It reports; it
+    refuses nothing and no funnel step consults it, which is what keeps it
+    procedure under armed §0.6. The fence version is apparatus and is prepared
+    in Annex A.1, not taken.
+
+    The state that matters is UNSCORABLE. A criterion the register cannot judge
+    is not met and is not failed, and counting it as met would be the defect §2
+    names: a check that could not run recorded as one that ran.
+    """
+
+    from fntn.scanner import achievability as ach
+
+    strong = ach.Candidate(
+        "m-strong", origin="agent", long_only=True, us_listed=True,
+        min_share_price_usd=25.0, median_daily_notional_usd=5_000_000,
+        survives_to_next_open=True, claimed_effect_bps=40.0,
+        holding_period_sessions=21, obtainable_without_purchase=True,
+    )
+    r = ach.score(strong, tolerance_bps=10.0, delta_min_floor_bps=17.0,
+                  smallest_position_usd=2418.75)
+    assert r.met == 8
+    assert r.failed == []
+    # The archive does not exist, so this one cannot be scored either way.
+    assert r.unscorable == ["backtestable"]
+
+    # Every criterion cites the decision behind it. A criterion whose authority
+    # is not written down is a preference wearing a derivation's clothes.
+    assert all(c.authority.strip() for c in r.criteria)
+
+    weak = ach.Candidate(
+        "m-weak", origin="random_control", long_only=False, us_listed=False,
+        min_share_price_usd=3.0, median_daily_notional_usd=10_000,
+        survives_to_next_open=False, claimed_effect_bps=4.0,
+        holding_period_sessions=7, obtainable_without_purchase=False,
+    )
+    w = ach.score(weak, tolerance_bps=10.0, delta_min_floor_bps=17.0,
+                  smallest_position_usd=2418.75)
+    assert w.met == 0
+    assert len(w.failed) == 8
+    # The failing criterion is NAMED, never merely counted.
+    assert "min_share_price" in w.failed and "effect_exceeds_delta_min" in w.failed
+
+    # An absent declaration is unscorable, never a failure: the two are
+    # different claims about the candidate and are reported apart.
+    silent = ach.Candidate("m-silent", origin="agent")
+    q = ach.score(silent, tolerance_bps=10.0, delta_min_floor_bps=17.0,
+                  smallest_position_usd=2418.75)
+    assert q.met == 0 and q.failed == [] and len(q.unscorable) == 9
+
+    # And the two derived thresholds are derived, not held.
+    assert round(ach.minimum_share_price_usd(10.0), 2) == 10.42
+    assert round(ach.minimum_daily_notional_usd(2418.75)) == 40312
+    # An unset tolerance yields no floor rather than a default one.
+    assert ach.minimum_share_price_usd(None) is None
+
+
 def test_the_unexercised_list_splits_by_arm_like_the_distribution(tmp_path):
     """P126: the fourth instance of a class whose invariant was installed at P105.
 
