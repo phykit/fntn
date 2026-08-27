@@ -285,6 +285,29 @@ correct reading is the opposite: **the filings are correctly conceived and were
 pointed at the wrong intake**, and position 5, `ingestion_lag_exceeds_window`,
 is the **only** route to a §13 row 15 observation that row has ever had.
 
+### B8pre. The tiered election was FITTED, not measured, and the Codespace caught its own prior work
+
+| | |
+|---|---|
+| **Asserted** | P112: elect **tiered**, because it moves the US proportional term from `104/p` to `74/p`, a 28.8% saving |
+| **True** | **`74/104` restated.** P101 had fitted **both** schedules to the **same two readings**, giving each the same fixed component and the same USD 1.00 per-order minimum and solving only the share price, **so the model could not distinguish the schedules on anything but the per-share rate.** The published schedules differ on three further things: **tiered's minimum is USD 0.35, not USD 1.00**; **fixed absorbs exchange, clearing and pass-through fees and tiered passes them through**; and the strategy's own fill convention puts it at the **opening auction**, priced separately again |
+| **Refuted by** | reading the schedule instead of the fit. **The election reverses to fixed** (P118) |
+| **Provenance** | `verified_primary` |
+
+***The defect was found by this Codespace against its own prior work, one batch
+later, and that is the part worth recording.*** P112 **named the weakness in the
+same row that took the decision**: it wrote that 28.8% was *"`74/104` restated,
+not a measurement"* and that *"every unmodelled pass-through narrows the gap and
+none widens it"*. **It then took the decision anyway, because the delegation was
+over prepared recommendations and this one was prepared.**
+
+**So the failure was not in the analysis. It was in acting on a recommendation
+whose own text said what would refute it, without first doing the thing the text
+named.** *A stated caveat is not a discharged one, and a decision taken over a
+live caveat is a decision taken on a fit.*
+
+**The invariant this suggests is in §6c.**
+
 ### B8. One class closed three times, which means it was never closed at all
 
 | | |
