@@ -1,0 +1,10 @@
+filename	source_url	retrieved_at	bytes	sha256	extracts_to
+regulation_fd_100.htm	https://www.law.cornell.edu/cfr/text/17/243.100	2026-08-27T19:58:32Z	37586	f62352895b6ebd9de7564fc27ed33444a28acfe12da9918bc3431597adc4e9c5	regulation_fd_100.txt
+regulation_fd_101.htm	https://www.law.cornell.edu/cfr/text/17/243.101	2026-08-27T19:58:33Z	37170	8479175591fe9e15f1d39448b10929445dc05fa2c26664f2ce09a846ee9479fb	regulation_fd_101.txt
+regulation_fd_102.htm	https://www.law.cornell.edu/cfr/text/17/243.102	2026-08-27T19:58:34Z	27503	1fa465338b1bf2aeb40b5231e05525996ec64e14a3ec41ee212968b197fcb53f	regulation_fd_102.txt
+regulation_fd_103.htm	https://www.law.cornell.edu/cfr/text/17/243.103	2026-08-27T19:58:34Z	30756	dc901f9313b34cb873a74c00cda1767cd8b3e26d89c12c9b92b3d95fe30ff95d	regulation_fd_103.txt
+form_8k.htm	https://www.law.cornell.edu/cfr/text/17/249.308	2026-08-27T19:58:35Z	28976	2eef65ac1a05fb1c0f76be28736a89e934eaf8b748dd3b49091ec54524ed9383	form_8k.txt
+rule_13a11_current_reports.htm	https://www.law.cornell.edu/cfr/text/17/240.13a-11	2026-08-27T19:58:36Z	32359	82273541fe9aefdacdb0edc1e163a63d671c8e96f9ee1fbe618ed7d6f71f6493	rule_13a11_current_reports.txt
+regulation_g_100.htm	https://www.law.cornell.edu/cfr/text/17/244.100	2026-08-27T19:58:37Z	35231	2c6441e3d6192280b731b7190557e7d88adc06a0dc0e7fd113eb9e7eae19689b	regulation_g_100.txt
+regulation_g_101.htm	https://www.law.cornell.edu/cfr/text/17/244.101	2026-08-27T19:58:38Z	33184	081ab7c32753f4a64dc6d154a2835268e069ad6af75e3a5dd9946b866e936d81	regulation_g_101.txt
+item10_non_gaap.htm	https://www.law.cornell.edu/cfr/text/17/229.10	2026-08-27T19:58:39Z	68204	e6797ca1d624379681dc52d4b0c1e44f80f69670fd45496988c1da11cad45eba	item10_non_gaap.txt

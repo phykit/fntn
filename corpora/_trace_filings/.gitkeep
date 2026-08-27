@@ -3,3 +3,9 @@ No registration retrieval_route may resolve here: Corpus.__post_init__ refuses
 any underscore-prefixed path component, corpusio.corpus_documents returns
 nothing for one, and discovery.py's import closure may not name this path.
 Empty: nothing has been fetched. SEC_CONTACT is unset.
+
+RE-POINTED 27 August 2026. The Form 4 machinery is RETIRED WITH THE FAMILY and
+is not deleted: verify_response's byte floor plus structural marker, the
+manifest shape and the raw-retention invariant are family-agnostic and are what
+the 8-K Item 2.02 fetch reuses. What changes is the form and the deadline, not
+the fetcher's contract. Still empty: SEC_CONTACT is unset.

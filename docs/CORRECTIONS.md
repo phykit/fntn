@@ -32,15 +32,15 @@ itself: a class with THREE OR MORE instances must carry an invariant, and
 `test_every_recurring_correction_class_has_an_invariant` refuses this file if one
 does not.**
 
-**Eighteen rows fall into three classes and four singletons.** *The
+**Nineteen rows fall into three classes and eight singletons.** *The
 concentration is the finding: this project does not make many kinds of mistake.
 It makes three kinds, repeatedly.*
 
 | Class | Instances | Count | Invariant |
 |---|---|---|---|
-| **I. A conclusion acted on without checking the link it rests on** | A2, A5b, A8, B8pre, B9 | **5** | **INSTALLED, below** |
+| **I. A conclusion acted on without checking the link it rests on** | A2, A5b, A8, A9, B8pre, B9 | **6** | **INSTALLED at P122, STRENGTHENED at P130 and again at P131, to four clauses. **The installed version would NOT have caught A9**** |
 | **II. Material that decided something was not committed at the moment it decided it** | B3, B4, B5, and the registration chain's first object | **4** | **INSTALLED at P114**: `cmd_sweep` refuses over a corpus git cannot produce again, with `corpus_not_committed` |
-| **III. A population pooled, mis-scoped or miscounted** | B6 (itself three), B7, and the §13 table's two hand counts | **6** | **INSTALLED at P105**: the abort-position distribution splits by `origin`, and every §13 count is now taken by machine over the table |
+| **III. A population pooled, mis-scoped or miscounted** | B6 (itself three), B7, the §13 table's two hand counts, and `_unexercised` at P126 | **7** | **INSTALLED at P105 and WIDENED at P126**: the invariant was applied to a METHOD when the class was about a QUERY, so it now reads **every ledger read path carries the marker the fences rely on**, and phase 2 swept every `SELECT` in the package to hold it |
 | Singletons, which are not a class | A1, A3, A4, A5, A6, A7, B1, B2 | n/a | n/a, no invariant is owed: a row belonging to no class asserts no recurrence |
 
 ---
@@ -72,6 +72,54 @@ acted on.***
 > Where the preparation names the thing that would refute it, ***that thing is
 > checked before the decision, or the decision waits.*** A stated caveat is not
 > a discharged one.
+
+***PART 3, added 27 August 2026 (P130) after the invariant fired twice in one
+batch and a sixth instance arrived in the same batch.***
+
+> **3. A borrowed quantity is a DERIVATION only where it CAUSES the thing
+> derived.** Where it merely shares a unit, a name or a page, it is a
+> **coincidence**, and adopting it is a preference wearing a derivation's
+> clothes.
+
+**Why part 3 was needed.** The four derivations that have worked all borrowed a
+**causal** quantity: §6.7's risk budget **sizes** the position §4.4's bound
+constrains; §5.2.2's break-even **is what an effect must clear**; Gate 1's lag
+rule **is what kills a stale item**; row 1's schedule **is the cost**.
+**Phase 8's offered derivation borrowed §9.4's tracing block size to fix the
+precision of a fence's false-positive rate**, and *nothing connects them*:
+tracing 100 items does not make 3% the right bound on a rate about a different
+population in a different pipeline.
+
+***Parts 1 and 2 would both have passed it.*** It cites an artefact already in
+the document, and its preparation states no caveat it then overrides. **It is a
+third way for the same class to produce an instance, and it needed its own
+clause.**
+
+***PART 4, added 27 August 2026 (P131), because the answer to "would the
+installed invariant have caught A9?" is NO.***
+
+> **4. A claim that changes what a phase is FOR is checked against the tree
+> before the phase runs.** Where an instruction, a preparation or a handover
+> asserts a fact about this repository — what a file contains, what a variable
+> gates, what a step needs — **that fact is checked before work proceeds on
+> it.**
+
+**Why parts 1 to 3 all missed A9.** A9 was **not a decision**. It was an
+assertion made in the framing of a task: *retiring insider dealing takes
+`SEC_CONTACT` off the critical path.* **Part 1 governs `§12.1` rows that take
+decisions. Part 2 governs decisions taken over caveats. Part 3 governs borrowed
+quantities.** ***A9 was a claim nothing was decided on, and all three clauses
+reach only decisions.***
+
+**And it was checkable in two greps**: `scripts_fetch_us_corpus.sh` fetches only
+`law.cornell.edu`, and `trace_filings.py` is the only thing that touches the SEC.
+*That is how it was refuted, after the claim had already shaped a phase.*
+
+***The mechanical support is in the session protocol, not in a test.***
+`CLAUDE.md`'s opening reconciliation now requires the batch's **factual premises
+about the tree** to be enumerated and each marked **checked or unchecked**.
+**A9 would have appeared on that list as unchecked, and checking it costs two
+greps.**
 
 **Part 2 is what B8pre needed and part 1 would not have caught.** P112 cited its
 preparation file, satisfying part 1 in full, **and its own text said 28.8% was
@@ -200,6 +248,28 @@ inaction**, which is the quietest way for one to be wrong.
 
 Renamed to `position_below_clip_floor` on 27 August 2026 (P108), on delegated
 authority.
+
+### A9. "Retiring insider dealing takes `SEC_CONTACT` off the critical path"
+
+| | |
+|---|---|
+| **Asserted** | that retiring the insider-dealing family removes the dependency on `SEC_CONTACT` |
+| **True** | **it does not touch it.** What retiring the family removes is a **discovery corpus**, and the discovery corpus is **thirteen documents from `law.cornell.edu`**, fetched with no SEC contact at all. What needs `SEC_CONTACT` is **step 4's ITEM-PIPELINE trace**, which needs live filings **whatever the family**, and **13D, 8-K and issuer repurchase disclosures are all EDGAR** |
+| **Caught by** | the operator, in the instruction that recorded it |
+| **Provenance** | `verified_primary` |
+
+***The error was conflating the DISCOVERY corpus with the TRACE corpus.*** They
+are different objects with different fences, and `corpora/_trace_filings` is
+fenced out of every registration route **precisely so the two cannot be
+confused**. **The conflation this error makes is the one that fence exists
+against**, which is a sharper way of saying the fence is doing work the prose
+around it is not.
+
+***It is the SIXTH instance of Class I***, after A2, A5b, A8, B8pre and B9.
+**So the invariant installed at P122 was installed against a class that was
+still generating instances**, and §9b of this batch asks whether it would have
+caught this one. *An invariant that does not catch the next instance of its own
+class is not yet an invariant.*
 
 ### A8. "Row 29's closing will move binding-path step 3"
 

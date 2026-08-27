@@ -3213,6 +3213,167 @@ def test_the_budget_count_is_printed_even_at_zero_and_never_inside_row_23():
     ledger.close()
 
 
+CANDIDATES = REPO_ROOT / "docs" / "CANDIDATE_MECHANISMS.md"
+
+
+def test_the_candidate_list_carries_no_ranking_key_but_the_criteria_count():
+    """P129: the deliverable may not rank, and plausibility is the one to name.
+
+    The list is ordered by number of achievability criteria met, which is a
+    count of registered constraints satisfied and therefore arithmetic over the
+    parameter object. Any other key would be this file telling the operator
+    which mechanism to believe, which is the clerk becoming an analyst.
+
+    The check is over the STRUCTURE with no exemption, and over the prose less
+    the sentences that exist to disclaim the words. Rewording a disclaimer fails
+    this test and sends the next reader back to it.
+    """
+
+    text = CANDIDATES.read_text()
+
+    structure = "\n".join(
+        l for l in text.splitlines() if l.startswith(("|", "#"))
+    ).lower()
+    for word in RANKING_WORDS + ("plausib", "confidence", "likelihood"):
+        assert word not in structure, word
+
+    disclaimers = (
+        "**By number of achievability criteria MET, descending. Then\n"
+        "alphabetically by mechanism.**\n",
+        "No merit, no severity, no score, no plausibility, no\nrecency, no "
+        "confidence.",
+        "***Plausibility is named explicitly because it is the one a model "
+        "would reach\nfor.*** A model-derived plausibility ranking is the "
+        "clerk becoming an analyst,",
+        "**The alphabetical tie-break ranks nothing**",
+    )
+    prose = text
+    for d in disclaimers:
+        assert d in text, d
+        prose = prose.replace(d, "")
+    # `score` is deliberately NOT checked in the prose: the lens's own third
+    # state is `unscorable`, and a file that may not name the vocabulary of the
+    # thing it reports cannot describe it. It IS checked in the structure
+    # above, which is where a ranking key would live.
+    for word in ("merit", "severity", "plausib", "confidence", "recency"):
+        assert word not in prose.lower(), word
+
+    # And it must say what it is not, in terms a reader cannot skim past.
+    for claim in (
+        "It is NOT evidence that any of them works",
+        "Zero backtests. Zero frozen designs. Zero trades.",
+        "A reader must not be able to mistake this list for results",
+    ):
+        assert claim in text, claim
+
+
+def test_the_achievability_lens_reports_and_refuses_nothing():
+    """P128: a LENS, not a fence, and the third state is not a pass.
+
+    Every criterion is derived from a registered decision, so the lens reads the
+    parameter object rather than holding numbers of its own. It reports; it
+    refuses nothing and no funnel step consults it, which is what keeps it
+    procedure under armed §0.6. The fence version is apparatus and is prepared
+    in Annex A.1, not taken.
+
+    The state that matters is UNSCORABLE. A criterion the register cannot judge
+    is not met and is not failed, and counting it as met would be the defect §2
+    names: a check that could not run recorded as one that ran.
+    """
+
+    from fntn.scanner import achievability as ach
+
+    strong = ach.Candidate(
+        "m-strong", origin="agent", long_only=True, us_listed=True,
+        min_share_price_usd=25.0, median_daily_notional_usd=5_000_000,
+        survives_to_next_open=True, claimed_effect_bps=40.0,
+        holding_period_sessions=21, obtainable_without_purchase=True,
+    )
+    r = ach.score(strong, tolerance_bps=10.0, delta_min_floor_bps=17.0,
+                  smallest_position_usd=2418.75)
+    assert r.met == 8
+    assert r.failed == []
+    # The archive does not exist, so this one cannot be scored either way.
+    assert r.unscorable == ["backtestable"]
+
+    # Every criterion cites the decision behind it. A criterion whose authority
+    # is not written down is a preference wearing a derivation's clothes.
+    assert all(c.authority.strip() for c in r.criteria)
+
+    weak = ach.Candidate(
+        "m-weak", origin="random_control", long_only=False, us_listed=False,
+        min_share_price_usd=3.0, median_daily_notional_usd=10_000,
+        survives_to_next_open=False, claimed_effect_bps=4.0,
+        holding_period_sessions=7, obtainable_without_purchase=False,
+    )
+    w = ach.score(weak, tolerance_bps=10.0, delta_min_floor_bps=17.0,
+                  smallest_position_usd=2418.75)
+    assert w.met == 0
+    assert len(w.failed) == 8
+    # The failing criterion is NAMED, never merely counted.
+    assert "min_share_price" in w.failed and "effect_exceeds_delta_min" in w.failed
+
+    # An absent declaration is unscorable, never a failure: the two are
+    # different claims about the candidate and are reported apart.
+    silent = ach.Candidate("m-silent", origin="agent")
+    q = ach.score(silent, tolerance_bps=10.0, delta_min_floor_bps=17.0,
+                  smallest_position_usd=2418.75)
+    assert q.met == 0 and q.failed == [] and len(q.unscorable) == 9
+
+    # And the two derived thresholds are derived, not held.
+    assert round(ach.minimum_share_price_usd(10.0), 2) == 10.42
+    assert round(ach.minimum_daily_notional_usd(2418.75)) == 40312
+    # An unset tolerance yields no floor rather than a default one.
+    assert ach.minimum_share_price_usd(None) is None
+
+
+def test_the_unexercised_list_splits_by_arm_like_the_distribution(tmp_path):
+    """P126: the fourth instance of a class whose invariant was installed at P105.
+
+    P105 split the abort-position distribution by `origin`, because pooling the
+    agent arm with the random-mechanism control arm destroys the comparison the
+    control arm exists for. The method BESIDE it kept the pooled query and went
+    on projecting `origin` away, so a point exercised only by the control arm
+    was reported as exercised when for the agent arm it was not.
+
+    The invariant was applied to a method when the class was about a query.
+    Found by sweeping every SELECT in the package for markers the fences rely
+    on, which is what the class's invariant should have said to do.
+    """
+
+    ledger = Ledger(parameter_hash="unexercised-arms")
+    # The agent arm trips position 3 only; the control arm trips position 7
+    # only. Pooled, both look exercised. Split, each arm is missing the other's.
+    for did, origin, code in (
+        ("prop-a", Origin.AGENT, "proposal_names_entity"),
+        ("prop-c", Origin.RANDOM_CONTROL, "duplicate_of_open_pointer"),
+    ):
+        ledger.write_proposal(did, clean_proposal(origin=origin),
+                              "abandoned_at_ingestion")
+        ledger.write_refusal(summaries.render(code, did, {
+            "entity": "Acme plc", "duplicate_ref": "dir-open",
+            "population_key": "k",
+        }))
+
+    section = _render(ledger).split("### Intake points not exercised")[1]
+    section = section.split("## 4.")[0]
+    agent = section.split("**agent:")[1].split("**random_control:")[0]
+    control = section.split("**random_control:")[1]
+
+    # The control arm's point is unexercised FOR THE AGENT, and vice versa.
+    assert "`duplicate_of_open_pointer`" in agent
+    assert "`proposal_names_entity`" not in agent
+    assert "`proposal_names_entity`" in control
+    assert "`duplicate_of_open_pointer`" not in control
+
+    # Eleven of twelve for each arm, and the pooled ten printed as not a
+    # reading so a reader holding an earlier report can see what moved.
+    assert "**agent: 11 of 12 unexercised**" in section
+    assert "**random_control: 11 of 12 unexercised**" in section
+    assert "Pooled, and NOT a reading: 10 of 12." in section
+    ledger.close()
+
+
 def test_unexercised_intake_points_are_named_not_counted():
     ledger = _report_ledger()
     section = _render(ledger).split("### Intake points not exercised")[1].split("## 4.")[0]
