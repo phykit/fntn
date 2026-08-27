@@ -2334,3 +2334,193 @@ def test_the_fingerprint_moves_when_the_hashed_shape_moves():
 
     assert fingerprint_of(hashed) == Registration.schema_fingerprint()
     assert fingerprint_of(hashed | {"a_new_gate"}) != Registration.schema_fingerprint()
+
+
+# ---------------------------------------------------------------------------
+# §13 rows 21a and 21b: the ratification harness.
+# ---------------------------------------------------------------------------
+
+from fntn.scanner import ratify
+from fntn.scanner.ratify import Agreement, RatificationRefused
+
+
+def _labelled():
+    subjects = load_labelled(str(REPO_ROOT / "docs" / "labelled_proposals.json"))
+    assert len(subjects) == 42
+    return subjects
+
+
+def test_the_draw_comes_from_the_registered_seed_and_nowhere_else():
+    """Unchoosable by whoever runs it, and replayable from the registration.
+
+    A ratification sample the runner can steer is a sample chosen after the
+    labels are known, whatever order the two actually happened in.
+    """
+
+    subjects = _labelled()
+    reg = Registration.load(REPO_ROOT / REGISTRATION_FILE)
+    a = [l.subject_id for l in ratify.draw(subjects, reg.control_arm_seed)]
+    b = [l.subject_id for l in ratify.draw(subjects, reg.control_arm_seed)]
+    assert len(a) == ratify.DRAW_N == 12
+    assert a == b
+    # A different registration draws a different twelve, so a re-draw costs a
+    # re-stamp with the causing field named.
+    assert a != [l.subject_id for l in ratify.draw(subjects, reg.control_arm_seed + 1)]
+
+
+def test_the_draw_does_not_share_a_stream_with_the_control_arm():
+    """Same registered seed, two purposes, and the salt keeps them apart."""
+
+    import random
+
+    subjects = _labelled()
+    drawn = sorted([l for l in subjects if not l.probe_route],
+                   key=lambda l: l.subject_id)
+    assert len(drawn) == 36
+    unsalted = random.Random(20260826).sample(drawn, 12)
+    salted = ratify.draw(subjects, 20260826)
+    assert [l.subject_id for l in salted] != [l.subject_id for l in unsalted]
+
+
+def test_the_worksheet_withholds_the_drawn_arm_labels_and_shows_every_probe():
+    """The withholding is the design, so it is asserted rather than assumed."""
+
+    subjects = _labelled()
+    text = ratify.render_draw(subjects, 20260826, "testhash", date(2026, 8, 27))
+    body = text.split("## Drawn arm")[1].split("## Authored probes")[0]
+    for l in ratify.draw(subjects, 20260826):
+        assert f"`{l.subject_id}`" in body
+        # The only occurrences of the taxonomy's words in this half are the
+        # operator's own empty box.
+    assert body.count("class_level") == body.count(
+        "operator_label (class_level / not_class_level):") * 2
+    assert "clerk label" not in body
+
+    probes = text.split("## Authored probes")[1]
+    for l in [x for x in subjects if x.probe_route]:
+        assert f"`{l.subject_id}`" in probes
+        assert l.probe_route in probes
+    assert probes.count("clerk label") == 6
+
+
+def test_the_refutation_rule_is_written_before_any_label_is_revealed():
+    text = ratify.render_draw(_labelled(), 20260826, "h", date(2026, 8, 27))
+    assert "one disagreement in twelve refutes the clerk's labels for the whole" in text.lower()
+    # And it is above the subjects, not in a footnote after them.
+    assert text.index("refutes the clerk's labels") < text.index("## Drawn arm")
+
+
+def test_one_disagreement_refutes_the_whole_arm():
+    subjects = _labelled()
+    picked = ratify.draw(subjects, 20260826)
+    labels = {l.subject_id: l.is_class_level for l in picked}
+    agreed = ratify.reveal(subjects, 20260826, labels)
+    assert not agreed.refutes and agreed.agreed == 12
+    assert "NOT REFUTED" in agreed.render()
+
+    labels[picked[0].subject_id] = not picked[0].is_class_level
+    refuted = ratify.reveal(subjects, 20260826, labels)
+    assert refuted.refutes
+    assert refuted.agreed == 11
+    out = refuted.render()
+    assert "REFUTED" in out and "FOR THE WHOLE DRAWN" in out
+    assert "roughly 3 across it" in out
+
+
+def test_a_blank_label_is_neither_agreement_nor_disagreement():
+    subjects = _labelled()
+    picked = ratify.draw(subjects, 20260826)
+    labels = {l.subject_id: l.is_class_level for l in picked[1:]}
+    with pytest.raises(RatificationRefused, match="no operator label for"):
+        ratify.reveal(subjects, 20260826, labels)
+
+
+def test_the_harness_refuses_a_draw_larger_than_the_arm():
+    with pytest.raises(RatificationRefused, match="Refusing to shrink"):
+        ratify.draw(_labelled(), 20260826, n=99)
+
+
+def test_neither_reveal_reports_a_rate():
+    """Counts with their own denominator, and no percentage anywhere."""
+
+    subjects = _labelled()
+    picked = ratify.draw(subjects, 20260826)
+    for labels in (
+        {l.subject_id: l.is_class_level for l in picked},
+        {l.subject_id: (l.is_class_level if i else not l.is_class_level)
+         for i, l in enumerate(picked)},
+    ):
+        out = ratify.reveal(subjects, 20260826, labels).render()
+        assert "%" not in out
+
+
+def test_the_worksheet_states_the_bound_and_never_the_point_estimate():
+    """0 of 36 is a count. The rate it supports is an upper bound near 8.3%."""
+
+    text = ratify.render_draw(_labelled(), 20260826, "h", date(2026, 8, 27))
+    assert "upper bound" in text and "8.3%" in text
+    assert "0%" not in text
+
+
+OPEN_ITEMS = REPO_ROOT / "docs" / "OPEN_ITEMS.md"
+
+
+def _open_items_row(n: str):
+    """(status cell, note cell) for a §13 row, so a status is read as a status.
+
+    Split rather than searched: `21b`'s note contains the sentence "PROVISIONAL
+    and not BLOCKED", and a substring test over the whole row would read that
+    as a status of BLOCKED.
+    """
+
+    rows = [l for l in OPEN_ITEMS.read_text().splitlines()
+            if l.startswith(f"| {n} |")]
+    assert len(rows) == 1, f"expected one row {n}, found {len(rows)}"
+    cells = [c.strip() for c in rows[0].strip().strip("|").split("|")]
+    assert len(cells) == 4, cells[:2]
+    return cells[2], cells[3]
+
+
+def test_row_21a_is_blocked_and_states_a_bound_not_a_rate():
+    """The split's whole content, locked against drift back to `0%`.
+
+    A point estimate of zero on 36 trials is a precision claim the sample does
+    not carry: a fence refusing one clean proposal in twenty produces this
+    reading better than one time in six.
+    """
+
+    status, note = _open_items_row("21a")
+    assert status == "**BLOCKED**"
+    assert "upper bound" in note.lower() and "8.3%" in note
+    assert "0 of 36" in note          # the count stands
+    assert "0 events in 36 trials" in note
+    assert "rule of three" in note
+    # `0%` appears only where it is being withdrawn, never as the reading.
+    assert "It is not 0%" in note
+    assert "**0%** previously carried on this row is withdrawn" in note
+    assert "refused (0%)" not in note
+    # The blocker is named, and it is not labelling effort.
+    assert "design segment" in note and "§7.1" in note
+    assert "chosen and not derived" in note
+
+
+def test_row_21b_is_provisional_coverage_and_never_a_rate():
+    status, note = _open_items_row("21b")
+    assert status == "**PROVISIONAL**"
+    assert "5 of 6 routes closed" in note
+    assert "never a rate" in note.lower()
+    assert "title-case bare ticker" in note
+    # No percentage anywhere in the note. Coverage carries no denominator.
+    assert "%" not in note
+    assert "operator reading the six" in note
+
+
+def test_the_old_row_21_is_gone_from_both_registers():
+    """One row carried two quantities with two blockers and one status."""
+
+    assert not [l for l in OPEN_ITEMS.read_text().splitlines()
+                if l.startswith("| 21 |")]
+    spec = (REPO_ROOT / "docs" / "spec" / "from_narrative_to_null_v1_14.md").read_text()
+    assert "| 21 | **Entity-fence error rates**" not in spec
+    assert "| 21a | **Fence false-positive rate" in spec
+    assert "| 21b | **Fence false-negative route coverage" in spec

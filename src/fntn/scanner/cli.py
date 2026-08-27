@@ -14,6 +14,7 @@ registration cannot be attributed to anything.
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -228,6 +229,78 @@ def cmd_trace(args) -> int:
     return 0
 
 
+def cmd_ratify_draw(args) -> int:
+    """Write the operator's ratification worksheet, clerk labels withheld.
+
+    Procedure, not apparatus: it produces a document for a person and no verdict
+    for a machine, and nothing downstream reads what it writes.
+    """
+
+    from . import ratify
+
+    try:
+        reg = Registration.load(args.registration)
+    except FileNotFoundError:
+        print(f"{args.registration} not found. Run `init` first.")
+        return 1
+    if reg.control_arm_seed is None:
+        print("no registered seed. The draw is unchoosable only because it comes")
+        print("from the registration; without one it would come from whoever ran")
+        print("this, which is the thing the draw exists to prevent.")
+        return 2
+
+    labelled = load_labelled(args.labelled)
+    on = date.fromisoformat(args.on) if args.on else date.today()
+    out = Path(args.out or f"docs/ratification_draw_{on.isoformat()}.md")
+    if out.exists() and not args.overwrite:
+        print(f"{out} exists. Refusing to overwrite a worksheet that may already")
+        print("carry an operator's labels. Pass --overwrite to replace it, or")
+        print("--out to write elsewhere.")
+        return 3
+    out.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        text = ratify.render_draw(labelled, reg.control_arm_seed, reg.hash(), on)
+    except ratify.RatificationRefused as exc:
+        print(f"refused: {exc}")
+        return 4
+    out.write_text(text, encoding="utf-8")
+    print(f"wrote {out}")
+    print(f"  registration {reg.hash()}, seed {reg.control_arm_seed}")
+    print(f"  {ratify.DRAW_N} drawn-arm subjects, labels WITHHELD")
+    print("  6 authored probes, shown in full")
+    print()
+    print("One disagreement in twelve refutes the clerk's labels for the whole")
+    print("drawn arm. That rule is in the file, above the subjects, and it was")
+    print("written before any label was revealed.")
+    return 0
+
+
+def cmd_ratify_reveal(args) -> int:
+    """Reveal the clerk labels and report agreement as a count."""
+
+    from . import ratify
+
+    try:
+        reg = Registration.load(args.registration)
+    except FileNotFoundError:
+        print(f"{args.registration} not found.")
+        return 1
+    labelled = load_labelled(args.labelled)
+
+    raw = json.loads(Path(args.labels).read_text(encoding="utf-8"))
+    operator = {
+        k: (v == "class_level" if isinstance(v, str) else bool(v))
+        for k, v in raw.items()
+    }
+    try:
+        result = ratify.reveal(labelled, reg.control_arm_seed, operator)
+    except ratify.RatificationRefused as exc:
+        print(f"refused: {exc}")
+        return 4
+    print(result.render())
+    return 0 if not result.refutes else 5
+
+
 def cmd_sweep(args) -> int:
     try:
         reg = Registration.load(args.registration)
@@ -380,6 +453,24 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     )
     p_trace.add_argument("--labelled", default="docs/labelled_proposals.json")
     p_trace.set_defaults(func=cmd_trace)
+
+    p_rd = sub.add_parser(
+        "ratify-draw",
+        help="write the operator ratification worksheet (§13 rows 21a, 21b)",
+    )
+    p_rd.add_argument("--labelled", default="docs/labelled_proposals.json")
+    p_rd.add_argument("--out", help="default docs/ratification_draw_<date>.md")
+    p_rd.add_argument("--on", help="date to stamp the file with, ISO")
+    p_rd.add_argument("--overwrite", action="store_true")
+    p_rd.set_defaults(func=cmd_ratify_draw)
+
+    p_rr = sub.add_parser(
+        "ratify-reveal",
+        help="reveal the clerk labels and report agreement as a count",
+    )
+    p_rr.add_argument("labels", help="JSON: {subject_id: class_level|not_class_level}")
+    p_rr.add_argument("--labelled", default="docs/labelled_proposals.json")
+    p_rr.set_defaults(func=cmd_ratify_reveal)
 
     p_sweep = sub.add_parser("sweep", help="run a sweep, if registration is complete")
     p_sweep.add_argument("--transcript", help="replay a saved payload instead of calling the model")

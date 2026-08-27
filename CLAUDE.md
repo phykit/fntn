@@ -85,6 +85,8 @@ src/fntn/scanner/  the agent discovery layer (spec §3.7)
   ledger.py       SQLite; nothing deleted, nothing overwritten
   summaries.py    §8 rejection summaries: rendered, never judged
   trace.py        §9.4 trace harness; evidentially inert by construction
+  ratify.py       §13 row 21a/21b ratification: twelve drawn by the
+                  registered seed, clerk labels withheld
   run.py          one scan cycle and its report
 docs/spec/         the governing manuscript
 docs/OPEN_ITEMS.md   §13 calibrations, §14 decisions, Annex A.1 predicates
@@ -105,7 +107,7 @@ tests/
 
 ```bash
 pip install -e ".[dev]"      # once: puts src/ on the path
-python -m pytest tests/ -q   # 181 tests
+python -m pytest tests/ -q   # 193 tests
 ```
 
 Without the editable install the package sits at `src/fntn` and is invisible to
