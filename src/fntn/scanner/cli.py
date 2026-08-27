@@ -208,7 +208,8 @@ def cmd_trace(args) -> int:
     exclusivity = {c.event_class: reg.default_scoring_mode
                    for c in reg.discoverable_classes}
     harness = TraceHarness(
-        exclusivity_available=exclusivity, entity_fence=master.as_fence()
+        exclusivity_available=exclusivity,
+        entity_fence=master.as_fence(stopwords=frozenset(reg.rulebook_stopwords)),
     )
     print(f"registration {reg.hash()} stamped {reg.registered_at}")
     print(master.render(floor=reg.master_coverage_floor))
@@ -304,7 +305,9 @@ def cmd_sweep(args) -> int:
         default_scoring_mode=ScoringMode(reg.default_scoring_mode),
         exclusivity=exclusivity,
         corpus_modes=corpus_modes,
-        entity_fence=master.as_fence(),
+        entity_fence=master.as_fence(
+            stopwords=frozenset(reg.rulebook_stopwords)
+        ),
         control_arm_ratio=reg.control_arm_ratio,
         control_arm_seed=reg.control_arm_seed,
         policy=SegmentPolicy(

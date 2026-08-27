@@ -35,9 +35,12 @@
     }
   ],
   "master_coverage_floor": 0.95,
-  "rationale": "delta 50 bps: an agent beating a random draw by less than half a round trip is not paying for the search it consumes. n_min 30: \u00a76.1 already refuses below 30 non-overlapping trades, so this reuses the paper's minimum rather than inventing a second. ratio 1.0: equal n maximises power for a fixed total, and an underpowered control arm is worse than none because it consumes segment and returns undetermined forever. delta_min_floor 25 bps: the cheapest break-even in \u00a75.2.2 is 22.5 bps, so an effect below that could never be traded in any cell. theta 0.25 is a placeholder, non-binding until the archive exists.",
-  "registered_at": "2026-08-26T22:54:01.850224+00:00",
+  "rationale": "delta 50 bps: an agent beating a random draw by less than half a round trip is not paying for the search it consumes. n_min 30: \u00a76.1 already refuses below 30 non-overlapping trades, so this reuses the paper's minimum rather than inventing a second. ratio 1.0: equal n maximises power for a fixed total, and an underpowered control arm is worse than none because it consumes segment and returns undetermined forever. delta_min_floor 25 bps: the cheapest break-even in \u00a75.2.2 is 22.5 bps, so an effect below that could never be traded in any cell. theta 0.25 is a placeholder, non-binding until the archive exists.  Re-stamped 27 August 2026 after a fence repair, NOT after a change to the kill criterion. rulebook_stopwords enters the registration because it changes what the entity fence refuses, and a value that changes a fence's behaviour without reaching the hash makes that behaviour unattributable. delta (50 bps), n_min (30), ratio (1.0) and seed (20260826) are carried across unchanged from the 26 August commitment, which was made before any archive exists and is therefore still blind.",
+  "registered_at": "2026-08-27T06:51:39.473454+00:00",
   "registered_by": "operator",
+  "rulebook_stopwords": [
+    "trust"
+  ],
   "security_master_files": [
     "./master/us.json:US"
   ],

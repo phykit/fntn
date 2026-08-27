@@ -27,7 +27,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 from .markets import CorpusInvalid, validate_corpus
-from .records import ScoringMode
+from .records import RULEBOOK_STOPWORDS, ScoringMode
 
 
 class RegistrationIncomplete(RuntimeError):
@@ -104,6 +104,17 @@ class Registration:
     #: the master before that market is readable. Below it, the fence has holes
     #: it cannot see and the market is refused.
     master_coverage_floor: float = 0.95
+
+    # -- §13 row 21: the fence's own vocabulary ----------------------------
+    #: Rulebook nouns that may head a legal-form span without a firm being
+    #: named. Registered rather than left as a module constant because it
+    #: changes what the entity fence refuses, and a value that changes what a
+    #: fence refuses and does not reach the hash is a fence whose behaviour
+    #: cannot be attributed to a registration. Adding a row here is a re-stamp,
+    #: which is the point: it makes the cost of a quiet widening visible.
+    rulebook_stopwords: List[str] = field(
+        default_factory=lambda: sorted(RULEBOOK_STOPWORDS)
+    )
 
     # -- the archive boundary that pre_archive is defined against ----------
     #: ISO date on which the archive opens. **Required when any corpus declares

@@ -15,6 +15,8 @@ from __future__ import annotations
 import json
 from datetime import date, datetime, timedelta, timezone
 
+from pathlib import Path
+
 import pytest
 
 from fntn.scanner import codes, summaries
@@ -69,7 +71,7 @@ from fntn.scanner.screen import (
 )
 from fntn.scanner.segment import ReuseLedger, SegmentPolicy
 from fntn.scanner.trace import FenceAudit, TraceHarness, load_labelled
-from fntn.scanner.records import IntakeRecord, ClaimField
+from fntn.scanner.records import IntakeRecord, ClaimField, RULEBOOK_STOPWORDS
 
 NOW = datetime(2026, 8, 26, 12, 0, tzinfo=timezone.utc)
 
@@ -348,6 +350,84 @@ def test_an_empty_arm_refuses_to_score_rather_than_reading_zero():
     no_probes = FenceAudit(n=36, n_class_level=36, n_probes=0, false_positives=3)
     assert "not scored, no subjects in this arm" in no_probes.render()
     assert "of 0" not in no_probes.render()
+
+
+def test_a_rulebook_heading_is_not_a_firm_however_the_designator_reads():
+    """§13 row 21. The designator branch fired on Rule 16a-8's own heading.
+
+    "Trust Holdings and Transactions" matches the legal-form grammar exactly as
+    "Vodafone Group Holdings" does, and the pattern cannot tell them apart:
+    Holdings is a designator in both. The leading token is what separates them,
+    and it is separated by a registered stopword set rather than by a better
+    pattern, because the set can be audited and a pattern cannot.
+    """
+
+    fence = EntityFence(
+        security_master=MASTER,
+        tickers=TICKERS,
+        lexicon=SEED_LEXICON,
+        rulebook_stopwords=RULEBOOK_STOPWORDS,
+    )
+    # The heading, as it appears in the corpus.
+    assert entity_mentions("Trust Holdings and Transactions", fence) == []
+    # "Joint and group filings" in Rule 16a-3: The Joint Corp is a listed US
+    # issuer whose one-word name is an ordinary English word, so this one is
+    # closed by a lexicon row rather than by the stopword set.
+    assert entity_mentions("Joint and group filings must include", fence) == []
+
+
+def test_a_genuine_designator_span_is_still_flagged():
+    """The other half of the same rule, so the narrowing cannot go unnoticed.
+
+    The span matcher is greedy, so a firm whose name merely contains a stopword
+    leads on the word before it and is unaffected. Only a firm whose name
+    *begins* with a rulebook noun loses this branch, and that cost is stated on
+    RULEBOOK_STOPWORDS.
+    """
+
+    fence = EntityFence(
+        security_master=MASTER,
+        tickers=TICKERS,
+        lexicon=SEED_LEXICON,
+        rulebook_stopwords=RULEBOOK_STOPWORDS,
+    )
+    assert entity_mentions("Northern Trust Holdings raised its stake", fence)
+    assert entity_mentions("purchases by Vodafone Group Holdings", fence)
+    assert entity_mentions("a filing by Acme Inc in the window", fence)
+    # The shape guard: a bare initial and a section number never lead a firm.
+    assert entity_mentions("A Ltd", fence) == []
+    assert entity_mentions("16a Holdings", fence) == []
+
+
+def test_the_stopword_set_is_registered_so_it_reaches_the_hash():
+    """A value that changes what the fence refuses must change the hash.
+
+    Otherwise the fence's behaviour cannot be attributed to a registration, and
+    a row added quietly to a module constant would silently widen what a sweep
+    lets through with nothing on the record to show it.
+    """
+
+    from fntn.scanner.params import Registration
+
+    a = Registration(rulebook_stopwords=["trust"])
+    b = Registration(rulebook_stopwords=["trust", "beneficial"])
+    assert a.hash() != b.hash()
+    assert Registration().rulebook_stopwords == sorted(RULEBOOK_STOPWORDS)
+
+
+def test_the_corpus_no_longer_trips_the_designator_branch():
+    """The reading this repair was raised against, locked against the corpus."""
+
+    m = SecurityMaster()
+    m.load_sec_tickers("./master/us.json", market="US")
+    fence = m.as_fence()
+    hits = set()
+    for doc in sorted(Path("corpora/us").glob("*.htm")):
+        hits.update(entity_mentions(
+            doc.read_text(encoding="utf-8", errors="replace"), fence
+        ))
+    assert "Trust Holdings" not in hits
+    assert "Joint" not in hits
 
 
 def test_no_security_master_refuses_to_score():

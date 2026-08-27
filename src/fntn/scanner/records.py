@@ -144,6 +144,13 @@ _IDENTIFIER_PATTERNS: Sequence[re.Pattern] = (
 #: are already caught above, so this pattern carries only the bare case.
 _BARE_TICKER_PATTERN = re.compile(r"\b[A-Z]{3,6}\b")
 
+#: The shape a proper noun takes as the leading token of a designator span:
+#: an initial capital, at least two characters, and letters throughout.  A bare
+#: initial (``A Ltd``), a section number (``16a Holdings``) and punctuation are
+#: excluded.  It is a cheap guard rather than the discriminating test; the
+#: rulebook stopword set below is what actually separates a heading from a firm.
+_PROPER_NOUN_LEAD = re.compile(r"[A-Z][A-Za-z&.'-]*[A-Za-z]$")
+
 #: Corporate designators.  A designator is a strong signal because it is a
 #: legal-form suffix that only ever attaches to a named firm; a regulator, a
 #: rulebook and an exchange never carry one.
@@ -228,6 +235,14 @@ class EntityFence:
     #: by different rules: a name is a word and is matched as a span in any case,
     #: a ticker is a symbol and is matched only in a symbol's shape.
     tickers: frozenset = frozenset()
+    #: Rulebook nouns that may head a designator span without a firm being
+    #: named.  Consulted by the designator branch alone; see
+    #: ``RULEBOOK_STOPWORDS`` for why it is a separate set from the lexicon.
+    #: Empty by default, exactly as ``lexicon`` is: an empty set makes the
+    #: branch refuse more rather than less, which is the safe direction, and
+    #: the seed is supplied by the caller so the value in force is the value
+    #: the registration hashed.
+    rulebook_stopwords: frozenset = frozenset()
     #: Regulatory and market vocabulary that is *not* an issuer.  Seeded, and
     #: extended by operator mapping in the same idiom as §3.6.5's stream table:
     #: it grows by use rather than by anticipation, and each addition is
@@ -240,8 +255,17 @@ class EntityFence:
             hits.extend(m.group(0) for m in pattern.finditer(text))
         for m in _DESIGNATOR_PATTERN.finditer(text):
             phrase = m.group(0)
-            if phrase.split()[0].lower() not in self.lexicon:
-                hits.append(phrase)
+            lead = phrase.split()[0]
+            # Three conditions, and all three must hold.  A designator suffix
+            # alone is not enough: it also matched the Rule 16a-8 heading
+            # "Trust Holdings and Transactions", which names no firm.
+            if not _PROPER_NOUN_LEAD.match(lead):
+                continue
+            if lead.lower() in self.lexicon:
+                continue
+            if lead.lower() in self.rulebook_stopwords:
+                continue
+            hits.append(phrase)
         for m in _BARE_TICKER_PATTERN.finditer(text):
             symbol = m.group(0)
             low = symbol.lower()
@@ -327,13 +351,42 @@ SEED_LEXICON = frozenset(
         "Interruption", "Aggregated", "Ad", "An", "A", "Where", "Read",
         "Related", "Membership", "Position", "Positions", "Issued",
         "Monthly", "Two", "Three", "Four", "Five", "Ten", "Twelve",
+        # Added by operator mapping on the trace of 27 August 2026: the fence
+        # refused "Joint and group filings" in Rule 16a-3, The Joint Corp being
+        # a listed US issuer whose one-word name is an ordinary English word.
+        "Joint",
     )
 )
+
+#: Rulebook vocabulary that may lead a **designator span** without the span
+#: naming a firm.  Separate from ``SEED_LEXICON`` and consulted by one branch
+#: only, because it answers a narrower question: not *is this token an entity*
+#: but *may this token head a legal-form span in a rulebook without a firm being
+#: named*.  ``Trust Holdings and Transactions`` is the heading of Rule 16a-8,
+#: and ``Trust Holdings`` matched the designator grammar exactly as
+#: ``Vodafone Group Holdings`` would.
+#:
+#: **Seeded from evidence, not from anticipation.**  One token, because one is
+#: what the 27 August trace over the thirteen US pre-archive documents actually
+#: produced: it is the only designator span in the corpus.  It grows by operator
+#: mapping in the same idiom as ``SEED_LEXICON`` and §3.6.5's stream table, by
+#: use rather than by guesswork, because every speculative row here is a false
+#: negative waiting to happen and false negatives are the expensive direction.
+#:
+#: **The cost, stated.**  A firm whose name *begins* with a stopword loses the
+#: designator branch: ``Trust Holdings Inc`` would not be flagged by it.  The
+#: name lookup still matches such a firm, and the span matcher is greedy, so
+#: ``Northern Trust Holdings`` leads on ``Northern`` and is unaffected.  The
+#: residual is confined to a firm whose first word is a rulebook noun and whose
+#: name is absent from the security master.
+RULEBOOK_STOPWORDS = frozenset({"trust"})
 
 #: Module-level default: lexicon seeded, security master empty.  A caller that
 #: has a master supplies one; a caller that does not gets designator and
 #: identifier detection only, and the refusal to score that goes with it.
-DEFAULT_FENCE = EntityFence(lexicon=SEED_LEXICON)
+DEFAULT_FENCE = EntityFence(
+    lexicon=SEED_LEXICON, rulebook_stopwords=RULEBOOK_STOPWORDS
+)
 
 
 def entity_mentions(text: str, fence: Optional[EntityFence] = None) -> List[str]:

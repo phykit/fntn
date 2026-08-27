@@ -27,7 +27,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Set
 
-from .records import SEED_LEXICON, EntityFence
+from .records import SEED_LEXICON, RULEBOOK_STOPWORDS, EntityFence
 
 _NAME_COLUMNS = ("name", "company", "company name", "issuer", "security name",
                  "companyname", "issuer name", "long name", "description")
@@ -239,7 +239,9 @@ class SecurityMaster:
 
     # -- use ---------------------------------------------------------------
 
-    def as_fence(self, lexicon=SEED_LEXICON) -> EntityFence:
+    def as_fence(
+        self, lexicon=SEED_LEXICON, stopwords=RULEBOOK_STOPWORDS
+    ) -> EntityFence:
         """Names and tickers go in separately, and the fence matches them apart.
 
         An earlier version passed the union as one lookup set. That put 10,359
@@ -255,6 +257,7 @@ class SecurityMaster:
             security_master=frozenset(self.names),
             tickers=frozenset(self.tickers),
             lexicon=lexicon,
+            rulebook_stopwords=frozenset(stopwords),
         )
 
     def readable_markets(self, floor: float) -> List[str]:

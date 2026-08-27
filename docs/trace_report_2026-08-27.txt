@@ -271,11 +271,18 @@ WHAT THE FENCE REFUSES ON THE CORPUS ITSELF
     Opera
     Joint           name half. A one-word US issuer name that is also an
                     ordinary word, tripping on 'Joint and group filings' in
-                    Rule 16a-3. A genuine fence false positive.
+                    Rule 16a-3. A genuine fence false positive. CLOSED by P80,
+                    with a lexicon row.
     Trust Holdings  designator pattern, on the heading 'Trust Holdings and
                     Transactions' in Rule 16a-8. A rulebook heading, not an
                     issuer. Also genuine, and the only one coming from a pattern
-                    rather than from a lookup.
+                    rather than from a lookup. CLOSED by P80, by narrowing the
+                    designator branch to a proper-noun-shaped lead absent from a
+                    registered rulebook stopword set.
+
+  After P80, under registration b8dd61e7eea6898e: 3 distinct hits, 39 total.
+  Both genuine fence false positives are gone and the residue is exactly the
+  three chrome tokens below, which are row 22's decision and not the fence's.
 
 THE CHROME STRIP, AND WHAT IT DID NOT FIX
   API, BlackBerry and Opera were diagnosed on 27 August as a corpus-fetch defect
