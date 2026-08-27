@@ -97,7 +97,8 @@ blocks the freeze signature exactly as `recollection` does.
 | 9 | `eb3bbe92c34d1e6f` | 2026-08-27T09:06:19.906138 | `0cabf9b` | `git show 0cabf9b:discovery_registration.json` | `verified_primary` | `delta_min_floor` |
 | 10 | `09e1e23c447edf92` | 2026-08-27T09:06:19.906138 | `bb49304` | `git show bb49304:discovery_registration.json` | `verified_primary` | `discoverable_classes` |
 | 11 | `81e9b57128f9285a` | 2026-08-27T09:06:19.906138 | `bd1a345` | `git show bd1a345:discovery_registration.json` | `verified_primary` | `corpora` |
-| 12 | `2616ba37fb307c0e` | 2026-08-27T09:06:19.906138 | **current** | `discovery_registration.json` | `verified_primary` | `max_tolerable_fixed_cost_bps` |
+| 12 | `2616ba37fb307c0e` | 2026-08-27T09:06:19.906138 | `df5f721` | `git show df5f721:discovery_registration.json` | `verified_primary` | `max_tolerable_fixed_cost_bps` |
+| 13 | `827cf0d8c84791e8` | 2026-08-27T09:06:19.906138 | **current** | `discovery_registration.json` | `verified_primary` | `delta_min_floor` |
 
 Each cell in the object column is the command or path that yields the bytes,
 and every one of them names `discovery_registration.json`, because that is what
@@ -108,6 +109,38 @@ The current row names no object commit because the commit carrying it does not
 exist until it is made; **the row is completed with its SHA at the moment it is
 superseded**, which is the moment `save` demands it be written down, and the
 test fails a superseded row that has not been completed.
+
+## Rows 12 and 13 re-derive two values, and one of them was written twice
+
+*Row 12's causing field is `max_tolerable_fixed_cost_bps`, **§13 row 29**,
+re-derived from 10.0 bp to **8.7 bp** on 27 August 2026 (`§12.1` P134) once
+§0.12 stated reference equity. Row 13's is `delta_min_floor`, **§14's floor**,
+which follows by the arithmetic `7.0 + 8.7` from 17.0 bp to **15.7 bp**.*
+
+**Two stamps and not one, deliberately.** Each names the single field that
+caused it, as rows 5 to 10 do. *A stamp naming two fields records that
+something changed and leaves a reader to work out which change mattered, and
+the causing-field column exists precisely so that they do not have to.*
+
+***AND THE SESSION THAT WROTE THEM BROKE THE RULE ONCE, WHICH IS RECORDED
+BECAUSE THE CHAIN CAUGHT IT.*** Both saves were first made in one working
+tree with **no commit between them**, so row 12 named a hash whose object
+existed in **no commit at all** and row 12's own object column would have said
+`current` for a file that had already moved on.
+`test_a_superseded_row_carries_its_object_commit` and
+`test_registration_history_recomputes` both failed, naming row 12 exactly.
+**The sequence was redone as one save, one commit**, which is what row 12's
+`df5f721` now records. *The rule was already written; what was missing was an
+occasion to find out that it binds. The guard also refused the rollback,
+because rolling back would itself have destroyed a stamped object.*
+
+**`registered_at` has still not moved**, and rows 12 and 13 share
+`2026-08-27T09:06:19.906138` with rows 5 to 11. ***That is not a defect and it
+is the second time it needs saying.*** The timestamp records when the
+commitment was made, and the commitment recorded at that instant — the control
+arm's δ and *n*ₘᵢₙ, its ratio and its seed — **has not moved and cannot be
+moved by a cost tolerance.** *A timestamp that moved whenever any field did
+would record the last edit, which is what `git log` is for.*
 
 ## Row 6 shares row 5's timestamp, and that is the mechanism working
 
