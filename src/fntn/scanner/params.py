@@ -63,6 +63,26 @@ class RegistrationHistoryMissing(RuntimeError):
 #: itself rather than in a tree it has nothing to do with.
 HISTORY_FILE = Path("docs") / "REGISTRATION_HISTORY.md"
 
+#: What a schema fingerprint is written as. **The prefix types the value; it is
+#: not part of the digest and reaches neither hash.**
+#:
+#: *Why it exists.* The fingerprint was stored as sixteen hex characters, which
+#: is exactly the shape of a registration hash, so the two were
+#: indistinguishable to anything reading the file mechanically. A sweep of
+#: `discovery_registration.json` for registration hashes found two values and
+#: had to be told by a person that one of them was not a stamp, which is a
+#: check that is not machine-checkable and therefore, by this project's own
+#: standard, not a check. Prefixing makes the stored token `schema:<digest>`,
+#: which no sweep for a hash can read as one.
+#:
+#: **The cost, stated.** A naked `[0-9a-f]{16}` regex ignores token boundaries
+#: and still matches the digest inside the prefixed value, so the prefix types
+#: the record and does not on its own repair a careless sweep. The sweep is
+#: therefore written down beside the record it sweeps, in
+#: `docs/REGISTRATION_HISTORY.md`, and `test_a_hash_sweep_of_the_registration_
+#: finds_only_registration_hashes` is what holds it rather than the prose.
+SCHEMA_PREFIX = "schema:"
+
 
 @dataclass(frozen=True)
 class DiscoverableClass:
@@ -224,6 +244,11 @@ class Registration:
     #: the choice is between verifying nothing and raising on every old file,
     #: and both are wrong. With it the two are distinguishable and the third
     #: state, *cannot verify*, can be reported as itself.
+    #:
+    #: **Written as `schema:<digest>`, never as a bare digest.** Untyped it was
+    #: sixteen hex characters, the shape of a registration hash, and a sweep of
+    #: this file for unrecorded stamps found it and could only be told by hand
+    #: that it was not one. See `SCHEMA_PREFIX`.
     registered_schema: Optional[str] = None
     #: Free text: why these values and not others. Not read by anything; it
     #: exists because a number whose reasoning is not written down gets changed
@@ -378,7 +403,37 @@ class Registration:
             "discoverable_class": sorted(f.name for f in dc_fields(DiscoverableClass)),
         }
         blob = json.dumps(shape, sort_keys=True, separators=(",", ":"))
-        return hashlib.sha256(blob.encode()).hexdigest()[:16]
+        digest = hashlib.sha256(blob.encode()).hexdigest()[:16]
+        return SCHEMA_PREFIX + digest
+
+    @classmethod
+    def schema_matches(cls, stored: Optional[str]) -> bool:
+        """Whether `stored` names the shape the dataclass currently has.
+
+        **Two encodings are accepted and they denote the same shape.** The
+        typed `schema:<digest>` is what `save` writes. A bare `<digest>` is the
+        superseded encoding, written by every file stamped before the prefix
+        landed, and it is the same digest of the same field names.
+
+        *Why accepting it is the honest answer and not a fallback.* Rule 3
+        forbids substituting a working value for a broken one. Nothing is
+        substituted here: a bare digest equal to today's digest establishes
+        that the file was stamped under today's field names, which is the only
+        question this method asks. Refusing it would report
+        `unverifiable_schema_change` over a file whose shape demonstrably
+        matches, and *cannot verify* said of something that can be verified is
+        as false as *verified* said of something that cannot.
+
+        **The cost, stated.** A file still carrying the untyped encoding is
+        still a sixteen-hex token in a sweep until it is next saved. `save`
+        writes the typed form unconditionally, so the untyped encoding leaves
+        the tree the first time each file is re-stamped and not before.
+        """
+
+        if not stored:
+            return False
+        current = cls.schema_fingerprint()
+        return stored in (current, current[len(SCHEMA_PREFIX):])
 
     def hash(self) -> str:
         """Canonical hash. Goes on every record the run produces."""
@@ -561,7 +616,7 @@ class Registration:
 
         if not obj.registered_hash:
             obj.hash_verification = cls.UNSTAMPED
-        elif obj.registered_schema != cls.schema_fingerprint():
+        elif not cls.schema_matches(obj.registered_schema):
             obj.hash_verification = cls.UNVERIFIABLE
         else:
             recomputed = obj.hash()

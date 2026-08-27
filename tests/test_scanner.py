@@ -16,6 +16,7 @@ import dataclasses
 import itertools
 import json
 import os
+import re
 import subprocess
 import sys
 from datetime import date, datetime, timedelta, timezone
@@ -1365,6 +1366,7 @@ def test_every_defined_code_is_emitted(tmp_path):
 
 from fntn.scanner.master import SecurityMaster
 from fntn.scanner.params import (
+    SCHEMA_PREFIX,
     Corpus as RegCorpus,
     DiscoverableClass,
     Registration,
@@ -2358,11 +2360,83 @@ def test_the_fingerprint_moves_when_the_hashed_shape_moves():
             "discoverable_class": sorted(
                 f.name for f in dataclasses.fields(DiscoverableClass)),
         }
-        return _h.sha256(json.dumps(shape, sort_keys=True,
-                                    separators=(",", ":")).encode()).hexdigest()[:16]
+        digest = _h.sha256(json.dumps(shape, sort_keys=True,
+                                      separators=(",", ":")).encode()).hexdigest()[:16]
+        return SCHEMA_PREFIX + digest
 
     assert fingerprint_of(hashed) == Registration.schema_fingerprint()
     assert fingerprint_of(hashed | {"a_new_gate"}) != Registration.schema_fingerprint()
+
+
+# ---------------------------------------------------------------------------
+# The fingerprint is typed, so a hash sweep cannot read it as a stamp.
+# ---------------------------------------------------------------------------
+
+#: The sweep for registration hashes, as `docs/REGISTRATION_HISTORY.md` states
+#: it.  Sixteen hex characters, not preceded by a colon and not part of a longer
+#: hex run: the colon is what excludes the digest half of a typed fingerprint.
+#: The literal is asserted to be in that document below, so the prose cannot
+#: drift from the sweep that is actually run.
+HASH_SWEEP = r"(?<![:0-9a-fA-F])[0-9a-f]{16}(?![0-9a-fA-F])"
+
+
+def test_the_schema_fingerprint_is_typed_and_cannot_be_read_as_a_stamp():
+    """It was sixteen hex characters, which is what a registration hash is.
+
+    A sweep of `discovery_registration.json` found two such values and needed a
+    person to say which was a stamp.  A check only a person can complete is not
+    machine-checkable and by this project's own standard is not a check.
+    """
+
+    fp = Registration.schema_fingerprint()
+    assert fp.startswith(SCHEMA_PREFIX)
+    assert not re.fullmatch(r"[0-9a-f]{16}", fp)
+    # The digest survives untouched under the prefix; the prefix types the
+    # value and is not part of what the fingerprint asserts.
+    assert re.fullmatch(r"[0-9a-f]{16}", fp[len(SCHEMA_PREFIX):])
+
+
+def test_a_hash_sweep_of_the_registration_finds_only_registration_hashes():
+    """The sweep run, not described.
+
+    Every sixteen-hex token the registration file yields must be a hash the
+    history document records.  Before the prefix landed this was false by one
+    token every time, and the reconciliation of 27 August had to write a
+    paragraph explaining that the extra one was not an unrecorded stamp.
+    """
+
+    text = (REPO_ROOT / REGISTRATION_FILE).read_text()
+    found = set(re.findall(HASH_SWEEP, text))
+    recorded = set(re.findall(r"[0-9a-f]{16}", HISTORY_MD.read_text()))
+    assert found, "the sweep found nothing, so it is not sweeping"
+    assert found <= recorded, sorted(found - recorded)
+    # And the thing it must not find.
+    digest = Registration.schema_fingerprint()[len(SCHEMA_PREFIX):]
+    assert digest not in found
+    # The document states the sweep it is swept with, verbatim.
+    assert HASH_SWEEP in HISTORY_MD.read_text()
+
+
+def test_the_untyped_fingerprint_still_names_the_same_shape(tmp_path):
+    """A file stamped before the prefix landed is old, not unverifiable.
+
+    Reporting `unverifiable_schema_change` over a file whose field names
+    demonstrably match today's would be *cannot verify* said of something that
+    can be verified, which is as false as the reverse.
+    """
+
+    p = tmp_path / REGISTRATION_FILE
+    (tmp_path / "docs").mkdir()
+    _complete_registration().save(p)
+    raw = json.loads(p.read_text())
+    assert raw["registered_schema"].startswith(SCHEMA_PREFIX)
+    raw["registered_schema"] = raw["registered_schema"][len(SCHEMA_PREFIX):]
+    p.write_text(json.dumps(raw))
+    assert Registration.load(p).hash_verification == Registration.VERIFIED
+    assert Registration.schema_matches(raw["registered_schema"])
+    # A bare digest that is not this shape's digest is still not this shape.
+    assert not Registration.schema_matches("0" * 16)
+    assert not Registration.schema_matches(None)
 
 
 # ---------------------------------------------------------------------------

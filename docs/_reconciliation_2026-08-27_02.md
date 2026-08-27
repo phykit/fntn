@@ -60,6 +60,10 @@ schema      cb1dffbfadbe3d58 == schema_fingerprint() cb1dffbfadbe3d58
 verification verified
 ```
 
+*The schema line is the state at the start of this session and item 1 moved it.
+The fingerprint is now stored typed, `schema:cb1dffbfadbe3d58`; the digest, the
+registration hash and the verification state are all unchanged.*
+
 Both hash sets agree, and neither register carries a hash the other does not:
 
 ```

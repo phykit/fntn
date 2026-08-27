@@ -176,6 +176,17 @@ chain of registration hashes. It is recorded here because a mechanical sweep
 for sixteen hex characters finds it and it reads at first glance as an
 unrecorded stamp. It is not one.
 
+> *Superseded later on 27 August 2026, and the paragraph above is left standing
+> as the reason.* Needing a paragraph to tell a reader that one of two
+> identically shaped values is not a stamp is a check only a person can
+> complete. The fingerprint is now stored **typed**, as
+> `schema:cb1dffbfadbe3d58`, and the sweep is written down in
+> `docs/REGISTRATION_HISTORY.md` as
+> `(?<![:0-9a-fA-F])[0-9a-f]{16}(?![0-9a-fA-F])`, which yields the registration
+> hash and not the fingerprint. What this section found stands; the sweep it
+> used does not, and running the old naked `[0-9a-f]{16}` against the file today
+> would still find the digest under the prefix.
+
 **The stored hash recomputes**, and under the schema it was taken under:
 
 ```

@@ -225,7 +225,7 @@
   "registered_at": "2026-08-27T09:06:19.906138+00:00",
   "registered_by": "operator",
   "registered_hash": "ce576a9fa04a7403",
-  "registered_schema": "cb1dffbfadbe3d58",
+  "registered_schema": "schema:cb1dffbfadbe3d58",
   "rulebook_stopwords": [
     "trust"
   ],

@@ -36,6 +36,45 @@ is claimed. A file whose fingerprint matches and whose hash does not is refused
 outright. Both provenance fields sit outside the hashed payload, so adding them
 moved neither the hash nor the fingerprint.
 
+**The fingerprint is written `schema:<digest>` and is not a hash.** It was
+stored as sixteen bare hex characters, which is exactly the shape of a
+registration hash, so a sweep of `discovery_registration.json` for unrecorded
+stamps found two values and could only be told by a person that one of them was
+not a stamp. The reconciliation of 27 August had to write a paragraph saying so.
+A check that a person has to complete is not machine-checkable, and by this
+project's own standard that makes it not a check. The prefix types the value so
+that no sweep for a hash can read it as one. It is not part of the digest and
+reaches neither hash, so typing it moved nothing: `ce576a9fa04a7403` is the
+hash before and after, and no row was added above. `Registration.schema_matches`
+accepts the superseded bare encoding as naming the same shape, because a bare
+digest equal to today's digest establishes exactly what the fingerprint is
+asked to establish, and reporting `unverifiable_schema_change` over it would be
+*cannot verify* said of something that can be verified.
+
+## The sweep
+
+Registration hashes are found in a file with this and nothing looser:
+
+```
+(?<![:0-9a-fA-F])[0-9a-f]{16}(?![0-9a-fA-F])
+```
+
+The colon in the lookbehind is what excludes the digest half of a typed
+fingerprint; **the trailing guard is what stops a longer hex run yielding a
+false sixteen.** *The cost, stated:* a naked `[0-9a-f]{16}` ignores token
+boundaries and matches inside `schema:cb1dffbfadbe3d58` regardless, so the
+prefix types the record and does not on its own repair a careless sweep. That is
+why the pattern is written here, beside the chain it is swept against, and why
+`test_a_hash_sweep_of_the_registration_finds_only_registration_hashes` runs it
+against the real file and asserts this document still states it verbatim. Every
+token it yields must appear in the chain below.
+
+**One file in the tree still carries the untyped encoding: none.** `save`
+writes the typed form unconditionally, and `discovery_registration.json` was
+re-saved when the prefix landed. Any registration written elsewhere keeps the
+bare encoding until it is next stamped, which is a real limit and is why the
+loader still accepts it.
+
 **The provenance column** carries a §0.5 tag per row. `verified_primary` means
 the object itself is retrievable at the commit named.
 `reconstructed_hash_verified` means it is not: what is retrievable is a
