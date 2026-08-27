@@ -1117,6 +1117,9 @@ def test_end_to_end_scan_produces_a_legible_ledger():
     ledger = Ledger(parameter_hash="test")
     config = ScanConfig(
         parameter_hash="test",
+        # §7.2's fraction is registered from 27 Aug 2026 and ScanConfig no
+        # longer defaults it, so every caller states it, tests included.
+        audit_fraction=0.10,
         entity_fence=FENCE,
         exclusivity={
             "insider_dealing": ScoringMode.CROSS_MARKET,
@@ -1165,6 +1168,7 @@ def _scan_with(exclusivity, default=ScoringMode.CROSS_MARKET, control_ratio=0.25
     ledger = Ledger(parameter_hash="mode")
     config = ScanConfig(
         parameter_hash="mode",
+        audit_fraction=0.10,
         default_scoring_mode=default,
         entity_fence=FENCE,
         control_arm_ratio=control_ratio,
@@ -1196,6 +1200,115 @@ def test_a_sweep_without_a_control_arm_is_refused():
 
     with pytest.raises(ValueError, match="refute"):
         _scan_with({"insider_dealing": None}, control_ratio=0.0)
+
+
+def test_the_import_fence_now_runs_in_both_directions(monkeypatch):
+    """P115: the existing fence covered one direction of a two-way prohibition.
+
+    `assert_import_fence` stops `discovery.py` reaching prices, outcomes and
+    gates, so selection cannot see evaluation. Nothing stopped the reverse, and
+    the reverse is the prohibition CLAUDE.md states in its own words: agent
+    origin material may not enter the §3.5 item pipeline, because it would
+    re-base §7.1's headline on an agent-selected population.
+
+    Today the answer is NOT_APPLICABLE and that is deliberately not CLEAN: none
+    of the forbidden modules exists in this tree, so the walk has nothing to
+    walk. A not-applicable check may never be read as a pass, so it is a state
+    of its own and this test asserts which state.
+    """
+
+    from fntn.scanner.fences import (
+        ImportFenceBreach,
+        ReverseImportFenceState,
+        assert_reverse_import_fence,
+    )
+
+    # Nothing to walk: reported as itself, never as clean.
+    assert assert_reverse_import_fence() is ReverseImportFenceState.NOT_APPLICABLE
+
+    # And when a forbidden module DOES exist and reaches the discovery layer,
+    # the fence refuses. Built rather than waited for, because a fence first
+    # exercised by the breach it exists against is a fence nobody has tested.
+    import sys
+    import types
+
+    breaching = types.ModuleType("fntn.gates")
+    breaching.__file__ = "<synthetic>"
+    breaching.discovery = __import__("fntn.scanner.discovery", fromlist=["x"])
+    monkeypatch.setitem(sys.modules, "fntn.gates", breaching)
+    with pytest.raises(ImportFenceBreach) as caught:
+        assert_reverse_import_fence()
+    assert "may not enter the §3.5 item pipeline" in str(caught.value)
+
+
+def test_a_sweep_refuses_over_a_corpus_that_is_not_committed(tmp_path):
+    """P114: the invariant against a fourth instance of one class.
+
+    Three times now a thing this project depended on turned out not to be
+    retrievable: the raw fetched pages were never retained, the object behind
+    `890a80e3a8566837` survives only as a reconstruction, and the corpus the
+    twelve queued drafts were swept from is in no commit at all. Each was
+    closed as an instance. The class stayed open.
+
+    The class is: **material that decided something was not committed at the
+    moment it decided it.** The invariant is the only closure that addresses
+    the class rather than an instance -- a sweep may not read a corpus that git
+    cannot produce again.
+
+    Written to fail first, against a corpus directory that exists on disk and
+    in no commit.
+    """
+
+    from fntn.scanner.corpusio import uncommitted_routes
+
+    loose = tmp_path / "corpora" / "loose"
+    loose.mkdir(parents=True)
+    (loose / "doc.txt").write_text("a document nothing can retrieve again")
+
+    problems = uncommitted_routes([str(loose)])
+    assert problems, "an uncommitted corpus must be reported, not swept"
+    route, reason = problems[0]
+    assert str(loose) in route
+    # The reason names WHICH failure, because "not committed" spans three very
+    # different states and a reader must not have to guess which.
+    assert "not a git" in reason or "untracked" in reason or "modified" in reason
+
+    # And the committed corpus in this very tree passes, so the check is
+    # discriminating rather than merely strict.
+    assert uncommitted_routes(["./corpora/us"]) == []
+
+
+def test_a_sweep_refuses_when_the_audit_fraction_is_unregistered():
+    """§7.2's fraction has one source, and an unset one is a refusal (P112).
+
+    It was a default on ScanConfig and a default again in ingest.py, and the
+    registration carried it in neither place, so two sweeps under one parameter
+    hash could audit different fractions and nothing on the record would say
+    which. Every attribution statistic in §7.2 computes on the audit sample
+    exclusively, so that is not a cosmetic gap.
+
+    The repair is the field, and this test is what stops the silent path being
+    left open beside the registered one: a ScanConfig that never received a
+    fraction must refuse rather than reach for 0.10.
+    """
+
+    ledger = Ledger(parameter_hash="unset-audit")
+    config = ScanConfig(parameter_hash="unset-audit", entity_fence=FENCE)
+    assert config.audit_fraction is None
+
+    with pytest.raises(ValueError) as caught:
+        scan(
+            StubClient([{}]),
+            [Corpus("c1", Partition.EXTERNAL, ["doc"])],
+            [GridCell("insider_dealing", "drawn population", "a drawn mechanism")],
+            config,
+            ledger,
+            now=NOW,
+        )
+    assert "audit_fraction is unset" in str(caught.value)
+    # And it says WHY, not merely that: a refusal whose reason a reader has to
+    # infer is the kind this project keeps refusing to write.
+    assert "attribution statistic" in str(caught.value)
 
 
 def test_per_class_override_beats_the_default():
@@ -1360,6 +1473,28 @@ def test_every_defined_code_is_emitted(tmp_path):
         observation_runner()
         .run("itm-noobs", obs_ctx(_item(t_pub_observed=None)), mode=Mode.FULL_PANEL)
         .refusals
+    )
+
+    # -- provenance, both ends of the class (P114) -------------------------
+    # One refuses to CREATE an unreproducible record; one MARKS one that
+    # already is. Neither is reachable from the funnel, which is the point:
+    # they are the ledger's own hygiene and they still must be exercised.
+    ledger.write_refusal(
+        summaries.render(
+            "corpus_not_committed",
+            "corpus:./corpora/loose",
+            {"route": "./corpora/loose",
+             "detail": "holds untracked content that no commit carries: doc.txt"},
+        )
+    )
+    ledger.write_refusal(
+        summaries.render(
+            "population_not_replayable",
+            "prop-unreplayable",
+            {"subject_id": "prop-unreplayable",
+             "parameter_hash": "a06400ef28ebb54c",
+             "material": "ASX and ASIC documents"},
+        )
     )
 
     report = codes.coverage(ledger.emitted_codes())

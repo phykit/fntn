@@ -113,6 +113,26 @@ will return the wrong one as soon as the case changes.**
 Adding a gate is apparatus under §0.6 and takes a §0 decision; the cap needs
 none because it already exists.
 
+### A5b. P96's stated ground for not renaming a code, which was itself an assertion
+
+| | |
+|---|---|
+| **Asserted** | §4.4, in terms: the naming defect *"is left alone because renaming a reason code is a change to the registry and takes its own decision"* |
+| **True** | **the name was never in the registry.** `ALL_CODES` holds forty codes and none is `capital_exceeds_clip_floor`; the string appeared in three documents and **no Python file** |
+| **Caught by** | costing the rename for the decision pack, which required knowing what the registry actually held |
+| **Provenance** | `verified_primary` |
+
+**Why this row is here and not merely in §12.1.** The rule P96 stated was
+sound; **the fact it rested on was not checked**. The defect was therefore
+deferred for a cost that did not exist, and the deferral would have created
+that cost: once §4.4's matrix is implemented the same rename does become a
+registry migration plus a permanently mixed ledger. **A correct rule applied to
+an unverified fact produces a decision that is wrong in the direction of
+inaction**, which is the quietest way for one to be wrong.
+
+Renamed to `position_below_clip_floor` on 27 August 2026 (P108), on delegated
+authority.
+
 ### A6. The 1e cost model dropped the per-share commission
 
 | | |
@@ -129,6 +149,29 @@ the ~19 bp recorded, having never been shown it.
 
 *The correction's own limit, kept:* the **mechanism** is confirmed and the
 **share price is not**, row 1's working recording no share price at all.
+
+### A7. Two break-even tables computed against assumed costs, one of them recovered backwards from the thing it was supposed to justify
+
+| | |
+|---|---|
+| **Asserted** | §5.2.2's break-evens (cheapest 22.5 / 19.5 bp) and §0.10's microcap break-evens (225 / 425 / 625 bp) |
+| **True** | both rest on **assumed** fixed costs: §5.2.2 on an assumed £6.25 round trip on £5,000, and §0.10 on the 25 bp implied by the withdrawn £2,500 clip. **§0.7(c) records that the £6.25 was *"recovered backwards from the clip definition"***, and the clip was *defined as* the notional at which fixed costs fall below 25 bp |
+| **Caught by** | §13 row 29 being set, which replaced the assumption with a bound and made the recomputation possible |
+| **Provenance** | `verified_primary` |
+
+**The circularity is the point.** The commission justified the clip and the clip
+justified the commission, and the pair then justified a break-even table that
+Gate 1's ceiling reads. **Nothing in that loop was ever measured.** It took
+fourteen versions and an explicit tolerance to break it, and what broke it was
+not a better estimate but a **bound**: row 29 caps the fixed cost of any
+admissible position at 10 bp by construction, so the table can be published as
+an upper bound that depends on no assumption at all.
+
+**Recomputed 27 August 2026 (P111): §5.2.2 falls by 2.5 bp everywhere, §0.10 by
+15 bp, and no conclusion moves.** *A check run and passed is a different record
+from a check not run.*
+
+---
 
 ---
 
@@ -219,6 +262,56 @@ neither.
 
 *The lesson this register takes from a defect found three times: a correction
 applied to a published number does not travel to the code that produces it.*
+
+### B9. The Form 4 answer was correct about the wrong set
+
+| | |
+|---|---|
+| **Believed** | that the Form 4 block would exercise **none** of the intake points, the entity fence stopping filings at the first one |
+| **True** | that answer is correct about the **discovery layer's twelve** and the question was about **§9.4's requirement**, which is written about the **§3.5 item pipeline**. Against the item pipeline's eleven points a Form 4 block exercises **four directly**, a fifth for some filings, and makes two others pass |
+| **Refuted by** | reading §9.4's nouns instead of accepting the inventory: **gates**, **items**, **feed**, **source class**, **catalyst type**, **filing flow**, and not one **intake point** |
+| **Provenance** | `verified_primary` |
+
+**The shape of this error is worth naming because it is not a wrong answer.**
+Every step of the reasoning was sound and the conclusion follows. **What was
+wrong was the referent**, and a wrong referent produces a confident, internally
+consistent, checkable answer to a question nobody asked. *`tidy.sh` in A2 made
+the same shape of error from the other end.*
+
+**And it cost more than a paragraph.** The conclusion drawn was that *"the one
+point the block would light up is the one whose firing would mean the fence had
+failed"*, which reads as an argument for **not fetching filings at all**. The
+correct reading is the opposite: **the filings are correctly conceived and were
+pointed at the wrong intake**, and position 5, `ingestion_lag_exceeds_window`,
+is the **only** route to a §13 row 15 observation that row has ever had.
+
+### B8. One class closed three times, which means it was never closed at all
+
+| | |
+|---|---|
+| **Believed** | that each of three retrievability failures had been closed |
+| **True** | **the same class recurred three times**: the raw fetched pages were never retained; `890a80e3a8566837`'s object is a reconstruction no commit carries; and the corpus the twelve queued drafts were swept from is in no commit at all |
+| **Refuted by** | the third instance, found in the phase 4 contamination check that was looking for something else entirely |
+| **Provenance** | `verified_primary` |
+
+***This is the register's first row about a PATTERN rather than an error, and
+that is why it is here.*** The first two repairs are both correct and **neither
+generalises**: retain the pages, record the hash. They answer *"how do we keep
+this particular artefact?"* when the question is *"what may a decision be taken
+over?"*
+
+**The tell was available and was not read.** After the second instance this
+project wrote `docs/REGISTRATION_HISTORY.md`, whose entire subject is that **a
+hash pointing at an object nobody can retrieve is not a record.** That is the
+general form of the class. **It was written about registrations and applied to
+registrations**, and the corpus stayed outside its scope for another day.
+
+**Closed at the class on 27 August 2026 (P114)**: `cmd_sweep` refuses over a
+corpus git cannot produce again, with `corpus_not_committed`. **The
+generalisation, stated so a fourth instance has to get past it: any input to a
+decision must be retrievable by commit at the moment the decision is taken, and
+the check belongs at the point of DECISION rather than at the point of storage.**
+*Retention is a hope about the future. A refusal is a fact about the present.*
 
 ### B7. Six floor sites, and there were seven
 

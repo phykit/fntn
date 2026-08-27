@@ -90,7 +90,10 @@ blocks the freeze signature exactly as `recollection` does.
 | 2 | `a06400ef28ebb54c` | 2026-08-26T22:54:01.850224 | `1057c44` | `git show 1057c44:discovery_registration.json` | `verified_primary` | `archive_opens` |
 | 3 | `b8dd61e7eea6898e` | 2026-08-27T06:51:39.473454 | `e955d2b` | `git show e955d2b:discovery_registration.json` | `verified_primary` | `rulebook_stopwords` |
 | 4 | `701adbd9d48015ed` | 2026-08-27T07:59:55.127137 | `d84fd5b` | `git show d84fd5b:discovery_registration.json` | `verified_primary` | `lexicon` |
-| 5 | `ce576a9fa04a7403` | 2026-08-27T09:06:19.906138 | **current** | `discovery_registration.json` | `verified_primary` | `intake_point_budget_s` |
+| 5 | `ce576a9fa04a7403` | 2026-08-27T09:06:19.906138 | `cac46f6` | `git show cac46f6:discovery_registration.json` | `verified_primary` | `intake_point_budget_s` |
+| 6 | `d47d1fe876dafe36` | 2026-08-27T09:06:19.906138 | `2b571c0` | `git show 2b571c0:discovery_registration.json` | `verified_primary` | `max_tolerable_fixed_cost_bps` |
+| 7 | `61fafd4ac5c6e99b` | 2026-08-27T09:06:19.906138 | `9fe7e9f` | `git show 9fe7e9f:discovery_registration.json` | `verified_primary` | `audit_fraction` |
+| 8 | `fcfa57a15a011b33` | 2026-08-27T09:06:19.906138 | **current** | `discovery_registration.json` | `verified_primary` | `theta` |
 
 Each cell in the object column is the command or path that yields the bytes,
 and every one of them names `discovery_registration.json`, because that is what
@@ -101,6 +104,21 @@ The current row names no object commit because the commit carrying it does not
 exist until it is made; **the row is completed with its SHA at the moment it is
 superseded**, which is the moment `save` demands it be written down, and the
 test fails a superseded row that has not been completed.
+
+## Row 6 shares row 5's timestamp, and that is the mechanism working
+
+*Row 6's causing field is `max_tolerable_fixed_cost_bps`, which is **§13 row 29**, the maximum tolerable fixed cost, set to **10 bp** on 27 August 2026 on delegated authority. The attribution is written here and not in the table's last column, because `test_every_causing_field_names_a_real_field_or_the_first_stamp` reads that column mechanically and a cell carrying a field name plus a gloss is a cell that no longer names a field.*
+
+`registered_at` did not move when row 29 entered the object, because `stamp`
+refuses to move a timestamp whose whole purpose is that it cannot move. **Rows 5
+and 6 therefore carry the same `2026-08-27T09:06:19.906138`**, exactly as rows 1
+and 2 do, and for the same reason: **a hash moved whilst the commitment and its
+timestamp stood.**
+
+*That is the distinction this file exists to keep.* A new hash is a new
+**object**. It is a new **commitment** only where the field that caused it is
+one of δ, *n*ₘᵢₙ, the ratio or the seed, and row 6's causing field is none of
+those. §13 rows 19 and 20 say so in those words and are unmoved by this row.
 
 ## Row 1 is a reconstruction, and what that is worth
 

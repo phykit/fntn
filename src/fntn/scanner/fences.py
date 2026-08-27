@@ -266,6 +266,75 @@ def assert_import_fence(module_name: str = "fntn.scanner.discovery") -> None:
                 )
 
 
+class ReverseImportFenceState(str, Enum):
+    """What the reverse fence could establish, and it is three states.
+
+    ``NOT_APPLICABLE`` is not a pass. The item pipeline does not exist in this
+    tree yet, so there is nothing to walk, and a check that had nothing to check
+    must report that rather than returning clean. §2's rule holds here as
+    everywhere: a not-applicable check may never be read as a pass.
+    """
+
+    CLEAN = "clean"
+    NOT_APPLICABLE = "not_applicable, the item pipeline does not exist here"
+    BREACHED = "breached"
+
+
+def assert_reverse_import_fence() -> ReverseImportFenceState:
+    """No item-pipeline module may reach the discovery layer.
+
+    **The fence this codebase already had runs in ONE direction.**
+    ``assert_import_fence`` forbids ``discovery.py`` from reaching prices,
+    outcomes and gates, so selection cannot see evaluation. **Nothing forbade
+    the reverse**, and the reverse is the prohibition ``CLAUDE.md`` states in
+    its own words: *agent-origin material may not enter the §3.5 item pipeline,
+    because it would re-base §7.1's headline on an agent-selected population.*
+
+    An import is a read path in both directions. A gate module that imported
+    ``fntn.scanner.discovery`` for one convenience would put agent-selected
+    material one attribute access away from the population §7.1 measures, and
+    the existing fence would report clean throughout.
+
+    **Found by phase 8 of the 27 August 2026 batch**, which asked whether the
+    import fence covered that direction and established that it did not.
+
+    Returns ``NOT_APPLICABLE`` today, because none of the forbidden modules
+    exists yet. *That is the honest answer and it is deliberately not
+    ``CLEAN``.* The check is written now so that it is in place before the
+    module it guards is, which is the order this project has twice wished it
+    had used.
+    """
+
+    walked = 0
+    for name in sorted(FORBIDDEN_TO_DISCOVERY):
+        try:
+            importlib.import_module(name)
+        except Exception:
+            continue
+        walked += 1
+        closure = discovery_import_closure(name)
+        for reached in sorted(closure):
+            if reached == DISCOVERY_MODULE or reached.startswith(
+                DISCOVERY_MODULE + "."
+            ):
+                raise ImportFenceBreach(
+                    f"{name} reaches {reached}. Agent-origin material may not "
+                    "enter the §3.5 item pipeline: it would re-base §7.1's "
+                    "headline on an agent-selected population. An import is a "
+                    "read path, and this is the direction the original fence "
+                    "did not cover."
+                )
+    return (
+        ReverseImportFenceState.CLEAN
+        if walked
+        else ReverseImportFenceState.NOT_APPLICABLE
+    )
+
+
+#: Named once so both fences agree on what "the discovery layer" is.
+DISCOVERY_MODULE = "fntn.scanner.discovery"
+
+
 @dataclass
 class FenceReport:
     """What each fence covers, printed beside every verdict.

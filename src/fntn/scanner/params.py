@@ -235,6 +235,51 @@ class Registration:
     #: weather rather than the idea. Every attempt is counted and recorded.
     budget_retry_max: int = 1
 
+    # -- §7.2: the audit fraction ------------------------------------------
+    #: Share of subjects that run the **full panel** regardless of early
+    #: failures, so that the reason-code distribution is not censored by
+    #: fail-fast. §7.2's antidote to that censoring, and **every attribution
+    #: statistic computes on the audit sample exclusively**.
+    #:
+    #: **Registered on 27 August 2026 because §7.2 already called it
+    #: "pre-registered" and it was not registered at all.** It was a default
+    #: argument in `ingest.py` and `run.py`, so two runs under one parameter
+    #: hash could audit different fractions and the difference would be
+    #: attributable to nothing on the record. That is the third instance of the
+    #: defect class that caused the `rulebook_stopwords`, `lexicon` and intake
+    #: budget re-stamps, and `docs/CORRECTIONS.md` records why closing three
+    #: instances did not close the class.
+    #:
+    #: **The sample was always replayable and the fraction was not.** The audit
+    #: draw is a hash of the subject identity and the parameter hash, so a given
+    #: fraction always selects the same subjects; nothing recorded which
+    #: fraction had been in force.
+    audit_fraction: float = 0.10
+
+    # -- §13 row 29: the maximum tolerable fixed cost ----------------------
+    #: Basis points of position, round trip, **excluding spread and market
+    #: impact**, neither of which has a §13 row and both of which scale with
+    #: participation.
+    #:
+    #: **Registered because it decides which names exist.** It is the one free
+    #: parameter §13 row 30's clip-floor derivation cannot eliminate, and every
+    #: per-market floor beneath it is arithmetic. Two runs under one hash could
+    #: otherwise size against two different tolerances and admit two different
+    #: universes, and the difference would be attributable to nothing.
+    #:
+    #: **Dimensionless on purpose.** One number governs a USD and a GBP trade
+    #: with no FX rate entering a governance decision, it is comparable across
+    #: markets, and §5.2.2 and §0.5 are already in basis points so it can be
+    #: read straight off the break-even table.
+    #:
+    #: **Set to 10.0 on 27 August 2026 on delegated authority**, inside a range
+    #: whose ends are both derived: 2.375 bp below, where `104/p` exceeds the
+    #: tolerance and no position size of any kind reaches it, and 12.5 bp
+    #: above, which is the fixed-cost basis §5.2.2's cheapest break-even was
+    #: computed on. The operator's standing right to revise is unaffected, and
+    #: **revising to 12.5 is the decision about whether the UK exists**.
+    max_tolerable_fixed_cost_bps: Optional[float] = None
+
     # -- the archive boundary that pre_archive is defined against ----------
     #: ISO date on which the archive opens. **Required when any corpus declares
     #: ``pre_archive``**, because without it that mode names no boundary and is

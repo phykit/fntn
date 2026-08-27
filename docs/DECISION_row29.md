@@ -1,5 +1,114 @@
 # Prepared decision: §13 row 29, the maximum tolerable fixed cost
 
+***TAKEN 27 August 2026, ON DELEGATED AUTHORITY: row 29 is SET AT 10 BASIS
+POINTS.*** Registered as `max_tolerable_fixed_cost_bps` = 10.0; the object
+re-stamped to row 6 of `docs/REGISTRATION_HISTORY.md`. §13 row 29 reads
+**CLOSED**. **The operator's standing right to revise is unaffected**, and §8.5
+below states the one word that revises it and exactly what it buys.
+
+**The file below is the preparation, kept as the record of what was decided and
+on what grounds.** §8, added after the decision, states the consequences.
+
+---
+
+## 8. WHAT 10 BP COSTS. Read this before the preparation
+
+### 8.1 It is a US-only decision, and it should be called that
+
+**At 10 bp the book is US-only.** Not *mostly*, not *initially*: **both UK
+venues are excluded, and neither exclusion can be lifted by anything currently
+on the register.**
+
+### 8.2 UK Main Market: EXCLUDED, with certainty
+
+Stamp duty is **50 bp** of consideration on the buy leg. It is statutory, it is
+a percentage, **it does not decay at any size**, and it is independent of every
+one of §13 row 1's open gaps. Row 1's UK tiered round trip reads **61.4 bp**.
+**No citation row 1 is waiting on can move it below 10.**
+
+### 8.3 UK AIM: EXCLUDED at about 10.3 bp, and NOT because of stamp duty
+
+***This is the finding that matters, and it is derived rather than asserted.***
+
+**IBKR's UK commission is 0.05% each side.** That is a **percentage**, so it is
+proportional and does not decay:
+
+```
+0.0005 x 10,000 =  5 bp a side
+                = 10 bp round trip, on commission alone
+plus the PTM levy, GBP 1 over GBP 10,000 of consideration
+                =  0.20 bp at GBP 50,000
+                = 10.20 bp, before exchange fees
+```
+
+**`sizing.py` fires `clip_floor_unreachable_at_any_size` where the proportional
+share MEETS OR EXCEEDS the tolerance.** At 10 bp, **commission alone reaches it
+exactly**, so AIM is unreachable **on the most generous possible reading of its
+cost**, before a single levy or fee is added.
+
+***Therefore the deferred AIM growth-market tier CANNOT RESCUE THE UK.*** That
+tier is a **stamp-duty** exemption. It addresses a **50 bp tax**. **AIM's
+binding cost at a 10 bp tolerance is the 10.3 bp of commission that the
+exemption does not touch.** *AIM fails on commission, not on tax.*
+
+**One discrepancy, recorded rather than smoothed.** Row 1's UK readings imply an
+AIM residual of **11.4 bp** (61.4 minus 50 bp stamp), whilst the bottom-up build
+gives **10.20 bp** before exchange fees. The gap is about 1.2 bp and it is not
+reconciled here: row 1's UK working is PROVISIONAL and no published schedule has
+been read. **The conclusion is unaffected**, both readings exceeding 10 bp, and
+**the qualitative claim is robust because it rests on the 0.05% rate alone**.
+
+### 8.4 US: reachable above about USD 10.40 a share
+
+`104/p < 10` requires `p > 10.40` on fixed pricing, `74/p < 10` requires
+`p > 7.40` on tiered. **The clip floor rises steeply as price falls toward that
+bound**, because the floor is `40,000 / (10 - 104/p)` in the rate regime.
+
+| Share price | Hard floor, `104/p` | Clip floor at 10 bp, fixed |
+|---|---|---|
+| USD 10.40 | 10.00 bp | **none at any size** |
+| USD 11.00 | 9.45 bp | USD 73,333 |
+| USD 12.00 | 8.67 bp | USD 30,000 |
+| USD 15.00 | 6.93 bp | USD 13,043 |
+| USD 20.00 | 5.20 bp | USD 8,333 |
+| USD 30.00 | 3.47 bp | USD 6,122 |
+| USD 43.79 *(calibration)* | 2.375 bp | **USD 6,055** |
+| USD 75.00 | 1.39 bp | USD 6,032 |
+| USD 150.00 | 0.69 bp | USD 6,016 |
+
+**The floor is nearly flat above about USD 30 and blows up below about USD 12.**
+*The practical screen is not the USD 10.40 bound but the region above it where
+the floor is affordable.* At a £100,000 book, §6.7 sizes between **£1,875 and
+£15,000**, roughly **USD 2,400 to USD 19,300**: the floor fits inside that band
+from about **USD 15 upward** and leaves it below about USD 13.
+
+*Every figure recomputed from the model rather than carried from the earlier
+draft; four of the five rows moved, the largest by 900 USD at USD 15 a share,
+because the rate regime binds at these prices and a hand calculation had used
+the minimum-regime branch.*
+
+### 8.5 THE REVISION THAT IS AVAILABLE IN ONE WORD
+
+***12.5 bp, the derived upper bound, is the value at which AIM becomes
+reachable.*** At 12.5 bp AIM's ~10.3 bp proportional cost sits below the
+tolerance and a floor exists; at 10 bp it does not.
+
+**So the choice between 10 and 12.5 is the choice of whether the UK exists in
+this strategy.** It is not a choice about precision or conservatism.
+
+**10 was taken because it sits INSIDE the derived range rather than at its
+edge.** 12.5 is the point at which a trade's fixed cost alone equals the
+fixed-cost basis §5.2.2's cheapest break-even was computed on, and a parameter
+set at the exact edge of its own coherence bound has no margin for row 1's three
+open gaps, every one of which pushes cost **up**.
+
+**The operator can revise to 12.5 in one word and the consequence is exactly the
+UK.** Nothing else in the cascade changes sign.
+
+---
+
+## The preparation, as it stood
+
 **27 August 2026. Phase 2 of the resumed batch.**
 
 **Row 29 releases TEN things.** It is the largest single release left on the
@@ -18,7 +127,7 @@ with participation.
 |---|---|---|---|
 | 1 | **§13 row 30**, the derived clip floor per market | direct: row 30 *is* `absolute ÷ ((tolerance − proportional) ÷ 10,000)` | row 1's PROVISIONAL status |
 | 2 | **§4.4's three ATR bounds** at full size, and their multiplier-floor halves | direct: the bounds were computed against a clip floor and the floor is the output of row 29 | row 1 |
-| 3 | **§4.4's reachability matrix zero cells.** `capital_exceeds_clip_floor` acquires a threshold to test against and the zero cells can be located | direct | row 1 |
+| 3 | **§4.4's reachability matrix zero cells.** `position_below_clip_floor` (renamed from `capital_exceeds_clip_floor` by P108) acquires a threshold to test against and the zero cells can be located | direct | row 1 |
 | 4 | **§5.4.4's admissibility × reachability intersection** | inherited from §4.4 entire; the table has no independent content | nothing further |
 | 5 | **§0.7(c)'s two withdrawn right-hand columns**, max ATR at h=63 and h=5 | direct, by arithmetic | row 1 |
 | 6 | **§0.10's microcap break-even table**, which is invalidated and today cannot even be recomputed, there being no clip to recompute it at | direct | row 1; the impact column it has never had |

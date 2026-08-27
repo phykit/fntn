@@ -64,7 +64,17 @@ from .segment import ReuseLedger, SegmentPolicy, counting_family_four
 @dataclass
 class ScanConfig:
     parameter_hash: str = "unfrozen"
-    audit_fraction: float = 0.10
+    #: §7.2's audit fraction, **read from the registration and never defaulted
+    #: here**.
+    #:
+    #: *Why ``None`` and not 0.10.* It was 0.10 as a default on this dataclass
+    #: and 0.10 again as a default in ``ingest.py``, and the registration did
+    #: not carry it at all, so two runs under one parameter hash could audit
+    #: different fractions with the difference attributable to nothing. It is
+    #: registered from 27 August 2026; leaving a default here would leave the
+    #: silent path open beside the registered one, which is the defect and not
+    #: a convenience.
+    audit_fraction: Optional[float] = None
     #: The registered default exclusivity construction, settled in v1.14 as
     #: ``cross_market``: it costs no archive span, where ``disjoint_partition``
     #: would take span from an archive already down to nine to twelve
@@ -183,6 +193,14 @@ def scan(
     fence = fence or QueryFence()
     cache = ProposalCache()
     resolve = source_resolver or (lambda ref: bool(ref))
+    if config.audit_fraction is None:
+        raise ValueError(
+            "ScanConfig.audit_fraction is unset. §7.2 calls it a pre-registered "
+            "audit fraction and every attribution statistic computes on the "
+            "audit sample exclusively, so a sweep that picked its own would "
+            "make those statistics unattributable to any registration. Read it "
+            "from Registration.audit_fraction."
+        )
     runner = intake_runner(config.parameter_hash, config.audit_fraction)
     reuse = ReuseLedger(policy=config.policy)
     result = ScanResult(reuse=reuse)

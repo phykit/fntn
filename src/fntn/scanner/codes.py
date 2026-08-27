@@ -40,6 +40,7 @@ class Surface(str, Enum):
     REGISTRATION = "registration"
     SEGMENT = "segment"
     SIZING = "sizing"
+    PROVENANCE = "provenance"
 
 
 @dataclass(frozen=True)
@@ -909,9 +910,74 @@ _SIZING: List[ReasonCode] = [
 # Registry.
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# Surface H -- provenance.  Can this be produced again?
+#
+# Three times this project depended on material that turned out not to be
+# retrievable: the raw fetched pages were never retained, the object behind the
+# registration chain's first hash survives only as a reconstruction, and the
+# corpus the twelve queued drafts were swept from is in no commit at all.
+# **Each was closed as an instance and the class stayed open**, which is how it
+# recurred twice more.  These two codes address the class from both ends: one
+# refuses to CREATE a record that cannot be reproduced, and one MARKS a record
+# that already cannot be.
+# ---------------------------------------------------------------------------
+
+_PROVENANCE: List[ReasonCode] = [
+    ReasonCode(
+        code="corpus_not_committed",
+        surface=Surface.PROVENANCE,
+        description=(
+            "A registered corpus route holds content that no commit carries, "
+            "so a sweep over it could not be reproduced from its parameter "
+            "hash."
+        ),
+        summary_template=(
+            "The sweep did not run. Corpus route {route} {detail}, so a "
+            "proposal raised from it could not be replayed from the parameter "
+            "hash it would carry. Rule 1 requires every decision to be "
+            "replayable byte-for-byte from that hash, and a corpus git cannot "
+            "produce again makes that false at the first step. Nothing was "
+            "read and nothing was written. {resurrection}"
+        ),
+        resurrection=(
+            "Resurrectable the moment the corpus is committed: commit it and "
+            "re-run the sweep, which then carries a hash a reader can go back "
+            "to."
+        ),
+        refuse_to_score=True,
+    ),
+    ReasonCode(
+        code="population_not_replayable",
+        surface=Surface.PROVENANCE,
+        description=(
+            "A ledger record whose deciding material is not retrievable. "
+            "Marked, never deleted: rule 4 says nothing is removed, and a "
+            "record that cannot be reproduced is still a record of what "
+            "happened."
+        ),
+        summary_template=(
+            "{subject_id} is marked NOT REPLAYABLE. It was raised under "
+            "parameter hash {parameter_hash} over {material}, so the sweep "
+            "that produced it cannot be reproduced byte-for-byte. The record "
+            "is retained in full and "
+            "nothing about its content is withdrawn: what is withdrawn is the "
+            "claim that it could be replayed. {resurrection}"
+        ),
+        resurrection=(
+            "Not resurrectable by retention: keeping the material now would "
+            "not make this record reproducible. Only a fresh sweep under a "
+            "registration that names a committed corpus produces a replayable "
+            "population."
+        ),
+        refuse_to_score=False,
+    ),
+]
+
+
 ALL_CODES: Dict[str, ReasonCode] = {
     rc.code: rc
-    for rc in (*_INTAKE, *_SCREEN, *_DIRECTIVE, *_REGISTRATION, *_SEGMENT, *_SIZING, *_OBSERVATION)
+    for rc in (*_INTAKE, *_SCREEN, *_DIRECTIVE, *_REGISTRATION, *_SEGMENT, *_SIZING, *_PROVENANCE, *_OBSERVATION)
 }
 
 #: The ordered fail-fast sequence for each surface.  Stated explicitly rather

@@ -307,3 +307,43 @@ class Ledger:
 
     def close(self) -> None:
         self.conn.close()
+
+
+def mark_not_replayable(ledger, subject_ids, material: str) -> int:
+    """Mark records whose deciding material is not retrievable. Never delete.
+
+    **Rule 4 says nothing is deleted from the ledger and nothing is
+    overwritten**, so a record that turns out to be unreproducible is *marked*
+    and kept whole. Nothing about its content is withdrawn; what is withdrawn is
+    the claim that it could be replayed.
+
+    *Why a refusal row and not a column on the record.* A column would have to
+    be written over the existing row, which is the one operation this ledger
+    does not perform. Appending a refusal on the ``provenance`` surface leaves
+    the original bytes untouched and puts the mark where every other statement
+    about a subject already lives.
+
+    Returns the number of subjects marked.
+    """
+
+    from . import summaries
+
+    marked = 0
+    for subject_id in subject_ids:
+        row = ledger.conn.execute(
+            "SELECT parameter_hash FROM proposal WHERE subject_id = ?",
+            (subject_id,),
+        ).fetchone()
+        ledger.write_refusal(
+            summaries.render(
+                "population_not_replayable",
+                subject_id,
+                {
+                    "subject_id": subject_id,
+                    "parameter_hash": row["parameter_hash"] if row else "unknown",
+                    "material": material,
+                },
+            )
+        )
+        marked += 1
+    return marked
