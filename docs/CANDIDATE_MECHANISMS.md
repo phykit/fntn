@@ -82,6 +82,42 @@ tested** (`test_a_SET_ANTHROPIC_API_KEY_can_still_be_unusable`,
 preflight `models.retrieve` at construction: no tokens, and it settles the key
 and the model identifier together, before a single document is opened.*
 
+### Re-attempted 27 August 2026 after the operator reported the endpoint answering
+
+***It did not answer to THIS session, and the difference is recorded rather
+than reconciled away.*** The operator read the models endpoint and reports key,
+credit and connectivity good, and `claude-opus-4-6` present — **which refuted a
+claim of mine and is recorded as `docs/CORRECTIONS.md` B14.**
+
+**What this session can see is unchanged**, checked three ways: the process
+environment, a login shell, and `models.list` itself.
+
+| Check | Reading |
+|---|---|
+| `ANTHROPIC_API_KEY` in-process | **10 characters**, prefix `sk-ant-` |
+| the same in a login shell | **10 characters**, identical |
+| `~/.config/anthropic`, `ant` CLI, `.env` | **absent, absent, absent** |
+| `client.models.list()` | **401 `authentication_error`** |
+| `python -m fntn.scanner sweep` | **exit 4**, refused at construction |
+
+***So the re-pin to a cheaper model is PREPARED AND NOT TAKEN.*** The
+instruction is that the identifier be taken **verbatim from the models
+response**, and **this session has no models response.** *Retyping an
+identifier from memory is precisely what the instruction forbids, and inventing
+a response would be the authored-as-drawn defect wearing a different coat.*
+**The pin stays at `claude-opus-4-6`, which is the pin that was already
+registered, so no hash moves and nothing becomes non-comparable.**
+
+**The justification for the re-pin is recorded now so it survives this
+session** and can be taken the moment a response exists: **cost**, a full sweep
+at Opus pricing possibly exceeding the available credit; and **timing**, *no
+proposals having ever been drawn, so there is no arm this makes
+non-comparable.* ***And the sticky rule, recorded before the first sweep rather
+than after it: once one sweep has run, the pin becomes STICKY and does not move
+without a stated reason on the record.*** *A pin that moves between sweeps
+makes them incomparable, and the cheapest moment to move it is the only moment
+at which moving it costs nothing.*
+
 ### The three temptations, named and refused
 
 *Each is already in this project's record as the authored-as-drawn defect.*
