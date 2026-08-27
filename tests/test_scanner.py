@@ -3111,6 +3111,26 @@ def test_the_refutations_section_is_seeded_with_the_three_to_date():
 # ---------------------------------------------------------------------------
 
 
+def _flip(row: str):
+    """A status for ``row`` that DIFFERS from the one the register holds today.
+
+    Returns ``(cell, from_token, to_token)``.
+
+    **Why this exists (P117).** Two fixtures below edited §13 row 1 to
+    ``**CLOSED**`` to simulate binding-path movement. Row 1 closed on 27 August
+    2026, so the edit became a **no-op** and the fixtures went on passing whilst
+    testing nothing, until the movement assertions failed for the right reason
+    and exposed it. A fixture that silently stops changing anything is the
+    failure class this suite exists against, so the flip is computed from the
+    register rather than written as a literal.
+    """
+
+    live = report_mod.status_token(_open_items_row(row)[0])
+    if live == "CLOSED":
+        return "**BLOCKED**", "CLOSED", "NOT CLOSED"
+    return "**CLOSED**", "NOT CLOSED", "CLOSED"
+
+
 def _register_copy(tmp_path, edits) -> Path:
     """`docs/OPEN_ITEMS.md` with named §13 rows' status cells replaced."""
 
@@ -3120,6 +3140,12 @@ def _register_copy(tmp_path, edits) -> Path:
         for i, line in enumerate(lines):
             if line.startswith(f"| {row} |"):
                 cells = line.strip().strip("|").split("|")
+                # Refuse a no-op. An edit that changes nothing makes every
+                # assertion downstream vacuous, and it does so silently.
+                assert cells[2].strip() != status.strip(), (
+                    f"row {row} already reads {status}, so this edit changes "
+                    "nothing and the fixture would assert nothing"
+                )
                 cells[2] = f" {status} "
                 lines[i] = "|" + "|".join(cells) + "|"
                 hit += 1
@@ -3157,11 +3183,10 @@ def test_every_binding_path_status_is_read_from_the_register(tmp_path):
     assert before[0][3] == f"§13 row 1: {row1}"
     assert before[0][2] == ("CLOSED" if row1 == "CLOSED" else "NOT CLOSED")
 
-    after = report_mod.binding_path_rows(
-        _register_copy(tmp_path, {"1": "**CLOSED**"})
-    )
-    assert after[0][2] == "CLOSED"
-    assert after[0][3] == "§13 row 1: CLOSED"
+    cell, _, to_token = _flip("1")
+    after = report_mod.binding_path_rows(_register_copy(tmp_path, {"1": cell}))
+    assert after[0][2] == to_token
+    assert after[0][3] == f"§13 row 1: {cell.strip('*')}"
     # Row 1 is also one of the twenty-seven step 5 waits on, so step 5's
     # evidence moves too whilst its status does not.
     assert after[4][2] == "NOT CLOSED"
@@ -3260,13 +3285,14 @@ def test_the_movement_line_names_the_step_that_moved(tmp_path):
     runs = tmp_path / "runs"
     runs.mkdir()
     (runs / "2026-08-27_funnel.md").write_text(_render(ledger, runs_dir=runs))
+    cell, from_token, to_token = _flip("1")
     moved = _render(
         ledger, runs_dir=runs,
-        register=_register_copy(tmp_path, {"1": "**CLOSED**"}),
+        register=_register_copy(tmp_path, {"1": cell}),
     )
     assert "no binding-path movement" not in moved
     assert "**Moved since 2026-08-27_funnel.md:**" in moved
-    assert "- step 1: **NOT CLOSED** to **CLOSED**" in moved
+    assert f"- step 1: **{from_token}** to **{to_token}**" in moved
     # Step 5's status held and its evidence moved, and both are said.
     assert "- step 5: **NOT CLOSED** to **NOT CLOSED**; register cells were" in moved
     ledger.close()
