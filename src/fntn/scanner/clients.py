@@ -71,6 +71,9 @@ class AnthropicClient:
     max_tokens: int = 8000
     api_key: Optional[str] = None
     _client: Any = None
+    #: What the preflight established, so a caller can print it rather than
+    #: re-derive it. See `__post_init__`.
+    _preflight: Any = None
 
     def __post_init__(self) -> None:
         try:
@@ -94,8 +97,28 @@ class AnthropicClient:
         # model together. Refused rather than deferred: a sweep that discovers
         # at document 40 that it was never authenticated has spent forty
         # documents' worth of nothing and reports it as a failure of the sweep.
+        #
+        # **It ENUMERATES rather than retrieving** (P137). `models.retrieve`
+        # answers *is this id resolvable*; `models.list` answers *what does
+        # this key actually have*, and the refusal can then name the
+        # alternatives instead of leaving the operator to guess. **Four
+        # separate failures -- an absent key, a stub key, a model question
+        # settled from a cached table, and a sweep that could not have run --
+        # were each found only by running the whole thing**, so the preflight
+        # is deliberately the widest cheap check available rather than the
+        # narrowest sufficient one.
         try:
-            client.models.retrieve(self.model)
+            available = [m.id for m in client.models.list(limit=100).data]
+            if self.model not in available:
+                raise ClientRefusal(
+                    f"the pinned model {self.model!r} is NOT in the models "
+                    f"this key can see.\n\n"
+                    f"Available: {', '.join(sorted(available)) or '(none)'}\n\n"
+                    "REFUSED rather than substituting one. Which model read "
+                    "the corpus is part of what a proposal is replayable "
+                    "against, so a pin that silently moves makes two sweeps "
+                    "incomparable without saying so."
+                )
         except anthropic.AuthenticationError as exc:
             raise ClientRefusal(
                 f"ANTHROPIC_API_KEY is set and the API refused it: {exc}.\n\n"
@@ -119,6 +142,20 @@ class AnthropicClient:
                 "sweep, because the two mean opposite things."
             ) from exc
         object.__setattr__(self, "_client", client)
+        object.__setattr__(self, "_preflight", {
+            "model": self.model,
+            "models_visible": len(available),
+            # **The credit state is REPORTED AS UNESTABLISHED, and that is not
+            # evasion.** The models endpoint does not consult the balance, so a
+            # 200 from it says the key authenticates and says nothing whatever
+            # about credit. Reading "the endpoint answered" as "there is credit"
+            # is a conclusion from a partial view, which is the class this
+            # preflight exists because of. A low balance surfaces as a 400 on
+            # the first message call, and that is where it will be reported.
+            "credit": "not established by the preflight: the models endpoint "
+                      "does not consult the balance. A shortfall surfaces as a "
+                      "400 on the first sweep call.",
+        })
 
     def complete(
         self, system: str, user: str, schema: Dict[str, Any]

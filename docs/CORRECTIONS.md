@@ -32,7 +32,7 @@ itself: a class with THREE OR MORE instances must carry an invariant, and
 `test_every_recurring_correction_class_has_an_invariant` refuses this file if one
 does not.**
 
-**Twenty-four rows fall into FIVE classes and six singletons.** *The
+**Twenty-five rows fall into FIVE classes and six singletons.** *The
 concentration is the finding: this project does not make many kinds of mistake.
 It makes a few kinds, repeatedly.*
 
@@ -46,7 +46,7 @@ repair does not need a third instance to be believed.**
 
 | Class | Instances | Count | Invariant |
 |---|---|---|---|
-| **I. A conclusion acted on without checking the link it rests on** | A2, A5b, A8, A9, A10, B8pre, B9 | **7** | **INSTALLED at P122, STRENGTHENED at P130 and again at P131, to four clauses. **The four-clause version DID catch A10, in preparation rather than in outcome**** |
+| **I. A conclusion acted on without checking the link it rests on** | A2, A5b, A8, A9, A10, B8pre, B9, B14 | **8** | **INSTALLED at P122, STRENGTHENED at P130 and again at P131, to four clauses. **The four-clause version DID catch A10, in preparation rather than in outcome**** |
 | **II. Material that decided something was not committed at the moment it decided it** | B3, B4, B5, and the registration chain's first object | **4** | **INSTALLED at P114**: `cmd_sweep` refuses over a corpus git cannot produce again, with `corpus_not_committed` |
 | **III. A population pooled, mis-scoped or miscounted** | B6 (itself three), B7, the §13 table's two hand counts, and `_unexercised` at P126 | **7** | **INSTALLED at P105 and WIDENED at P126**: the invariant was applied to a METHOD when the class was about a QUERY, so it now reads **every ledger read path carries the marker the fences rely on**, and phase 2 swept every `SELECT` in the package to hold it |
 | **IV. A quantity validated against something computed from that quantity** | A7, B10 | **2** | **INSTALLED at P133, and deliberately at two instances rather than three**: *a bound may not be validated against a table computed from that bound*, and a table recomputed against a registered value carries that value's name from then on |
@@ -573,6 +573,42 @@ address — *for a project whose entire product is that every refusal is legible
 address. *`example.com` is refused with the brackets, RFC 2606 reserving it for
 documentation, and the test that asserted `a.person@example.com` was ACCEPTED
 is corrected: it was asserting the defect.*
+
+---
+
+### B14. The model pin put in question from a CACHED TABLE, with the authoritative endpoint unread
+
+| | |
+|---|---|
+| **Asserted** | in `docs/_resume_2026-08-27_02.md`, under *things the audit found*: **"The model is pinned to `claude-opus-4-6`. The current reference default is `claude-opus-5`."** Listed as a decision the project should revisit |
+| **True** | **`claude-opus-4-6` is present and available.** The operator read the models endpoint and it answered. *The pin was not stale and there was nothing to revisit* |
+| **The link not checked** | **what the models endpoint returns.** The "current reference default" was taken from a table in a loaded reference document **stamped `cached: 2026-06-24`**, which states what is recommended in general and **not what this key can see** |
+| **Provenance** | `verified_primary` for the claim (the file, quoted above); `operator_reported` for the refutation, this session's key being a stub that returns 401 |
+
+***It is the EIGHTH instance of Class I and the shape is the familiar one:*** a
+conclusion that is internally sound, checkable in one call, and drawn instead
+from the nearest thing to hand. **A cached recommendation table and a live
+capability listing answer different questions**, and the second was never
+asked.
+
+**The mitigation, and it does not exonerate.** The endpoint was returning
+**401** to this session at the time, so the check was *unavailable* — and part
+2's own text distinguishes a gap that cannot be closed from a caveat naming a
+page nobody opened. ***The failure is not that the endpoint went unread. It is
+that the claim was written flatly rather than marked unverified.*** *"The
+current reference default is X" and "a cached table says X, and I could not
+reach the endpoint to confirm what this key has" are different sentences, and
+only the second was true.*
+
+**And the consequence was real rather than notional.** It put a **re-pin** on
+the table as remediation. *A pin that moves is a `§12.1` version and a
+re-stamp; moving one to fix a problem that did not exist would have spent a
+registration hash on nothing and made two sweeps incomparable for no reason.*
+
+**What it changes.** §13 row 39 now carries the pin and its open question, and
+the client preflight **enumerates** the models the key can see rather than
+asking whether one id resolves, so **the refusal names the alternatives** and
+the question cannot be settled from a cached table again.
 
 ---
 

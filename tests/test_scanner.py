@@ -4066,7 +4066,7 @@ def test_a_SET_ANTHROPIC_API_KEY_can_still_be_unusable(monkeypatch):
 
     def _raiser(exc):
         class _Models:
-            def retrieve(self, _model):
+            def list(self, **_kw):
                 raise exc
 
         class _Fake:
@@ -4114,6 +4114,63 @@ def test_a_SET_ANTHROPIC_API_KEY_can_still_be_unusable(monkeypatch):
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
     with pytest.raises(ClientRefusal, match="no API key"):
         AnthropicClient()
+
+
+def test_the_preflight_refuses_a_pinned_model_the_key_cannot_see(monkeypatch):
+    """P137. Written against a FABRICATED id, and it fails without the check.
+
+    The preflight enumerates rather than retrieving: `models.retrieve` answers
+    *is this id resolvable*, `models.list` answers *what does this key actually
+    have*, and only the second lets the refusal name the alternatives.
+
+    The reason for widening it is not that any pin was found stale -- that
+    claim was made from a cached table and was wrong (B14). It is that FOUR
+    separate failures, an absent key, a stub key, a model question settled
+    without the authoritative source, and a call the API would have rejected,
+    were each found only by running the whole thing.
+    """
+
+    from types import SimpleNamespace
+
+    import anthropic
+
+    from fntn.scanner.clients import AnthropicClient, ClientRefusal
+
+    class _Models:
+        def __init__(self, ids):
+            self._ids = ids
+
+        def list(self, **_kw):
+            return SimpleNamespace(data=[SimpleNamespace(id=i) for i in self._ids])
+
+    def _fake(ids):
+        class _Fake:
+            def __init__(self, *a, **kw):
+                self.models = _Models(ids)
+
+        return _Fake
+
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-whatever-this-is-not-checked")
+
+    # A fabricated id the key cannot see: REFUSED, and the refusal names what
+    # is actually there rather than leaving the operator to guess.
+    monkeypatch.setattr(anthropic, "Anthropic", _fake(["claude-real-1", "claude-real-2"]))
+    with pytest.raises(ClientRefusal) as exc:
+        AnthropicClient(model="claude-fabricated-9")
+    assert "claude-fabricated-9" in str(exc.value)
+    assert "claude-real-1" in str(exc.value), "the refusal must name the alternatives"
+    assert "REFUSED rather than substituting" in str(exc.value)
+
+    # A pin the key CAN see constructs, and records what the preflight
+    # established without inferring anything it did not.
+    monkeypatch.setattr(anthropic, "Anthropic", _fake(["claude-real-1", "claude-real-2"]))
+    c = AnthropicClient(model="claude-real-2")
+    assert c._preflight["model"] == "claude-real-2"
+    assert c._preflight["models_visible"] == 2
+    # THE CREDIT STATE IS REPORTED AS UNESTABLISHED. The models endpoint does
+    # not consult the balance, and reading "the endpoint answered" as "there is
+    # credit" is the partial-view conclusion this preflight exists because of.
+    assert "not established" in c._preflight["credit"]
 
 
 def test_the_client_no_longer_claims_temperature_zero():
