@@ -26,7 +26,7 @@ things that have not been ruled out yet.***
 
 ## THE FINDING THAT GOES ABOVE THE LIST
 
-***Neither arm exists. The question 7d asks cannot be answered, and it is not
+***Neither arm exists. The question 3g asks cannot be answered, and it is not
 evaded.***
 
 **The comparison this file exists to make is whether the agent arm is
@@ -35,21 +35,76 @@ lens.** *If a random draw over the grid meets as many criteria as an agent
 reading corpora, the agent has located nothing and the whole discovery layer is an
 expensive way to sample a grid.*
 
-**That comparison is NOT made here, because neither arm was produced:**
-
-```
-$ python -m fntn.scanner sweep
-no API key: set ANTHROPIC_API_KEY or pass api_key. Refusing rather than falling
-back to an unauthenticated call that would fail later with a less useful message.
-```
-
-**`ANTHROPIC_API_KEY` is unset.** The control arm is sized relative to the agent
-arm at the registered ratio, so **with zero agent proposals the correct control
-arm is zero as well.**
+**That comparison is NOT made here, because neither arm was produced.** The
+control arm is sized relative to the agent arm at the registered ratio, so with
+zero agent proposals the correct control arm is zero as well.
 
 ***The question stands open and unanswered. It is not "no difference found";
 nothing was looked at.*** *Those are different claims and this project has
 corrected the confusion of them three times.*
+
+---
+
+## WHY NOTHING WAS SWEPT, 27 August 2026. TWO CAUSES, AND NEITHER IS THE ONE THE INSTRUCTION ANTICIPATED
+
+**The instruction's stop condition was `ANTHROPIC_API_KEY` unset.** ***It is
+set.*** It is set to a ten-character stub beginning `sk-ant-`, and the API
+answers **401 Unauthorized**. **A variable that is SET is not thereby USABLE**,
+and the guard tested only that something was there.
+
+```
+$ python -m fntn.scanner sweep
+ANTHROPIC_API_KEY is set and the API refused it: Error code: 401 -
+{'type': 'error', 'error': {'type': 'authentication_error',
+'message': 'API key is invalid.'}, 'request_id': None}.
+
+SET IS NOT USABLE. A placeholder, a revoked key and a truncated paste all
+satisfy a presence check and none of them authenticates, so this is checked
+here rather than discovered part-way through a sweep.
+
+Nothing has been swept and no proposal has been authored.
+```
+
+***And the first attempt did not even reach the 401.*** It raised
+
+```
+TypeError: Messages.create() got an unexpected keyword argument 'temperature'
+```
+
+**`temperature` has been removed from `messages.create` in `anthropic` 1.x and
+the current models reject sampling parameters outright.** The client carried
+`temperature=0`, so **the sweep could not have run even with a working key**,
+and the class's own name-line claimed a determinism the API no longer offers.
+
+**Both are repaired, both are refusals rather than fallbacks, and both are
+tested** (`test_a_SET_ANTHROPIC_API_KEY_can_still_be_unusable`,
+`test_the_client_no_longer_claims_temperature_zero`). *The key check is now a
+preflight `models.retrieve` at construction: no tokens, and it settles the key
+and the model identifier together, before a single document is opened.*
+
+### The three temptations, named and refused
+
+*Each is already in this project's record as the authored-as-drawn defect.*
+
+| Temptation | Refused because |
+|---|---|
+| **Author the proposals** | an authored proposal presented as a drawn one is the defect §13 row 23 was re-based to remove, and it would enter §7.1's population as though a model had located it |
+| **Write a transcript and replay it** | `TranscriptClient` replays what a model returned. A transcript written by hand is authorship with a file in front of it |
+| **Fall back to a weaker call** | rule 3. A missing input produces a refusal with a reason code; it does not run the weaker half of the machinery |
+
+### Cost, reported because the operator is choosing to spend it
+
+| | |
+|---|---|
+| Model calls made | **0** |
+| Input tokens | **0** |
+| Output tokens | **0** |
+| Credits | **0** |
+
+***Zero is the honest figure and it is reported rather than omitted.*** *The
+refusal happened at client construction, before the first corpus document was
+read, which is where a refusal belongs.* **What a real sweep will cost is not
+estimated here**, because an estimate written beside a zero reads as a result.
 
 ---
 
@@ -65,7 +120,25 @@ corrected the confusion of them three times.*
 
 ***The zero has one cause and it is not the corpora.*** Twenty-two documents are
 built, committed, integrity-checked, registered and readable across three
-families. **The apparatus is complete up to the model call and stops there.**
+families, and the sweep cleared the registration, the corpus-commit fence and
+the security master before it stopped. **The apparatus is complete up to the
+model call and stops there.**
+
+---
+
+### The schema is NOT revised, and one note on how it fits
+
+**3f forbids revising the schema now that the results are known, and the
+results are zero, which is exactly when a schema looks wrong.** *It is left
+alone.*
+
+**One observation recorded as a finding rather than acted on:** the schema's
+**Clears δₘᵢₙ?** row names *"the derived 17.0 bp"*, and δₘᵢₙ was re-derived to
+**15.7 bp** in phase 1 of this same batch. **The figure in the schema is stale
+and the FIELD is not.** *A field that names the derived floor is correct; the
+number beside it is a copy of a register cell, and the register is the record.*
+**The row is left as written**, and a reader takes δₘᵢₙ from §14 and not from
+here.
 
 ---
 

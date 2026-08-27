@@ -32,7 +32,7 @@ itself: a class with THREE OR MORE instances must carry an invariant, and
 `test_every_recurring_correction_class_has_an_invariant` refuses this file if one
 does not.**
 
-**Twenty-one rows fall into FOUR classes and eight singletons.** *The
+**Twenty-three rows fall into FIVE classes and six singletons.** *The
 concentration is the finding: this project does not make many kinds of mistake.
 It makes a few kinds, repeatedly.*
 
@@ -50,7 +50,8 @@ repair does not need a third instance to be believed.**
 | **II. Material that decided something was not committed at the moment it decided it** | B3, B4, B5, and the registration chain's first object | **4** | **INSTALLED at P114**: `cmd_sweep` refuses over a corpus git cannot produce again, with `corpus_not_committed` |
 | **III. A population pooled, mis-scoped or miscounted** | B6 (itself three), B7, the §13 table's two hand counts, and `_unexercised` at P126 | **7** | **INSTALLED at P105 and WIDENED at P126**: the invariant was applied to a METHOD when the class was about a QUERY, so it now reads **every ledger read path carries the marker the fences rely on**, and phase 2 swept every `SELECT` in the package to hold it |
 | **IV. A quantity validated against something computed from that quantity** | A7, B10 | **2** | **INSTALLED at P133, and deliberately at two instances rather than three**: *a bound may not be validated against a table computed from that bound*, and a table recomputed against a registered value carries that value's name from then on |
-| Singletons, which are not a class | A1, A3, A4, A5, A6, B1, B2 | n/a | n/a, no invariant is owed: a row belonging to no class asserts no recurrence |
+| **V. A guard implemented WEAKER than the rule its own docstring states** | B1, B5, B11, B12 | **4** | **INSTALLED at P136**: *a presence check is not a content check*, and **every guard carries a test that supplies material it must REFUSE, present and well-formed, not merely absent** |
+| Singletons, which are not a class | A1, A3, A4, A5, A6, B2 | n/a | n/a, no invariant is owed: a row belonging to no class asserts no recurrence |
 
 ---
 
@@ -187,6 +188,55 @@ registered bound: P111 was right to do it, the recomputed cells are *upper
 bounds that depend on no assumption*, and §5.2.2 is better for it. **What it
 forbids is reading the result back as a constraint on the bound.** *Publishing
 and reading are different acts, and the loop closes only on the second.*
+
+---
+
+## THE CLASS V INVARIANT
+
+***Two of its four instances arrived on the same day, in two modules, written
+against two different rules, and neither was found by reading the code.***
+
+| Row | The rule the docstring states | What the code tested |
+|---|---|---|
+| **B1** | the entity fence refuses proposals naming an issuer | a *pattern*, tested only against probes authored to that pattern. Real agent material refused **94%** |
+| **B5** | underscore-prefixed names are bookkeeping and are not read | the *files*, not the **route**, so `_raw` was reachable by walking round it |
+| **B11** | *"refuses to substitute a placeholder: a placeholder is a false statement made to a regulator's server"* | `if not contact`. **`SEC_CONTACT` set to `<name> <email>` passed** |
+| **B12** | *"checked at construction, so a misconfiguration surfaces before a sweep is half-run"* | `if not key`. **A ten-character stub passed and the sweep failed at the API** |
+
+***The shape.*** A rule is written in prose, in a docstring, correctly and often
+at length. **The check beneath it tests a weaker predicate** — presence instead
+of content, a pattern instead of a population, files instead of routes — **and
+the gap is invisible because the prose is right.** *Every one of these modules
+reads, on inspection, as though it does what it says.*
+
+> **THE INVARIANT, in two clauses.**
+>
+> **1. A presence check is not a content check.** Where a docstring says what a
+> value must *be*, `if not value` does not test it. **The two credential guards
+> both failed exactly here**, and an environment variable set to an unedited
+> template satisfies every existence test ever written.
+>
+> **2. Every guard carries a test that supplies material it must REFUSE,
+> present and well-formed.** *Not absent, not empty, not obviously malformed:
+> the case that looks right and is wrong.* **A guard tested only against
+> absence is a guard tested against the one input nobody ships.**
+
+**What the second clause costs, stated.** It is one more test per guard, and
+**it is the test that is hard to write**, because writing it means naming the
+plausible wrong value — which is the thing whoever wrote the guard did not
+think of. *That is not an argument against it. It is the reason the class
+exists.*
+
+***Why this is not Class I.*** Class I is a conclusion acted on without
+checking the link beneath it, and its four clauses reach decisions, claims and
+borrowed quantities. **These are not conclusions; they are implementations**,
+and no decision was taken over any of them. *A separate failure mode needed a
+separate class, and the register's rule made it compulsory at three.*
+
+***Why B1 and B5 are moved out of the singletons.*** They were filed as
+singletons when the register opened, correctly, because no pattern was visible
+in two rows. **B11 and B12 make it four**, and *a class is recognised when its
+third instance arrives, not when its first is written down.*
 
 ---
 
@@ -503,6 +553,58 @@ neither.
 
 *The lesson this register takes from a defect found three times: a correction
 applied to a published number does not travel to the code that produces it.*
+
+### B11. `SEC_CONTACT` was set to `<name> <email>` and the guard admitted it
+
+| | |
+|---|---|
+| **Asserted** | by `trace_filings.user_agent`'s own docstring: it *"refuses to invent one and refuses to substitute a placeholder: a placeholder is a false statement made to a regulator's server to obtain data"* |
+| **True** | the function tested `if not contact` and nothing else. **This session's environment had `SEC_CONTACT` set to the literal string `<name> <email>`**, which passed, and which would have been sent to `sec.gov` in a `User-Agent` header on every request of a hundred-filing fetch |
+| **Caught by** | the opening reconciliation's premise enumeration, part 4 of the Class I invariant. *Not by reading `trace_filings.py`, which reads correctly* |
+| **Provenance** | `verified_primary`; the environment, and `src/fntn/scanner/trace_filings.py` before P136 |
+
+**The consequence had it not been caught.** Phase 4 of this batch fetches 100
+8-K filings from EDGAR. **The SEC's fair-access policy is enforced by
+rate-limiting and blocking on the `User-Agent`**, so the outcome would have
+been a hundred requests carrying a false identity, and plausibly a blocked
+address — *for a project whose entire product is that every refusal is legible.*
+
+**Repaired at P136:** three refusals, unset, placeholder markers, and no email
+address. *`example.com` is refused with the brackets, RFC 2606 reserving it for
+documentation, and the test that asserted `a.person@example.com` was ACCEPTED
+is corrected: it was asserting the defect.*
+
+---
+
+### B12. `ANTHROPIC_API_KEY` was a ten-character stub and the guard admitted it
+
+| | |
+|---|---|
+| **Asserted** | by `AnthropicClient`'s own docstring: *"Both are checked at construction rather than at first call, so a misconfiguration surfaces before a sweep is half-run"* |
+| **True** | it tested `if not key`. **The key was `sk-ant-` plus three characters** and the API returns **401**. The sweep loaded the registration, the security master and three corpora, and then failed at the model call |
+| **Caught by** | the same reconciliation pass, the same day, in the same enumeration |
+| **Provenance** | `verified_primary`; a live probe of `/v1/models` returning 401, and `src/fntn/scanner/clients.py` before P136 |
+
+***And a second defect sat behind it, which the first one hid.*** The call
+carried `temperature=0`, and **`messages.create` in `anthropic` 1.x does not
+accept `temperature`**; the current models reject sampling parameters outright.
+**The real first failure was `TypeError`, before authentication was ever
+reached**, so ***the sweep could not have run even with a working key.***
+
+**What the withdrawal of temperature zero costs, checked rather than assumed.**
+**Lost:** two sweeps over identical material may return different proposals.
+**Not lost:** replay is served by `TranscriptClient`, `ProposalCache` is keyed
+on the prompt's content hash and not on the reply, and the control arm is drawn
+from a registered seed with no model in its path. ***Rule 1's guarantee is over
+LOGGED data and is untouched.*** *Run-to-run stability was a convenience the
+docstring oversold as determinism, and the oversell is the correction.*
+
+**Repaired at P136:** a preflight `models.retrieve` at construction, which
+costs no tokens and settles the key and the model identifier together. *A shape
+or length test was considered and rejected: it encodes a guess about how keys
+are formatted, and the question is not what the key looks like.*
+
+---
 
 ### B10. The 12.5 bp ceiling was recomputed into circularity, by this project, in one batch
 

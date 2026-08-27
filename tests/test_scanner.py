@@ -4000,8 +4000,149 @@ def test_the_fetch_refuses_when_SEC_CONTACT_is_unset(monkeypatch):
 
 
 def test_the_user_agent_carries_the_operator_contact(monkeypatch):
-    monkeypatch.setenv("SEC_CONTACT", "A Person a.person@example.com")
-    assert "A Person a.person@example.com" in tf.user_agent()
+    """The address is no longer an `example.com` one, and that is the point.
+
+    This test asserted that `a.person@example.com` was accepted until 27 August
+    2026. RFC 2606 reserves that domain for documentation and no mail reaches
+    it, so it is exactly the unedited-template case the guard now refuses, and
+    a test asserting it was accepted was asserting the defect.
+    """
+
+    monkeypatch.setenv("SEC_CONTACT", "A Person a.person@a-real-domain.uk")
+    assert "A Person a.person@a-real-domain.uk" in tf.user_agent()
+
+
+def test_a_SET_SEC_CONTACT_can_still_be_unusable(monkeypatch):
+    """P136. The guard tested presence and its own docstring is about content.
+
+    Found by running the reconciliation rather than by reading the code: this
+    session's environment had `SEC_CONTACT` set to the literal string
+    `<name> <email>`, which `if not contact` admitted. It would have been sent
+    to sec.gov in a User-Agent on every request of a hundred-filing fetch.
+    """
+
+    # The exact string this session found in its own environment.
+    monkeypatch.setenv("SEC_CONTACT", "<name> <email>")
+    with pytest.raises(TraceCorpusRefused, match="unedited placeholder"):
+        tf.user_agent()
+
+    # A documentation domain is a placeholder even where nothing is bracketed.
+    monkeypatch.setenv("SEC_CONTACT", "Your Name your.address@example.com")
+    with pytest.raises(TraceCorpusRefused, match="unedited placeholder"):
+        tf.user_agent()
+
+    # A name with no address identifies nobody the SEC could write to.
+    monkeypatch.setenv("SEC_CONTACT", "Ada Lovelace")
+    with pytest.raises(TraceCorpusRefused, match="no email address"):
+        tf.user_agent()
+    monkeypatch.setenv("SEC_CONTACT", "Ada Lovelace ada@localhost")
+    with pytest.raises(TraceCorpusRefused, match="no email address"):
+        tf.user_agent()
+
+    # And the refusal happens before anything is fetched or written.
+    monkeypatch.setenv("SEC_CONTACT", "<name> <email>")
+    with pytest.raises(TraceCorpusRefused, match="unedited placeholder"):
+        tf.fetch_block(date(2026, 8, 27))
+
+
+def test_a_SET_ANTHROPIC_API_KEY_can_still_be_unusable(monkeypatch):
+    """P136, the same defect in the other credential guard, on the same day.
+
+    `AnthropicClient` tested `if not key` and promised in its own docstring
+    that "a misconfiguration surfaces before a sweep is half-run". A key set to
+    a ten-character stub satisfied the test, and the sweep failed at the API
+    after the registration, the master and the corpora had all been loaded.
+
+    The preflight is a real call to `models.retrieve`, which costs no tokens
+    and settles the key and the model identifier together. A shape or length
+    test was considered and rejected: it encodes a guess about how keys are
+    formatted, and the question is not what the key looks like.
+    """
+
+    import anthropic
+    import httpx2
+
+    from fntn.scanner.clients import AnthropicClient, ClientRefusal
+
+    def _raiser(exc):
+        class _Models:
+            def retrieve(self, _model):
+                raise exc
+
+        class _Fake:
+            def __init__(self, *a, **kw):
+                self.models = _Models()
+
+        return _Fake
+
+    request = httpx2.Request("GET", "https://api.anthropic.com/v1/models/x")
+    response = httpx2.Response(401, request=request)
+
+    # An unusable key is refused at CONSTRUCTION, naming the true cause.
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-stub")
+    monkeypatch.setattr(
+        anthropic,
+        "Anthropic",
+        _raiser(anthropic.AuthenticationError("API key is invalid.",
+                                              response=response, body=None)),
+    )
+    with pytest.raises(ClientRefusal, match="SET IS NOT USABLE"):
+        AnthropicClient()
+
+    # A model the key cannot reach is refused too, and NOT substituted: which
+    # model read the corpus is part of what a proposal is replayable against.
+    monkeypatch.setattr(
+        anthropic,
+        "Anthropic",
+        _raiser(anthropic.NotFoundError("no such model",
+                                        response=httpx2.Response(404, request=request),
+                                        body=None)),
+    )
+    with pytest.raises(ClientRefusal, match="not available to this key"):
+        AnthropicClient()
+
+    # A network failure is reported as one and never as an empty sweep.
+    monkeypatch.setattr(
+        anthropic,
+        "Anthropic",
+        _raiser(anthropic.APIConnectionError(request=request)),
+    )
+    with pytest.raises(ClientRefusal, match="reported as a network failure"):
+        AnthropicClient()
+
+    # An absent key still refuses before any of that is reached.
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    with pytest.raises(ClientRefusal, match="no API key"):
+        AnthropicClient()
+
+
+def test_the_client_no_longer_claims_temperature_zero():
+    """P136. The API removed the parameter; the docstring had to follow it.
+
+    `messages.create` in `anthropic` 1.x does not accept `temperature`, and the
+    current models reject sampling parameters outright. The call carried
+    `temperature=0` and raised TypeError before it ever reached authentication,
+    so the sweep could not have run even with a working key.
+
+    What is asserted here is the honesty of the record, not the absence of a
+    keyword: a class that says "temperature zero" in its own name-line while
+    the API refuses the parameter is a claim this project would have to
+    withdraw later.
+    """
+
+    import inspect
+
+    from fntn.scanner import clients
+
+    source = inspect.getsource(clients.AnthropicClient.complete)
+    assert "temperature" not in source.split('"""')[2], (
+        "the call must not pass temperature: 1.x does not accept it"
+    )
+    doc = inspect.getdoc(clients.AnthropicClient) or ""
+    assert "NO LONGER temperature zero" in doc
+    # And the thing that was NOT lost is named, because that is what makes the
+    # withdrawal a finding rather than a shrug.
+    assert "TranscriptClient" in doc and "registered seed" in doc
 
 
 def test_the_698_byte_stub_is_reported_and_never_worked_around():

@@ -3,9 +3,9 @@
 `discovery.sweep` takes any object with `complete(system, user, schema) -> dict`.
 Two are provided:
 
-* `AnthropicClient`, which calls the API at temperature zero with the schema
-  attached as a forced tool call, so the model cannot return prose where a
-  record is required.
+* `AnthropicClient`, which calls the API with the schema attached as a forced
+  tool call, so the model cannot return prose where a record is required. It is
+  NOT a temperature-zero call: see its docstring.
 * `TranscriptClient`, which replays a saved payload. A sweep whose proposals
   came from a file is legible and free, and it is what the trace harness should
   normally be pointed at.
@@ -34,11 +34,37 @@ class ClientRefusal(RuntimeError):
 
 @dataclass
 class AnthropicClient:
-    """Schema-enforced, temperature zero, no tools.
+    """Schema-enforced, no tools, and NO LONGER temperature zero.
 
-    Requires the `anthropic` package and an API key. Both are checked at
-    construction rather than at first call, so a misconfiguration surfaces
+    Requires the `anthropic` package and a **usable** API key. Both are checked
+    at construction rather than at first call, so a misconfiguration surfaces
     before a sweep is half-run.
+
+    ***Two things this class claimed on 27 August 2026 and did not do.***
+
+    **One: it did not check that the key WORKS.** It tested ``if not key``, so
+    an environment variable set to a ten-character stub passed construction and
+    the sweep failed at the API. *A variable that is SET is not thereby USABLE,
+    and the same defect was live in `trace_filings.user_agent` on the same day.*
+    **The check is now a preflight call** to ``models.retrieve``, which costs no
+    tokens and settles the key and the model identifier together. *A shape or
+    length test was considered and rejected: it would encode a guess about how
+    keys are formatted, and the question is not what the key looks like.*
+
+    **Two: temperature zero is no longer available.** ``messages.create`` in
+    `anthropic` 1.x does not accept ``temperature`` at all, and the current
+    models reject sampling parameters with a 400. The call carried
+    ``temperature=0`` and raised ``TypeError`` before it ever reached
+    authentication.
+
+    ***What was lost with it, and what never rested on it.*** **Lost:** two
+    sweeps over identical material may now return different proposals.
+    **Not lost, and this was checked rather than assumed:** replay is served by
+    `TranscriptClient` reading a saved payload, `ProposalCache` is keyed on the
+    content hash of the prompt and not on the reply, and the control arm is
+    drawn from a registered seed with no model in its path. **Rule 1's
+    guarantee is over LOGGED data and is untouched.** *Run-to-run stability was
+    a convenience the docstring oversold as determinism.*
     """
 
     model: str = "claude-opus-4-6"
@@ -63,17 +89,50 @@ class AnthropicClient:
             )
         import anthropic
 
-        object.__setattr__(self, "_client", anthropic.Anthropic(api_key=key))
+        client = anthropic.Anthropic(api_key=key)
+        # The preflight. One call, no tokens, and it settles the key and the
+        # model together. Refused rather than deferred: a sweep that discovers
+        # at document 40 that it was never authenticated has spent forty
+        # documents' worth of nothing and reports it as a failure of the sweep.
+        try:
+            client.models.retrieve(self.model)
+        except anthropic.AuthenticationError as exc:
+            raise ClientRefusal(
+                f"ANTHROPIC_API_KEY is set and the API refused it: {exc}.\n\n"
+                "SET IS NOT USABLE. A placeholder, a revoked key and a "
+                "truncated paste all satisfy a presence check and none of them "
+                "authenticates, so this is checked here rather than discovered "
+                "part-way through a sweep.\n\n"
+                "Nothing has been swept and no proposal has been authored."
+            ) from exc
+        except anthropic.NotFoundError as exc:
+            raise ClientRefusal(
+                f"the model {self.model!r} is not available to this key: "
+                f"{exc}.\n\nRefusing rather than substituting a model the "
+                "operator did not choose: which model read the corpus is part "
+                "of what a proposal has to be replayable against."
+            ) from exc
+        except anthropic.APIConnectionError as exc:
+            raise ClientRefusal(
+                f"the API could not be reached: {exc}. Nothing was swept. "
+                "This is reported as a network failure and NOT as an empty "
+                "sweep, because the two mean opposite things."
+            ) from exc
+        object.__setattr__(self, "_client", client)
 
     def complete(
         self, system: str, user: str, schema: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """One call. Temperature zero. The schema is forced, not requested."""
+        """One call. The schema is forced, not requested.
+
+        ``temperature`` is not passed: it is absent from `anthropic` 1.x's
+        ``messages.create`` and rejected by the current models. See the class
+        docstring for what that costs and what it does not.
+        """
 
         response = self._client.messages.create(
             model=self.model,
             max_tokens=self.max_tokens,
-            temperature=0,
             system=system,
             tools=[
                 {

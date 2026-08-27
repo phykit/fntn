@@ -99,6 +99,12 @@ class ResponseNotTheDocument(RuntimeError):
     """
 
 
+#: Characters that mark an unedited placeholder rather than a contact. The SEC
+#: asks for a name and an email address; neither contains an angle bracket, and
+#: `<name> <email>` is the exact string a documented example leaves behind.
+_PLACEHOLDER_MARKERS = ("<", ">", "your.address@example.com", "example.com")
+
+
 def user_agent() -> str:
     """The SEC fair-access identity, read from ``SEC_CONTACT``.
 
@@ -107,6 +113,27 @@ def user_agent() -> str:
     placeholder would be a false statement made to a regulator's server in
     order to obtain data, which is not a configuration shortcut; and inventing
     a value would put an unverifiable string on every row of the manifest.
+
+    ***AND UNTIL 27 August 2026 THIS FUNCTION DID NOT IMPLEMENT THE PARAGRAPH
+    ABOVE.*** It tested `if not contact` and nothing else, so **an environment
+    variable SET TO A PLACEHOLDER passed it.** The session that found this had
+    `SEC_CONTACT` set to the literal string ``<name> <email>``, which the guard
+    admitted and which would have gone to `sec.gov` in a `User-Agent` header on
+    every request of a hundred-filing fetch. *The rule was written; the check
+    tested presence and the rule is about content.*
+
+    **Three refusals now, and the second and third are the new ones:**
+
+    * **unset or blank** -- nothing to identify the caller with;
+    * **placeholder markers** -- an angle bracket or a documented example
+      address, which is an unedited template rather than a contact;
+    * **no email address** -- the SEC asks for a name *and* an address, and a
+      bare name gives their operators nothing to write to.
+
+    *The shape checks are taken from the format the SEC itself publishes, not
+    invented here. They cannot establish that a well-formed address is real,
+    and they are not claimed to: what they establish is that nobody has left
+    the example in place.*
     """
 
     contact = (os.environ.get("SEC_CONTACT") or "").strip()
@@ -123,6 +150,35 @@ def user_agent() -> str:
             "    export SEC_CONTACT='Your Name your.address@example.com'\n\n"
             "Nothing is fetched and nothing is written until it is set."
         )
+
+    lowered = contact.lower()
+    hit = next((m for m in _PLACEHOLDER_MARKERS if m in lowered), None)
+    if hit is not None:
+        raise TraceCorpusRefused(
+            f"SEC_CONTACT is set to what looks like an unedited placeholder: "
+            f"{contact!r} contains {hit!r}.\n\n"
+            "This fetch will not run. Sending a placeholder to sec.gov in a "
+            "User-Agent is the false statement this module exists to refuse, "
+            "and a variable that is SET is not thereby USABLE: until now this "
+            "guard tested only that something was there.\n\n"
+            "Set it to a real name and a real address you will answer:\n"
+            "    export SEC_CONTACT='Ada Lovelace ada@her-own-domain.uk'\n\n"
+            "Nothing is fetched and nothing is written until it is."
+        )
+
+    local, _, domain = contact.partition("@")
+    if not local.strip() or not domain.strip() or "." not in domain:
+        raise TraceCorpusRefused(
+            f"SEC_CONTACT is set to {contact!r}, which carries no email "
+            "address.\n\n"
+            "The SEC's fair-access policy asks for a name AND an address, so "
+            "that their operators can reach whoever is making the requests. A "
+            "bare name identifies nobody they can write to, and this module "
+            "will not send one and call it an identity.\n\n"
+            "    export SEC_CONTACT='Ada Lovelace ada@her-own-domain.uk'\n\n"
+            "Nothing is fetched and nothing is written until it is."
+        )
+
     return f"fntn-trace-harness/1.0 ({contact})"
 
 
