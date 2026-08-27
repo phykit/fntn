@@ -1202,6 +1202,45 @@ def test_a_sweep_without_a_control_arm_is_refused():
         _scan_with({"insider_dealing": None}, control_ratio=0.0)
 
 
+def test_the_import_fence_now_runs_in_both_directions(monkeypatch):
+    """P115: the existing fence covered one direction of a two-way prohibition.
+
+    `assert_import_fence` stops `discovery.py` reaching prices, outcomes and
+    gates, so selection cannot see evaluation. Nothing stopped the reverse, and
+    the reverse is the prohibition CLAUDE.md states in its own words: agent
+    origin material may not enter the §3.5 item pipeline, because it would
+    re-base §7.1's headline on an agent-selected population.
+
+    Today the answer is NOT_APPLICABLE and that is deliberately not CLEAN: none
+    of the forbidden modules exists in this tree, so the walk has nothing to
+    walk. A not-applicable check may never be read as a pass, so it is a state
+    of its own and this test asserts which state.
+    """
+
+    from fntn.scanner.fences import (
+        ImportFenceBreach,
+        ReverseImportFenceState,
+        assert_reverse_import_fence,
+    )
+
+    # Nothing to walk: reported as itself, never as clean.
+    assert assert_reverse_import_fence() is ReverseImportFenceState.NOT_APPLICABLE
+
+    # And when a forbidden module DOES exist and reaches the discovery layer,
+    # the fence refuses. Built rather than waited for, because a fence first
+    # exercised by the breach it exists against is a fence nobody has tested.
+    import sys
+    import types
+
+    breaching = types.ModuleType("fntn.gates")
+    breaching.__file__ = "<synthetic>"
+    breaching.discovery = __import__("fntn.scanner.discovery", fromlist=["x"])
+    monkeypatch.setitem(sys.modules, "fntn.gates", breaching)
+    with pytest.raises(ImportFenceBreach) as caught:
+        assert_reverse_import_fence()
+    assert "may not enter the §3.5 item pipeline" in str(caught.value)
+
+
 def test_a_sweep_refuses_over_a_corpus_that_is_not_committed(tmp_path):
     """P114: the invariant against a fourth instance of one class.
 

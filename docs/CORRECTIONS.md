@@ -263,6 +263,28 @@ neither.
 *The lesson this register takes from a defect found three times: a correction
 applied to a published number does not travel to the code that produces it.*
 
+### B9. The Form 4 answer was correct about the wrong set
+
+| | |
+|---|---|
+| **Believed** | that the Form 4 block would exercise **none** of the intake points, the entity fence stopping filings at the first one |
+| **True** | that answer is correct about the **discovery layer's twelve** and the question was about **§9.4's requirement**, which is written about the **§3.5 item pipeline**. Against the item pipeline's eleven points a Form 4 block exercises **four directly**, a fifth for some filings, and makes two others pass |
+| **Refuted by** | reading §9.4's nouns instead of accepting the inventory: **gates**, **items**, **feed**, **source class**, **catalyst type**, **filing flow**, and not one **intake point** |
+| **Provenance** | `verified_primary` |
+
+**The shape of this error is worth naming because it is not a wrong answer.**
+Every step of the reasoning was sound and the conclusion follows. **What was
+wrong was the referent**, and a wrong referent produces a confident, internally
+consistent, checkable answer to a question nobody asked. *`tidy.sh` in A2 made
+the same shape of error from the other end.*
+
+**And it cost more than a paragraph.** The conclusion drawn was that *"the one
+point the block would light up is the one whose firing would mean the fence had
+failed"*, which reads as an argument for **not fetching filings at all**. The
+correct reading is the opposite: **the filings are correctly conceived and were
+pointed at the wrong intake**, and position 5, `ingestion_lag_exceeds_window`,
+is the **only** route to a §13 row 15 observation that row has ever had.
+
 ### B8. One class closed three times, which means it was never closed at all
 
 | | |
