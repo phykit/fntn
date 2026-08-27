@@ -1202,6 +1202,56 @@ def test_a_sweep_without_a_control_arm_is_refused():
         _scan_with({"insider_dealing": None}, control_ratio=0.0)
 
 
+def test_no_ledger_read_path_hands_out_a_directive_without_its_origin():
+    """P119: the crossing CLAUDE.md forbids is not an import, so no import fence catches it.
+
+    `CLAUDE.md`: agent-origin material may not enter the §3.5 item pipeline, or
+    §7.1's headline is re-based on an agent-selected population.
+    `assert_import_fence` and `assert_reverse_import_fence` between them cover
+    module imports in both directions. **They cannot cover this one**, because
+    the discovery layer and the item pipeline share a ledger: the crossing is a
+    SELECT, and a SELECT is not an import.
+
+    The hole found by looking: `queue_from_ledger` selected `directive_id`,
+    `event_class`, `delta_min`, `registered_sign` and `registered_at`, and NOT
+    `origin`. Every consumer built on it therefore received a directive list
+    with the marker already stripped, and the §3.5 prohibition is unenforceable
+    at the point where the information is gone. That is the same shape as the
+    underscore-directory hole: the rule was right and the read path walked
+    round it.
+
+    This test is the fence for the ledger direction. Any function returning a
+    directive out of the ledger must carry its origin, so that a consumer can
+    refuse agent material rather than being unable to see it.
+    """
+
+    ledger = Ledger(parameter_hash="origin-fence")
+    for did, origin in (("dir-agent", Origin.AGENT),
+                        ("dir-operator", Origin.OPERATOR),
+                        ("dir-control", Origin.RANDOM_CONTROL)):
+        d = _directive(origin=origin)
+        d.directive_id = did
+        ledger.write_directive(d, "blocked_on_operator")
+
+    drafts = {d.directive_id: d for d in queue_from_ledger(ledger)}
+    assert set(drafts) == {"dir-agent", "dir-operator", "dir-control"}
+
+    # Every draft names its origin, and the agent one is identifiable as such.
+    for did, expected in (("dir-agent", "agent"),
+                          ("dir-operator", "operator"),
+                          ("dir-control", "random_control")):
+        assert drafts[did].origin == expected, (
+            f"{did} came out of the ledger without its origin; a consumer "
+            "cannot refuse what it cannot see"
+        )
+
+    # And the discovery-origin set is nameable in one place rather than by
+    # each consumer inventing its own test.
+    assert drafts["dir-agent"].is_discovery_origin
+    assert not drafts["dir-operator"].is_discovery_origin
+    ledger.close()
+
+
 def test_the_import_fence_now_runs_in_both_directions(monkeypatch):
     """P115: the existing fence covered one direction of a two-way prohibition.
 
@@ -2941,8 +2991,21 @@ def test_the_report_carries_no_ranking_key_other_than_the_count():
         assert word not in prose, word
 
     # The only numeric column in the waiting table is the outstanding count.
+    # `origin` joined the header at P119; it is a provenance marker and not a
+    # ranking key, and the check below is what holds that distinction rather
+    # than the header literal alone.
     header = [l for l in queue.splitlines() if l.startswith("| outstanding |")]
-    assert header == ["| outstanding | directive | class | awaiting |"]
+    assert header == ["| outstanding | directive | class | origin | awaiting |"]
+    for row in queue.splitlines():
+        if not row.startswith("| ") or row.startswith("| outstanding |"):
+            continue
+        cells = [c.strip() for c in row.strip().strip("|").split("|")]
+        if len(cells) != 5 or set(cells[0]) <= set("-"):
+            continue
+        # Every cell after the first must be non-numeric: a second number
+        # beside the count is a second ordering the reader can impose.
+        for cell in cells[1:]:
+            assert not cell.replace(".", "", 1).isdigit(), cell
     ledger.close()
 
 
