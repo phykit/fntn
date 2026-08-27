@@ -34,6 +34,8 @@ A rule change is recorded in the same commit that lands it. Where the specificat
 |---|---|---|---|---|
 | n/a | n/a | n/a | n/a | n/a |
 
+**The batch of 27 August 2026 (phases 1 to 5) landed three rule-touching changes and each took a `§12.1` row in the commit that landed it: P93 (§0.11's two false claims corrected and the floor-or-position-size question opened), P94 (the §9.4 trace corpus fenced, and `Corpus.__post_init__` made to refuse underscore-prefixed routes), P95 (§13 row 23 re-based off a pooled population; rows 11 and 15 given their derivations and their gaps). §0.6's test is applied explicitly in each and the answer recorded: none adds a gate, a family, a grammar row, a cost tier, a sizing input, a feed or a field the funnel reads at decision time.** *`docs/DECISION_PACK.md` and `docs/DECISION_sizing_collision.md` take no row: they prepare decisions and change no rule.*
+
 *Empty is the correct state immediately after a version is composed. P76, P77 and P78 were carried here between 27 August 2026 and the composition of v1.14, and are discharged into §12.1.*
 
 **One rule landed in this batch without a row, and the judgement is recorded here rather than left in a commit message.** Commit `d95c816` typed the schema fingerprint as `schema:<digest>` and, with it, made `Registration.schema_matches` accept **two encodings**: the typed form and the superseded bare digest. The loader therefore returns `verified` for a file it would have called `unverifiable_schema_change` the moment before, which is **an acceptance widening**, and P80 is the standard such a thing answers to: a value that changes what a fence lets through, added quietly, widens the sweep with nothing on the record.
