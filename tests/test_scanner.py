@@ -2580,8 +2580,9 @@ def _open_items_row(n: str):
             if l.startswith(f"| {n} |")]
     assert len(rows) == 1, f"expected one row {n}, found {len(rows)}"
     cells = [c.strip() for c in rows[0].strip().strip("|").split("|")]
-    assert len(cells) == 4, cells[:2]
-    return cells[2], cells[3]
+    # # | Quantity | Status | Scope | What unblocks it
+    assert len(cells) == 5, cells[:2]
+    return cells[2], cells[4]
 
 
 def test_the_register_names_no_hash_outside_a_reference_to_the_history():
@@ -2924,6 +2925,7 @@ def _register_copy(tmp_path, edits) -> Path:
                 lines[i] = "|" + "|".join(cells) + "|"
                 hit += 1
         assert hit == 1, f"expected one row {row}, edited {hit}"
+
     out = tmp_path / "OPEN_ITEMS.md"
     out.write_text("\n".join(lines) + "\n")
     return out
@@ -2953,34 +2955,70 @@ def test_every_binding_path_status_is_read_from_the_register(tmp_path):
     assert before[0][2] == "NOT CLOSED" and "BLOCKED" in before[0][3]
 
     after = report_mod.binding_path_rows(
-        _register_copy(tmp_path, {"1": "**CLOSED 28 Aug 2026**"})
+        _register_copy(tmp_path, {"1": "**CLOSED**"})
     )
     assert after[0][2] == "CLOSED"
-    assert "CLOSED 28 Aug 2026" in after[0][3]
+    assert after[0][3] == "§13 row 1: CLOSED"
     # Row 1 is also one of the twenty-seven step 5 waits on, so step 5's
     # evidence moves too whilst its status does not.
     assert after[4][2] == "NOT CLOSED"
     assert after[4][3] != before[4][3]
 
 
-def test_a_qualified_closure_does_not_close_a_step():
-    """`PART CLOSED` and `CLOSED for US` are closures over part of an object.
+def test_a_part_closure_does_not_close_a_step_and_prints_its_scope():
+    """`PART CLOSED` is a closure over the scope in the Scope column.
 
-    Reading either as done would say the binding path had moved when the
-    register says it has not, which is the one thing this section must not do.
+    Reading one as done would say the binding path had moved when the register
+    says it has not, which is the one thing this section must not do.
     """
 
     assert report_mod.is_closed("CLOSED")
-    assert report_mod.is_closed("CLOSED 26 Aug 2026")
-    assert not report_mod.is_closed("PART CLOSED")
-    assert not report_mod.is_closed("CLOSED for US")
-    assert not report_mod.is_closed("PROVISIONAL")
-    assert not report_mod.is_closed("BLOCKED")
-    # Step 2 names row 22 (PART CLOSED) and row 25 (CLOSED for US), so it is
-    # the step the distinction decides.
+    for token in ("PART CLOSED", "PROVISIONAL", "BLOCKED", "OPEN"):
+        assert not report_mod.is_closed(token)
+    # Rows 22 and 25 are both PART CLOSED over the US, and step 2 names both.
     step2 = report_mod.binding_path_rows(OPEN_ITEMS)[1]
     assert step2[2] == "NOT CLOSED"
-    assert "PART CLOSED" in step2[3] and "CLOSED for US" in step2[3]
+    assert step2[3] == "§13 row 22: PART CLOSED (US); §13 row 25: PART CLOSED (US)"
+
+
+def test_the_register_carries_only_its_five_declared_statuses():
+    """Declared once, in the register's preamble, and used nowhere loosely."""
+
+    rows = report_mod.register_rows(OPEN_ITEMS.read_text())
+    assert set(rows) == {"13", "14d", "14p"}
+    seen = {
+        report_mod.status_token(row["Status"])
+        for table in rows.values() for row in table.values()
+    }
+    assert seen <= set(report_mod.REGISTER_STATUSES), seen - set(
+        report_mod.REGISTER_STATUSES)
+    # And the preamble declares exactly those five, so the vocabulary is in
+    # one place rather than two.
+    preamble = OPEN_ITEMS.read_text().split("## The binding path")[0]
+    for status in report_mod.REGISTER_STATUSES:
+        assert f"`{status}`" in preamble
+    assert "Scope is a column and never a status" in preamble
+
+
+def test_a_status_outside_the_five_is_refused_and_never_repaired(tmp_path):
+    """An earlier reader took everything up to the first colon and so silently
+    repaired a cell carrying a note where a status belongs. A vocabulary kept
+    in two places is widened in the second one."""
+
+    doc = _register_copy(tmp_path, {"1": "**CLOSED for US**"})
+    step1 = report_mod.binding_path_rows(doc)[0]
+    assert step1[2] == "CANNOT READ THE REGISTER"
+    assert "outside the register's declared status vocabulary" in step1[3]
+    assert "CLOSED for US" in step1[3]
+
+    # A note where a status belongs is refused for the same reason.
+    doc = _register_copy(tmp_path, {"1": "**OPEN**: waiting on the schedule"})
+    assert report_mod.binding_path_rows(doc)[0][2] == "CANNOT READ THE REGISTER"
+
+    # And an unreadable file is still its own, different refusal.
+    gone = report_mod.binding_path_rows(tmp_path / "no-such-register.md")
+    assert all(r[2] == "CANNOT READ THE REGISTER" for r in gone)
+    assert "no-such-register.md" in gone[0][3]
 
 
 def test_a_register_that_cannot_be_read_refuses_rather_than_defaulting(tmp_path):
@@ -3021,7 +3059,7 @@ def test_the_movement_line_names_the_step_that_moved(tmp_path):
     (runs / "2026-08-27_funnel.md").write_text(_render(ledger, runs_dir=runs))
     moved = _render(
         ledger, runs_dir=runs,
-        register=_register_copy(tmp_path, {"1": "**CLOSED 28 Aug 2026**"}),
+        register=_register_copy(tmp_path, {"1": "**CLOSED**"}),
     )
     assert "no binding-path movement" not in moved
     assert "**Moved since 2026-08-27_funnel.md:**" in moved

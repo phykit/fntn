@@ -114,19 +114,20 @@ class ReportRefused(RuntimeError):
 #: binding path", which reads as reassuring and is not.
 BINDING_PATH_HEADING = "## 1. Binding path"
 
-#: The register's declared status vocabulary, plus the one token in use that
-#: the register's own declaration at the top of `docs/OPEN_ITEMS.md` does not
-#: list.  `PART CLOSED` is row 22's status and `CLOSED for US` is row 25's; the
-#: declaration names four words and the table uses two more.  They are admitted
-#: here **and reported as qualified**, rather than either being smoothed into
-#: `CLOSED` or refused: refusing would make the section unreadable over a
-#: register that is simply more careful than its own preamble, and smoothing
-#: would let part of an object closed read as the whole of one closed.
+#: The register's status vocabulary, declared at the top of
+#: `docs/OPEN_ITEMS.md` and **exhaustive**.  A cell outside these five is a
+#: refusal here and not a widening of this tuple.
+#:
+#: *Why the reader is strict and the register was normalised instead.* The
+#: §13 table once carried `CLOSED for US`, a closure with its scope written
+#: into the status, and the first version of this reader admitted it and
+#: reported it as qualified. That put the vocabulary in two places, the
+#: register's preamble and this tuple, and made the reader the thing that had
+#: to be widened whenever a cell was written loosely. **The scope now has a
+#: column of its own**, so a partial closure is `PART CLOSED` with a scope
+#: beside it, and this tuple is the register's own list rather than a
+#: superset of it.
 REGISTER_STATUSES = ("OPEN", "BLOCKED", "PROVISIONAL", "PART CLOSED", "CLOSED")
-
-#: Words that qualify a closure.  `CLOSED for US` is a closure over part of the
-#: object, and **a binding-path step is not settled by part of one**.
-CLOSURE_QUALIFIERS = ("part", "for")
 
 #: The five steps of `docs/OPEN_ITEMS.md`'s *binding path, in order*, and the
 #: register cells each is settled by.
@@ -184,71 +185,65 @@ REGISTER_TABLES = {
 }
 
 
-def register_rows(text: str) -> Dict[str, Dict[str, str]]:
+def register_rows(text: str) -> Dict[str, Dict[str, Dict[str, str]]]:
     """Every register table with a *Status* column, keyed by its first cell.
 
-    The status column is found **by its header** and never by its position, so
-    a column inserted before it does not silently start reporting the wrong
-    cell. A table with no `Status` header is skipped rather than guessed at.
+    Each row is returned as its whole header-to-cell mapping, so *Status* and
+    *Scope* are read by name. Columns are found **by their headers** and never
+    by position, so a column inserted before either does not silently start
+    reporting the wrong cell. A table with no `Status` header is skipped rather
+    than guessed at.
     """
 
-    out: Dict[str, Dict[str, str]] = {}
+    out: Dict[str, Dict[str, Dict[str, str]]] = {}
     heading = ""
     header: Optional[List[str]] = None
-    status_col: Optional[int] = None
     for line in text.splitlines():
         if line.startswith("## "):
-            heading, header, status_col = line.strip(), None, None
+            heading, header = line.strip(), None
             continue
         if not line.startswith("|"):
-            header, status_col = None, None
+            header = None
             continue
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
         if all(set(c) <= set("-: ") for c in cells):
             continue                      # the header rule
         if header is None:
             header = cells
-            status_col = (
-                header.index("Status") if "Status" in header else None
-            )
             continue
-        if status_col is None or status_col >= len(cells):
+        if "Status" not in header:
             continue
+        row = dict(zip(header, cells))
         for key, prefix in REGISTER_TABLES.items():
             if heading.startswith(prefix):
-                out.setdefault(key, {})[cells[0]] = cells[status_col]
+                out.setdefault(key, {})[cells[0]] = row
     return out
 
 
 def status_token(cell: str) -> str:
-    """The leading status token of a register status cell, verbatim.
+    """A register status cell with its markdown emphasis stripped, and nothing else.
 
-    Everything up to the first colon, with markdown emphasis stripped and a
-    trailing parenthetical note dropped. `**OPEN**: the traces of 26 and 27
-    August ...` yields `OPEN`; `**CLOSED for US**` yields `CLOSED for US`,
-    qualifier included, because dropping the qualifier is the failure this
-    whole function guards.
+    **No splitting and no salvage.** An earlier version took everything up to
+    the first colon so that `**OPEN**: the traces of 26 and 27 August ...`
+    would yield `OPEN`, which meant the reader silently repaired cells that
+    carried a note where a status belongs. The register now keeps its notes in
+    a note column, so a cell that is not exactly one of the five is a register
+    defect and is reported as one.
     """
 
-    token = cell.split(":", 1)[0]
-    token = token.replace("*", "").replace("`", "").strip()
-    token = token.split(" *(")[0].strip()
-    return token
+    return cell.replace("*", "").replace("`", "").strip()
 
 
 def is_closed(token: str) -> bool:
-    """Whether a status token says the thing is done, whole.
+    """Whether a status says the thing is done, whole.
 
-    `CLOSED` and `CLOSED 26 Aug 2026` are done. `PART CLOSED` and `CLOSED for
-    US` are not: **a step of the binding path is not settled by part of an
-    object being settled**, and a report that read them as done would say the
-    path had moved when the register says it has not.
+    Only `CLOSED`. `PART CLOSED` is a closure over the scope in the scope
+    column, and **a step of the binding path is not settled by part of an
+    object being settled**: a report that read one as done would say the path
+    had moved when the register says it has not.
     """
 
-    words = token.lower().split()
-    if not words or words[0] != "closed":
-        return False
-    return not any(w in CLOSURE_QUALIFIERS for w in words)
+    return token == "CLOSED"
 
 
 def binding_path_rows(register: Path) -> List[Tuple[str, str, str, str]]:
@@ -272,7 +267,7 @@ def binding_path_rows(register: Path) -> List[Tuple[str, str, str, str]]:
 
     out: List[Tuple[str, str, str, str]] = []
     for n, what, cells in BINDING_PATH:
-        wanted: List[Tuple[str, str]] = []
+        wanted: List[Tuple[str, Dict[str, str]]] = []
         for table, key in cells:
             table_rows = rows.get(table, {})
             if key == ALL_13:
@@ -285,8 +280,8 @@ def binding_path_rows(register: Path) -> List[Tuple[str, str, str, str]]:
                 label = f"§13 row {key}" if table == "13" else f"§14 {key}"
                 wanted.append((label, table_rows[key]))
             else:
-                wanted.append((f"{table}:{key}", ""))
-        missing = [lab for lab, cell in wanted if not cell]
+                wanted.append((f"{table}:{key}", {}))
+        missing = [lab for lab, row in wanted if not row.get("Status")]
         if not wanted or missing:
             out.append((
                 n, what, "CANNOT READ THE REGISTER",
@@ -295,19 +290,30 @@ def binding_path_rows(register: Path) -> List[Tuple[str, str, str, str]]:
                 + " and the register does not carry it",
             ))
             continue
-        tokens = [(lab, status_token(cell)) for lab, cell in wanted]
+        tokens = [
+            (lab, status_token(row["Status"]), status_token(row.get("Scope", "")))
+            for lab, row in wanted
+        ]
+        # Strict. A cell outside the register's own five is a register defect,
+        # and repairing one here would put the vocabulary in two places and
+        # make this file the thing that gets widened.
         unknown = [
-            lab for lab, t in tokens
-            if not any(t.upper().startswith(v) for v in REGISTER_STATUSES)
+            f"{lab}: {t}" for lab, t, _sc in tokens if t not in REGISTER_STATUSES
         ]
         if unknown:
             out.append((
                 n, what, "CANNOT READ THE REGISTER",
-                "outside the register's status vocabulary: "
-                + ", ".join(f"`{u}`" for u in unknown),
+                "outside the register's declared status vocabulary "
+                + f"({', '.join(REGISTER_STATUSES)}): "
+                + "; ".join(f"`{u}`" for u in unknown),
             ))
             continue
-        closed = all(is_closed(t) for _, t in tokens)
+        def _shown(token: str, scope: str) -> str:
+            """The status, with its scope where the register gives it one."""
+
+            return token if scope in ("", "n/a") else f"{token} ({scope})"
+
+        closed = all(is_closed(t) for _, t, _sc in tokens)
         if any(key == ALL_13 for _table, key in cells):
             # Twenty-seven cells printed one by one is a paragraph nobody
             # reads.  Grouped by token instead, which loses no token and so
@@ -316,9 +322,11 @@ def binding_path_rows(register: Path) -> List[Tuple[str, str, str, str]]:
             # because its evidence was summarised is the failure this whole
             # section exists against.
             groups: Dict[str, List[str]] = {}
-            for lab, t in tokens:
-                groups.setdefault(t, []).append(lab.replace("§13 row ", ""))
-            n_closed = sum(1 for _, t in tokens if is_closed(t))
+            for lab, t, sc in tokens:
+                groups.setdefault(_shown(t, sc), []).append(
+                    lab.replace("§13 row ", "")
+                )
+            n_closed = sum(1 for _, t, _sc in tokens if is_closed(t))
             evidence = (
                 f"{n_closed} of {len(tokens)} §13 rows closed whole; "
                 + "; ".join(
@@ -326,7 +334,9 @@ def binding_path_rows(register: Path) -> List[Tuple[str, str, str, str]]:
                 )
             )
         else:
-            evidence = "; ".join(f"{lab}: {t}" for lab, t in tokens)
+            evidence = "; ".join(
+                f"{lab}: {_shown(t, sc)}" for lab, t, sc in tokens
+            )
         out.append((n, what, "CLOSED" if closed else "NOT CLOSED", evidence))
     return out
 
@@ -581,9 +591,10 @@ class RunReport:
             "The one judgement in this section is which register cells settle "
             "which step, and it is printed in the last column so a reader who "
             "disagrees can see it. A step is **CLOSED** only where every cell "
-            "it names is closed whole: `PART CLOSED` and `CLOSED for US` are "
-            "closures over part of an object and the path is not settled by "
-            "part of one.",
+            "it names reads `CLOSED`: `PART CLOSED` is a closure over the "
+            "scope printed beside it and the path is not settled by part of "
+            "an object being settled. **A status outside the register's "
+            "declared five is refused, not repaired.**",
             "",
         ]
         if self.register is None:
