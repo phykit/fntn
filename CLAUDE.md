@@ -65,7 +65,9 @@ Do not, without an explicit §0 decision from the operator recorded in the spec:
 - Let anything machine-raised supply `delta_min`, `n_min`, a registered sign, or a ratified pre-mortem. The scanner's steady state is a queue of drafts **blocked on the operator**, and that is the design working.
 - Let agent-origin material enter the §3.5 item pipeline. It would re-base §7.1's headline on an agent-selected population.
 - Fit a parameter on the archive and present it as a restriction. A restriction parameter fitted on the archive is a fitted parameter wearing a restriction's clothes.
-- Assume a value for any pending §13 row. **§13 row 1, the broker commission, is unverified and is the most leveraged number in the paper.** *Amended twice on 27 August 2026 by §0.11. The first amendment set the clip at £50,000 by decision; **that is WITHDRAWN**. The clip is now **DERIVED, not chosen**: `floor(market)` is the smallest position at which row 1's fixed round-trip cost falls at or below **§13 row 29's tolerance**, and row 29 is **OPEN**. So **position size is UNDETERMINED, `sizing.py` refuses to score with `clip_floor_tolerance_unset`, and the book takes no positions.* **That refusal is the point: a chosen floor produces the same empty book and §0.6 says why that is worse.** Reference equity confirmed at £100,000. Row 1 stays PROVISIONAL on three gaps the clip never touched. **Never quote a clip figure: there isn't one.** §6.7's participation cap (2% of median daily notional per session over ≤ 3 sessions) is **in force**; only the participation *gate* is deferred, and adding one needs a §0 decision because it is apparatus.
+- Assume a value for any pending §13 row. **§13 row 1, the broker commission, is unverified and is the most leveraged number in the paper.** *Amended twice on 27 August 2026 by §0.11, and then RESOLVED.* **§13 row 29 is SET at 10 bp** (27 Aug 2026, delegated authority, P109), so **the clip floor DERIVES and there is now a floor to quote** — but it is **a function of share price and never a constant**: USD 6,055 at USD 43.79 a share, USD 30,000 at USD 12, and **`clip_floor_unreachable_at_any_size` below USD 10.40**. *The book is NOT empty: the floor sits inside §6.7's £1,875 to £15,000 band and positions exist for stops tighter than about 16%.* **10 bp is a US-ONLY decision**: UK Main Market is out with certainty on stamp duty, and **AIM is out on COMMISSION, not tax** (0.05% a side is 10 bp round trip), so the deferred AIM tier cannot rescue the UK. **12.5 bp is where AIM becomes reachable, and that choice is whether the UK exists in this strategy.** Row 1 stays **PROVISIONAL on one gap, the contracting entity, which is a fact about the operator's account and is not delegable.** §6.7's participation cap is in force; only the participation *gate* is deferred.
+- **Fill §13 row 31, the promotion-to-live-capital predicate.** §0.10 and §7.6 both call it pre-registered and it holds two blanks, *a stated margin* over *a stated minimum sample*, and has since v1.0. **Until they are filled nothing in this document authorises capital and the gate can neither pass nor fail.** It takes an explicit §0 decision and it is the highest-consequence item on the register.
+- **Sweep over a corpus that is not committed.** `cmd_sweep` refuses with `corpus_not_committed`. The class this closes recurred three times before it was closed at the class: any input to a decision must be retrievable by commit **at the moment the decision is taken**.
 - Weaken the import fence, the query fence, the entity fence or the authority fence.
 
 ---
@@ -94,10 +96,13 @@ src/fntn/scanner/  the agent discovery layer (spec §3.7)
                   underscore-prefixed names are bookkeeping, covering the
                   route itself and not only the files inside it
   sizing.py       §13 rows 29 and 30: the DERIVED clip floor. There is no
-                  clip constant. Refuses in three named ways and the third,
+                  clip constant and there never will be: with row 29 set at
+                  10 bp the floor is a FUNCTION OF SHARE PRICE. Refuses in
+                  three named ways and the third,
                   clip_floor_unreachable_at_any_size, is NOT a refusal to
                   score: it is the measured fact that no size satisfies the
-                  tolerance, which is the UK Main Market case
+                  tolerance, which is the UK Main Market case, the AIM case,
+                  and the US case below USD 10.40 a share
   trace_filings.py  the §9.4 Form 4 trace corpus fetcher. FENCED: no
                   registration route may resolve to corpora/_trace_filings,
                   the sweep's loader will not read it, and discovery.py's
@@ -121,6 +126,10 @@ docs/REGISTRATION_HISTORY.md  one row per registration hash ever stamped, the
 corpora/us/_raw/   the pages the server sent, kept because extraction is
                      destructive. Underscore-prefixed, so every corpus reader
                      skips them
+docs/CASCADE_2026-08-27.md        what row 29 released, item by item
+docs/PIPELINE_9_4_2026-08-27.md   §9.4 is written about the ITEM pipeline, and
+                     what the trace corpus must CONTAIN, stratum by stratum
+docs/REPLAY_INVARIANT_2026-08-27.md  why three closures did not close one class
 docs/CORRECTIONS.md  one row per assertion withdrawn, whoever made it. §12.1
                      records what the SPECIFICATION changed; this records what
                      was SAID and was wrong. Two sections, and the second, the
@@ -134,7 +143,7 @@ tests/
 
 ```bash
 pip install -e ".[dev]"      # once: puts src/ on the path
-python -m pytest tests/ -q   # 265 tests
+python -m pytest tests/ -q   # 268 tests
 ```
 
 Without the editable install the package sits at `src/fntn` and is invisible to
