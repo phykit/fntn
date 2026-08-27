@@ -149,6 +149,7 @@ schedule at whatever granularity the answer turns out to require.
 | Overlap tolerance θ | OPEN | n/a | Governance in a stated range. Gates directive admission |
 | δₘᵢₙ floor | OPEN | n/a | Governance. Below it a directive is not worth a session of the segment |
 | Account type, cash or margin | OPEN | n/a | Currently non-binding; binds before any short-side family or margin simulation. **Note the settlement-bridge cost line arguably binds it already** |
+| **Minimum clip (§0 decision)** | **CLOSED** | n/a | **Closed 27 August 2026, over a stated objection.** £2,500 to £50,000 against unchanged reference equity of approximately £100,000, taking the single-name position from 2.5% to 50%. The costs are on the record in §0.11 and `§12.1` P90 and are not restated here: a bounded fixed-cost saving that is **negative on the UK tiered schedule**, 61.4 to 61.5 bp, because the PTM levy crosses its £10,000 threshold; market impact that scales with participation, has no ceiling and has no row; concentration up twentyfold; and an analysis that argued against the change. **The §0.6 consequence resolved to (b)**: no participation constraint, a known unbounded exposure with no refusing mechanism. The gate is deferred in Annex A.1 |
 | Control-arm ratio *M/N* | OPEN | n/a | Also §13 row 20 |
 | Manual-observation capacity per period | OPEN | n/a | The scanner will exhaust it rather than approach it |
 | UK daily factor series (§0.7b) | OPEN | n/a | Standard library ends December 2017, five years before the archive opens |
@@ -177,6 +178,12 @@ Evaluated and logged continuously; acted on only after the §0.6 instruments rep
 | Discovery corpus ingestion adapters for markets outside §0.7(f) | Instruments reported, **and** the manual-observation route has produced at least one registered directive that reached a verdict. Reading a foreign register by hand is not apparatus; a parser for it is |
 | Standing automation of the discovery layer | Instruments reported, **and** the control arm has returned *agent selection carries information*. Automation follows demonstrated value, not the reverse |
 | Agent-proposed items entering the §3.5 item pipeline | **Refused rather than deferred**, pending an explicit §0 decision |
+
+The row added on 27 August 2026 by §0.11:
+
+| Capability | Predicate |
+|---|---|
+| **Participation constraint against daily traded value** | The §0.6 instruments report. A gate, therefore apparatus, therefore blocked. §0.11 resolved to **(b)**, so the £50,000 clip runs with no participation constraint; this row records that the refusing mechanism is **absent by decision and not by oversight**, and does not soften the exposure. Taking it early needs an explicit §0 exception to §0.6, a `§12.1` row, and a threshold as a §13 row with a sample and a rule |
 
 ---
 

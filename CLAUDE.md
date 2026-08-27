@@ -65,7 +65,7 @@ Do not, without an explicit §0 decision from the operator recorded in the spec:
 - Let anything machine-raised supply `delta_min`, `n_min`, a registered sign, or a ratified pre-mortem. The scanner's steady state is a queue of drafts **blocked on the operator**, and that is the design working.
 - Let agent-origin material enter the §3.5 item pipeline. It would re-base §7.1's headline on an agent-selected population.
 - Fit a parameter on the archive and present it as a restriction. A restriction parameter fitted on the archive is a fitted parameter wearing a restriction's clothes.
-- Assume a value for any pending §13 row. **§13 row 1, the broker commission, is unverified and is the most leveraged number in the paper.** The clip stays £2,500 and the reachability figures stay as they are until it verifies.
+- Assume a value for any pending §13 row. **§13 row 1, the broker commission, is unverified and is the most leveraged number in the paper.** *Amended 27 August 2026 by §0.11, which is the explicit §0 decision this prohibition reserves: the clip is **£50,000**, taken over a stated objection, against unchanged reference equity of ~£100,000, so the single-name position is 50% of the book. Row 1 is still unverified and still PROVISIONAL; the clip did not move because the commission resolved. The reachability figures and every clip-dependent row are recomputed at £50,000 and marked as recomputed, never edited in place.* **§0.11 resolved §0.6's consequence to (b): the clip runs with no participation constraint, a known unbounded exposure with no refusing mechanism.** Do not add one without a further §0 decision; it is a gate, and the armed rule blocks it.
 - Weaken the import fence, the query fence, the entity fence or the authority fence.
 
 ---
