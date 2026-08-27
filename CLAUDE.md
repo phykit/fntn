@@ -121,6 +121,11 @@ docs/REGISTRATION_HISTORY.md  one row per registration hash ever stamped, the
 corpora/us/_raw/   the pages the server sent, kept because extraction is
                      destructive. Underscore-prefixed, so every corpus reader
                      skips them
+docs/CORRECTIONS.md  one row per assertion withdrawn, whoever made it. §12.1
+                     records what the SPECIFICATION changed; this records what
+                     was SAID and was wrong. Two sections, and the second, the
+                     project's own refutations, is what stops it being a
+                     grievance list
 docs/CONVENTIONS.md  coding conventions derived from the spec
 tests/
 ```
