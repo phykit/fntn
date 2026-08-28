@@ -580,9 +580,18 @@ def cmd_row12(args) -> int:
 
     from .row12 import DEFAULT_PRICE_FLOOR_USD, measure, read_directory
 
-    readings = read_directory(args.dir)
+    unparseable: list = []
+    readings = read_directory(args.dir, unparseable=unparseable)
     m = measure(readings, price_floor=args.price_floor or DEFAULT_PRICE_FLOOR_USD)
+    m.unparseable = len(unparseable)
     print(m.render())
+    if unparseable:
+        print()
+        print('Files that would not parse, named rather than counted:')
+        for name, why in unparseable[:10]:
+            print(f'  {name}: {why}')
+        if len(unparseable) > 10:
+            print(f'  ... and {len(unparseable) - 10} more')
     print()
     print("NOT a calibration. Row 12 names the DESIGN SEGMENT and there is no")
     print("archive, so this is a reading over whatever days were fetched and it")

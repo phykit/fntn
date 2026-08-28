@@ -56,6 +56,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import random
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
@@ -804,12 +805,22 @@ def fetch_form4_block(on: date, limit: int = BLOCK_SIZE,
             "another date chosen to produce a result."
         )
 
+    seen_accessions: set = set()
+    duplicate_rows = 0
     kept = scanned = 0
-    for cik, _company, path in rows:
+    drawn = list(rows)
+    random.Random(f"form4|{on.isoformat()}|{limit}").shuffle(drawn)
+    for cik, _company, path in drawn:
         if kept >= limit:
             break
         scanned += 1
         accession = path.rsplit("/", 1)[-1][: -len(".txt")]
+        # EDGAR lists ONE ROW PER FILER: an issuer and two reporting
+        # owners is three rows and ONE accession. `kept` counted rows.
+        if accession in seen_accessions:
+            duplicate_rows += 1
+            continue
+        seen_accessions.add(accession)
         raw = fetch_raw(f"{SEC_HOST}/Archives/{path}")
         xml = extract_ownership_document(raw.decode("utf-8", errors="replace"))
         if xml is None or len(xml) < FORM4_MIN_BYTES:
@@ -820,8 +831,9 @@ def fetch_form4_block(on: date, limit: int = BLOCK_SIZE,
         time.sleep(pause_s)
 
     (root / "_manifest.tsv").write_text(
-        "form_type\tindex_date\tscanned\tkept\tretrieved_at\n"
-        f"{FORM4_TYPE}\t{on.isoformat()}\t{scanned}\t{kept}\t"
+        "form_type\tindex_date\trows_in_index\tscanned\tduplicate_rows\tkept\tdraw_seed\tretrieved_at\n"
+        f"{FORM4_TYPE}\t{on.isoformat()}\t{len(rows)}\t{scanned}\t{duplicate_rows}\t{kept}\t"
+        f"form4|{on.isoformat()}|{limit}\t"
         f"{datetime.now(timezone.utc).isoformat()}\n"
     )
     return kept, scanned, root

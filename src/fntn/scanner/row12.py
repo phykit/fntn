@@ -195,6 +195,8 @@ class Row12Reading:
     price_absent: int = 0
     #: Never populated. The liquidity leg refuses; see the module docstring.
     adv_unmeasured: int = 0
+    #: Files on disk that would not parse. In the denominator, never dropped.
+    unparseable: int = 0
     code_census: Counter = field(default_factory=Counter)
     price_floor: float = DEFAULT_PRICE_FLOOR_USD
 
@@ -224,7 +226,9 @@ class Row12Reading:
         q = self.qualifying_rate
         out = [
             "§13 row 12: the joint qualifying-and-tradable rate",
+            f"  files on disk                   : {self.filings + self.unparseable}",
             f"  filings read                    : {self.filings}",
+            f"  UNPARSEABLE, in the denominator : {self.unparseable}",
             "",
             "  §5.4.1's three tests, each with its own denominator:",
             f"    1 net increase in interest    : {self.test1:5d}  ({self.test1/self.filings:6.1%})",
@@ -261,7 +265,8 @@ def measure(readings: Iterable[Form4Reading],
     return out
 
 
-def read_directory(path: str | Path) -> List[Form4Reading]:
+def read_directory(path: str | Path,
+                   unparseable: Optional[List] = None) -> List[Form4Reading]:
     """Every Form 4 XML under ``path``. Fetching is NOT done here.
 
     The fetch runs through the existing `trace_filings` transport, which refuses
@@ -271,12 +276,15 @@ def read_directory(path: str | Path) -> List[Form4Reading]:
     duplicated here in a weaker form.
     """
 
+    unparseable = unparseable if unparseable is not None else []
     out: List[Form4Reading] = []
     for p in sorted(Path(path).rglob("*.xml")):
         if p.name.startswith("_"):
             continue
         try:
             out.append(read_form4(p.read_text(errors="replace"), accession=p.stem))
-        except ET.ParseError:
-            continue
+        except ET.ParseError as exc:
+            # Counted and named, never swallowed: this bare `continue`
+            # dropped 143 of 1000 filings out of the denominator.
+            unparseable.append((p.name, str(exc)))
     return out
