@@ -113,6 +113,22 @@ HEADER_MARKER = "<ACCESSION-NUMBER>"
 #: default**: the family is §13 row 22's `earnings_event` and the flow is fixed
 #: by `§12.1` P126.
 FORM_TYPE = "8-K"
+
+#: §13 row 12's form. **A separate constant beside the 8-K one and not a
+#: replacement for it**: step 4's trace corpus is Item 2.02 by P126 and stays
+#: there, because a field-delimited form exercises a parser and not the
+#: model-mediated extraction path §9.4 is aimed at. **Row 12 wants exactly the
+#: property that disqualified Form 4 from the trace**: it is machine-parseable,
+#: so the qualifying rate is a deterministic read rather than an estimate.
+FORM4_TYPE = "4"
+
+#: The structural marker for a Form 4 primary document. **A positive marker and
+#: not a byte floor**, per `verify_response`'s contract: a response shaped like
+#: a page rather than a document fails this whatever its size.
+FORM4_MARKER = "<ownershipDocument"
+
+#: A Form 4 XML below this is not a Form 4.
+FORM4_MIN_BYTES = 500
 TARGET_ITEM = "2.02"
 #: Item 2.02's title as EDGAR writes it in the full submission's
 #: ``ITEM INFORMATION`` lines. **Carried but NOT used as the filter**: the
@@ -342,6 +358,36 @@ def submissions_url(cik: str) -> str:
     return f"{DATA_HOST}/submissions/CIK{int(cik):010d}.json"
 
 
+def form_rows(index_text: str, form_type: str) -> List[Tuple[str, str, str]]:
+    """(CIK, company, path) for every row of one form type in a daily index.
+
+    **Generalised 28 August 2026 so §13 row 12 can reach Form 4.** The parser
+    was already form-agnostic in everything except one comparison against a
+    module constant; `eight_k_rows` now calls this with `FORM_TYPE` and its
+    behaviour is unchanged, so step 4's corpus is untouched.
+
+    ***The form type is an ARGUMENT and not a second constant.*** A module
+    constant deciding which population a fetch returns is the defect class that
+    caused the `agent_model`, `lexicon`, `rulebook_stopwords` and intake-budget
+    re-stamps: a value that changes what a run produces while moving nothing on
+    the record. Here it is passed at the call site and recorded in the manifest.
+    """
+
+    out: List[Tuple[str, str, str]] = []
+    for line in index_text.splitlines():
+        parts = line.rsplit(None, 3)
+        if len(parts) != 4:
+            continue
+        head, cik, _filed, path = parts
+        if not cik.isdigit() or not path.endswith(".txt"):
+            continue
+        form, _, company = head.partition(" ")
+        if form.strip() != form_type:
+            continue
+        out.append((cik, company.strip(), path))
+    return out
+
+
 def eight_k_rows(index_text: str) -> List[Tuple[str, str, str]]:
     """(CIK, company, path) for every 8-K in a daily form index.
 
@@ -357,21 +403,7 @@ def eight_k_rows(index_text: str) -> List[Tuple[str, str, str]]:
     would put a second population in the same denominator.*
     """
 
-    out: List[Tuple[str, str, str]] = []
-    for line in index_text.splitlines():
-        parts = line.rsplit(None, 3)
-        if len(parts) != 4:
-            continue
-        head, cik, _filed, path = parts
-        if not cik.isdigit() or not path.endswith(".txt"):
-            continue
-        # The form type is the first whitespace-delimited token; an exact
-        # match excludes `8-K/A` without a second rule.
-        form, _, company = head.partition(" ")
-        if form.strip() != FORM_TYPE:
-            continue
-        out.append((cik, company.strip(), path))
-    return out
+    return form_rows(index_text, FORM_TYPE)
 
 
 def header_url(path: str) -> str:
@@ -688,3 +720,93 @@ def write_manifest(filings: List[FetchedFiling], root: Path = CORPUS_ROOT) -> Pa
     manifest = root / "_manifest.tsv"
     manifest.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return manifest
+
+
+# ---------------------------------------------------------------------------
+# §13 row 12: Form 4 flow. Same transport, same guard, a different population.
+# ---------------------------------------------------------------------------
+
+
+def extract_ownership_document(submission_text: str) -> Optional[str]:
+    """The Form 4 XML out of a full submission `.txt`.
+
+    **One fetch per filing rather than three.** The 8-K path reads a header view
+    to filter on item numbers, because the daily index does not carry them.
+    Form 4 needs no such filter: every row of the index that says `4` is the
+    population, so the submission text is fetched once and the primary document
+    lifted out of it.
+
+    Returns ``None`` where no ownership document is present, which is a fact
+    about the submission and not a fetch failure. **A paper filing and a
+    submission whose primary document is a PDF both land here**, and both are
+    reported as skipped rather than counted as filings that failed a test.
+    """
+
+    start = submission_text.find(FORM4_MARKER)
+    if start == -1:
+        return None
+    end = submission_text.find("</ownershipDocument>", start)
+    if end == -1:
+        return None
+    return submission_text[start:end + len("</ownershipDocument>")]
+
+
+def fetch_form4_block(on: date, limit: int = BLOCK_SIZE,
+                      pause_s: float = 0.15,
+                      out_dir: Optional[Path] = None) -> Tuple[int, int, Path]:
+    """One day's Form 4 flow, written as XML for `row12.read_directory`.
+
+    Returns ``(kept, scanned, directory)``. **Both counts are returned and both
+    are written**, because §13 row 12 is a rate and a rate whose denominator
+    nobody can reconstruct is not a measurement. *`scanned` is every Form 4 row
+    in the index; `kept` is those whose submission carried an ownership
+    document.*
+
+    **Refuses before it starts if `SEC_CONTACT` is unset or is a placeholder.**
+    The identity is checked once, here, so the refusal arrives before anything
+    is written rather than part-way through a block.
+
+    ***This does not touch step 4's corpus.*** It writes to its own directory,
+    underscore-prefixed so `Corpus.__post_init__` refuses to build a
+    registration row pointing at it and `corpusio` will not read it as a
+    discovery corpus. **Row 12's population is a measurement input and must
+    never become material an agent is shown.**
+    """
+
+    import time
+
+    user_agent()  # refuse early, and loudly
+    root = Path(out_dir) if out_dir else Path("corpora/_form4") / on.isoformat()
+    root.mkdir(parents=True, exist_ok=True)
+
+    _body, index_text = fetch(daily_index_url(on), MIN_INDEX_BYTES, INDEX_MARKER)
+    rows = form_rows(index_text, FORM4_TYPE)
+    if not rows:
+        raise TraceCorpusRefused(
+            f"{daily_index_url(on)} verified as an index and carries no "
+            f"form {FORM4_TYPE!r} rows. That is a fact about the day, not a "
+            "fetch failure, and it is reported rather than retried against "
+            "another date chosen to produce a result."
+        )
+
+    kept = scanned = 0
+    for cik, _company, path in rows:
+        if kept >= limit:
+            break
+        scanned += 1
+        accession = path.rsplit("/", 1)[-1][: -len(".txt")]
+        raw = fetch_raw(f"{SEC_HOST}/Archives/{path}")
+        xml = extract_ownership_document(raw.decode("utf-8", errors="replace"))
+        if xml is None or len(xml) < FORM4_MIN_BYTES:
+            time.sleep(pause_s)
+            continue
+        (root / f"{accession}.xml").write_text(xml)
+        kept += 1
+        time.sleep(pause_s)
+
+    (root / "_manifest.tsv").write_text(
+        "form_type\tindex_date\tscanned\tkept\tretrieved_at\n"
+        f"{FORM4_TYPE}\t{on.isoformat()}\t{scanned}\t{kept}\t"
+        f"{datetime.now(timezone.utc).isoformat()}\n"
+    )
+    return kept, scanned, root

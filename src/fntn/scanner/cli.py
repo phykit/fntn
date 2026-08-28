@@ -552,6 +552,44 @@ def cmd_delisting_register(args) -> int:
     return 0
 
 
+def cmd_form4_block(args) -> int:
+    """Fetch one day's Form 4 flow. The SEC_CONTACT guard refuses first."""
+
+    from datetime import date as _date
+    from .trace_filings import BLOCK_SIZE, TraceCorpusRefused, fetch_form4_block
+
+    on = _date.fromisoformat(args.on) if args.on else _date.today()
+    try:
+        kept, scanned, root = fetch_form4_block(
+            on, limit=args.limit or BLOCK_SIZE,
+            out_dir=Path(args.out) if args.out else None)
+    except TraceCorpusRefused as exc:
+        print(exc)
+        return 4
+    print(f"form 4, index {on.isoformat()}")
+    print(f"  scanned : {scanned}")
+    print(f"  kept    : {kept}   -> {root}")
+    print()
+    print("Both counts are written to the manifest. A rate whose denominator")
+    print("nobody can reconstruct is not a measurement, and row 12 is a rate.")
+    return 0
+
+
+def cmd_row12(args) -> int:
+    """§13 row 12 over whatever has been fetched. Measures; refuses the rest."""
+
+    from .row12 import DEFAULT_PRICE_FLOOR_USD, measure, read_directory
+
+    readings = read_directory(args.dir)
+    m = measure(readings, price_floor=args.price_floor or DEFAULT_PRICE_FLOOR_USD)
+    print(m.render())
+    print()
+    print("NOT a calibration. Row 12 names the DESIGN SEGMENT and there is no")
+    print("archive, so this is a reading over whatever days were fetched and it")
+    print("carries the registration hash it was taken under, not a later one.")
+    return 0 if m.filings else 3
+
+
 def cmd_sweep(args) -> int:
     try:
         reg = Registration.load(args.registration)
@@ -808,6 +846,21 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                            "cover is the archive's and not one chosen here")
     p_dl.add_argument("--closes", default=None, help="span end, ISO. Defaults to today")
     p_dl.set_defaults(func=cmd_delisting_register)
+
+    p_f4 = sub.add_parser("form4-block",
+                          help="fetch one day's Form 4 flow for §13 row 12")
+    p_f4.add_argument("--on", help="index date, ISO. Defaults to today")
+    p_f4.add_argument("--limit", type=int, default=0,
+                      help="0 means the registered block size")
+    p_f4.add_argument("--out", help="directory. Defaults to corpora/_form4/<date>")
+
+    p_r12 = sub.add_parser("row12", help="measure §13 row 12 over fetched Form 4s")
+    p_r12.add_argument("--dir", default="corpora/_form4",
+                       help="directory of Form 4 XML, read recursively")
+    p_r12.add_argument("--price-floor", type=float, default=None,
+                       help="override the USD 10.42 floor derived at rows 29 and 1")
+    p_f4.set_defaults(func=cmd_form4_block)
+    p_r12.set_defaults(func=cmd_row12)
 
     p_sweep = sub.add_parser("sweep", help="run a sweep, if registration is complete")
     p_sweep.add_argument("--transcript", help="replay a saved payload instead of calling the model")

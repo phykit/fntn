@@ -5429,3 +5429,36 @@ def test_row12_refuses_a_rate_over_an_empty_set():
     m = measure([])
     assert m.qualifying_rate is None
     assert "not a rate" in m.render()
+
+
+def test_form_rows_is_form_agnostic_and_eight_k_rows_is_unchanged():
+    """Generalised for §13 row 12 without moving step 4's population."""
+
+    from fntn.scanner.trace_filings import eight_k_rows, form_rows
+
+    index = (
+        "Form Type  Company Name  CIK  Date Filed  File Name\n"
+        "-------------------------------------------------\n"
+        "8-K         Acme Corp                 320193 2026-08-03 edgar/data/320193/a.txt\n"
+        "8-K/A       Acme Corp                 320193 2026-08-03 edgar/data/320193/b.txt\n"
+        "4           Acme Corp                 320193 2026-08-03 edgar/data/320193/c.txt\n"
+    )
+    assert [r[2] for r in eight_k_rows(index)] == ["edgar/data/320193/a.txt"]
+    assert [r[2] for r in form_rows(index, "4")] == ["edgar/data/320193/c.txt"]
+    # The amendment exclusion is a property of the exact match, not of 8-K.
+    assert form_rows(index, "8-K/A")[0][2] == "edgar/data/320193/b.txt"
+
+
+def test_the_ownership_document_is_lifted_out_of_a_full_submission():
+    from fntn.scanner.trace_filings import extract_ownership_document
+    sub = ("<SEC-DOCUMENT>header noise\n<ownershipDocument><x/></ownershipDocument>\n"
+           "<TYPE>GRAPHIC more noise")
+    assert extract_ownership_document(sub) == "<ownershipDocument><x/></ownershipDocument>"
+
+
+def test_a_submission_with_no_ownership_document_is_skipped_not_failed():
+    """A paper filing and a PDF primary both land here, and neither is a defect."""
+
+    from fntn.scanner.trace_filings import extract_ownership_document
+    assert extract_ownership_document("<SEC-DOCUMENT>no xml here") is None
+    assert extract_ownership_document("<ownershipDocument>unterminated") is None
