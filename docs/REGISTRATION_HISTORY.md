@@ -100,9 +100,9 @@ blocks the freeze signature exactly as `recollection` does.
 | 12 | `2616ba37fb307c0e` | 2026-08-27T09:06:19.906138 | `df5f721` | `git show df5f721:discovery_registration.json` | `verified_primary` | `max_tolerable_fixed_cost_bps` |
 | 13 | `827cf0d8c84791e8` | 2026-08-27T09:06:19.906138 | `270066e` | `git show 270066e:discovery_registration.json` | `verified_primary` | `delta_min_floor` |
 | 14 | `bbfc50c781de67b5` | 2026-08-27T09:06:19.906138 | `db1c463` | `git show db1c463:discovery_registration.json` | `verified_primary` | `agent_model` |
-| 15 | `79280b2b50e8fd0b` | 2026-08-27T09:06:19.906138 | `0d3997f` | `git show 0d3997f:discovery_registration.json` | `verified_primary` | `discoverable_classes` |
-| 16 | `4ee72126ce99fd79` | 2026-08-27T09:06:19.906138 | `271549f` | `git show 271549f:discovery_registration.json` | `verified_primary` | `agent_prompt_sha` |
-| 17 | `6ed075bc9378be04` | 2026-08-27T09:06:19.906138 | `30087bf` | `git show 30087bf:discovery_registration.json` | `verified_primary` | `proposal_schema_sha` |
+| 15 | `79280b2b50e8fd0b` | 2026-08-27T09:06:19.906138| `cb0ceea` | `git show cb0ceea:discovery_registration.json` | `verified_primary`| `discoverable_classes`|
+| 16 | `4ee72126ce99fd79` | 2026-08-27T09:06:19.906138| `604cb83` | `git show 604cb83:discovery_registration.json` | `verified_primary`| `agent_prompt_sha`|
+| 17 | `6ed075bc9378be04` | 2026-08-27T09:06:19.906138| `2bd1ad9` | `git show 2bd1ad9:discovery_registration.json` | `verified_primary`| `proposal_schema_sha`|
 | 18 | `a109a854b7083776` | 2026-08-27T09:06:19.906138 | **current** | `discovery_registration.json` | `verified_primary` | `structured_outputs_strict` |
 
 Each cell in the object column is the command or path that yields the bytes,
