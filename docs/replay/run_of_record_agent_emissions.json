@@ -1,0 +1,15 @@
+{
+  "_what_this_is": "NON-EVIDENTIARY REPLAY FIXTURE. The six agent emissions of the 27 August run of record, transcribed verbatim from docs/CANDIDATE_MECHANISMS.md's table 'WHAT THE AGENT ARM ACTUALLY EMITTED'. It is a recording of what the clerk returned under the PRE-REPAIR prompt, kept so the intake path can be driven over the same input before and after. It is not a sweep, it is not a measurement, and no row of it may be counted as an observation.",
+  "sweeps": [
+    {"proposals": [
+      {"event_definition": "monthly issuer disclosure of aggregate open-market repurchases, including shares bought outside an announced programme and residual authorised capacity", "measured_on_intention": "US common equities", "event_class": "unclassified", "source_ref": "17 CFR 229.703"},
+      {"event_definition": "restrictions on a distribution participant bidding for a covered security during a pre-offering restricted period", "measured_on_intention": "US common equities", "event_class": "unclassified", "source_ref": "17 CFR 242.101"},
+      {"event_definition": "the same restriction applied to issuers and selling security holders during a distribution", "measured_on_intention": "US common equities", "event_class": "unclassified", "source_ref": "17 CFR 242.102"},
+      {"event_definition": "regulated stabilisation bidding during a distribution, with price ceilings tied to independent bids", "measured_on_intention": "US common equities", "event_class": "unclassified", "source_ref": "17 CFR 242.104"},
+      {"event_definition": "clusters of issuer repurchases satisfying the safe harbour's broker, timing, price-ceiling and volume conditions", "measured_on_intention": "US common equities", "event_class": "unclassified", "source_ref": "17 CFR 240.10b-18"}
+    ]},
+    {"proposals": [
+      {"event_definition": "unclassified", "measured_on_intention": "US common equities", "event_class": "unclassified", "source_ref": "17 CFR 249.308"}
+    ]}
+  ]
+}

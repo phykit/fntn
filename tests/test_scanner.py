@@ -5117,3 +5117,225 @@ def test_the_report_and_the_sweep_do_not_share_a_label_for_different_counts():
     # counts emissions.
     from fntn.scanner import run as run_mod
     assert "proposals raised" in Path(run_mod.__file__).read_text(encoding="utf-8")
+
+
+# ---------------------------------------------------------------------------
+# The 28 August repairs. One test per finding, each named for what it would
+# have caught rather than for the function it calls.
+# ---------------------------------------------------------------------------
+
+
+def test_the_clerk_is_given_the_table_it_is_told_to_classify_against():
+    """B5. The prompt said *the fixed table* and the table was never sent.
+
+    `event_class` was a free string, the user message carried the corpus and
+    nothing else, and `STREAM_TABLE` lived in `screen.py` where no call could
+    reach it. So `unclassified` was not the fallback branch: it was the only
+    branch reachable on the instructions given, and the run of record's
+    six-of-six intake kill followed by construction.
+    """
+
+    seen = {}
+
+    class Recorder:
+        def complete(self, system, user, schema):
+            seen["user"] = json.loads(user)
+            seen["schema"] = schema
+            return {"proposals": []}
+
+    sweep(Recorder(), Corpus("c", Partition.EXTERNAL, ["d"]), QueryFence(),
+          ProposalCache(), now=NOW, classes=["buyback", "earnings_event"])
+
+    # Supplied.
+    assert seen["user"]["event_class_table"] == [
+        "buyback", "earnings_event", UNCLASSIFIED
+    ]
+    # And enforced, which is the half a prompt alone does not buy.
+    enum = (seen["schema"]["properties"]["proposals"]["items"]
+            ["properties"]["event_class"]["enum"])
+    assert enum == ["buyback", "earnings_event", UNCLASSIFIED]
+
+
+def test_the_permitted_vocabulary_always_admits_unclassified():
+    """P51's escape hatch may not be closed by a registration that forgot it.
+
+    Refusing on unclassified would make the table's current contents a ceiling
+    on what the system can ever investigate, which is the endogeneity §3.6.6
+    exists to contain, hard-coded into the machinery instead.
+    """
+
+    for classes in ([], ["buyback"], ["a", "b", "c"]):
+        enum = (proposal_schema(classes)["properties"]["proposals"]["items"]
+                ["properties"]["event_class"]["enum"])
+        assert enum[-1] == UNCLASSIFIED
+        assert enum.count(UNCLASSIFIED) == 1
+
+
+def test_unclassified_reaches_the_operator_instead_of_dying_at_intake():
+    """B6. `stream_unmapped_pending_operator` had never been emitted.
+
+    It sat in the run report's defined-but-never-emitted list, which is §9.4's
+    own failure class -- a rule that is wrong because nothing ever reached it --
+    inside the layer §9.4 is aimed at. Intake point 9 was what nothing got past.
+    """
+
+    from fntn.scanner.ingest import build_intake_checks
+
+    checks = build_intake_checks()
+
+    class Ctx:
+        proposal = Proposal(
+            event_definition="a mechanism",
+            measured_on_intention="US common equities",
+            event_class=UNCLASSIFIED,
+            source_ref="ref",
+            source_partition=Partition.EXTERNAL,
+        )
+        exclusivity_available = {"buyback": "cross_market"}
+
+    assert checks["scoring_mode_unsatisfiable"](Ctx()) is None
+
+    # A class that is genuinely undeclared is still refused: the repair is
+    # narrow, and it does not open the check it moves one case out of.
+    class Other(Ctx):
+        proposal = Proposal(
+            event_definition="a mechanism",
+            measured_on_intention="US common equities",
+            event_class="index_reconstitution",
+            source_ref="ref",
+            source_partition=Partition.EXTERNAL,
+        )
+
+    refusal = checks["scoring_mode_unsatisfiable"](Other())
+    assert refusal is not None and refusal[0] == "scoring_mode_unsatisfiable"
+
+
+def test_registration_refuses_a_directive_with_no_registered_sign():
+    """§3.6.8 step 4: any part missing, no observation. The sign was the part
+    nothing refused on.
+
+    `register` blocked on delta_min, the pre-mortem and the literature search
+    and let a directive through with no sign, so the direction could be chosen
+    once the answer was known -- the endogeneity P57 replaced sign-against-zero
+    to close, arriving through the gap where the check should have been.
+    """
+
+    blocking = register(
+        _directive(),
+        RegistrationInputs(
+            delta_min=40.0,
+            pre_mortem=PreMortem("confound", True, "operator", True),
+            literature_search_ref="ref",
+        ),
+        25.0,
+        NOW,
+    )
+    assert [r.code for r in blocking] == ["registered_sign_absent"]
+
+
+def test_a_sign_outside_minus_one_and_plus_one_is_not_a_sign():
+    blocking = register(
+        _directive(),
+        RegistrationInputs(
+            delta_min=40.0,
+            registered_sign=0,
+            pre_mortem=PreMortem("confound", True, "operator", True),
+            literature_search_ref="ref",
+        ),
+        25.0,
+        NOW,
+    )
+    assert [r.code for r in blocking] == ["registered_sign_absent"]
+
+
+def test_the_lens_refuses_a_pointer_instead_of_returning_nine_unscorables():
+    """C1. Nine unscorables was never a reading.
+
+    Nothing in `src/` constructs a Candidate from a proposal; the schema has no
+    column for seven criteria; and rule 3 discards whole any proposal stating an
+    effect size or a horizon, which are the other two. The lens can return
+    nothing else on a pointer at any sample size, and reporting that as a result
+    put a category error in a table where it read as a finding about mechanisms.
+    """
+
+    from fntn.scanner.achievability import Candidate, LensNotApplicable, score
+
+    pointer = Candidate("m-1", origin="agent", evidence_tier="pointer")
+    try:
+        score(pointer, tolerance_bps=10.0, delta_min_floor_bps=15.7,
+              smallest_position_usd=2419.0)
+    except LensNotApplicable as exc:
+        assert "pointer" in str(exc)
+    else:
+        raise AssertionError("the lens scored a pointer")
+
+
+def test_the_lens_still_scores_an_item_that_declares():
+    from fntn.scanner.achievability import Candidate, Result, score
+
+    item = Candidate(
+        "m-2", origin="operator", long_only=True, us_listed=True,
+        min_share_price_usd=25.0, median_daily_notional_usd=5_000_000,
+        survives_to_next_open=True, claimed_effect_bps=40.0,
+        holding_period_sessions=21, obtainable_without_purchase=True,
+    )
+    reading = score(item, tolerance_bps=10.0, delta_min_floor_bps=15.7,
+                    smallest_position_usd=2419.0)
+    assert reading.met == 8
+    assert reading.unscorable == ["backtestable"]
+
+
+def test_the_registered_classes_are_the_ones_the_sweep_is_given():
+    """Row 22 and the enum are one object, not two copies of one.
+
+    A second place the vocabulary lives is a second place it can diverge, which
+    is the defect `rulebook_stopwords`, `lexicon` and the intake budget were all
+    re-stamped to close.
+    """
+
+    reg = Registration.load(REPO_ROOT / REGISTRATION_FILE)
+    declared = sorted(c.event_class for c in reg.discoverable_classes)
+    enum = (proposal_schema(declared)["properties"]["proposals"]["items"]
+            ["properties"]["event_class"]["enum"])
+    assert enum == declared + [UNCLASSIFIED]
+
+
+def test_every_stream_table_class_is_declared_discoverable():
+    """§0 decision, 28 August 2026.
+
+    Four classes were funnel-reachable and discovery-unreachable, with nothing
+    on the register saying that had been chosen. A proposal correctly classified
+    to one of them died at intake point 9 while no control draw could, which is
+    the arm asymmetry that made §13 row 19's verdict uncomputable.
+    """
+
+    from fntn.scanner.screen import STREAM_TABLE
+
+    reg = Registration.load(REPO_ROOT / REGISTRATION_FILE)
+    declared = {c.event_class for c in reg.discoverable_classes}
+    assert declared == set(STREAM_TABLE)
+
+
+def test_the_prompt_and_schema_digests_are_typed():
+    """A digest that cannot be told from a registration hash is a defect.
+
+    `SCHEMA_PREFIX` established the pattern and the repository sweeps its own
+    documents for the bare shape.
+    """
+
+    assert prompt_sha().startswith("prompt:")
+    assert schema_sha().startswith("proposal_schema:")
+
+
+def test_the_registration_pins_the_prompt_the_code_actually_sends():
+    """B15's defect in a larger field: the prompt moved nothing when it moved.
+
+    A prompt edit changed what every future sweep produced while moving no hash
+    and leaving no row. This is what says the registered digest and the live
+    prompt have not drifted apart.
+    """
+
+    reg = Registration.load(REPO_ROOT / REGISTRATION_FILE)
+    assert reg.agent_prompt_sha == prompt_sha()
+    assert reg.proposal_schema_sha == schema_sha()
+    assert reg.structured_outputs_strict is True

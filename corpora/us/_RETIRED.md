@@ -1,3 +1,32 @@
+# SUPERSEDED, 28 August 2026. The retirement is reversed.
+
+***This corpus is NO LONGER RETIRED.*** §0 operator decision of 28 August 2026
+reverses the decision of 27 August recorded below. `insider_dealing` is
+reinstated in `discoverable_classes` (registration `79280b2b50e8fd0b`, row 15 of
+`docs/REGISTRATION_HISTORY.md`), and this corpus is readable again.
+
+**Why the reversal.** The retirement was taken *"on achievability grounds"* and
+**no document in this tree named which of the nine criteria the family fails.**
+Scored against the nine as written it passes or is unscorable on every one, and
+it clears the registered δₘᵢₙ of 15.7 bp by a factor of seven on §0.5's own
+post-decay figure of 115 bp. `achievability.py` describes itself as **naming the
+failing one**; this was the only refusal in the tree that named none. It also
+could not have rested on a lens reading, because the lens had never scored a real
+object of any kind — nothing in `src/` constructs a `Candidate`.
+
+**What the reversal costs, stated as the retirement's cost was.** The family is
+the one with paper-sourced effect sizes, so §5.4's decay priors and Gate 1's
+cost-survival check have something to run against again. It does **not** re-point
+binding-path step 4: `§12.1` P126's argument for Item 2.02 stands on its own
+ground, which is that a field-delimited form exercises a parser and not the
+model-mediated extraction path. **Choosing a trace corpus and choosing a strategy
+are different decisions and the reversal touches only the second.**
+
+**The retirement notice is kept below, unaltered**, per §12.6: superseded wording
+is annotated where it stands and never rewritten.
+
+---
+
 # RETIRED, 27 August 2026. Kept, not deleted.
 
 **This corpus is retired and nothing in it is deleted.**
