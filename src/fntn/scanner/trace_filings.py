@@ -164,7 +164,22 @@ class ResponseNotTheDocument(RuntimeError):
 #: Characters that mark an unedited placeholder rather than a contact. The SEC
 #: asks for a name and an email address; neither contains an angle bracket, and
 #: `<name> <email>` is the exact string a documented example leaves behind.
-_PLACEHOLDER_MARKERS = ("<", ">", "your.address@example.com", "example.com")
+_PLACEHOLDER_MARKERS = ("<", ">", "your.address@example.com", "example.com",
+                        "your.address", "your name", "yourname", "your.name",
+                        "firstname", "lastname")
+#: **Widened 28 August 2026, and the reason is the guard's own failure class.**
+#: The markers caught `example.com` and the angle brackets, so a paste of this
+#: module's own example minus the domain -- `Your Name your.address@domain` --
+#: reached the SHAPE rule and was refused there for having no dot, whilst
+#: `Your Name your.address@domain.com` would have passed **all three checks and
+#: gone to sec.gov in a User-Agent header.** *The rule is about content and the
+#: check was testing a proxy for it*, which is exactly what B17 recorded when a
+#: presence test stood in for a content rule. The documented examples are now
+#: markers themselves. **The suggested example is deliberately NOT a marker**:
+#: the refusal names `Ada Lovelace ada@her-own-domain.uk` as the shape to copy,
+#: and a guard that refused its own suggestion would be incoherent. What is
+#: blocked is the *slot* language a person pastes without editing -- `your name`,
+#: `your.address`, `firstname` -- and not an illustrative person.
 
 
 def user_agent() -> str:

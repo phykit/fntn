@@ -5462,3 +5462,44 @@ def test_a_submission_with_no_ownership_document_is_skipped_not_failed():
     from fntn.scanner.trace_filings import extract_ownership_document
     assert extract_ownership_document("<SEC-DOCUMENT>no xml here") is None
     assert extract_ownership_document("<ownershipDocument>unterminated") is None
+
+
+def test_the_contact_guard_refuses_a_pasted_example_even_with_a_real_domain():
+    """`Your Name your.address@domain.com` passed all three checks.
+
+    A false statement made to a regulator's server in order to obtain data is
+    not a configuration shortcut, and the check must test the content rather
+    than a proxy for it.
+
+    **The module's own suggested example stays usable**, deliberately: the
+    refusal names a shape to copy, and a guard refusing its own suggestion
+    would be incoherent. What is blocked is unedited slot language.
+    """
+
+    import os
+    from fntn.scanner.trace_filings import TraceCorpusRefused, user_agent
+
+    prior = os.environ.get("SEC_CONTACT")
+    try:
+        for bad in ("Your Name your.address@domain.com",
+                    "YourName your.name@somewhere.co.uk",
+                    "<name> <email>",
+                    "someone@example.com"):
+            os.environ["SEC_CONTACT"] = bad
+            try:
+                user_agent()
+            except TraceCorpusRefused:
+                continue
+            raise AssertionError(f"the guard admitted {bad!r}")
+        # A synthetic address, deliberately. **The operator's real contact is an
+        # environment variable and never a committed string**: this repository
+        # is public, and a test asserting a personal address publishes it to
+        # everyone who clones. The guard is what must be tested here, not the
+        # value it will carry in production.
+        os.environ["SEC_CONTACT"] = "A Real Person a.person@a-real-domain.uk"
+        assert "a.person@a-real-domain.uk" in user_agent()
+    finally:
+        if prior is None:
+            os.environ.pop("SEC_CONTACT", None)
+        else:
+            os.environ["SEC_CONTACT"] = prior
