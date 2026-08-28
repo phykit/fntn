@@ -107,6 +107,13 @@ PROPOSAL_SCHEMA_SKELETON: Dict[str, object] = {
 #: rather than by escaping it.
 UNCLASSIFIED = "unclassified"
 
+#: **The prefix TYPES the value; it is a standard, not a check.** Untyped, a
+#: sixteen-character digest sitting in the registration file cannot be told from
+#: a registration hash, and this repository sweeps its own documents for exactly
+#: that shape. `params.SCHEMA_PREFIX` established the pattern; these follow it.
+PROMPT_PREFIX = "prompt:"
+PROPOSAL_SCHEMA_PREFIX = "proposal_schema:"
+
 
 def proposal_schema(classes: Sequence[str]) -> Dict[str, object]:
     """The skeleton with ``event_class`` closed over the registered classes.
@@ -140,9 +147,10 @@ def schema_sha() -> str:
     and is hashed already.  Two fields, one fact each.
     """
 
-    return hashlib.sha256(
+    digest = hashlib.sha256(
         json.dumps(PROPOSAL_SCHEMA_SKELETON, sort_keys=True).encode()
     ).hexdigest()[:16]
+    return f"{PROPOSAL_SCHEMA_PREFIX}{digest}"
 
 
 def prompt_sha() -> str:
@@ -157,7 +165,7 @@ def prompt_sha() -> str:
     closed here on the same terms: registered rather than edited carefully.
     """
 
-    return hashlib.sha256(SYSTEM_PROMPT.encode()).hexdigest()[:16]
+    return f"{PROMPT_PREFIX}{hashlib.sha256(SYSTEM_PROMPT.encode()).hexdigest()[:16]}"
 
 SYSTEM_PROMPT = """\
 You are a clerk, not an analyst. Your entire job is to read the supplied \
