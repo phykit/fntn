@@ -69,6 +69,32 @@ class CriterionResult:
     detail: str
 
 
+class LensNotApplicable(RuntimeError):
+    """Raised where the lens is pointed at an object that cannot declare.
+
+    **The C1 repair, made structural rather than documentary.** On the run of
+    record the lens reported *nine unscorables on every mechanism in both arms*,
+    and that was never a reading. Nothing in this package constructs a
+    ``Candidate`` from a proposal; the proposal schema has no column for seven
+    of the nine criteria; and the system prompt's rule 3 **discards whole** any
+    proposal stating an effect size or a horizon, which are the other two. The
+    lens can therefore return nothing else on a pointer, at any sample size,
+    for ever.
+
+    A refusal beats nine unscorables for the reason the register prefers
+    refusals everywhere else: *this mechanism does not say* and *this instrument
+    cannot ask* are different claims, and printing the second as the first put a
+    category error into a results table where it read as a finding about the
+    mechanisms. §13 row 35 was opened off criterion 9 of an instrument that had
+    never scored a real object of any kind.
+    """
+
+
+#: The tier a §3.6 pointer carries. The lens was written for §3.5 items, which
+#: declare claims; a pointer is a class-level mechanism and declares none.
+POINTER_TIER = "pointer"
+
+
 @dataclass(frozen=True)
 class Candidate:
     """What a mechanism declares about itself, at class level.
@@ -81,6 +107,9 @@ class Candidate:
     #: `agent` or `random_control`. Carried so the lens can never be read
     #: across arms by accident.
     origin: str = "unrecorded"
+    #: ``quantified`` or ``pointer``. **The lens refuses the second outright**
+    #: rather than scoring it into nine unscorables: see ``LensNotApplicable``.
+    evidence_tier: str = "quantified"
     long_only: Optional[bool] = None
     us_listed: Optional[bool] = None
     min_share_price_usd: Optional[float] = None
@@ -146,7 +175,26 @@ def score(
     smallest_position_usd: float,
     account_is_cash: bool = True,
 ) -> LensReading:
-    """Nine criteria, each citing the registered decision behind it."""
+    """Nine criteria, each citing the registered decision behind it.
+
+    Refuses a pointer-tier candidate rather than scoring it: see
+    ``LensNotApplicable``. C2 is the other half and is not code -- the lens runs
+    where it belongs, on §3.5 items, once the item pipeline produces any. It has
+    produced none.
+    """
+
+    if candidate.evidence_tier == POINTER_TIER:
+        raise LensNotApplicable(
+            f"{candidate.mechanism_id} is a pointer-tier mechanism and the lens "
+            "reads declarations a pointer cannot carry. Seven criteria read "
+            "fields the proposal schema has no column for; criteria 6 and 7 "
+            "read an effect size and a horizon, which the clerk is FORBIDDEN "
+            "to state and which `agent_overreached_schema` exists to discard. "
+            "Scoring it would return nine unscorables on every mechanism at "
+            "every sample size, which is a fact about this instrument and not "
+            "about the mechanism. Run the lens on a §3.5 item; the item "
+            "pipeline has produced none."
+        )
 
     out = LensReading(candidate.mechanism_id, candidate.origin)
     p_min = minimum_share_price_usd(tolerance_bps)

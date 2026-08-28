@@ -40,6 +40,7 @@ from .fences import (
     RESERVED_FROM_AGENT,
     assert_agent_authority,
 )
+from .discovery import UNCLASSIFIED
 from .records import (
     DEFAULT_FENCE,
     Directive,
@@ -364,6 +365,24 @@ def build_intake_checks() -> Dict[str, Callable[[object], CheckResult]]:
 
     def scoring_mode_unsatisfiable(ctx: IntakeContext) -> CheckResult:
         if ctx.proposal.event_class in ctx.exclusivity_available:
+            return None
+        # **`unclassified` is not a class with no construction; it is a class
+        # not yet mapped, and §3.6.5 already says what happens to one.** P51's
+        # reason for the unclassified branch is that refusing on it "would make
+        # the table's current contents a ceiling on what the system can ever
+        # investigate, hard-coding the very endogeneity §3.6.6 exists to
+        # contain". Refusing it *here* built that ceiling out of the
+        # containment: `screen.build_directive` handles the class correctly and
+        # emits `stream_unmapped_pending_operator`, and nothing ever reached it
+        # -- the code sat in the run report's defined-but-never-emitted list,
+        # which is §9.4's own failure class inside the layer §9.4 is aimed at.
+        #
+        # **No directive is built without a construction.** Passing here does
+        # not resolve a `scoring_mode`; it lets the proposal reach the operator
+        # mapping that would give it one. The refusal moves from intake to the
+        # directive surface, where it carries the code that names what is
+        # actually missing: a stream, not an exclusivity construction.
+        if ctx.proposal.event_class == UNCLASSIFIED:
             return None
         return (
             "scoring_mode_unsatisfiable",

@@ -25,6 +25,7 @@ at the registered delta, the discovery layer is refuted and switched off.
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import random
@@ -39,7 +40,15 @@ from .records import Origin, Partition, Proposal, READABLE_BY_DISCOVERY
 #: temperature zero, cached by content hash -- §3.5.2's conventions, applied to
 #: a call that is not on the trading path but is on the search path, which is
 #: the thing §6.4's fourth family counts.
-PROPOSAL_SCHEMA: Dict[str, object] = {
+#:
+#: **This is the SKELETON and not the schema sent.** ``event_class`` carries no
+#: ``enum`` here because the permitted vocabulary is a registered field
+#: (``discoverable_classes``, §13 row 22) and a constant holding a copy of it
+#: would be a second place the vocabulary lives.  ``proposal_schema()`` injects
+#: the enum from the registration at call time.  The skeleton is what
+#: ``schema_sha()`` hashes, which is what keeps that hash non-circular: the
+#: class list is already covered by ``discoverable_classes``.
+PROPOSAL_SCHEMA_SKELETON: Dict[str, object] = {
     "type": "object",
     "additionalProperties": False,
     "required": ["proposals"],
@@ -76,7 +85,8 @@ PROPOSAL_SCHEMA: Dict[str, object] = {
                     "event_class": {
                         "type": "string",
                         "description": (
-                            "Classify against the fixed table. Emit "
+                            "Classify against the table supplied in the user "
+                            "message under 'event_class_table'. Emit "
                             "'unclassified' where no row fits; do not invent a "
                             "class and do not propose a stream."
                         ),
@@ -89,6 +99,66 @@ PROPOSAL_SCHEMA: Dict[str, object] = {
     },
 }
 
+#: The literal a clerk emits where no row of the supplied table fits.  It is a
+#: **verdict with a route**, not a failure: §3.6.5's unclassified branch sends
+#: it to the operator to name a stream by hand, and the table then grows by use
+#: rather than by anticipation (P51).  It is deliberately a member of the
+#: schema's enum so that the model can reach it *within* the closed vocabulary
+#: rather than by escaping it.
+UNCLASSIFIED = "unclassified"
+
+
+def proposal_schema(classes: Sequence[str]) -> Dict[str, object]:
+    """The skeleton with ``event_class`` closed over the registered classes.
+
+    **This is P75's repair, one layer up.** The entity fence was refuted as a
+    pattern over an open vocabulary and rebuilt as a lookup against a closed
+    list, because a regulator's name and an issuer's name are both proper
+    nouns.  ``event_class`` was the same defect on the same call: a free string
+    described as *the fixed table* against a table the model was never shown.
+    *The model classifies; the table decides* cannot hold while the model
+    cannot see the table, so the table is now both **supplied** (in the user
+    message) and **enforced** (as this enum).
+
+    ``unclassified`` is always admitted, and is appended rather than being left
+    to the registration to remember: a registration that forgot it would close
+    the escape hatch §3.6.5 requires, and would do so silently.
+    """
+
+    permitted = sorted({c for c in classes if c}) + [UNCLASSIFIED]
+    schema = copy.deepcopy(PROPOSAL_SCHEMA_SKELETON)
+    props = schema["properties"]["proposals"]["items"]["properties"]
+    props["event_class"] = dict(props["event_class"], enum=permitted)
+    return schema
+
+
+def schema_sha() -> str:
+    """Digest of the schema skeleton, for the parameter object.
+
+    The skeleton and not the composed schema, so that the digest does not move
+    when the registered class list moves: that list is ``discoverable_classes``
+    and is hashed already.  Two fields, one fact each.
+    """
+
+    return hashlib.sha256(
+        json.dumps(PROPOSAL_SCHEMA_SKELETON, sort_keys=True).encode()
+    ).hexdigest()[:16]
+
+
+def prompt_sha() -> str:
+    """Digest of the system prompt, for the parameter object.
+
+    **Registered because the prompt decides what the layer produces.** §3.7.4
+    says the intake ordering is pre-registered and sits in the parameter
+    object; the prompt determines the population that ordering is applied to,
+    and it sat in a module constant where a change would move every future
+    sweep's output while moving no hash and leaving no row.  That is B15's
+    defect -- the model pin as a default string -- in a larger field, and it is
+    closed here on the same terms: registered rather than edited carefully.
+    """
+
+    return hashlib.sha256(SYSTEM_PROMPT.encode()).hexdigest()[:16]
+
 SYSTEM_PROMPT = """\
 You are a clerk, not an analyst. Your entire job is to read the supplied \
 material and emit candidate mechanisms against a fixed schema.
@@ -100,9 +170,12 @@ purchases by multiple directors of one issuer" and never "what happened to a \
 named company in a named month". Any issuer name, ticker, instrument \
 identifier, corporate designator, named month with a year, quarter label or \
 bare four-digit year causes the whole proposal to be discarded.
-2. Classify the event class against the fixed table. Where nothing fits, emit \
-exactly "unclassified" and propose no stream. You have no authority to invent \
-a class or to name a feed.
+2. Classify the event class against the table supplied in the user message \
+under "event_class_table". That table is the whole of the permitted \
+vocabulary and the schema rejects anything outside it. Where no row fits, \
+emit exactly "unclassified": that is a real verdict which routes to the \
+operator to map a stream, and it is not a way of declining to choose between \
+rows that do fit. You have no authority to invent a class or to name a feed.
 3. Do not score merit, promise, strength, confidence, priority or severity. Do \
 not state an expected effect size, a horizon, or a threshold. Those are \
 decided elsewhere and a proposal that carries them is discarded whole.
@@ -197,6 +270,7 @@ def sweep(
     cache: ProposalCache,
     actor: str = "discovery_agent",
     now: Optional[datetime] = None,
+    classes: Optional[Sequence[str]] = None,
 ) -> SweepResult:
     """One discovery sweep over one corpus.
 
@@ -204,14 +278,37 @@ def sweep(
     sweep cannot log a conditional-return query, because it has no path to
     returns; the fence entry exists so that the query log is a complete record
     of the search rather than a record of the operator's half of it.
+
+    ``classes`` is the registered discoverable vocabulary (§13 row 22).  It is
+    supplied to the model in the user message and enforced as the schema's
+    enum.  Defaulting it to empty is deliberate: a caller that does not pass it
+    gets a sweep whose only reachable class is ``unclassified``, which is the
+    pre-repair behaviour and is now visible as such rather than looking like a
+    fact about the corpus.
     """
 
     now = now or datetime.now(timezone.utc)
+    # **The table the prompt has always referred to, now actually supplied.**
+    # Rule 2 said *classify against the fixed table* and the table was never in
+    # the call: the user message carried the corpus and nothing else, and
+    # `event_class` was a free string. `unclassified` was therefore not the
+    # fallback branch but the only branch reachable on the instructions given,
+    # and the run of record's six-of-six intake kill followed by construction
+    # rather than from anything about the corpus, the model or the layer.
+    permitted = sorted({c for c in (classes or ()) if c})
+    schema = proposal_schema(permitted)
     user = json.dumps(
-        {"corpus_id": corpus.corpus_id, "documents": list(corpus.documents)},
+        {
+            "corpus_id": corpus.corpus_id,
+            "event_class_table": permitted + [UNCLASSIFIED],
+            "documents": list(corpus.documents),
+        },
         sort_keys=True,
     )
-    key = ProposalCache.key(SYSTEM_PROMPT, user)
+    # The key covers the schema too, because two sweeps run under different
+    # permitted vocabularies are different calls and a cache that conflated
+    # them would replay the narrower one's answer at the wider one.
+    key = ProposalCache.key(SYSTEM_PROMPT, user + json.dumps(schema, sort_keys=True))
 
     fence.record(
         kind=QueryKind.MECHANISM_LEVEL,
@@ -225,7 +322,7 @@ def sweep(
     if cached is not None:
         payload, hit = cached, True
     else:
-        payload = client.complete(SYSTEM_PROMPT, user, PROPOSAL_SCHEMA)
+        payload = client.complete(SYSTEM_PROMPT, user, schema)
         cache.put(key, payload)
         hit = False
 

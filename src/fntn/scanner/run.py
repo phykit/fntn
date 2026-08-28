@@ -246,7 +246,16 @@ def scan(
     off_schema: List[Tuple[str, int, str]] = []
     not_a_list: List[Tuple[str, str, int]] = []
     for index, corpus in enumerate(corpora):
-        sweep_result = sweep(client, corpus, fence, cache, now=now)
+        # **The registered vocabulary, supplied to the clerk.** `exclusivity`
+        # IS §13 row 22's discoverable-class list, so the table the prompt has
+        # always told the model to classify against is now the same object
+        # intake scores it against. It was previously neither sent nor
+        # enforced, and `unclassified` was the only branch the model could
+        # reach.
+        sweep_result = sweep(
+            client, corpus, fence, cache, now=now,
+            classes=sorted(config.exclusivity),
+        )
         for p in sweep_result.proposals:
             proposals.append((p, {}))
         for element_index, got in sweep_result.off_schema:

@@ -75,6 +75,13 @@ class AnthropicClient:
     model: str
     max_tokens: int = 8000
     api_key: Optional[str] = None
+    #: Whether the tool call is made with ``strict`` set. **No default that
+    #: differs from the registration**: it is read from
+    #: ``Registration.structured_outputs_strict`` (§13 row 40) and from nowhere
+    #: else, for the reason ``model`` carries no default. A sweep run strict and
+    #: a sweep run loose search different populations, and two populations under
+    #: one hash is the defect this whole field exists to close.
+    strict: bool = False
     _client: Any = None
     #: What the preflight established, so a caller can print it rather than
     #: re-derive it. See `__post_init__`.
@@ -199,6 +206,16 @@ class AnthropicClient:
                         "This is the only permitted output."
                     ),
                     "input_schema": schema,
+                    # **A forced tool call is not a validated tool call.**
+                    # `tool_choice` compels the call and not the arguments, and
+                    # on the run of record 8 of 14 calls returned `proposals` as
+                    # a JSON string. Run 2 lost all three families to it and run
+                    # 3 lost none, so the population the layer searched varied
+                    # with reply formatting, and §7.1's funnel depth would have
+                    # carried that variance as though it were a fact about the
+                    # market. Registered rather than set here, so a strict sweep
+                    # and a loose one are two hashes and not one.
+                    **({"strict": True} if self.strict else {}),
                 }
             ],
             tool_choice={"type": "tool", "name": "emit_proposals"},

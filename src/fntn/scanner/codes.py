@@ -567,10 +567,30 @@ _REGISTRATION: List[ReasonCode] = [
         ),
     ),
     ReasonCode(
+        code="registered_sign_absent",
+        surface=Surface.REGISTRATION,
+        description=(
+            "No registered sign, or one outside {-1, +1}. The agent may not "
+            "supply it and the operator has not."
+        ),
+        summary_template=(
+            "No direction was registered for this directive. §3.6.8 step 4 "
+            "makes the sign one of four parts that must exist before any "
+            "observation, and it was the only one nothing refused on: a "
+            "directive could register without it and have its direction chosen "
+            "once the answer was known, which is the endogeneity the "
+            "equivalence verdicts were adopted to close. {resurrection}"
+        ),
+        resurrection=(
+            "Registration proceeds once the operator states the sign as -1 or "
+            "+1, before any data on the target population is examined."
+        ),
+    ),
+    ReasonCode(
         code="delta_min_below_floor",
         surface=Surface.REGISTRATION,
         description=(
-            "The registered abandonment threshold is below the §14 floor, so "
+            "The registered abandonment threshold is below the §14 floor, so"
             "the directive is not worth a session of the segment."
         ),
         summary_template=(

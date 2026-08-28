@@ -304,6 +304,44 @@ class Registration:
     #: already unrecorded.
     agent_model: Optional[str] = None
 
+    # -- §13 row 40: the agent contract ------------------------------------
+    #: Digest of the system prompt the sweep runs under, and of the proposal
+    #: schema's skeleton.
+    #:
+    #: **Registered for exactly B15's reason, in a larger field.** The model pin
+    #: was a default string in two files, so a change to either moved what every
+    #: future sweep produced while moving no hash and leaving no row; P138 closed
+    #: that by registering it rather than by editing the strings carefully. The
+    #: **prompt** is the same defect and decides more: it is what tells the clerk
+    #: what to emit and what to classify against, and §3.7.4 already calls the
+    #: intake *ordering* pre-registered while the thing that decides the
+    #: population that ordering runs on sat in a module constant.
+    #:
+    #: The skeleton is hashed and not the composed schema, so this digest does
+    #: not move when ``discoverable_classes`` moves. That list is registered in
+    #: its own right, and one fact belongs in one field.
+    agent_prompt_sha: Optional[str] = None
+    proposal_schema_sha: Optional[str] = None
+    #: Whether the proposal tool call is made with ``strict`` set.
+    #:
+    #: **Registered rather than defaulted, because it decides what a sweep can
+    #: return.** On the run of record 8 of 14 calls returned ``proposals`` as a
+    #: JSON string rather than an array: a forced tool call is not a validated
+    #: one, ``tool_choice`` compels the call and not the arguments. Run 2 lost
+    #: all three families to it and run 3 lost none, so the search population
+    #: varied with reply formatting, and §7.1's funnel depth would have carried
+    #: that variance as though it were a fact about the market.
+    #:
+    #: **The authority fence is NOT retired by this.** Under ``strict`` the
+    #: model cannot return a reserved field, so ``agent_overreached_schema``
+    #: becomes unreachable in practice and the guarantee moves to a supplier
+    #: who versions it outside this parameter object. The fence therefore keeps
+    #: running as an assertion that must never fire, and its firing count is a
+    #: reading on every run report: that converts a supplier's promise into a
+    #: locally checked one, in the idiom of the import fence being checked at
+    #: process start rather than only in the suite.
+    structured_outputs_strict: bool = False
+
     # -- the archive boundary that pre_archive is defined against ----------
     #: ISO date on which the archive opens. **Required when any corpus declares
     #: ``pre_archive``**, because without it that mode names no boundary and is
@@ -392,6 +430,15 @@ class Registration:
                 "compared with the next one, and a default in the code is a pin "
                 "that moves with nothing on the record"
             )
+        if not self.agent_prompt_sha:
+            out.append(
+                "agent_prompt_sha (§13 row 40): the digest of the system prompt "
+                "the sweep runs under. Refused rather than defaulted for the "
+                "reason agent_model is: a prompt that moves with nothing on the "
+                "record moves what every future sweep produces"
+            )
+        if not self.proposal_schema_sha:
+            out.append("proposal_schema_sha (§13 row 40)")
         if self.theta is None:
             out.append("theta (§14 governance)")
         if self.delta_min_floor is None:

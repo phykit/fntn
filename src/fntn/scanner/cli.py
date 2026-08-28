@@ -632,7 +632,11 @@ def cmd_sweep(args) -> int:
         client = (
             TranscriptClient(args.transcript)
             if args.transcript
-            else AnthropicClient(model=reg.agent_model)
+            else AnthropicClient(
+                model=reg.agent_model,
+                # §13 row 40, read from the registration and from nowhere else.
+                strict=reg.structured_outputs_strict,
+            )
         )
     except ClientRefusal as exc:
         print(exc)

@@ -32,8 +32,12 @@ from fntn.scanner.discovery import (
     GridCell,
     ProposalCache,
     SYSTEM_PROMPT,
+    UNCLASSIFIED,
     ControlArmVerdict,
     draw_control_mechanisms,
+    prompt_sha,
+    proposal_schema,
+    schema_sha,
     sweep,
 )
 from fntn.scanner.fences import (
@@ -797,6 +801,7 @@ def test_delta_min_below_floor_is_refused():
         _directive(),
         RegistrationInputs(
             delta_min=5.0,
+            registered_sign=1,
             pre_mortem=PreMortem("confound", True, "operator", True),
             literature_search_ref="ref",
         ),
@@ -825,6 +830,7 @@ def test_agent_drafted_premortem_blocks_until_ratified():
         _directive(),
         RegistrationInputs(
             delta_min=40.0,
+            registered_sign=1,
             pre_mortem=PreMortem("confound", True, "agent", ratified_by_operator=False),
             literature_search_ref="ref",
         ),
@@ -1657,6 +1663,11 @@ def _complete_registration(**over) -> Registration:
         security_master_files=["master.csv"],
         theta=0.25, delta_min_floor=25.0,
         agent_model="claude-test-0",
+        # §13 row 40. Supplied here rather than defaulted on the dataclass, for
+        # the reason `agent_model` is: a default is a second copy of a value the
+        # hash is supposed to be the only home for.
+        agent_prompt_sha=prompt_sha(),
+        proposal_schema_sha=schema_sha(),
         registered_at="2026-08-26T00:00:00+00:00", registered_by="operator",
     )
     base.update(over)

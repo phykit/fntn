@@ -248,6 +248,35 @@ def register(
             )
         )
 
+    # **§3.6.8 step 4: "Any part missing -> no observation. There is no
+    # advisory tier for registration."** The sign was one of the four parts and
+    # was the only one nothing refused on: `register` blocked on `delta_min`,
+    # the pre-mortem and the literature search, and let a directive register
+    # with no sign at all. The run report's queue printed it as outstanding by
+    # reading it off the directive rather than off a refusal, and said so --
+    # which made the gap visible and left it open, a report being the wrong
+    # place to add a refusal. This is the right place.
+    #
+    # It matters more than a missing field usually would: the sign is the
+    # direction committed *before* the data is seen, and a directive that
+    # reaches observation without one lets the sign be chosen once the answer
+    # is known. That is precisely the endogeneity P57 replaced sign-against-zero
+    # to close, arriving through the gap left where the check should have been.
+    if inputs.registered_sign is None:
+        blocking.append(
+            summaries.render(
+                "registered_sign_absent", directive.directive_id, fields
+            )
+        )
+    elif inputs.registered_sign not in (-1, 1):
+        blocking.append(
+            summaries.render(
+                "registered_sign_absent",
+                directive.directive_id,
+                {**fields, "registered_sign": inputs.registered_sign},
+            )
+        )
+
     pm = inputs.pre_mortem
     if pm is None:
         blocking.append(
