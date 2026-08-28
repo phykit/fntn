@@ -101,7 +101,8 @@ blocks the freeze signature exactly as `recollection` does.
 | 13 | `827cf0d8c84791e8` | 2026-08-27T09:06:19.906138 | `270066e` | `git show 270066e:discovery_registration.json` | `verified_primary` | `delta_min_floor` |
 | 14 | `bbfc50c781de67b5` | 2026-08-27T09:06:19.906138 | `db1c463` | `git show db1c463:discovery_registration.json` | `verified_primary` | `agent_model` |
 | 15 | `79280b2b50e8fd0b` | 2026-08-27T09:06:19.906138+00:00 | `271549f` | `discovery_registration.json` | `verified_primary` | `discoverable_classes` |
-| 16 | `4ee72126ce99fd79` | 2026-08-27T09:06:19.906138+00:00 | **current** | `discovery_registration.json` | `verified_primary` | `agent_prompt_sha` |
+| 16 | `4ee72126ce99fd79` | 2026-08-27T09:06:19.906138+00:00 | `30087bf` | `discovery_registration.json` | `verified_primary` | `agent_prompt_sha` |
+| 17 | `6ed075bc9378be04` | 2026-08-27T09:06:19.906138+00:00 | **current** | `discovery_registration.json` | `verified_primary` | `proposal_schema_sha` |
 
 Each cell in the object column is the command or path that yields the bytes,
 and every one of them names `discovery_registration.json`, because that is what
