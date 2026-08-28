@@ -245,3 +245,38 @@ difference counts, and it cannot redraw a seed. The 21a reading of 0 of 36 and
 `docs/labelled_proposals.json` with clerk labels already written, and this
 stamp changes no rule the fence applies, so **neither reading is restated under
 `bbfc50c781de67b5`** and neither is carried forward.
+
+
+---
+
+## The chain is repo-local, and a patch transfer breaks it
+
+**Found 28 August 2026, by transferring this branch to another clone and
+watching two tests fail.**
+
+`test_registration_history_recomputes` and
+`test_control_arm_values_unchanged_across_restamps` fetch **both halves** of a
+row from the commit its fourth column names: the object with `git show`, and the
+**code** with `git archive`, because a hash is taken over the field set as well
+as the values. That is correct and it is what makes the file a record rather
+than a list.
+
+***It also means a commit SHA is load-bearing, and a commit SHA is not
+portable.*** Anything that rebuilds history regenerates it: `git am`,
+cherry-pick, rebase, squash. A chain moved as a patch series therefore arrives
+naming commits the receiving clone does not have, and both tests fail with
+`git show ... returned non-zero exit status 128`.
+
+**That is a transport failure and not a registration defect, and the difference
+matters**: no hash disagrees with anything, no object has changed, and no rule
+has moved. `docs/replay/relocalise_history.py` repairs it in one pass, matching
+each row's hash against the objects this clone actually carries and rewriting
+only rows whose commit does not exist. **Rows whose commit exists are left
+entirely alone**, because a row's object legitimately hashes to a different
+value under a later schema and a hash comparison here would rewrite rows that
+are correct.
+
+*Row 1 is the standing evidence for the general point: it survives only as
+`docs/registration_history/890a80e3a8566837.json` because no commit carries it.*
+**A stored object survives a history rewrite and a commit reference does not**,
+which is worth knowing before the next transfer rather than after it.
