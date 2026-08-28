@@ -5339,3 +5339,93 @@ def test_the_registration_pins_the_prompt_the_code_actually_sends():
     assert reg.agent_prompt_sha == prompt_sha()
     assert reg.proposal_schema_sha == schema_sha()
     assert reg.structured_outputs_strict is True
+
+
+# ---------------------------------------------------------------------------
+# §13 row 12. The three tests are conjunctive and a word match cannot do them.
+# ---------------------------------------------------------------------------
+
+def _form4(code="P", ad="A", shares=1000, price="25.00", director="1",
+           officer="0", ten="0"):
+    return f"""<ownershipDocument>
+  <periodOfReport>2026-08-03</periodOfReport>
+  <issuer><issuerCik>0000320193</issuerCik></issuer>
+  <reportingOwner><reportingOwnerRelationship>
+    <isDirector>{director}</isDirector><isOfficer>{officer}</isOfficer>
+    <isTenPercentOwner>{ten}</isTenPercentOwner>
+  </reportingOwnerRelationship></reportingOwner>
+  <nonDerivativeTransaction>
+    <transactionCoding><transactionCode>{code}</transactionCode></transactionCoding>
+    <transactionAmounts>
+      <transactionShares><value>{shares}</value></transactionShares>
+      <transactionPricePerShare><value>{price}</value></transactionPricePerShare>
+      <transactionAcquiredDisposedCode><value>{ad}</value></transactionAcquiredDisposedCode>
+    </transactionAmounts>
+  </nonDerivativeTransaction>
+</ownershipDocument>"""
+
+
+def test_row12_a_clean_director_open_market_purchase_qualifies():
+    from fntn.scanner.row12 import read_form4
+    r = read_form4(_form4())
+    assert (r.test1_net_increase, r.test2_open_market, r.test3_qualifying_filer) == (True, True, True)
+    assert r.qualifies and r.price_usd == 25.0
+
+
+def test_row12_the_three_filings_that_pass_a_word_match_and_carry_no_information():
+    """The trace over one week's RNS flow found these; P30 is written from them."""
+
+    from fntn.scanner.row12 import read_form4
+
+    # A scheme award: shares acquired, and it is compensation, not a purchase.
+    award = read_form4(_form4(code="A"))
+    assert award.test1_net_increase and not award.test2_open_market
+    assert not award.qualifies
+
+    # An option exercise: an acquisition leg, and no view expressed.
+    exercise = read_form4(_form4(code="M"))
+    assert not exercise.qualifies
+
+    # A ten-per-cent owner who is neither director nor officer. The literature
+    # finds abnormal returns for insider purchases and none for large holders.
+    holder = read_form4(_form4(director="0", officer="0", ten="1"))
+    assert holder.test1_net_increase and holder.test2_open_market
+    assert not holder.test3_qualifying_filer and not holder.qualifies
+
+
+def test_row12_a_disposal_is_not_a_net_increase():
+    from fntn.scanner.row12 import read_form4
+    assert not read_form4(_form4(ad="D")).test1_net_increase
+
+
+def test_row12_an_absent_price_is_not_a_price_below_the_floor():
+    """A refusal, not a failure: the two are different claims about a filing."""
+
+    from fntn.scanner.row12 import read_form4
+    xml = _form4().replace(
+        "<transactionPricePerShare><value>25.00</value></transactionPricePerShare>", "")
+    r = read_form4(xml)
+    assert r.price_usd is None
+    assert r.clears_price_floor() is None
+    assert read_form4(_form4(price="3.00")).clears_price_floor() is False
+
+
+def test_row12_reports_every_denominator_and_refuses_the_liquidity_leg():
+    from fntn.scanner.row12 import measure, read_form4
+    readings = [read_form4(_form4()), read_form4(_form4(code="A")),
+                read_form4(_form4(director="0", officer="0", ten="1")),
+                read_form4(_form4(price="3.00"))]
+    m = measure(readings)
+    assert m.filings == 4 and m.qualifying == 2       # clean, and the cheap one
+    assert m.price_cleared == 1                        # only the clean one clears
+    text = m.render()
+    assert "REFUSED, not estimated" in text
+    assert "UPPER BOUND" in text
+    assert "absent is NOT below" in text
+
+
+def test_row12_refuses_a_rate_over_an_empty_set():
+    from fntn.scanner.row12 import measure
+    m = measure([])
+    assert m.qualifying_rate is None
+    assert "not a rate" in m.render()
