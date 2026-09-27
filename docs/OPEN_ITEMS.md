@@ -1,5 +1,13 @@
 # Open items
 
+> **MOTHBALLED 27 September 2026 by the operator.** Nothing below is being worked, and no row's status has been changed by this entry: every `OPEN`, `BLOCKED` and `PROVISIONAL` row stands as last recorded, so that the register can be resumed exactly where it stopped. **Frozen designs: zero. Backtests: zero. Trades: zero.**
+>
+> **Closing publication scan, 27 September 2026.** Nothing in this repository is publishable as it stands. i) The working paper has no frozen design or result. ii) The discovery layer's arm comparison is invalid by construction (the clerk classifies against a table it is never shown; the arms cannot fail the same check), and its negative finding and methodological critique are already published (StockBench; AlphaForgeBench; the 2026 audits by Xia et al. and Yao et al.). iii) A method paper without a valid run is not a paper. None of the three is carried forward.
+>
+> **The one salvageable item, the delisting note, moves to the operator's journal-publications workstream.** It rests on `rule_split.py` and `archive/delistings/register.tsv`, which stay here. Its state at handover: **the 400-filing pilot is UNRATIFIED**; blended k = 0.097 (sampling 95% interval 0.067 to 0.127; prior range -0.02 to +0.22) against the manuscript's assumed 0.60; the pre-committed ratification draw (`draw --n 30`, seed 20260919, then `verify`) has not been run; the census of 7,399 filings has not been run; the constant `X = 0.4467` in `cmd_report` is undocumented and the bound table may not be quoted until it is derived or deleted; the headline factor should be read against k = 0.60 (6.2x), not 1.00 (10.3x). **The draft 4 manuscript (`manuscript.tex` / `.pdf`) is not in this repository.**
+>
+> **To resume the trading programme**, the last recorded proposal (27 September) was: decide §0 decision 0c, register the programme hurdle before any result exists, buy a delisting-inclusive price source, run `mvm.py`, and act on the branch it lands in.
+
 **Every decision waiting on the operator is prepared in `docs/DECISION_PACK.md`**, ordered by what each releases, with the count against each heading. The two that needed more room than a pack entry have their own files: `docs/DECISION_sizing_collision.md` and, for row 21b, the worksheet at `docs/ratification_draw_2026-08-27.md`.
 
 The live register. §13 holds every quantity requiring measurement or lookup; §14 holds the decisions and the freeze preconditions; Annex A.1 holds deferred capability behind predicates. **Nothing pends elsewhere**, and the spec's own linter tests that claim mechanically.
