@@ -174,6 +174,16 @@ SEC_BASES = (
 )
 
 
+def notice(title: str, payload) -> None:
+    """One line a GitHub Actions run records as an annotation. Outside Actions
+    it prints nothing."""
+    if os.environ.get("GITHUB_ACTIONS") != "true":
+        return
+    msg = payload if isinstance(payload, str) else json.dumps(payload, separators=(",", ":"), default=str)
+    msg = msg.replace("%", "%25").replace("\r", " ").replace("\n", "%0A")
+    print(f"::notice title={title}::{msg[:3800]}", flush=True)
+
+
 class Refusal(SystemExit):
     """A named refusal. Rule 3: a missing input stops the run; it is never
     replaced by a working value."""
@@ -232,7 +242,8 @@ def http_get(url: str, ua: str, *, tries: int = 5, timeout: int = 90,
             last = f"HTTP {e.code}"
         except Exception as e:                  # noqa: BLE001
             last = e
-        time.sleep(min(60.0, 2.0 * (2 ** attempt)))
+        if attempt + 1 < tries:
+            time.sleep(min(60.0, 2.0 * (2 ** attempt)))
     raise Transient(f"{url.split('?')[0]}: {last}")
 
 
@@ -486,9 +497,10 @@ class YahooProvider(PriceProvider):
     name = "yahoo"
     keeps_delisted = False
 
-    def __init__(self, cache: pathlib.Path, pause: float = 0.35):
+    def __init__(self, cache: pathlib.Path, pause: float = 0.35, tries: int = 4):
         self.cache = cache
         self.pause = pause
+        self.tries = tries
         cache.mkdir(parents=True, exist_ok=True)
 
     def _raw(self, sym: str) -> dict | None:
@@ -503,7 +515,7 @@ class YahooProvider(PriceProvider):
         p2 = int(dt.datetime(e.year, e.month, e.day, tzinfo=dt.timezone.utc).timestamp()) + 86400
         url = (f"https://query2.finance.yahoo.com/v8/finance/chart/{urllib.parse.quote(sym)}"
                f"?period1={p1}&period2={p2}&interval=1d&events=div%2Csplits&includeAdjustedClose=true")
-        status, body = http_get(url, BROWSER_UA, pause=self.pause)
+        status, body = http_get(url, BROWSER_UA, pause=self.pause, tries=self.tries, timeout=25)
         try:
             data = json.loads(body.decode("utf-8", "replace"))
         except json.JSONDecodeError:
@@ -1130,10 +1142,14 @@ def probe(prov: PriceProvider, out: pathlib.Path) -> None:
     pass band is wide). The eight in PROBE_GONE were acquired or failed inside
     the span."""
     rep_: dict = {"provider": prov.name, "live": {}, "gone": {}, "checks": {}}
+    deaf = 0
     for tk in PROBE_LIVE + PROBE_GONE:
         try:
+            if deaf >= 2:
+                raise Transient("not asked: the first two questions went unanswered")
             s_ = prov.daily(tk)
         except Transient as err:
+            deaf += 1
             row = {"answered": False, "error": str(err)[:160]}
         else:
             row = {"answered": True, "present": s_ is not None}
@@ -1160,6 +1176,10 @@ def probe(prov: PriceProvider, out: pathlib.Path) -> None:
     rep_["pass"] = bool(c["every_live_name_answered_and_present"] and c["every_question_answered"]
                         and c["split_unadjusted_in_the_right_direction"] and c.get("ko_tr_open_below_nominal_at_start"))
     (out / "provider_probe.json").write_text(json.dumps(rep_, indent=1))
+    notice("probe rows", {k: (("present %s..%s n=%s" % (v["first"], v["last"], v["bars"])) if v.get("present")
+                              else "absent" if v["answered"] else "UNANSWERED " + v.get("error", "")[:60])
+                          for k, v in {**rep_["live"], **rep_["gone"]}.items()})
+    notice("probe checks", {**c, "pass": rep_["pass"]})
     print(f"  checks {json.dumps(c)}")
     print(f"  PROBE {'PASSED' if rep_['pass'] else 'FAILED'}: {prov.name}")
     if not rep_["pass"]:
@@ -1196,7 +1216,10 @@ def main() -> None:
         out_ = pathlib.Path(a.out)
         out_.mkdir(parents=True, exist_ok=True)
         print(f"PROVIDER PROBE ({a.provider}); protocol hash {protocol_hash()}, code {code_hash()}")
-        probe(make_provider(a, pathlib.Path(a.cache)), out_)
+        prov_ = make_provider(a, pathlib.Path(a.cache))
+        if isinstance(prov_, YahooProvider):
+            prov_.tries = 2                         # a probe that waits is not a probe
+        probe(prov_, out_)
         return
     if not a.register:
         raise refuse("delisting_register_absent", "--register is required; there is no default path")
@@ -1267,6 +1290,10 @@ def main() -> None:
     print(f"  coverage  {cov}")
     print(f"  dropped   {meta['dropped']}")
     print(f"  trades    {len(trades):,}")
+    notice("funnel", funnel)
+    notice("coverage", {"smoke": a.smoke is not None, "provider": prov.name, "coverage": cov,
+                        "dropped": meta["dropped"], "trades": len(trades),
+                        "span_end_effective": str(span_end_eff), "archives": len(manifest)})
 
     if a.smoke is not None:
         print("\n  SMOKE RUN: coverage only. No return was written or printed.")
@@ -1292,6 +1319,17 @@ def main() -> None:
                         t.cost_cons if t.cost_cons is not None else "", t.n_accessions])
     report = render(stats, meta)
     (out / "killtest_report.md").write_text(report)
+    brief = lambda blk: {b: {k: blk[f"abnormal_net_vs_{b}"].get(k) for k in ("n", "clusters", "mean_bps", "ci95_bps", "median_bps", "share_positive")}   # noqa: E731
+                         for b in PROTOCOL2["A1_benchmarks"]}
+    notice("verdict", {"text": stats["verdict"]["text"], "hash": stats["protocol_hash"], "code": stats["code_sha256"],
+                       "detail": stats["verdict"]})
+    notice("net abnormal", {k: brief(stats[k]) for k in ("G_all_trades_flat_cost", "T_B1_to_B4_tiered_midpoint",
+                                                         "T_B1_to_B2_tiered_midpoint", "gross_all_trades")})
+    notice("gross by bucket", {k: {"per_year": v["trades_per_year"], **brief(v["gross"])}
+                               for k, v in stats["by_bucket_gross"].items()})
+    notice("registered and context", {"registered_19_sep": stats["registered_19_sep_statistic"],
+                                      "by_year": stats["by_entry_year_mean_gross_abnormal"],
+                                      "arithmetic": stats["arithmetic_at_registered_book"]})
     print("\n" + "=" * 78)
     print(report)
 
