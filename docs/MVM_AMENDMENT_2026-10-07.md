@@ -159,14 +159,23 @@ window, on a population of several thousand events, against both benchmarks.
 
 ## 5. Running it
 
-`runbook.yml` gains two steps and one input. Both steps are manual, as every
-step in that file is.
+`runbook.yml` gains three steps and one input. All are manual, as every step in
+that file is.
 
 ```
+gh workflow run runbook.yml --ref killtest-2026-10-07 -f step=provider-probe   # no SEC host, no event
 gh workflow run runbook.yml --ref killtest-2026-10-07 -f step=killtest-smoke   # 150 seeded tickers, COVERAGE ONLY
 gh workflow run runbook.yml --ref killtest-2026-10-07 -f step=killtest         # the measurement
 gh workflow run runbook.yml --ref killtest-2026-10-07 -f step=killtest -f killtest_provider=eodhd
 ```
+
+**The provider probe is first contact with the price source**, added because
+the first dispatch of 7 October stopped at the reachability check: the
+`SEC_CONTACT` secret is not set, and setting it is the operator's act. The probe
+needs no secret. It asks the provider for seven well-known live names and eight
+that were acquired or failed inside the span, checks that a known ten-for-one
+split is un-adjusted in the right direction, and counts how many of the eight
+the provider still holds. It prices no insider event, so it is not a look.
 
 **The smoke run computes no return into any output.** It exists to learn
 whether the SEC archives parse and what share of tickers the provider answers

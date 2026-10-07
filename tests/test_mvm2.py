@@ -536,9 +536,28 @@ def test_the_run_refuses_when_the_provider_leaves_too_much_unanswered(world, mon
 
 def test_the_register_has_no_default_and_an_empty_one_refuses(tmp_path):
     r = subprocess.run([sys.executable, str(TOOLS / "mvm2.py"), "--provider", "csv"], capture_output=True, text=True)
-    assert r.returncode != 0 and "--register" in r.stderr
+    assert r.returncode != 0 and "delisting_register_absent" in r.stderr
     empty = tmp_path / "r.tsv"
     empty.write_text("form\tcik\n15-12G\t123\n")
     with pytest.raises(SystemExit) as e:
         mvm2.load_delisted(empty)
     assert "delisting_register_empty" in str(e.value)
+
+
+def test_the_probe_passes_a_provider_that_behaves_and_refuses_one_that_does_not(tmp_path):
+    days = sessions(D(2022, 8, 1), 1000)
+    for tk in mvm2.PROBE_LIVE:
+        closes = [50.0] * len(days)
+        adj = [45.0 + 5.0 * i / len(days) for i in range(len(days))]        # dividends: adjusted below nominal early
+        if tk == "NVDA":
+            closes = [1200.0 if d < D(2024, 6, 10) else 120.0 for d in days]
+            adj = [118.0 if d < D(2024, 6, 10) else 119.0 for d in days]
+        write_prices(tmp_path, tk, closes, closes=closes, adj=adj, days=days)
+    out = tmp_path / "o"; out.mkdir()
+    mvm2.probe(mvm2.CsvProvider(str(tmp_path)), out)
+    rep = json.loads((out / "provider_probe.json").read_text())
+    assert rep["pass"] and rep["checks"]["gone_names_kept"] == 0 and rep["checks"]["nvda_nominal_close_2024_06_07"] == 1200.0
+    (tmp_path / "NVDA.csv").unlink()
+    with pytest.raises(SystemExit) as e:
+        mvm2.probe(mvm2.CsvProvider(str(tmp_path)), out)
+    assert "provider_probe_failed" in str(e.value)

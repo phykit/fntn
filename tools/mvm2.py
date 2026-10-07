@@ -1114,6 +1114,58 @@ def load_delisted(register: pathlib.Path) -> set[str]:
     return ciks
 
 
+PROBE_LIVE = ("SPY", "IWM", "AAPL", "KO", "NVDA", "WMT", "BRK.B")
+PROBE_GONE = ("ATVI", "VMW", "SPLK", "SGEN", "HZNP", "SIVB", "FRC", "PXD")
+
+
+def probe(prov: PriceProvider, out: pathlib.Path) -> None:
+    """First contact with a price provider, on names chosen for what is publicly
+    known about them and on no insider event at all. It answers three questions
+    the harness otherwise takes on trust: does the provider answer this machine,
+    is a split un-adjusted in the right direction, and does it keep a name after
+    the name stops trading. No event return is computed, so this is not a look.
+
+    NVDA split ten for one with effect from 2024-06-10 and closed the session
+    before near USD 1,209 (recollection, which is why it is printed and why the
+    pass band is wide). The eight in PROBE_GONE were acquired or failed inside
+    the span."""
+    rep_: dict = {"provider": prov.name, "live": {}, "gone": {}, "checks": {}}
+    for tk in PROBE_LIVE + PROBE_GONE:
+        try:
+            s_ = prov.daily(tk)
+        except Transient as err:
+            row = {"answered": False, "error": str(err)[:160]}
+        else:
+            row = {"answered": True, "present": s_ is not None}
+            if s_ is not None:
+                row.update(bars=len(s_), first=str(s_.dates[0]), last=str(s_.dates[-1]))
+        (rep_["live"] if tk in PROBE_LIVE else rep_["gone"])[tk] = row
+        print(f"  {tk:<6} {row}", flush=True)
+    c = rep_["checks"]
+    c["every_live_name_answered_and_present"] = all(r.get("present") for r in rep_["live"].values())
+    c["every_question_answered"] = all(r["answered"] for r in list(rep_["live"].values()) + list(rep_["gone"].values()))
+    c["gone_names_kept"] = sum(1 for r in rep_["gone"].values() if r.get("present"))
+    c["gone_names_asked"] = len(PROBE_GONE)
+    try:
+        nv = prov.daily("NVDA")
+        k = nv.dates.index(dt.date(2024, 6, 7))
+        c["nvda_nominal_close_2024_06_07"] = round(nv.nominal[k], 2)
+        c["nvda_tr_open_2024_06_07"] = round(nv.tr_open[k], 2)
+        c["split_unadjusted_in_the_right_direction"] = 1100.0 <= nv.nominal[k] <= 1300.0
+        ko = prov.daily("KO")
+        c["ko_tr_open_below_nominal_at_start"] = ko.tr_open[0] < ko.nominal[0]
+    except (AttributeError, ValueError, Transient) as err:
+        c["split_unadjusted_in_the_right_direction"] = False
+        c["probe_error"] = str(err)[:160]
+    rep_["pass"] = bool(c["every_live_name_answered_and_present"] and c["every_question_answered"]
+                        and c["split_unadjusted_in_the_right_direction"] and c.get("ko_tr_open_below_nominal_at_start"))
+    (out / "provider_probe.json").write_text(json.dumps(rep_, indent=1))
+    print(f"  checks {json.dumps(c)}")
+    print(f"  PROBE {'PASSED' if rep_['pass'] else 'FAILED'}: {prov.name}")
+    if not rep_["pass"]:
+        raise refuse("provider_probe_failed", f"{prov.name} did not behave as the harness assumes; see provider_probe.json")
+
+
 def check_contiguous(present: Sequence[str], start: dt.date, end: dt.date) -> None:
     """A quarter missing at the END of the span shortens the span. One missing
     anywhere else would leave a hole the statistics could not see."""
@@ -1130,7 +1182,9 @@ def main() -> None:
     ap.add_argument("--csv-root", default="prices")
     ap.add_argument("--csv-keeps-delisted", action="store_true")
     ap.add_argument("--archives", default=None, help="directory of *_form345.zip; skips the SEC fetch")
-    ap.add_argument("--register", required=True, help="the delisting register; there is no default")
+    ap.add_argument("--register", default=None, help="the delisting register; there is no default and its absence refuses")
+    ap.add_argument("--probe", action="store_true",
+                    help="first contact with the price provider on well-known names; touches no SEC host and no event")
     ap.add_argument("--cache", default=".mvm2_cache")
     ap.add_argument("--out", default="out")
     ap.add_argument("--smoke", type=int, default=None,
@@ -1138,6 +1192,14 @@ def main() -> None:
     a = ap.parse_args()
     if a.smoke is not None and a.smoke < 1:
         raise refuse("smoke_size", "--smoke takes a positive count; nought is not a smoke run")
+    if a.probe:
+        out_ = pathlib.Path(a.out)
+        out_.mkdir(parents=True, exist_ok=True)
+        print(f"PROVIDER PROBE ({a.provider}); protocol hash {protocol_hash()}, code {code_hash()}")
+        probe(make_provider(a, pathlib.Path(a.cache)), out_)
+        return
+    if not a.register:
+        raise refuse("delisting_register_absent", "--register is required; there is no default path")
 
     start = dt.date.fromisoformat(BASE["span_start"])
     end = dt.date.fromisoformat(BASE["span_end"])
@@ -1186,15 +1248,7 @@ def main() -> None:
     delisted = load_delisted(pathlib.Path(a.register))
     print(f"  distinct delisted CIKs: {len(delisted):,}")
 
-    if a.provider == "yahoo":
-        prov: PriceProvider = YahooProvider(cache / "px_yahoo")
-    elif a.provider == "eodhd":
-        key = os.environ.get("EODHD_KEY", "").strip()
-        if not key:
-            raise refuse("eodhd_key_absent", "EODHD_KEY is unset")
-        prov = EodhdProvider(key, cache / "px_eodhd")
-    else:
-        prov = CsvProvider(a.csv_root, a.csv_keeps_delisted)
+    prov = make_provider(a, cache)
 
     print(f"\n[4/4] pricing with {prov.name}")
     only = None
@@ -1240,6 +1294,17 @@ def main() -> None:
     (out / "killtest_report.md").write_text(report)
     print("\n" + "=" * 78)
     print(report)
+
+
+def make_provider(a: argparse.Namespace, cache: pathlib.Path) -> PriceProvider:
+    if a.provider == "yahoo":
+        return YahooProvider(cache / "px_yahoo")
+    if a.provider == "eodhd":
+        key = os.environ.get("EODHD_KEY", "").strip()
+        if not key:
+            raise refuse("eodhd_key_absent", "EODHD_KEY is unset")
+        return EodhdProvider(key, cache / "px_eodhd")
+    return CsvProvider(a.csv_root, a.csv_keeps_delisted)
 
 
 FUNNEL_KEYS = ("submissions", "form4", "bad_filing_date", "malformed_rows", "p_rows",
