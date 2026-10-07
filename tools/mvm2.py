@@ -574,20 +574,19 @@ class YahooProvider(PriceProvider):
 
 
 class EodhdProvider(PriceProvider):
-    """Subscription. The vendor's own page states that delisted tickers keep
-    their history. UNTESTED against a live key at the time of writing."""
+    """Subscription. Contract read on the vendor's own page, 7 October 2026:
+    open, high, low and close are RAW; adjusted_close is adjusted for splits and
+    dividends; VOLUME IS ADJUSTED FOR SPLITS ONLY; a delisted ticker keeps its
+    history under its own symbol. So a day's notional is adjusted_close x
+    volume and never close x volume, which would multiply a pre-split price by
+    a post-split share count. The cost: adjusted_close also carries dividends,
+    so notional is understated by the yield paid after the bar, a few per cent,
+    which matters only to a name sitting on a bucket boundary.
+    UNTESTED against a live key: no key exists."""
     name = "eodhd"
     keeps_delisted = True
 
     def __init__(self, key: str, cache: pathlib.Path, pause: float = 0.05):
-        if os.environ.get("EODHD_CONTRACT_READ", "") != "volume-is-unadjusted":
-            raise refuse("eodhd_contract_unread",
-                         "this provider was written from recollection. Whether EODHD's "
-                         "'volume' is adjusted for splits decides the liquidity bucket, and "
-                         "so the cost, of every name that later split. Read the vendor's "
-                         "field definitions; if volume is raw, set "
-                         "EODHD_CONTRACT_READ=volume-is-unadjusted; if it is adjusted, the "
-                         "notional line below must un-adjust it first.")
         self.key, self.cache, self.pause = key, cache, pause
         cache.mkdir(parents=True, exist_ok=True)
 
@@ -627,7 +626,7 @@ class EodhdProvider(PriceProvider):
             out.dates.append(d)
             out.tr_open.append(o * a / c)
             out.nominal.append(c)
-            out.notional.append(c * v)
+            out.notional.append(a * v)
         return out if len(out) else None
 
 

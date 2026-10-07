@@ -28,9 +28,8 @@ asked for. **That widening is the thing the operator should check first.**
 harness read it against this document and ran it against synthetic inputs. It
 found no error on the core path (entry and exit indices, the trailing window,
 total-return opens across dividends and both kinds of split, the clustered
-interval) and twelve points off it. Each is repaired in the code, closed by a
-refusal (the EODHD volume contract), or written into this document as a stated
-cost. Three changed the rule itself and are marked *(review)* below.
+interval) and twelve points off it. Each is repaired in the code or written
+into this document as a stated cost. Three changed the rule itself and are marked *(review)* below.
 
 ---
 
@@ -54,14 +53,25 @@ were read; no figure was recomputed. **Its tables by capacity and tail
 concentration were deliberately not read before this document was committed**,
 because they answer on an overlapping sample the question amendment A3 asks.
 
+*Read after the rule was committed at `c2b11a6`, and recorded so that the order
+is on the record; the rule has not moved since.* From that repository's result
+files, same provenance: the five-session figure has a median of +0.20% and is
+positive in 51.6% of events, so the mean is carried by its right tail; **against
+matched placebo dates the difference is +0.60 points and not significant
+(*t* = 1.08)**; and entry on the transaction date instead of the filing date
+earns +2.57% against +1.05%, so **about three fifths of the move has gone
+before the filing is public**. Its capacity table is by the insider's own
+footprint and not by liquidity, and carries no five-session row, so it does not
+answer A3.
+
 **Dependency contracts this batch writes or first runs against:**
 
 | Contract | Reference read | Status |
 |---|---|---|
 | SEC Insider Transactions Data Sets: file names, columns, `DOCUMENT_TYPE` = `4`, dates as `DD-MON-YYYY` | The SEC's own readme, and the working parser in `github.com/makeev/form4-event-study` (`code/build_events2.py`) | **CHECKED**, against two sources that agree |
 | Download paths | The same repository's `code/download_data.sh`: `/files/structureddata/data/...` to 2026 Q1 and `/files/datastandardsinnovation/data/...` for 2026 Q2. Both are tried for every quarter and the one that answered is logged | **CHECKED** to 2026 Q2. 2026 Q3 is UNCHECKED and may not be published |
-| Yahoo chart endpoint: `timestamp`, `quote.open/close/volume`, `adjclose`, `events.splits`, `meta.gmtoffset` | None. Written from recollection | **UNCHECKED.** The smoke run is its first contact, which is what the smoke run is for |
-| EODHD end-of-day endpoint: raw `open`/`close`, `adjusted_close`, `volume` | None. Written from recollection | **UNCHECKED, and it refuses.** If the vendor's `volume` is adjusted for splits, the liquidity bucket of every name that later split is read from the future. The provider raises `eodhd_contract_unread` until the field definition has been read and `EODHD_CONTRACT_READ` is set to say so *(review)* |
+| Yahoo chart endpoint: `timestamp`, `quote.open/close/volume`, `adjclose`, `events.splits`, `meta.gmtoffset` | None. Written from recollection | **UNCHECKED, and now moot on hosted runners:** the provider probe of 7 October (run 37608613720) was answered HTTP 429 on its first two questions. Yahoo does not serve GitHub's runners, and impersonating a browser to get round that is not something this project does |
+| EODHD end-of-day endpoint | The vendor's own field definitions, read 7 October 2026 after the review raised it: OHLC raw, `adjusted_close` adjusted for splits and dividends, **`volume` adjusted for splits only**, delisted tickers kept under their own symbol | **CHECKED on the page, UNTESTED live** (no key exists). The review's suspicion was right and the provider as first written was wrong: notional is now `adjusted_close × volume` *(review)* |
 
 ---
 
@@ -185,6 +195,32 @@ the alphabet, which is the error row 12's first reading made.
 **The run refuses rather than reports** if more than 2% of tickers go
 unanswered: a verdict over whatever a rate-limited provider chose to return is
 not a verdict. The cache is saved on failure, so a re-run resumes.
+
+---
+
+## 6. State at the end of 7 October 2026: nothing measured, two inputs missing
+
+**No event has been priced and no return exists.** Three dispatches were made
+and each is recorded here because each is a fact about the world and not about
+the harness.
+
+| Run | Step | Outcome |
+|---|---|---|
+| 37606610225 | `killtest-smoke` | Stopped at the reachability check. **The `SEC_CONTACT` secret is not set**, so no SEC host was contacted |
+| 37606930326 | `provider-probe`, yahoo | Cancelled after fourteen minutes without an answer |
+| 37608613720 | `provider-probe`, yahoo | **HTTP 429 on SPY and on IWM.** The free price route is closed on hosted runners |
+
+**What the measurement now needs, and both are the operator's to supply:**
+
+1. **`SEC_CONTACT`** as a repository secret: a real name and address, per
+   `claude/github_runbook_setup_2026-09-19.md` §3. It costs nothing.
+2. **`EODHD_KEY`** as a repository secret. This is the purchase the closing
+   register of 27 September already named as the revival condition, and the
+   one-month plan covers a single run. It is also the only route here that
+   keeps delisted names, so it is the only one whose answer A6 lets stand.
+
+**Then, in order:** `provider-probe` with `killtest_provider=eodhd`,
+`killtest-smoke`, `killtest`.
 
 *NON-EVIDENTIARY throughout. §13 row 31 is unaffected and remains BLOCKED BY
 DECISION.*

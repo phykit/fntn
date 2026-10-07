@@ -561,3 +561,17 @@ def test_the_probe_passes_a_provider_that_behaves_and_refuses_one_that_does_not(
     with pytest.raises(SystemExit) as e:
         mvm2.probe(mvm2.CsvProvider(str(tmp_path)), out)
     assert "provider_probe_failed" in str(e.value)
+
+
+def test_eodhd_notional_survives_a_later_split_because_its_volume_is_already_adjusted(tmp_path):
+    # Ten for one after the bar: the tape printed 1,000 on 1,000,000 shares. The
+    # vendor reports close 1,000 raw, adjusted_close 100 and volume 10,000,000.
+    rows = [{"date": "2023-03-13", "open": 990.0, "high": 1010, "low": 980, "close": 1000.0,
+             "adjusted_close": 100.0, "volume": 10_000_000},
+            {"date": "2023-03-14", "open": 100.0, "high": 101, "low": 99, "close": 100.0,
+             "adjusted_close": 100.0, "volume": 10_000_000}]
+    (tmp_path / "AAA-B.json").write_text(json.dumps(rows))
+    s = mvm2.EodhdProvider("k", tmp_path).daily("AAA.B")
+    assert s.nominal == [1000.0, 100.0]
+    assert s.notional == pytest.approx([1e9, 1e9])              # the same turnover on both days
+    assert s.tr_open == pytest.approx([99.0, 100.0])            # and no fifty per cent loss at the split
