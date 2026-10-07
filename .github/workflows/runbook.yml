@@ -16,6 +16,8 @@ on:
           - split-census      # step 2b: the full paragraph split
           - mvm-smoke         # step 3a: 200-filing smoke test
           - mvm               # step 3b: the full minimum viable measurement
+          - killtest-smoke    # step 4a: amended kill test, 150 seeded tickers, COVERAGE ONLY
+          - killtest          # step 4b: the amended kill test (docs/MVM_AMENDMENT_2026-10-07.md)
       start_date:
         description: "Register span start (register step only)"
         required: false
@@ -34,6 +36,12 @@ on:
         default: "stooq"
         type: choice
         options: [stooq, eodhd]
+      killtest_provider:
+        description: "Price source for the killtest steps. yahoo is free and omits delisted names, so it can kill and cannot pass"
+        required: false
+        default: "yahoo"
+        type: choice
+        options: [yahoo, eodhd]
 
 # One at a time. Two concurrent runs would double the request rate at EDGAR.
 concurrency:
@@ -145,6 +153,40 @@ jobs:
             --provider "${{ inputs.price_provider }}" \
             --register "${{ inputs.register_path }}" \
             $LIMIT --out out | tee out/mvm.log
+
+      # The kill test's cache is restored and saved by separate steps so that a
+      # run that refuses, or is rate-limited part way, still keeps what it fetched.
+      - name: Restore kill-test cache
+        if: ${{ startsWith(inputs.step, 'killtest') }}
+        uses: actions/cache/restore@v4
+        with:
+          path: .mvm2_cache
+          key: killtest-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: killtest-
+
+      - name: "Step 4: amended insider-purchase kill test"
+        if: ${{ startsWith(inputs.step, 'killtest') }}
+        env:
+          SEC_CONTACT: ${{ secrets.SEC_CONTACT }}
+          EODHD_KEY: ${{ secrets.EODHD_KEY }}
+        run: |
+          set -o pipefail
+          mkdir -p out
+          SMOKE=""
+          if [ "${{ inputs.step }}" = "killtest-smoke" ]; then
+            SMOKE="--smoke 150"
+          fi
+          python tools/mvm2.py \
+            --provider "${{ inputs.killtest_provider }}" \
+            --register "${{ inputs.register_path }}" \
+            $SMOKE --out out 2>&1 | tee out/killtest.log
+
+      - name: Save kill-test cache
+        if: ${{ always() && startsWith(inputs.step, 'killtest') }}
+        uses: actions/cache/save@v4
+        with:
+          path: .mvm2_cache
+          key: killtest-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Write the job summary
         if: always()
