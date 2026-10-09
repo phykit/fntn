@@ -1,0 +1,22 @@
+inputs retrieved and hashes matched: panel 1950002 rows, 145 columns; signal rows MomSeasonShort 3730640, Mom6m 3895206, Mom12m 3715128
+unit medians: ret_vw 0.011072, tret 0.006769, MomSeasonShort 0.066471 (all decimal)
+bond side: months 200208 to 202511; 1549898 filtered bond-months of 1950002; 260458 issuer-months
+reconstruction: 3730640 seeds, 275002 rolled in 2 passes; stock file end 202412
+validation: V1 all 1.000000 on 217185; V1 rolled 1.000000 on 15199; V2 1.000000 on 204497; comparable 0.999949 of 217196; largest errors V1 1.42e-14, V2 6.66e-15
+sample: 90665 eligible high-yield issuer-months, 88801 with an outcome, 499 lost final months; 267 valid months
+
+verdict: WEAK
+valid months: 267
+(a)  long-short     mean +0.010163  t +3.099  met True
+(b)  Fama-MacBeth   slope +0.015590  t +4.794  months 267  met True
+(c)  halves         first +0.011055  second +0.009264  met True
+(d)  long-only net  mean +0.002226  t +0.987  gross +0.006150  cost 0.003924  met False
+(e1) symmetric      mean +0.010446  months 267  met True
+(e2) adversarial    mean +0.007850  months 267  met True
+S5   (secondary)   mean +0.000456  t +0.369  months 267
+S6   (secondary)   mean +0.007140  t +3.396  months 267
+S7   (secondary)   mean +0.007539  t +1.953  months 266
+S8   (secondary)   mean +0.011954  t +2.383  months 265
+S11  (secondary)   mean +0.003936  t +1.240  months 267
+S12  (secondary)   mean +0.000363  t +0.163  months 267
+written: out/verify.json
