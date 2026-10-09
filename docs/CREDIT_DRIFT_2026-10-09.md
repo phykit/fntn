@@ -1,6 +1,7 @@
 # Credit drift pilot: status, 9 October 2026
 
-**No outcome has been measured.** The specification is frozen and the test is not yet dispatched.
+**No outcome has been measured.** The specification was frozen at `5444df2` and the frozen test
+(run number 4) is dispatched by the commit that writes this sentence.
 This file is the record for the side test; it is updated in the same commit as each thing it
 reports.
 
@@ -36,7 +37,7 @@ credit weakened most in month t underperform, in month t+1, those whose credit s
 | `probe`, run number 2 | files with sizes and SHA-256; the panel's columns, dates and units; rating, return-type and country counts; high-yield issuers per month; the reconstruction validated against `Mom12m`; coverage of the bond-to-stock join with a reason for each miss. Examines no outcome | **complete**, on `9d326c9`; results in `tools/credit_drift/results/2/` and summarised below |
 | `probe`, run number 3 | the same probe after "listed at t" was narrowed to a signal row (see below) | **complete**, on `711dba7`; results in `tools/credit_drift/results/3/` and summarised below |
 | freeze | `tools/credit_drift/PREREG.md` committed with the analysis code before `run` is dispatched | **done in this commit**; hashes below |
-| `run` | the frozen test | pending |
+| `run`, run number 4 | the frozen test, on the files frozen at `5444df2` | dispatched with this commit |
 | `verify` | an independent reimplementation of the headline numbers from the specification alone | pending |
 
 ## Probe run 2: what it shows (structure only; no signal was placed beside any outcome)
