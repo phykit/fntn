@@ -82,7 +82,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          sha256sum tools/credit_drift/PREREG.md tools/credit_drift/run.py tools/credit_drift/cdlib.py | tee out/frozen.sha256.txt
+          sha256sum tools/credit_drift/PREREG.md tools/credit_drift/run.py tools/credit_drift/cdlib.py tools/credit_drift/verify.py | tee out/frozen.sha256.txt
           python tools/credit_drift/run.py --out out 2>&1 | tee out/run.log
       - name: Independent reimplementation
         if: ${{ steps.step.outputs.step == 'verify' }}
@@ -91,6 +91,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          sha256sum tools/credit_drift/PREREG.md tools/credit_drift/run.py tools/credit_drift/cdlib.py tools/credit_drift/verify.py | tee out/frozen.sha256.txt
           python tools/credit_drift/verify.py --out out 2>&1 | tee out/verify.log
       - name: Commit the result files to this branch
         if: always()

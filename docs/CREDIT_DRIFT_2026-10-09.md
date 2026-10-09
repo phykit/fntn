@@ -1,7 +1,8 @@
 # Credit drift pilot: status, 9 October 2026
 
-**Nothing has been measured.** This file is the record for the side test; it is updated in the
-same commit as each thing it reports.
+**No outcome has been measured.** The specification is frozen and the test is not yet dispatched.
+This file is the record for the side test; it is updated in the same commit as each thing it
+reports.
 
 ## What it is
 
@@ -33,8 +34,8 @@ credit weakened most in month t underperform, in month t+1, those whose credit s
 | `probe`, run number 1 | the first probe, on `08b9ef8` | **void**: it concluded `success` behind a pipe with no `pipefail`, in a script that caught its own exceptions, and its output was never read. It proves nothing and nothing is taken from it |
 | return channel | the workflow commits plain-text result files to this branch under `tools/credit_drift/results/<run number>/` | written; first exercised by run number 2 |
 | `probe`, run number 2 | files with sizes and SHA-256; the panel's columns, dates and units; rating, return-type and country counts; high-yield issuers per month; the reconstruction validated against `Mom12m`; coverage of the bond-to-stock join with a reason for each miss. Examines no outcome | **complete**, on `9d326c9`; results in `tools/credit_drift/results/2/` and summarised below |
-| `probe`, run number 3 | the same probe after "listed at t" was narrowed to a signal row (see below) | dispatched with this commit |
-| freeze | `tools/credit_drift/PREREG.md` committed with the analysis code before `run` is dispatched | pending |
+| `probe`, run number 3 | the same probe after "listed at t" was narrowed to a signal row (see below) | **complete**, on `711dba7`; results in `tools/credit_drift/results/3/` and summarised below |
+| freeze | `tools/credit_drift/PREREG.md` committed with the analysis code before `run` is dispatched | **done in this commit**; hashes below |
 | `run` | the frozen test | pending |
 | `verify` | an independent reimplementation of the headline numbers from the specification alone | pending |
 
@@ -65,6 +66,46 @@ only from `MomSeasonShort` eleven months later; so eligibility at t depended on 
 to t+11. "Listed at t" now means a signal row at t and nothing else (`cdlib.py`). Months after the
 stock file's end are also counted under their own reason. Probe run 3 re-reads the coverage under
 the corrected definition; no hash, unit or validation figure can change.
+
+## Probe run 3: coverage under the corrected definition
+
+Every hash, unit and validation figure is identical to run 2. Coverage, with "listed at t" meaning
+a signal row at t:
+
+| Item | Reading |
+|---|---|
+| High-yield issuer-months, formation months 2002-08 to 2024-10 (267 months) | 107,731 |
+| of which the stock is listed at t (eligible) | 89,961 (83.5%) |
+| of which a return at t+1 is recovered | 88,801 (82.4%); 174 to 432 a month, median 325 |
+| Reasons for a miss, all 112,984 high-yield issuer-months | permno never in the stock file 9,125; stock's last row before t 5,971; months after the stock file ends 3,995; not yet listed 3,078; gap in the listing 150; stock's last row is t 492; **final month lost 499**; at or next to the stock file's end 702; other 171 |
+| Eligible, with an outcome, and both Fama-MacBeth controls present | 99.99% |
+
+## The freeze
+
+`tools/credit_drift/PREREG.md` is frozen in this commit together with the code. Its section 10
+lists every change from the draft design and the reason for each. The test has not been dispatched:
+`DISPATCH` still names the probe, and the next commit changes it.
+
+| File | SHA-256 |
+|---|---|
+| `tools/credit_drift/PREREG.md` | `43e5062459343c90528b5b77feee28a06b7494af1390b377152adf3c92579bd8` |
+| `tools/credit_drift/run.py` | `1867129330048a11497b84a2a8672b45d5295f39bd6943611486528129e1085c` |
+| `tools/credit_drift/cdlib.py` | `775b9699fedcafe7620aa9f3b7bd6cc265e6c6cd6e6025415c738cf57b2a055b` |
+| `tools/credit_drift/verify.py` | `e500badef9c67b61a5165a00d9242ba4f59a953e730ffd96051915e80d36f06e` |
+
+**How the specification was checked before the freeze.** A separate agent, which saw neither
+`run.py` nor `cdlib.py` nor any number from them, implemented the specification as `verify.py` and
+listed every sentence it found ambiguous. Its lists changed the text in eleven sections and one
+rule (the definition of "listed at t", above). On the revised text the two implementations were run
+on the same synthetic inputs, with no effect and with a planted one, and agreed on every headline
+number to within 4e-15. `run.py` was also checked against a third, loop-based computation of each
+criterion. All of this used synthetic data; no outcome existed on the real inputs.
+
+**What the verdict can be**, from `PREREG.md` section 7: PASS (all six criteria), WEAK (not a PASS,
+and the long-short return positive with t at or above 2.0; not actionable), FAIL (anything else),
+or UNSCORABLE (a refusal, never read as a pass or a fail). Criterion (d), the long-only form net of
+25 basis points on actual turnover, is hard to meet by construction and the specification says so
+in advance.
 
 ## How the stock returns are obtained, and what that costs
 
