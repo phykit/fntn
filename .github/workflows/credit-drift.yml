@@ -1,74 +1,146 @@
 name: Credit drift pilot
 
 # NON-EVIDENTIARY side test, not part of the FNTN funnel. See docs/CREDIT_DRIFT_2026-10-09.md.
-# Runs when tools/credit_drift/DISPATCH changes on this branch, or by hand. DISPATCH holds one
-# word naming the step. Nothing here touches EDGAR, so the runbook's concurrency group is not used.
+#
+# Runs when tools/credit_drift/DISPATCH changes on this branch. DISPATCH holds one word naming the
+# step (probe, run or verify) and a counter. There is no other trigger: no pull-request trigger and
+# no manual trigger, so only a push to this branch by someone with write access can start it.
+#
+# RETURN CHANNEL. The session that reads the results cannot reach GitHub's log or artifact storage,
+# so this workflow commits its own plain-text result files (a log and JSON, no encoding) to this
+# branch under tools/credit_drift/results/<run number>/, and they are read with git fetch. That is
+# why the job holds contents: write. The cost, stated: a workflow on a public repository that can
+# write to its own branch. It is bounded three ways: the trigger above; the commit step copies only
+# .log, .json and .txt files; and it refuses any file above the size ceiling, so a data file written
+# by mistake cannot be committed.
+#
+# NOTHING IS CACHED AND NOTHING IS UPLOADED. The stock signals are equivalent to the monthly returns
+# the publisher withholds, so the inputs live on the runner's disk for the length of the job only.
+# Every script publishes derived statistics only, never a row of either input.
 on:
   push:
     branches: [credit-drift-2026-10-09]
     paths: [tools/credit_drift/DISPATCH]
-  workflow_dispatch:
-    inputs:
-      step:
-        description: "probe or run"
-        required: true
-        default: "probe"
-        type: choice
-        options: [probe, run]
 
 concurrency:
   group: credit-drift
   cancel-in-progress: false
 
 permissions:
-  contents: read          # artifacts and logs only; nothing is committed back
+  contents: write         # to commit result files to this branch; see RETURN CHANNEL above
 
 jobs:
   pilot:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 90
+    env:
+      BRANCH: credit-drift-2026-10-09
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 50   # the commit step rebases onto the branch if it moved while the job ran
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install dependencies
-        run: python -m pip install --quiet numpy pandas pyarrow requests statsmodels openassetpricing
+      - name: Install pinned dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --quiet -r tools/credit_drift/requirements.txt
       - name: Resolve the step
         id: step
+        shell: bash
         run: |
-          if [ -n "${{ inputs.step }}" ]; then s="${{ inputs.step }}"; else s="$(head -1 tools/credit_drift/DISPATCH | awk '{print $1}')"; fi
-          echo "step=$s" >> "$GITHUB_OUTPUT"; echo "step: $s"
-      - name: Cache downloaded public data
-        uses: actions/cache@v4
-        with:
-          path: .cd_cache
-          key: credit-drift-data-v1
+          set -euo pipefail
+          s="$(head -1 tools/credit_drift/DISPATCH | awk '{print $1}')"
+          case "$s" in
+            probe|run|verify) ;;
+            *) echo "DISPATCH names no known step: '$s'"; exit 1 ;;
+          esac
+          echo "step=$s" >> "$GITHUB_OUTPUT"
+          echo "step: $s"
+      - name: Self-test on synthetic data
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          python tools/credit_drift/selftest.py 2>&1 | tee out/selftest.log
+      # Each step pipes into tee. `shell: bash` together with `set -o pipefail` is what makes a
+      # failing script fail the step: the first probe run reported success behind a pipe without it.
       - name: Probe (structure only, no outcomes)
         if: ${{ steps.step.outputs.step == 'probe' }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          mkdir -p out .cd_cache
-          python tools/credit_drift/probe.py --cache .cd_cache --out out 2>&1 | tee out/probe.log
+          set -euo pipefail
+          python tools/credit_drift/probe.py --out out 2>&1 | tee out/probe.log
       - name: Run the frozen test
         if: ${{ steps.step.outputs.step == 'run' }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          mkdir -p out .cd_cache
-          sha256sum tools/credit_drift/PREREG.md | tee out/prereg.sha256
-          python tools/credit_drift/run.py --cache .cd_cache --out out 2>&1 | tee out/run.log
+          set -euo pipefail
+          sha256sum tools/credit_drift/PREREG.md tools/credit_drift/run.py tools/credit_drift/cdlib.py | tee out/frozen.sha256.txt
+          python tools/credit_drift/run.py --out out 2>&1 | tee out/run.log
+      - name: Independent reimplementation
+        if: ${{ steps.step.outputs.step == 'verify' }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python tools/credit_drift/verify.py --out out 2>&1 | tee out/verify.log
+      - name: Commit the result files to this branch
+        if: always()
+        shell: bash
+        env:
+          STEP: ${{ steps.step.outputs.step }}
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          d="tools/credit_drift/results/${GITHUB_RUN_NUMBER}"
+          if [ "${GITHUB_RUN_ATTEMPT}" != "1" ]; then d="${d}_attempt${GITHUB_RUN_ATTEMPT}"; fi
+          mkdir -p "$d" out
+          {
+            echo "step: ${STEP:-unresolved}"
+            echo "job status at commit time: ${JOB_STATUS}"
+            echo "commit: ${GITHUB_SHA}"
+            echo "run id: ${GITHUB_RUN_ID}"
+            echo "run number: ${GITHUB_RUN_NUMBER}"
+            echo "run attempt: ${GITHUB_RUN_ATTEMPT}"
+            echo "utc: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } > "$d/meta.txt"
+          shopt -s nullglob
+          for f in out/*.log out/*.json out/*.txt; do
+            n=$(stat -c %s "$f")
+            if [ "$n" -gt 3000000 ]; then
+              echo "refused (above the 3 MB ceiling): $f, $n bytes" | tee -a "$d/meta.txt"
+            else
+              cp "$f" "$d/"
+            fi
+          done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$d"
+          git commit -m "credit drift: results of ${STEP:-unresolved} run ${GITHUB_RUN_NUMBER} on ${GITHUB_SHA::7} (${JOB_STATUS})"
+          for i in 1 2 3 4; do
+            if git pull --rebase origin "$BRANCH" && git push origin "HEAD:${BRANCH}"; then exit 0; fi
+            sleep $((i * 5))
+          done
+          echo "the result files could not be pushed"; exit 1
       - name: Job summary
         if: always()
+        shell: bash
+        env:
+          STEP: ${{ steps.step.outputs.step }}
         run: |
+          set -euo pipefail
           {
-            echo "## Credit drift pilot: \`${{ steps.step.outputs.step }}\` (non-evidentiary)"
+            echo "## Credit drift pilot: ${STEP:-unresolved} (non-evidentiary)"
             for f in out/*.log; do
               [ -e "$f" ] || continue
               echo "<details><summary>$(basename "$f")</summary>"; echo ""; echo '```'; tail -150 "$f"; echo '```'; echo "</details>"
             done
           } >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: credit-drift-${{ steps.step.outputs.step }}-${{ github.run_number }}
-          path: out/
-          retention-days: 30
-          if-no-files-found: warn
