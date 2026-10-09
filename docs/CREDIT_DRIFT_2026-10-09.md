@@ -1,7 +1,9 @@
 # Credit drift pilot: status, 9 October 2026
 
-**No outcome has been measured.** The specification was frozen at `5444df2` and the frozen test
-(run number 4) is dispatched by the commit that writes this sentence.
+**Verdict: WEAK, against the rules frozen at `5444df2`.** There is a relation in this sample; the
+test cannot show it to be tradeable, and the frozen rules call that not actionable. The independent
+implementation returns the same verdict and the same numbers. Non-evidentiary: this is not a
+calibration and it authorises nothing. The results are in the section "Result" below.
 This file is the record for the side test; it is updated in the same commit as each thing it
 reports.
 
@@ -37,8 +39,8 @@ credit weakened most in month t underperform, in month t+1, those whose credit s
 | `probe`, run number 2 | files with sizes and SHA-256; the panel's columns, dates and units; rating, return-type and country counts; high-yield issuers per month; the reconstruction validated against `Mom12m`; coverage of the bond-to-stock join with a reason for each miss. Examines no outcome | **complete**, on `9d326c9`; results in `tools/credit_drift/results/2/` and summarised below |
 | `probe`, run number 3 | the same probe after "listed at t" was narrowed to a signal row (see below) | **complete**, on `711dba7`; results in `tools/credit_drift/results/3/` and summarised below |
 | freeze | `tools/credit_drift/PREREG.md` committed with the analysis code before `run` is dispatched | **done in this commit**; hashes below |
-| `run`, run number 4 | the frozen test, on the files frozen at `5444df2` | dispatched with this commit |
-| `verify`, run number 5 | the independent implementation (`verify.py`, frozen at `5444df2`) on the same pinned inputs | dispatched with this commit, before the result of run number 4 was read |
+| `run`, run number 4 | the frozen test, on the files frozen at `5444df2` | **complete**, on `f7ccf6b`; results in `tools/credit_drift/results/4/` |
+| `verify`, run number 5 | the independent implementation (`verify.py`, frozen at `5444df2`) on the same pinned inputs | **complete**, on `6844ba5`, dispatched before the result of run number 4 was read; results in `tools/credit_drift/results/5/` |
 
 ## Probe run 2: what it shows (structure only; no signal was placed beside any outcome)
 
@@ -107,6 +109,97 @@ and the long-short return positive with t at or above 2.0; not actionable), FAIL
 or UNSCORABLE (a refusal, never read as a pass or a fail). Criterion (d), the long-only form net of
 25 basis points on actual turnover, is hard to meet by construction and the specification says so
 in advance.
+
+## Result (runs 4 and 5)
+
+Both runs found the pinned bytes, decimal units and a reconstruction that validates (217,185
+rebuilt `Mom12m` values for the stocks of high-yield issuers, every one within 2e-14). Both hashed
+the four frozen files to the values in the table above. Sample: 90,665 eligible high-yield
+issuer-months, 88,801 with an outcome, 267 valid months, outcome months 2002-09 to 2024-11, on
+average 337 issuers a month and 66 in each extreme fifth.
+
+### Criteria
+
+| | Criterion | Value | Threshold | Met |
+|---|---|---|---|---|
+| (a) | Long-short, top fifth minus bottom fifth | +1.02% a month, t 3.10 | positive, t >= 3.0 | yes |
+| (b) | Fama-MacBeth slope with controls | +1.56% across the range of the signal, t 4.79 | positive, t >= 2.0 | yes |
+| (c) | Both halves | +1.11% and +0.93% a month | both positive | yes |
+| (d) | Long-only, top fifth minus universe, net of costs | +0.22% a month, t 0.99 (gross +0.61%, cost 0.39%, one-way turnover 78% a month) | positive, t >= 2.0 | **no** |
+| (e1) | Lost final months at -30%, every fifth | +1.04% a month | positive | yes |
+| (e2) | Lost final months at -30%, top fifth only | +0.79% a month | positive | yes |
+
+**Verdict: WEAK** (not a PASS; long-short positive with t at or above 2.0). Not actionable.
+
+### The two implementations
+
+`run.py` and `verify.py` agree on the verdict, on 267 valid months, on both sample counts and on
+every criterion's mean and t to within 4e-15, and on the six secondary items `verify.py` covers.
+Under `PREREG.md` section 11 that is agreement.
+
+### Secondary (no weight in the verdict)
+
+| | Item | Value |
+|---|---|---|
+| S1 | Mean outcome by fifth, bottom to top | 0.92%, 1.18%, 1.14%, 1.45%, 1.93% a month; universe 1.32% |
+| S2 | Tails against the middle | top minus middle +0.68% (t 2.20); middle minus bottom +0.34% (t 1.03) |
+| S3 | Fama-MacBeth without controls | +1.21%, t 3.26 |
+| S4 | Weighted by bond value | +0.58%, t 1.15 |
+| S5 | Investment-grade universe | +0.05%, t 0.37 |
+| S6 | All issuers | +0.71%, t 3.40 |
+| S7 | Spread-change signal | +0.75%, t 1.95 |
+| S8 | Three-month formation | +1.20%, t 2.38 |
+| S9 | By outcome year | positive in 20 of 23 calendar years; the largest are 2003, 2008, 2014 and 2016 (3.2% to 4.0% a month); 2020 is -3.5% a month |
+| S10 | Attrition by fifth, bottom to top | lost final months 148, 77, 75, 71, 128; stock's last row is t 153, 65, 67, 78, 129 |
+| S11 | Every missing top-fifth outcome at -30% | +0.39%, t 1.24 |
+| S12 | Long-only net, under e2 | +0.04% a month, t 0.16 |
+| S13 | Every missing top-fifth outcome at -100% | **-0.94%, t -2.82** |
+
+### Reading it as a kill test
+
+1. **It is not tradeable on this evidence.** The long-only tilt earns 61 basis points a month over
+   the universe before costs and gives back 39 to turnover, leaving 22 with a t of 1.0. With the
+   top fifth's lost final months at -30% it leaves 4 (S12). The cost assumption is generous for
+   this population: there is no price filter, and many of these are distressed small stocks.
+2. **Criterion (a) clears its bar by a hair.** t is 3.10 against 3.0. Any of the stresses below
+   takes it under.
+3. **The outcomes that are missing are not missing at random, and the result does not survive the
+   worst case for them.** 322 top-fifth outcomes are missing in the valid months, 257 of them for a
+   delisting-related reason. With every one at -30% the long-short falls to 0.39% (t 1.24); at
+   -100% the sign reverses. The truth is between the primary and S13 and this data cannot say
+   where.
+4. **It is a small-issuer effect.** Weighted by bond value it is 0.58% with a t of 1.15, and in
+   the investment-grade universe there is nothing.
+5. **It comes from the long side.** The top fifth beats the middle by 0.68%; the bottom fifth
+   trails the middle by 0.34% with a t of 1.0. The hypothesis as worded (weakened credit
+   underperforms) is the weaker half of what was found.
+6. **It is concentrated in credit crises.** Four years supply most of it.
+
+### Exploratory (computed after the result from the published monthly series; not in the frozen specification; no weight)
+
+| Item | Value |
+|---|---|
+| Outcome months to 2019-12, the span of the published samples | +1.38% a month, t 3.77, 208 months |
+| Outcome months 2020-01 to 2024-11, the only span later than those samples | **-0.25% a month, t -0.38, 59 months** |
+| April 2020 alone | -41.8%: the stocks whose credit had weakened most in March rebounded |
+| Excluding 2020 | +1.23% a month, t 3.97 |
+| Excluding the five best months of 267 | +0.69% a month |
+| Monthly standard deviation of the long-short | 5.6% |
+
+The sub-period split is the most important thing here and it was not pre-registered, so it is a
+question and not a finding: on the 59 months that no published study could have seen, the sign is
+wrong.
+
+### Deviations
+
+1. None from the frozen specification is known in either implementation.
+2. S13 is computed by `run.py` only; `verify.py` covers S5 to S8, S11 and S12, as the specification
+   says.
+3. S10's "other missing" in the result file includes the two formation months at the stock file's
+   end (2024-11 and 2024-12), in which every outcome is missing; those months are not valid and
+   enter no statistic. The delisting-related counts in the table above exclude them.
+4. The definition of "listed at t" changed between probe run 2 and the freeze, before any outcome
+   existed; see above.
 
 ## How the stock returns are obtained, and what that costs
 
