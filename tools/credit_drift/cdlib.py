@@ -277,8 +277,8 @@ def reconstruct(sig):
 
     Returns a dict of aligned arrays over K, the sorted union of every key seen:
         key, r (NaN where unrecovered), origin (0 seed, n = recovered in pass n, -1 unrecovered),
-        has_row (any of the three signals at that key), m6 (Mom6m at that key)
-    plus first/last listed month and last signal row per permno, and the panel's final month.
+        has_row and listed (the same thing: any of the three signals at that key), m6 (Mom6m there)
+    plus the first and last signal row per permno, and the stock file's final month.
     """
     for n in SIGNALS:
         if n not in sig:
@@ -308,10 +308,13 @@ def reconstruct(sig):
     has_row = np.isin(K, rows)
     permno = K // KEY_BASE
     mi = K % KEY_BASE
-    listed = has_row | np.isfinite(r)
-    g = pd.DataFrame({"permno": permno, "mi": mi, "has_row": has_row, "listed": listed})
+    # Listed at t means a signal row at t, and nothing else. A recovered return at t is NOT enough:
+    # in a stock's first five months it is known only from MomSeasonShort eleven months later, so
+    # admitting it would make eligibility at t depend on the stock surviving to t+11.
+    listed = has_row.copy()
+    g = pd.DataFrame({"permno": permno, "mi": mi, "has_row": has_row})
     last_row = g[g.has_row].groupby("permno")["mi"].max()
-    first_listed = g[g.listed].groupby("permno")["mi"].min()
+    first_listed = g[g.has_row].groupby("permno")["mi"].min()
     panel_end = int(mi[has_row].max())
     return {"key": K, "permno": permno, "mi": mi, "r": r, "origin": origin, "has_row": has_row, "listed": listed,
             "m6": m6_now, "last_row": last_row, "first_listed": first_listed, "panel_end": panel_end,
@@ -422,7 +425,7 @@ def issuer_months(panel):
 # linkage: issuer-month at t to the stock at t and t+1
 # ---------------------------------------------------------------------------------------------
 
-MISS_REASONS = ["ok", "permno_not_in_stock_file", "not_listed_yet_at_t", "delisted_before_t", "gap_at_t",
+MISS_REASONS = ["ok", "permno_not_in_stock_file", "after_stock_file_end", "not_listed_yet_at_t", "delisted_before_t", "gap_at_t",
                 "t_is_final_month", "t_is_panel_end", "t1_is_final_month_lost", "t1_is_panel_end",
                 "t1_unrecovered_other"]
 
@@ -430,13 +433,19 @@ MISS_REASONS = ["ok", "permno_not_in_stock_file", "not_listed_yet_at_t", "delist
 def link(im, stk):
     """Attach to each issuer-month (permno, mi = t) the stock's state at t and its return at t+1.
 
-    listed_t: the stock has any of the three signals at t, or a recovered return at t. Required so
-    that a first listing month, whose missing return the publisher set to zero, cannot be scored as
-    the outcome of a position that could not have been opened.
-    Reasons are mutually exclusive. The four 'not listed at t' reasons are assigned first, then
+    listed_t: the stock has a row in any of the three signals at t. Required for two reasons. A first
+    listing month, whose missing return the publisher set to zero, must not be scored as the outcome
+    of a position that could not have been opened. And the test must be knowable at t: a signal row
+    at t depends only on months up to t, whereas a recovered return at t can depend on the stock
+    still being listed eleven months later.
+    Reasons are mutually exclusive. The five 'not listed at t' reasons are assigned first, then
     'ok' (listed at t and a recovered return at t+1), then the rest in the order below:
       permno_not_in_stock_file   the permno never appears in the signals
-      not_listed_yet_at_t        t is before the stock's first listed month
+      after_stock_file_end       t is after the stock file's final month, so no stock is listed at t.
+                                 (Probe run 2 counted these under delisted_before_t; the bond panel
+                                 runs eleven months beyond the stock file.)
+      not_listed_yet_at_t        t is before the stock's first signal row (its first five listed
+                                 months have none)
       delisted_before_t          t is after the stock's last signal row
       gap_at_t                   t is inside the stock's span but the stock is not listed at t
       t_is_final_month           listed at t, and t is the stock's last row before the panel's end
@@ -467,6 +476,7 @@ def link(im, stk):
         done[m] = True
 
     put(~known, "permno_not_in_stock_file")
+    put(~listed_t & (t > end), "after_stock_file_end")
     put(~listed_t & (t < np.where(np.isfinite(first), first, np.inf)), "not_listed_yet_at_t")
     put(~listed_t & (t > np.where(np.isfinite(last), last, -np.inf)), "delisted_before_t")
     put(~listed_t, "gap_at_t")

@@ -20,7 +20,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import cdlib  # noqa: E402
 
 START = 1995 * 12          # January 1995
-END = 2024 * 12 + 11       # December 2024, the synthetic panel's final month
+END = 2024 * 12 + 11       # December 2024, the synthetic stock file's final month
+BOND_END = END + 6         # the bond panel runs past the stock file, as the published one does
 
 
 def make_stocks(n_firms=600, seed=7):
@@ -95,7 +96,7 @@ def make_bonds(firms, seed=11, effect=0.0, first=2002 * 12 + 7):
             mcap = float(rng.uniform(1e5, 1e6))
             b_start = months[0] + int(rng.integers(0, 6))
             b_end = months[-1] + int(rng.integers(0, 5))      # bonds can outlive the listing
-            for m in range(max(b_start, first), min(b_end, END) + 1):
+            for m in range(max(b_start, first), min(b_end, BOND_END) + 1):
                 if rng.random() < 0.03:
                     continue                                   # an untraded month
                 if m not in common:
@@ -227,14 +228,23 @@ def main():
 
     # 5. linkage reasons against a brute-force classification
     lk = cdlib.link(im, stk)
-    listed = {int(k) for k, v in zip(K, stk["listed"]) if v}
-    last_row, first_listed = stk["last_row"].to_dict(), stk["first_listed"].to_dict()
+    # listed at t, rebuilt here from the signal frames themselves and not taken from cdlib
+    listed = set()
+    for n in cdlib.SIGNALS:
+        listed |= set((sig[n]["permno"].to_numpy() * cdlib.KEY_BASE + cdlib.mi_from_yyyymm(sig[n]["yyyymm"].to_numpy())).tolist())
+    first_listed, last_row = {}, {}
+    for k in listed:
+        p_, m_ = divmod(k, cdlib.KEY_BASE)
+        first_listed[p_] = min(first_listed.get(p_, m_), m_)
+        last_row[p_] = max(last_row.get(p_, m_), m_)
     bad = 0
     for row in lk.itertuples(index=False):
         p, t = int(row.permno), int(row.mi)
         kt = p * cdlib.KEY_BASE + t
         if p not in last_row and p not in first_listed:
             exp = "permno_not_in_stock_file"
+        elif kt not in listed and t > END:
+            exp = "after_stock_file_end"
         elif kt not in listed:
             exp = "not_listed_yet_at_t" if t < first_listed.get(p, 10**9) else ("delisted_before_t" if t > last_row.get(p, -1) else "gap_at_t")
         elif (kt + 1) in rec:
@@ -249,7 +259,7 @@ def main():
             bad += 1
     counts = lk["reason"].value_counts().to_dict()
     check(bad == 0, f"linkage reasons equal brute force on {len(lk):,} issuer-months", fails)
-    check(set(counts) <= set(cdlib.MISS_REASONS) and len(counts) >= 8, f"reasons seen: {counts}", fails)
+    check(set(counts) == set(cdlib.MISS_REASONS), f"every reason is reached: {counts}", fails)
 
     # 6. units
     check(cdlib.unit_of(bonds["ret_vw"].dropna(), "bond")[0] == "decimal", "unit rule: synthetic bond returns are decimal", fails)
