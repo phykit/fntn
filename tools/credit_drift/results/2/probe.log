@@ -1,0 +1,119 @@
+
+========== environment
+python 3.12.15 | commit 9d326c99a87ba4f344303e61c5864120cdd3eb95
+  6973bb405e4a50fe7eb7ab95a672d8e21f8d0d2f85f98267ce000cc483a0d5ed  DISPATCH
+  56ca066fd76974d533df48d8308b383e804fe5a8528e72e2e153273346aa2b5b  cdlib.py
+  5e23caa8616e817bb169158edac11d0bb843c34b9e1e09ceed262e1459309a46  probe.py
+  8c23c1a2a7707f86c72b86f503695c887c9c0f65e0fca3b3f6c950d36ca556b4  selftest.py
+
+========== site_links
+https://openbondassetpricing.com/data/ HTTP 200 96276 characters
+  {'status': 200, 'bytes': 1830781280} https://openbondassetpricing.com/wp-content/uploads/2025/12/stage1_osbap_0k_volume_2025.zip
+
+========== release_assets
+release data-2026 published 2026-09-17T04:20:40Z | assets: 16
+       1,162,485  sha256:097ede86ff76dd1d4901f0f40ef1bb776991790fe882a1f275a4e7f570701219  144a_data_report_2026.pdf
+          86,059  sha256:bcfa027913bed2aaa1e4c6b25cdf1245998a1e687dc7619ae24f2b8c89de90e3  bbw_factors_extended_1973_2023.zip
+     148,720,149  sha256:0512ecb814d938b453a51aa8efdd18781d1a5aa850a19a9389b7b3a7992be478  enhanced_data_report_2026.pdf
+   1,362,089,642  sha256:ef54758cb471f279ea280236beace039018728aab9f0e00d1d936e03b166c0d6  osbap_additional_data_2026.zip
+         212,720  sha256:992fd573b46e775c57fde9d694500a79f0833c4bdcd9d30c34458b4ce3e086ce  osbap_bbw_factors_2026.zip
+   1,273,628,254  sha256:bfcd509a923d34950318732171f571dbd202b05778048ce67121e5cf53c1e96f  osbap_main_data_2026.zip
+         184,951  sha256:9bc98023d0948d2e03852ec0034ac03b42c1234f39930e492dc9d9966e1ef928  osbap_stage2_factors_2026.zip
+       8,002,565  sha256:2aac298c186e95a3ec31cf3c8d879df8dd4e1777ab800c66c7e377ff5412f479  single_sort_extended_2026_csv.zip
+      65,911,404  sha256:7e4fb8ce643f5e40e1e26c64e8b7f8fccdf056eaa4a39babd7458f72244dfc84  single_sort_panel_extended_2026.zip
+     904,819,141  sha256:f26db8a151dea03d2f2db741a6d29e9eaf069d973458558e48a069a3e05bf4c4  stage1_daily_panel_2026_2002_2016.parquet
+   1,068,616,162  sha256:03fa5c39f754e566a64c3ba60e0570df51aa08efd8f5793f28c67d5f95518e54  stage1_daily_panel_2026_2017_2025.parquet
+       3,167,224  sha256:10c849381d0719a17148afb9804952897686722f19b0c9e78a82cea79d2b8d8a  stage1_data_report_2026.pdf
+         919,824  sha256:2b91646423660a6df505efb953cf3a03c187e6fc9c3f5107460cc8d7dc7c32b7  stage2_data_report_2026.pdf
+           2,481  sha256:e75f62e5e14d465167fd258fc7e2b724770a4ce3905ac1467f57040e576961cf  verify_release.py
+       8,039,131  sha256:08a1c57991e39478e50f85d8a0c22e16a4c517e0baa654cbde81d2695a0bdaca  within_firm_sort_extended_2026_csv.zip
+      66,436,154  sha256:f38023eb28c3ea4c9525a7f399ec1aff1be0787f4febaf0f4b1f730732b8d22a  within_firm_sort_panel_extended_2026.zip
+
+========== panel_file
+downloaded osbap_main_data_2026.zip: 1,273,628,254 bytes in 40s, sha256 bfcd509a923d34950318732171f571dbd202b05778048ce67121e5cf53c1e96f
+  member          6,595  README.txt
+  member          2,169  PROVENANCE.json
+  member  1,276,568,282  main_panel_2026.parquet
+-- main_panel_2026.parquet: 1,950,002 rows, 145 columns, has the required columns: True
+   columns: cusip, date, issuer_cusip, permno, permco, gvkey, 144a, country, call, ret_vw, ret_vw_bgn, hprd, lib, libd, ret_type, spc_rat, mdc_rat, ff17num, ff30num, fce_val, mcap_s, mcap_e, tret, tret_bns, tret_cfm, tret_gprs, tret_cls, tret_mat, rfret, dt_s, dt_e, dt_s_bgn, dt_e_bgn, hprd_bgn, igap_bgn, sig_dt, sig_gap, tmat, age, ytm, cs, md_dur, convx, bbtm, sze, val_hz, val_hz_dts, val_ipr, val_ipr_dts, dcs6, cs_mu12_1, pi, ami, ami_v, lix, ilq, roll, spd_abs, spd_rel, cs_sprd, ar_sprd, p_zro, p_fht, vov, dvol, dskew, dkurt, db_mkt, dvol_sys, dvol_idio, rvol, rsj, rsk, rkt, b_vix, b_dvixd, b_mktrf_mkt, b_mktb_mkt, ivol_mkt, ivol_bbw, b_mktbx_dcapm, b_term_dcapm, b_dvix_va, b_dvix_vp, ivol_vp, b_psb_m, b_amd_m, b_dvix, b_cpi_vol6, b_dunc, b_unc, b_dunc3, b_dunc6, b_duncr, b_duncf, b_dcredit, b_credit, b_dcpi, b_cptlt, b_rvol, b_rsj, b_psb, b_amd, b_illiq, b_dvix_dn, b_dvix_up, b_coskew, iskew, b_defb, b_termb, b_drf, b_crf, b_lrf, b_mktb, b_lvl, b_ysp, b_mktb_dn, b_mktb_up, b_epu, b_epum, b_eput, sysmom3_1, sysmom6_1, sysmom12_1, idimom3_1, idimom6_1, idimom12_1, mom3_1, mom6_1, mom9_1, mom12_1, mom12_7, ltr48_12, ltr30_6, ltr24_3, imom1, imom3_1, imom12_1, iltr48_12, iltr30_6, iltr24_3, var_90, es_90, var_95, str
+
+========== panel_description
+rows 1,950,002 | dates 2002-08-31 to 2025-11-30 | months 280 | calendar month-end share 1.0 | duplicate cusip-months 0
+   spc_rat: {'1.0': 1512297, '11.0': 437705}
+   mdc_rat: {'1.0': 1487606, '11.0': 462396}
+   ret_type: {'standard': 1942897, 'trad_in_def': 5575, 'default_evnt': 1530}
+   country: {'USA': 1702215, 'CAN': 61581, 'GBR': 40936, 'NLD': 19485, 'JPN': 11664, 'FRA': 11367, 'AUS': 11282, 'LUX': 9109, 'MEX': 8800, 'IRL': 8292, 'BMU': 7271, 'CYM': 6108}
+   144a: {'0': 1727725, '1': 222277}
+   non-null shares: {'cusip': 1.0, 'date': 1.0, 'permno': 0.8881, 'country': 1.0, 'ret_type': 1.0, 'spc_rat': 1.0, 'ret_vw': 1.0, 'tret': 1.0, 'mcap_s': 1.0, 'cs': 0.9655, 'mdc_rat': 1.0, 'rfret': 1.0, 'md_dur': 0.9655, 'tmat': 1.0, '144a': 1.0, 'issuer_cusip': 1.0, 'mcap_e': 1.0, 'ytm': 0.9655, 'fce_val': 1.0}
+   ret_vw: median abs 0.011071521788835526, q {'0.001': -0.3568807464838028, '0.01': -0.10156650751829148, '0.05': -0.0407396450638771, '0.25': -0.005628630518913269, '0.5': 0.003925255965441465, '0.75': 0.015001613646745682, '0.95': 0.04976029247045515, '0.99': 0.11349238693714143, '0.999': 0.4106217728853209}
+   tret: median abs 0.006769193336367607, q {'0.001': -0.06463248974084854, '0.01': -0.04293658584356308, '0.05': -0.023498855531215654, '0.25': -0.004155985079705715, '0.5': 0.0016596567584201694, '0.75': 0.008907312527298927, '0.95': 0.028358886018395424, '0.99': 0.046780030280351596, '0.999': 0.0690857470035553}
+   rfret: median abs 0.0008, q {'0.001': 0.0, '0.01': 0.0, '0.05': 0.0, '0.25': 0.0, '0.5': 0.0008, '0.75': 0.003, '0.95': 0.0044, '0.99': 0.004699999999999999, '0.999': 0.0048}
+   cs: median abs 0.014099147636443377, q {'0.001': 0.0005144188698614017, '0.01': 0.0018128853733651341, '0.05': 0.003951470833271742, '0.25': 0.008412051014602184, '0.5': 0.014097213745117188, '0.75': 0.026352853514254093, '0.95': 0.0687029730528593, '0.99': 0.1744436207413685, '0.999': 0.6617899139523518}
+   md_dur: median abs 5.2230000495910645, q {'0.001': 0.9110000133514404, '0.01': 1.0410000085830688, '0.05': 1.4450000524520874, '0.25': 3.190999984741211, '0.5': 5.2230000495910645, '0.75': 8.371999740600586, '0.95': 15.055999755859375, '0.99': 17.579999923706055, '0.999': 21.145000457763672}
+   tmat: median abs 6.381999969482422, q {'0.001': 1.0049999952316284, '0.01': 1.1119999885559082, '0.05': 1.5440000295639038, '0.25': 3.621999979019165, '0.5': 6.381999969482422, '0.75': 12.140000343322754, '0.95': 27.707000732421875, '0.99': 30.354999542236328, '0.999': 86.08599653625502}
+   mcap_s: median abs 503.1995544433594, q {'0.001': 0.9743177275657654, '0.01': 3.5408288478851317, '0.05': 12.719750976562501, '0.25': 275.5322265625, '0.5': 503.1995544433594, '0.75': 843.0509033203125, '0.95': 1921.4341308593748, '0.99': 3284.2415234374994, '0.999': 5653.501257812479}
+   ytm: median abs 0.04829968512058258, q {'0.001': 0.0030396833328995856, '0.01': 0.006481731776148081, '0.05': 0.014170528296381235, '0.25': 0.03290711436420679, '0.5': 0.04829968512058258, '0.75': 0.05992301367223263, '0.95': 0.09632797613739966, '0.99': 0.19876638337969962, '0.999': 0.6803265810012817}
+   units: {'ret_vw': {'unit': 'decimal', 'median_abs': 0.011071521788835526}, 'tret': {'unit': 'decimal', 'median_abs': 0.006769193336367607}, 'tret_share_equal_to_2dp': 2.2051813556531875e-05, 'tret_share_equal_to_4dp': 0.0022200535089820115}
+   permno non-null share: {'all': 0.8881, 'investment_grade': 0.9151, 'non_investment_grade': 0.7951, 'unrated': None}
+   non-investment-grade bond value carrying a permno, by year: {'2002': 0.873, '2003': 0.866, '2004': 0.876, '2005': 0.9, '2006': 0.89, '2007': 0.862, '2008': 0.838, '2009': 0.832, '2010': 0.827, '2011': 0.86, '2012': 0.859, '2013': 0.865, '2014': 0.845, '2015': 0.824, '2016': 0.831, '2017': 0.825, '2018': 0.832, '2019': 0.837, '2020': 0.845, '2021': 0.839, '2022': 0.815, '2023': 0.788, '2024': 0.734, '2025': 0.712}
+
+========== issuer_universe
+issuer-months 260,458 | distinct issuers 2620 | high-yield issuer-months 112,984 | distinct high-yield issuers 1765
+high-yield issuers per month: {'min': 203, 'p5': 268.9, 'median': 405.5, 'max': 518} | months 280 200208 to 202511
+yearly mean issuers per month (high-yield, investment-grade): {2002: (272.6, 439.6), 2003: (312.2, 436.0), 2004: (326.6, 436.9), 2005: (331.4, 418.8), 2006: (340.1, 430.6), 2007: (313.0, 384.7), 2008: (290.8, 376.9), 2009: (306.3, 427.2), 2010: (331.1, 476.6), 2011: (354.3, 493.8), 2012: (389.9, 501.0), 2013: (390.5, 541.6), 2014: (437.8, 559.6), 2015: (494.1, 580.2), 2016: (481.0, 573.8), 2017: (478.2, 590.4), 2018: (488.2, 603.3), 2019: (479.3, 596.4), 2020: (484.8, 582.8), 2021: (495.1, 604.7), 2022: (496.8, 625.2), 2023: (469.2, 628.2), 2024: (442.9, 637.4), 2025: (401.4, 654.7)}
+
+========== stock_signals
+-- MomSeasonShort: 117,061,858 bytes, sha256 09e494a3da4041e53c9efcb3f9c7b269fef0967cd8010804b5a6f04c44e39d6d, 3,730,640 rows, 192611 to 202412, 28,081 permnos, median abs 0.06647
+-- Mom6m: 128,916,217 bytes, sha256 7b1ee9dc26a477719423780e9e016dceb6880b5eabcb23ab625447178a105911, 3,895,206 rows, 192605 to 202412, 28,893 permnos, median abs 0.16801
+-- Mom12m: 122,312,193 bytes, sha256 a5fef64b62bf64ae1babc66aa1d9483f6142dadac132f86ff0e53d081564d7ec, 3,715,128 rows, 192611 to 202412, 28,065 permnos, median abs 0.26496
+unit of the stock return: {'unit': 'decimal', 'median_abs_MomSeasonShort': 0.0664709999999999}
+
+========== reconstruction
+keys 4,052,254 | passes [137663, 137339, 0] | origin counts {'-1': 46612, '0': 3730640, '1': 137663, '2': 137339} | panel end 202412
+   mom12m_all: {'n': 3713111, 'share_within_tol': 1.0, 'tol': 0.001, 'median': 1.3877787807814457e-16, 'p90': 4.996003610813204e-16, 'p99': 1.1102230246251565e-15, 'p999': 1.9984014443252818e-15, 'max': 8.526512829121202e-14}
+   mom12m_rolled: {'n': 267393, 'share_within_tol': 1.0, 'tol': 0.001, 'median': 2.220446049250313e-16, 'p90': 7.494005416219807e-16, 'p99': 1.7763568394002505e-15, 'p999': 3.552713678800501e-15, 'max': 8.526512829121202e-14}
+   mom12m_all_from_2002_08: {'n': 1175773, 'share_within_tol': 1.0, 'tol': 0.001, 'median': 1.3877787807814457e-16, 'p90': 4.996003610813204e-16, 'p99': 1.1102230246251565e-15, 'p999': 2.220446049250313e-15, 'max': 8.526512829121202e-14}
+   mom12m_rolled_from_2002_08: {'n': 117163, 'share_within_tol': 1.0, 'tol': 0.001, 'median': 2.220446049250313e-16, 'p90': 8.326672684688674e-16, 'p99': 1.7763568394002505e-15, 'p999': 3.552713678800501e-15, 'max': 8.526512829121202e-14}
+   roll_formula_on_seeds_all: {'n': 3585112, 'share_within_tol': 1.0, 'tol': 0.001, 'median': 1.1102230246251565e-16, 'p90': 2.8275992658421956e-16, 'p99': 4.996003610813204e-16, 'p999': 7.216449660063518e-16, 'max': 2.1316282072803006e-14}
+   roll_formula_on_seeds_from_2002_08: {'n': 1085905, 'share_within_tol': 1.0, 'tol': 0.001, 'median': 1.1102230246251565e-16, 'p90': 2.914335439641036e-16, 'p99': 4.996003610813204e-16, 'p999': 8.881784197001252e-16, 'max': 2.1316282072803006e-14}
+
+========== coverage
+-- high_yield: issuer-months 112,984, listed at t 0.810, ok 0.793
+   reasons: {'ok': 89626, 'permno_not_in_stock_file': 9125, 'not_listed_yet_at_t': 2276, 'delisted_before_t': 9966, 'gap_at_t': 126, 't_is_final_month': 492, 't_is_panel_end': 348, 't1_is_final_month_lost': 499, 't1_is_panel_end': 354, 't1_unrecovered_other': 172}
+-- investment_grade: issuer-months 147,474, listed at t 0.764, ok 0.754
+   reasons: {'ok': 111266, 'permno_not_in_stock_file': 20473, 'not_listed_yet_at_t': 325, 'delisted_before_t': 13922, 'gap_at_t': 16, 't_is_final_month': 211, 't_is_panel_end': 507, 't1_is_final_month_lost': 215, 't1_is_panel_end': 507, 't1_unrecovered_other': 32}
+-- all: issuer-months 260,458, listed at t 0.784, ok 0.771
+   reasons: {'ok': 200892, 'permno_not_in_stock_file': 29598, 'not_listed_yet_at_t': 2601, 'delisted_before_t': 23888, 'gap_at_t': 142, 't_is_final_month': 703, 't_is_panel_end': 855, 't1_is_final_month_lost': 714, 't1_is_panel_end': 861, 't1_unrecovered_other': 204}
+high-yield reasons by year:
+   2002: n   1363, ok 0.855, final month lost 9, {'delisted_before_t': 91, 'gap_at_t': 5, 'not_listed_yet_at_t': 19, 'ok': 1166, 'permno_not_in_stock_file': 58, 't1_is_final_month_lost': 9, 't1_is_panel_end': 0, 't1_unrecovered_other': 5, 't_is_final_month': 10, 't_is_panel_end': 0}
+   2003: n   3746, ok 0.842, final month lost 12, {'delisted_before_t': 247, 'gap_at_t': 12, 'not_listed_yet_at_t': 111, 'ok': 3156, 'permno_not_in_stock_file': 163, 't1_is_final_month_lost': 12, 't1_is_panel_end': 0, 't1_unrecovered_other': 33, 't_is_final_month': 12, 't_is_panel_end': 0}
+   2004: n   3919, ok 0.856, final month lost 22, {'delisted_before_t': 181, 'gap_at_t': 20, 'not_listed_yet_at_t': 153, 'ok': 3353, 'permno_not_in_stock_file': 168, 't1_is_final_month_lost': 22, 't1_is_panel_end': 0, 't1_unrecovered_other': 2, 't_is_final_month': 20, 't_is_panel_end': 0}
+   2005: n   3977, ok 0.845, final month lost 28, {'delisted_before_t': 190, 'gap_at_t': 5, 'not_listed_yet_at_t': 147, 'ok': 3360, 'permno_not_in_stock_file': 206, 't1_is_final_month_lost': 28, 't1_is_panel_end': 0, 't1_unrecovered_other': 10, 't_is_final_month': 31, 't_is_panel_end': 0}
+   2006: n   4081, ok 0.856, final month lost 23, {'delisted_before_t': 199, 'gap_at_t': 3, 'not_listed_yet_at_t': 123, 'ok': 3495, 'permno_not_in_stock_file': 216, 't1_is_final_month_lost': 23, 't1_is_panel_end': 0, 't1_unrecovered_other': 2, 't_is_final_month': 20, 't_is_panel_end': 0}
+   2007: n   3756, ok 0.833, final month lost 37, {'delisted_before_t': 229, 'gap_at_t': 1, 'not_listed_yet_at_t': 116, 'ok': 3128, 'permno_not_in_stock_file': 203, 't1_is_final_month_lost': 37, 't1_is_panel_end': 0, 't1_unrecovered_other': 9, 't_is_final_month': 33, 't_is_panel_end': 0}
+   2008: n   3490, ok 0.826, final month lost 20, {'delisted_before_t': 249, 'gap_at_t': 0, 'not_listed_yet_at_t': 113, 'ok': 2881, 'permno_not_in_stock_file': 206, 't1_is_final_month_lost': 20, 't1_is_panel_end': 0, 't1_unrecovered_other': 4, 't_is_final_month': 17, 't_is_panel_end': 0}
+   2009: n   3676, ok 0.822, final month lost 13, {'delisted_before_t': 248, 'gap_at_t': 1, 'not_listed_yet_at_t': 115, 'ok': 3020, 'permno_not_in_stock_file': 231, 't1_is_final_month_lost': 13, 't1_is_panel_end': 0, 't1_unrecovered_other': 35, 't_is_final_month': 13, 't_is_panel_end': 0}
+   2010: n   3973, ok 0.836, final month lost 19, {'delisted_before_t': 189, 'gap_at_t': 15, 'not_listed_yet_at_t': 119, 'ok': 3322, 'permno_not_in_stock_file': 294, 't1_is_final_month_lost': 19, 't1_is_panel_end': 0, 't1_unrecovered_other': 1, 't_is_final_month': 14, 't_is_panel_end': 0}
+   2011: n   4252, ok 0.823, final month lost 24, {'delisted_before_t': 202, 'gap_at_t': 0, 'not_listed_yet_at_t': 153, 'ok': 3499, 'permno_not_in_stock_file': 349, 't1_is_final_month_lost': 24, 't1_is_panel_end': 0, 't1_unrecovered_other': 1, 't_is_final_month': 24, 't_is_panel_end': 0}
+   2012: n   4679, ok 0.827, final month lost 14, {'delisted_before_t': 185, 'gap_at_t': 0, 'not_listed_yet_at_t': 158, 'ok': 3869, 'permno_not_in_stock_file': 426, 't1_is_final_month_lost': 14, 't1_is_panel_end': 0, 't1_unrecovered_other': 11, 't_is_final_month': 16, 't_is_panel_end': 0}
+   2013: n   4686, ok 0.818, final month lost 20, {'delisted_before_t': 204, 'gap_at_t': 9, 'not_listed_yet_at_t': 147, 'ok': 3833, 'permno_not_in_stock_file': 450, 't1_is_final_month_lost': 20, 't1_is_panel_end': 0, 't1_unrecovered_other': 0, 't_is_final_month': 23, 't_is_panel_end': 0}
+   2014: n   5253, ok 0.818, final month lost 21, {'delisted_before_t': 282, 'gap_at_t': 0, 'not_listed_yet_at_t': 145, 'ok': 4295, 'permno_not_in_stock_file': 486, 't1_is_final_month_lost': 21, 't1_is_panel_end': 0, 't1_unrecovered_other': 4, 't_is_final_month': 20, 't_is_panel_end': 0}
+   2015: n   5929, ok 0.824, final month lost 24, {'delisted_before_t': 374, 'gap_at_t': 0, 'not_listed_yet_at_t': 141, 'ok': 4884, 'permno_not_in_stock_file': 471, 't1_is_final_month_lost': 24, 't1_is_panel_end': 0, 't1_unrecovered_other': 7, 't_is_final_month': 28, 't_is_panel_end': 0}
+   2016: n   5772, ok 0.819, final month lost 29, {'delisted_before_t': 345, 'gap_at_t': 14, 'not_listed_yet_at_t': 131, 'ok': 4728, 'permno_not_in_stock_file': 480, 't1_is_final_month_lost': 29, 't1_is_panel_end': 0, 't1_unrecovered_other': 19, 't_is_final_month': 26, 't_is_panel_end': 0}
+   2017: n   5739, ok 0.822, final month lost 31, {'delisted_before_t': 338, 'gap_at_t': 16, 'not_listed_yet_at_t': 103, 'ok': 4720, 'permno_not_in_stock_file': 496, 't1_is_final_month_lost': 31, 't1_is_panel_end': 0, 't1_unrecovered_other': 3, 't_is_final_month': 32, 't_is_panel_end': 0}
+   2018: n   5859, ok 0.827, final month lost 26, {'delisted_before_t': 295, 'gap_at_t': 12, 'not_listed_yet_at_t': 106, 'ok': 4844, 'permno_not_in_stock_file': 551, 't1_is_final_month_lost': 26, 't1_is_panel_end': 0, 't1_unrecovered_other': 2, 't_is_final_month': 23, 't_is_panel_end': 0}
+   2019: n   5752, ok 0.837, final month lost 26, {'delisted_before_t': 258, 'gap_at_t': 9, 'not_listed_yet_at_t': 55, 'ok': 4816, 'permno_not_in_stock_file': 543, 't1_is_final_month_lost': 26, 't1_is_panel_end': 0, 't1_unrecovered_other': 15, 't_is_final_month': 30, 't_is_panel_end': 0}
+   2020: n   5818, ok 0.828, final month lost 28, {'delisted_before_t': 331, 'gap_at_t': 0, 'not_listed_yet_at_t': 43, 'ok': 4817, 'permno_not_in_stock_file': 562, 't1_is_final_month_lost': 28, 't1_is_panel_end': 0, 't1_unrecovered_other': 8, 't_is_final_month': 29, 't_is_panel_end': 0}
+   2021: n   5941, ok 0.838, final month lost 20, {'delisted_before_t': 297, 'gap_at_t': 4, 'not_listed_yet_at_t': 35, 'ok': 4981, 'permno_not_in_stock_file': 582, 't1_is_final_month_lost': 20, 't1_is_panel_end': 0, 't1_unrecovered_other': 1, 't_is_final_month': 21, 't_is_panel_end': 0}
+   2022: n   5962, ok 0.847, final month lost 18, {'delisted_before_t': 332, 'gap_at_t': 0, 'not_listed_yet_at_t': 12, 'ok': 5050, 'permno_not_in_stock_file': 532, 't1_is_final_month_lost': 18, 't1_is_panel_end': 0, 't1_unrecovered_other': 0, 't_is_final_month': 18, 't_is_panel_end': 0}
+   2023: n   5631, ok 0.834, final month lost 23, {'delisted_before_t': 356, 'gap_at_t': 0, 'not_listed_yet_at_t': 15, 'ok': 4697, 'permno_not_in_stock_file': 520, 't1_is_final_month_lost': 23, 't1_is_panel_end': 0, 't1_unrecovered_other': 0, 't_is_final_month': 20, 't_is_panel_end': 0}
+   2024: n   5315, ok 0.698, final month lost 12, {'delisted_before_t': 349, 'gap_at_t': 0, 'not_listed_yet_at_t': 16, 'ok': 3712, 'permno_not_in_stock_file': 512, 't1_is_final_month_lost': 12, 't1_is_panel_end': 354, 't1_unrecovered_other': 0, 't_is_final_month': 12, 't_is_panel_end': 348}
+   2025: n   4415, ok 0.000, final month lost 0, {'delisted_before_t': 3995, 'gap_at_t': 0, 'not_listed_yet_at_t': 0, 'ok': 0, 'permno_not_in_stock_file': 420, 't1_is_final_month_lost': 0, 't1_is_panel_end': 0, 't1_unrecovered_other': 0, 't_is_final_month': 0, 't_is_panel_end': 0}
+high-yield issuers per month, listed_at_t: {'min': 0, 'p5': 180.0, 'p25': 283.75, 'median': 330.5, 'max': 440, 'months_below_50': 11, 'months_below_100': 11}
+high-yield issuers per month, with_outcome: {'min': 0, 'p5': 175.0, 'p25': 278.75, 'median': 326.0, 'max': 436, 'months_below_50': 13, 'months_below_100': 13}
+   validation, high-yield stocks, mom12m_all: {'n': 217185, 'share_within_tol': 1.0, 'tol': 0.001, 'median': 1.6653345369377348e-16, 'p90': 4.996003610813204e-16, 'p99': 1.1102230246251565e-15, 'p999': 1.9984014443252818e-15, 'max': 1.4210854715202004e-14}
+   validation, high-yield stocks, mom12m_rolled: {'n': 15199, 'share_within_tol': 1.0, 'tol': 0.001, 'median': 2.220446049250313e-16, 'p90': 8.881784197001252e-16, 'p99': 1.7763568394002505e-15, 'p999': 3.1086244689504383e-15, 'max': 3.9968028886505635e-15}
+   validation, high-yield stocks, mom12m_comparable_share: 0.9999493545000828
+   validation, high-yield stocks, roll_formula_on_seeds: {'n': 204497, 'share_within_tol': 1.0, 'tol': 0.001, 'median': 1.1102230246251565e-16, 'p90': 2.914335439641036e-16, 'p99': 4.996003610813204e-16, 'p999': 7.216449660063518e-16, 'max': 6.661338147750939e-15}
+
+probe complete | sections failed or skipped: []
