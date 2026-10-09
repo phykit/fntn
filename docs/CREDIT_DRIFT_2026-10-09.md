@@ -38,7 +38,7 @@ credit weakened most in month t underperform, in month t+1, those whose credit s
 | `probe`, run number 3 | the same probe after "listed at t" was narrowed to a signal row (see below) | **complete**, on `711dba7`; results in `tools/credit_drift/results/3/` and summarised below |
 | freeze | `tools/credit_drift/PREREG.md` committed with the analysis code before `run` is dispatched | **done in this commit**; hashes below |
 | `run`, run number 4 | the frozen test, on the files frozen at `5444df2` | dispatched with this commit |
-| `verify` | an independent reimplementation of the headline numbers from the specification alone | pending |
+| `verify`, run number 5 | the independent implementation (`verify.py`, frozen at `5444df2`) on the same pinned inputs | dispatched with this commit, before the result of run number 4 was read |
 
 ## Probe run 2: what it shows (structure only; no signal was placed beside any outcome)
 
