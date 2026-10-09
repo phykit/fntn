@@ -1,0 +1,22 @@
+ok   parse_signal round trip: MomSeasonShort, 68,279 rows
+ok   parse_signal round trip: Mom6m, 71,567 rows
+ok   parse_signal round trip: Mom12m, 68,039 rows
+ok   parse_signal refuses unexpected columns
+ok   no return is recovered for a month the firm was not listed
+ok   recovered returns equal the truth: 73,540 months, max abs error 1.83e-15
+ok   no firm's final month is recovered (600 final months)
+ok   share of non-final months recovered: 0.9924 (561 unrecovered: short histories, gaps, guard)
+ok   panel end is the last signal month
+     passes: [2696, 2565, 0] | origin counts: {np.int16(-1): np.int64(809), np.int16(0): np.int64(68279), np.int16(1): np.int64(2696), np.int16(2): np.int64(2565)}
+ok   Mom12m rebuilt, all comparisons: n 67,902, max 4.00e-15
+ok   Mom12m rebuilt, rolled comparisons: n 5,339, max 4.00e-15
+ok   roll-forward formula against seeds: n 64,773, max 5.72e-15
+ok   issuer-months: 45,317 rows, same as brute force
+ok   issuer-month CR, hy_share, n_bonds and DCS equal brute force (max abs diff 3.33e-16)
+ok   linkage reasons equal brute force on 45,317 issuer-months
+ok   every reason is reached: {'ok': 38568, 'permno_not_in_stock_file': 4153, 'not_listed_yet_at_t': 857, 'after_stock_file_end': 559, 'delisted_before_t': 304, 't1_is_panel_end': 215, 't_is_panel_end': 213, 't1_unrecovered_other': 130, 't_is_final_month': 108, 't1_is_final_month_lost': 105, 'gap_at_t': 105}
+ok   unit rule: synthetic bond returns are decimal
+ok   unit rule: the same in per cent is seen as per cent
+ok   unit rule: synthetic stock returns are decimal
+
+selftest: PASSED (0 failure(s))
