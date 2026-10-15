@@ -93,9 +93,10 @@ needs is defined (its aligned sample, in date order, length m).
 - Each h: slope b_h of R_h on M, Newey-West t, p+, p-, p2, minimum detectable slope 2.80 x s.e.
   **Primary: b_5; s = sign(b_5).**
 - **Incremental:** R_5 on a constant, M, n1, n5, n20; coefficient g with Newey-West t (L = 10).
-- **Out of sample:** on the aligned sample of {M, n1, n5, n20, R_5}, for t >= 750, fit baseline
-  (n1, n5, n20) and augmented (plus M) by OLS on positions 0..t-5; R2_OS = 1 - SSE_aug / SSE_base;
-  Clark-West mean and Newey-West t (L = 10).
+- **Out of sample:** on the aligned sample of {M, n1, n5, n20, R_5}, with positions counted within
+  that aligned sample, for t >= 750, fit the baseline (n1, n5, n20) and the augmented model (plus
+  M) by OLS on positions 0..t-5 inclusive; R2_OS = 1 - SSE_aug / SSE_base; Clark-West mean and
+  Newey-West t (L = 10).
 - **Size:** Q = 80th percentile of s x M on the h = 5 aligned sample; Dq = mean R_5 on days with
   s x M >= Q minus mean R_5 over all days. If s = 0, Dq = 0.
 
