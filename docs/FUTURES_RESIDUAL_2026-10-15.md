@@ -38,3 +38,27 @@ observation of any input is stored, printed or committed.
 A PASS authorises nothing: it would justify one separate frozen test of a tradable expression
 (front futures, roll-aware, with costs and the operator's futures permissions, which are
 unverified). A FAIL is no support at the detectable size. The spot price itself is not traded.
+
+## Result (run 1, commit 9b639e6, 15 October 2026 09:38 UTC; `tools/futures_residual/results/1/`)
+
+Freeze record verified on the runner; self-test OK; independent reimplementation agreed on all 120
+criterion figures.
+
+| Asset | HL (level M) | HC (change dM) |
+|---|---|---|
+| Natural gas (primary) | **PASS, sign +** (b_5 = +0.55% per pp, NW t 6.1, R2_OS +0.106, Dq +4.4%) | WEAK, sign + (incremental t 1.7, R2_OS negative) |
+| Heating oil (replication) | PASS, sign + (b_5 = +0.18% per pp, NW t 2.8, R2_OS +0.011) | FAIL |
+| Gasoline (replication) | PASS, sign + (b_5 = +0.19% per pp, NW t 5.6, R2_OS +0.034) | FAIL |
+
+**What it means.** A futures premium over spot is followed by a spot rise, in every year from 2007
+and in every regime split, for all three products. That is the spot price converging to the front
+contract, which is what the Chinn and Coibion prior says at longer horizons and what a noisy
+day-ahead physical price does against a monthly contract. **It is not a trading signal for this
+operator:** the tradable expression (the front futures contract held within one contract, section 8
+item 2) shows nothing at h = 5 (gas NW t 1.2, Dq on futures -0.48%; heating oil t 0.4; gasoline
+t 1.0). The spot price is physical delivery and is not an instrument the operator can hold. The
+information is in the futures price already; the proposal's own section 10 names this case.
+
+**What it licenses.** Nothing. A PASS on the spot outcome with a null on the futures outcome is the
+proposal's "predictive information without profitability". No follow-up test is proposed. No §13 row
+is opened.
