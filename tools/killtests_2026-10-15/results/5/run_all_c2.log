@@ -1,0 +1,241 @@
+== freeze check
+106f7d1fb3ea80fc04866d241629f792fffd34c05a73c8809a2bc61d3773f245  tools/killtests_2026-10-15/c2_vx/PREREG.md
+9646cd481fe390b56043e6261bcb3e66977fe2ace2ecffe0593e9f820a972fac  tools/killtests_2026-10-15/c2_vx/run_c2.py
+a9b3be6ad5cee9a266efd6f4fa45cbc6979ae54a49e0e0c3ed97550e27cf8dd0  tools/killtests_2026-10-15/c2_vx/verify_c2.py
+711ce53e03919519ea41dc8b1d2efda90c5d6b1d5807e840200cd0f45fc29de4  tools/killtests_2026-10-15/c2_vx/fetch_c2.py
+61b8acc425f717230a928ce1062bc706c8c02c2dfb08ccbb716ab6995297bc15  tools/killtests_2026-10-15/c2_vx/synth_c2.py
+f3db0bc463e83d073e9ee7ab44102e30843906b528536c6b04bf8ecca768d45c  tools/killtests_2026-10-15/c2_vx/selftest_c2.py
+dd7e48d2e1bf90d91eeea7ed93ed19b54e72a6e9b027cdd96000d4a4fd3063b8  tools/killtests_2026-10-15/c2_vx/compare_c2.py
+fea896edf58b44d711dd08d2ad3e183d099f919d5305e46403ed0a6f8e183beb  tools/killtests_2026-10-15/kt.py
+77b6ed9b060b07edba977b2cd469b18c7136d79307cefab305aa60ca4c8e0506  tools/killtests_2026-10-15/cal.py
+106f7d1fb3ea80fc04866d241629f792fffd34c05a73c8809a2bc61d3773f245  tools/killtests_2026-10-15/c2_vx/PREREG.md
+9646cd481fe390b56043e6261bcb3e66977fe2ace2ecffe0593e9f820a972fac  tools/killtests_2026-10-15/c2_vx/run_c2.py
+a9b3be6ad5cee9a266efd6f4fa45cbc6979ae54a49e0e0c3ed97550e27cf8dd0  tools/killtests_2026-10-15/c2_vx/verify_c2.py
+fea896edf58b44d711dd08d2ad3e183d099f919d5305e46403ed0a6f8e183beb  tools/killtests_2026-10-15/kt.py
+77b6ed9b060b07edba977b2cd469b18c7136d79307cefab305aa60ca4c8e0506  tools/killtests_2026-10-15/cal.py
+frozen 2026-10-15T10:38:00Z
+freeze record verified
+== self-test
+null: ['FAIL (sign +)', 'FAIL (sign +)', 'FAIL (sign -)']
+planted: PASS (sign -)
+SELFTEST OK
+== fetch
+2013-01: expiry file 2013-01-16 (as computed), 11 rows
+2013-02: expiry file 2013-02-13 (as computed), 30 rows
+2013-03: expiry file 2013-03-20 (as computed), 54 rows
+2013-04: expiry file 2013-04-17 (as computed), 73 rows
+2013-05: expiry file 2013-05-22 (as computed), 98 rows
+2013-06: expiry file 2013-06-19 (as computed), 117 rows
+2013-07: expiry file 2013-07-17 (as computed), 136 rows
+2013-08: expiry file 2013-08-21 (as computed), 161 rows
+2013-09: expiry file 2013-09-18 (as computed), 180 rows
+2013-10: expiry file 2013-10-16 (as computed), 188 rows
+2013-11: expiry file 2013-11-20 (as computed), 194 rows
+2013-12: expiry file 2013-12-18 (as computed), 188 rows
+2014-01: expiry file 2014-01-22 (as computed), 191 rows
+2014-02: expiry file 2014-02-19 (as computed), 186 rows
+2014-03: expiry file 2014-03-18 (as computed), 186 rows
+2014-04: expiry file 2014-04-16 (as computed), 188 rows
+2014-05: expiry file 2014-05-21 (as computed), 186 rows
+2014-06: expiry file 2014-06-18 (as computed), 186 rows
+2014-07: expiry file 2014-07-16 (as computed), 185 rows
+2014-08: expiry file 2014-08-20 (as computed), 185 rows
+2014-09: expiry file 2014-09-17 (as computed), 185 rows
+2014-10: expiry file 2014-10-22 (as computed), 188 rows
+2014-11: expiry file 2014-11-19 (as computed), 189 rows
+2014-12: expiry file 2014-12-17 (as computed), 188 rows
+2015-01: expiry file 2015-01-21 (as computed), 191 rows
+2015-02: expiry file 2015-02-18 (as computed), 185 rows
+2015-03: expiry file 2015-03-18 (as computed), 186 rows
+2015-04: expiry file 2015-04-15 (as computed), 187 rows
+2015-05: expiry file 2015-05-20 (as computed), 187 rows
+2015-06: expiry file 2015-06-17 (as computed), 187 rows
+2015-07: expiry file 2015-07-22 (as computed), 186 rows
+2015-08: expiry file 2015-08-19 (as computed), 186 rows
+2015-09: expiry file 2015-09-16 (as computed), 186 rows
+2015-10: expiry file 2015-10-21 (as computed), 189 rows
+2015-11: expiry file 2015-11-18 (as computed), 190 rows
+2015-12: expiry file 2015-12-16 (as computed), 189 rows
+2016-01: expiry file 2016-01-20 (as computed), 191 rows
+2016-02: expiry file 2016-02-17 (as computed), 185 rows
+2016-03: expiry file 2016-03-16 (as computed), 186 rows
+2016-04: expiry file 2016-04-20 (as computed), 186 rows
+2016-05: expiry file 2016-05-18 (as computed), 186 rows
+2016-06: expiry file 2016-06-15 (as computed), 186 rows
+2016-07: expiry file 2016-07-20 (as computed), 185 rows
+2016-08: expiry file 2016-08-17 (as computed), 185 rows
+2016-09: expiry file 2016-09-21 (as computed), 190 rows
+2016-10: expiry file 2016-10-19 (as computed), 188 rows
+2016-11: expiry file 2016-11-16 (as computed), 189 rows
+2016-12: expiry file 2016-12-21 (as computed), 193 rows
+2017-01: expiry file 2017-01-18 (as computed), 186 rows
+2017-02: expiry file 2017-02-15 (as computed), 186 rows
+2017-03: expiry file 2017-03-22 (as computed), 191 rows
+2017-04: expiry file 2017-04-19 (as computed), 186 rows
+2017-05: expiry file 2017-05-17 (as computed), 186 rows
+2017-06: expiry file 2017-06-21 (as computed), 186 rows
+2017-07: expiry file 2017-07-19 (as computed), 185 rows
+2017-08: expiry file 2017-08-16 (as computed), 185 rows
+2017-09: expiry file 2017-09-20 (as computed), 185 rows
+2017-10: expiry file 2017-10-18 (as computed), 188 rows
+2017-11: expiry file 2017-11-15 (as computed), 188 rows
+2017-12: expiry file 2017-12-20 (as computed), 188 rows
+2018-01: expiry file 2018-01-17 (as computed), 186 rows
+2018-02: expiry file 2018-02-14 (as computed), 186 rows
+2018-03: expiry file 2018-03-21 (as computed), 186 rows
+2018-04: expiry file 2018-04-18 (as computed), 186 rows
+2018-05: expiry file 2018-05-16 (as computed), 186 rows
+2018-06: expiry file 2018-06-20 (as computed), 186 rows
+2018-07: expiry file 2018-07-18 (as computed), 185 rows
+2018-08: expiry file 2018-08-22 (as computed), 190 rows
+2018-09: expiry file 2018-09-19 (as computed), 185 rows
+2018-10: expiry file 2018-10-17 (as computed), 188 rows
+2018-11: expiry file 2018-11-21 (as computed), 193 rows
+2018-12: expiry file 2018-12-19 (as computed), 188 rows
+2019-01: expiry file 2019-01-16 (as computed), 187 rows
+2019-02: expiry file 2019-02-13 (as computed), 186 rows
+2019-03: expiry file 2019-03-19 (as computed), 185 rows
+2019-04: expiry file 2019-04-17 (as computed), 187 rows
+2019-05: expiry file 2019-05-22 (as computed), 186 rows
+2019-06: expiry file 2019-06-19 (as computed), 186 rows
+2019-07: expiry file 2019-07-17 (as computed), 185 rows
+2019-08: expiry file 2019-08-21 (as computed), 186 rows
+2019-09: expiry file 2019-09-18 (as computed), 185 rows
+2019-10: expiry file 2019-10-16 (as computed), 187 rows
+2019-11: expiry file 2019-11-20 (as computed), 193 rows
+2019-12: expiry file 2019-12-18 (as computed), 188 rows
+2020-01: expiry file 2020-01-22 (as computed), 191 rows
+2020-02: expiry file 2020-02-19 (as computed), 185 rows
+2020-03: expiry file 2020-03-18 (as computed), 186 rows
+2020-04: expiry file 2020-04-15 (as computed), 186 rows
+2020-05: expiry file 2020-05-20 (as computed), 186 rows
+2020-06: expiry file 2020-06-17 (as computed), 186 rows
+2020-07: expiry file 2020-07-22 (as computed), 190 rows
+2020-08: expiry file 2020-08-19 (as computed), 185 rows
+2020-09: expiry file 2020-09-16 (as computed), 195 rows
+2020-10: expiry file 2020-10-21 (as computed), 220 rows
+2020-11: expiry file 2020-11-18 (as computed), 240 rows
+2020-12: expiry file 2020-12-16 (as computed), 188 rows
+2021-01: expiry file 2021-01-20 (as computed), 191 rows
+2021-02: expiry file 2021-02-17 (as computed), 185 rows
+2021-03: expiry file 2021-03-17 (as computed), 186 rows
+2021-04: expiry file 2021-04-21 (as computed), 186 rows
+2021-05: expiry file 2021-05-19 (as computed), 186 rows
+2021-06: expiry file 2021-06-16 (as computed), 186 rows
+2021-07: expiry file 2021-07-21 (as computed), 185 rows
+2021-08: expiry file 2021-08-18 (as computed), 185 rows
+2021-09: expiry file 2021-09-15 (as computed), 185 rows
+2021-10: expiry file 2021-10-20 (as computed), 188 rows
+2021-11: expiry file 2021-11-17 (as computed), 189 rows
+2021-12: expiry file 2021-12-22 (as computed), 193 rows
+2022-01: expiry file 2022-01-19 (as computed), 187 rows
+2022-02: expiry file 2022-02-16 (as computed), 187 rows
+2022-03: expiry file 2022-03-15 (as computed), 186 rows
+2022-04: expiry file 2022-04-20 (as computed), 187 rows
+2022-05: expiry file 2022-05-18 (as computed), 187 rows
+2022-06: expiry file 2022-06-15 (as computed), 187 rows
+2022-07: expiry file 2022-07-20 (as computed), 185 rows
+2022-08: expiry file 2022-08-17 (as computed), 185 rows
+2022-09: expiry file 2022-09-21 (as computed), 186 rows
+2022-10: expiry file 2022-10-19 (as computed), 187 rows
+2022-11: expiry file 2022-11-16 (as computed), 187 rows
+2022-12: expiry file 2022-12-21 (as computed), 192 rows
+2023-01: expiry file 2023-01-18 (as computed), 185 rows
+2023-02: expiry file 2023-02-15 (as computed), 185 rows
+2023-03: expiry file 2023-03-22 (as computed), 190 rows
+2023-04: expiry file 2023-04-19 (as computed), 186 rows
+2023-05: expiry file 2023-05-17 (as computed), 186 rows
+2023-06: expiry file 2023-06-21 (as computed), 185 rows
+2023-07: expiry file 2023-07-19 (as computed), 184 rows
+2023-08: expiry file 2023-08-16 (as computed), 184 rows
+2023-09: expiry file 2023-09-20 (as computed), 184 rows
+2023-10: expiry file 2023-10-18 (as computed), 187 rows
+2023-11: expiry file 2023-11-15 (as computed), 187 rows
+2023-12: expiry file 2023-12-20 (as computed), 187 rows
+2024-01: expiry file 2024-01-17 (as computed), 185 rows
+2024-02: expiry file 2024-02-14 (as computed), 185 rows
+2024-03: expiry file 2024-03-20 (as computed), 186 rows
+2024-04: expiry file 2024-04-17 (as computed), 186 rows
+2024-05: expiry file 2024-05-22 (as computed), 191 rows
+2024-06: expiry file 2024-06-18 (as computed), 185 rows
+2024-07: expiry file 2024-07-17 (as computed), 184 rows
+2024-08: expiry file 2024-08-21 (as computed), 189 rows
+2024-09: expiry file 2024-09-18 (as computed), 184 rows
+2024-10: expiry file 2024-10-16 (as computed), 187 rows
+2024-11: expiry file 2024-11-20 (as computed), 192 rows
+2024-12: expiry file 2024-12-18 (as computed), 187 rows
+2025-01: expiry file 2025-01-22 (as computed), 190 rows
+2025-02: expiry file 2025-02-19 (as computed), 184 rows
+2025-03: expiry file 2025-03-18 (as computed), 185 rows
+2025-04: expiry file 2025-04-16 (as computed), 187 rows
+2025-05: expiry file 2025-05-21 (as computed), 186 rows
+2025-06: expiry file 2025-06-18 (as computed), 186 rows
+2025-07: expiry file 2025-07-16 (as computed), 184 rows
+2025-08: expiry file 2025-08-20 (as computed), 184 rows
+2025-09: expiry file 2025-09-17 (as computed), 184 rows
+2025-10: expiry file 2025-10-22 (as computed), 187 rows
+2025-11: expiry file 2025-11-19 (as computed), 188 rows
+2025-12: expiry file 2025-12-17 (as computed), 187 rows
+2026-01: expiry file 2026-01-21 (as computed), 190 rows
+2026-02: expiry file 2026-02-18 (as computed), 184 rows
+2026-03: expiry file 2026-03-18 (as computed), 186 rows
+2026-04: expiry file 2026-04-15 (as computed), 186 rows
+2026-05: expiry file 2026-05-19 (as computed), 185 rows
+2026-06: expiry file 2026-06-17 (as computed), 186 rows
+2026-07: expiry file 2026-07-22 (as computed), 184 rows
+2026-08: expiry file 2026-08-19 (as computed), 184 rows
+2026-09: expiry file 2026-09-16 (as computed), 184 rows
+2026-10: expiry file 2026-10-21 (as computed), 182 rows
+2026-11: expiry file 2026-11-18 (as computed), 163 rows
+vx.csv: 30441 contract-days, 167 monthly contracts, expiries 2013-01-16..2026-11-18
+vix: 9267 rows, 1990-01-02..2026-10-15
+etp (VIXY): 3968 rows, 2011-01-04..2026-10-14
+fetch complete
+== run
+=== C2 VX basis: joint 3372 2013-05-20..2026-10-14; 167 monthly contracts 2013-01-16..2026-11-18; VIXY days without a futures pair 0
+  B30 mean +8.267 median +9.438 sd 9.407 p5 -8.210 p95 +21.254 share>0 0.825; Bf mean +5.133 share>0 0.786; tau1 mean 16.1 d
+  H (B30 on VIXY next-open-to-close return): sign +1
+    h=1 n=3371 slope=-0.0008 per_sd=-0.0076 NW t=-0.1134 p2=0.8634 MDE=+0.0201
+    h=5 n=3367 slope=+0.0261 per_sd=+0.2456 NW t=+0.4962 p2=0.3763 MDE=+0.1473
+    h=20 n=3352 slope=+0.1182 per_sd=+1.1123 NW t=+1.0071 p2=0.2591 MDE=+0.3285
+    incremental g=-0.0755 t=-1.3440; OOS n=2597 R2_OS=-0.0039 CW t=+0.6930; size Dq=+0.4842 (n_top 674); halves +0.0350 / +0.0182; holdout +0.1186
+    quintile means R5: [-2.293, -0.96, -0.979, -0.885, -0.674]
+    criteria {"a_primary": false, "b_horizons": false, "c_halves": true, "d_incremental": false, "e_oos": false, "f_size": true} VERDICT: FAIL (sign +)
+  Bf: h=1 b=-0.0054 t=-0.6198 p2=0.3867; h=5 b=+0.0269 t=+0.4477 p2=0.4731; h=20 b=+0.1183 t=+0.8297 p2=0.2983;
+  RY: h=1 b=-0.0261 t=-0.2403 p2=0.7229; h=5 b=+0.5532 t=+0.9247 p2=0.1274; h=20 b=+2.2099 t=+1.9696 p2=0.0459;
+  contango vs backwardation h=5: 2776 days mean -0.901; 591 days mean -2.366
+  path in size group: n 674 mean -0.674 p5 -8.452 min -13.545
+== verify
+vx: 167 contracts, 3470 dates, 3375 with a pair, 0 duplicate rows dropped
+vix: 9267 rows (0 dup); etp: 3968 rows (0 dup); etp days with no futures pair: 596
+joint calendar N = 3372 (2013-05-20 .. 2026-10-14)
+h= 1: n=3371 b=-0.0008127 t=-0.1134 p+=0.5686 p-=0.4317 p2=0.8634 mde=0.02007
+h= 5: n=3367 b=0.0261 t=0.4962 p+=0.1882 p-=0.8121 p2=0.3763 mde=0.1473
+h=20: n=3352 b=0.1182 t=1.007 p+=0.1295 p-=0.8708 p2=0.2591 mde=0.3285
+s=1  K5=3326  halves 1683/1684: 0.03499 / 0.01816
+incremental n=3347 g=-0.07547 t=-1.344
+oos n=2597 R2_OS=-0.003936 CW mean=0.448 t=0.693
+size Q=16.19 n_top=674 Dq=0.4842
+criteria a=n b=n c=Y d=n e=n f=Y  VERDICT FAIL (s=1)
+== compare
+OK   h1 n 3371 3371
+OK   h1 slope -0.0008127460928207418 -0.0008127460928207418
+OK   h1 nw_t -0.11337788202463403 -0.11337788202463403
+OK   h1 p2 0.8634043830681477 0.8634043830681477
+OK   h5 n 3367 3367
+OK   h5 slope 0.026095228330861215 0.026095228330861215
+OK   h5 nw_t 0.4961957619160704 0.4961957619160704
+OK   h5 p2 0.37631499849714456 0.37631499849714456
+OK   h20 n 3352 3352
+OK   h20 slope 0.11815281158883435 0.11815281158883435
+OK   h20 nw_t 1.0070723228666136 1.0070723228666136
+OK   h20 p2 0.25905797101449274 0.25905797101449274
+OK   half first 0.034994800571575446 0.034994800571575446
+OK   half second 0.018163841374630292 0.018163841374630292
+OK   g -0.07547436539692805 -0.07547436539692805
+OK   g nw_t -1.3440365583662215 -1.3440365583662215
+OK   r2_os -0.00393633222887857 -0.003936332228835493
+OK   cw nw_t 0.6929658571740945 0.6929658571774465
+OK   Dq 0.4842114738707487 0.4842114738707487
+OK   verdict FAIL (sign +) | FAIL {'a': False, 'b': False, 'c': True, 'd': False, 'e': False, 'f': True}
+COMPARE 20 of 20 figures agree; 0 disagree

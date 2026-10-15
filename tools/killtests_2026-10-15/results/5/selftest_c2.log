@@ -1,0 +1,3 @@
+null: ['FAIL (sign +)', 'FAIL (sign +)', 'FAIL (sign -)']
+planted: PASS (sign -)
+SELFTEST OK

@@ -1,0 +1,13 @@
+=== C2 VX basis: joint 3372 2013-05-20..2026-10-14; 167 monthly contracts 2013-01-16..2026-11-18; VIXY days without a futures pair 0
+  B30 mean +8.267 median +9.438 sd 9.407 p5 -8.210 p95 +21.254 share>0 0.825; Bf mean +5.133 share>0 0.786; tau1 mean 16.1 d
+  H (B30 on VIXY next-open-to-close return): sign +1
+    h=1 n=3371 slope=-0.0008 per_sd=-0.0076 NW t=-0.1134 p2=0.8634 MDE=+0.0201
+    h=5 n=3367 slope=+0.0261 per_sd=+0.2456 NW t=+0.4962 p2=0.3763 MDE=+0.1473
+    h=20 n=3352 slope=+0.1182 per_sd=+1.1123 NW t=+1.0071 p2=0.2591 MDE=+0.3285
+    incremental g=-0.0755 t=-1.3440; OOS n=2597 R2_OS=-0.0039 CW t=+0.6930; size Dq=+0.4842 (n_top 674); halves +0.0350 / +0.0182; holdout +0.1186
+    quintile means R5: [-2.293, -0.96, -0.979, -0.885, -0.674]
+    criteria {"a_primary": false, "b_horizons": false, "c_halves": true, "d_incremental": false, "e_oos": false, "f_size": true} VERDICT: FAIL (sign +)
+  Bf: h=1 b=-0.0054 t=-0.6198 p2=0.3867; h=5 b=+0.0269 t=+0.4477 p2=0.4731; h=20 b=+0.1183 t=+0.8297 p2=0.2983;
+  RY: h=1 b=-0.0261 t=-0.2403 p2=0.7229; h=5 b=+0.5532 t=+0.9247 p2=0.1274; h=20 b=+2.2099 t=+1.9696 p2=0.0459;
+  contango vs backwardation h=5: 2776 days mean -0.901; 591 days mean -2.366
+  path in size group: n 674 mean -0.674 p5 -8.452 min -13.545

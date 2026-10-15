@@ -1,0 +1,11 @@
+vx: 167 contracts, 3470 dates, 3375 with a pair, 0 duplicate rows dropped
+vix: 9267 rows (0 dup); etp: 3968 rows (0 dup); etp days with no futures pair: 596
+joint calendar N = 3372 (2013-05-20 .. 2026-10-14)
+h= 1: n=3371 b=-0.0008127 t=-0.1134 p+=0.5686 p-=0.4317 p2=0.8634 mde=0.02007
+h= 5: n=3367 b=0.0261 t=0.4962 p+=0.1882 p-=0.8121 p2=0.3763 mde=0.1473
+h=20: n=3352 b=0.1182 t=1.007 p+=0.1295 p-=0.8708 p2=0.2591 mde=0.3285
+s=1  K5=3326  halves 1683/1684: 0.03499 / 0.01816
+incremental n=3347 g=-0.07547 t=-1.344
+oos n=2597 R2_OS=-0.003936 CW mean=0.448 t=0.693
+size Q=16.19 n_top=674 Dq=0.4842
+criteria a=n b=n c=Y d=n e=n f=Y  VERDICT FAIL (s=1)
