@@ -1,0 +1,238 @@
+{
+ "CL_C1": {
+  "first": "1983-04-04",
+  "last": "2024-04-05",
+  "layout": {
+   "columns": [
+    "Date",
+    "Cushing, OK Crude Oil Future Contract 1 (Dollars per Barrel)"
+   ],
+   "data_sheet": "Data 1",
+   "header_row": 2,
+   "sheets": [
+    "Contents",
+    "Data 1"
+   ]
+  },
+  "numeric": 10183,
+  "rows": 10183
+ },
+ "HO_C1": {
+  "first": "1980-01-02",
+  "last": "2024-04-05",
+  "layout": {
+   "columns": [
+    "Date",
+    "New York Harbor No. 2 Heating Oil Future Contract 1 (Dollars per Gallon)"
+   ],
+   "data_sheet": "Data 1",
+   "header_row": 2,
+   "sheets": [
+    "Contents",
+    "Data 1"
+   ]
+  },
+  "numeric": 9894,
+  "rows": 9894
+ },
+ "NG_C1": {
+  "first": "1994-01-13",
+  "last": "2024-04-05",
+  "layout": {
+   "columns": [
+    "Date",
+    "Natural Gas Futures Contract 1 (Dollars per Million Btu)"
+   ],
+   "data_sheet": "Data 1",
+   "header_row": 2,
+   "sheets": [
+    "Contents",
+    "Data 1"
+   ]
+  },
+  "numeric": 7496,
+  "rows": 7496
+ },
+ "NG_C2": {
+  "first": "1994-01-12",
+  "last": "2024-04-05",
+  "layout": {
+   "columns": [
+    "Date",
+    "Natural Gas Futures Contract 2 (Dollars per Million Btu)"
+   ],
+   "data_sheet": "Data 1",
+   "header_row": 2,
+   "sheets": [
+    "Contents",
+    "Data 1"
+   ]
+  },
+  "numeric": 7500,
+  "rows": 7500
+ },
+ "NG_C3": {
+  "first": "1994-01-19",
+  "last": "2024-04-05",
+  "layout": {
+   "columns": [
+    "Date",
+    "Natural Gas Futures Contract 3 (Dollars per Million Btu)"
+   ],
+   "data_sheet": "Data 1",
+   "header_row": 2,
+   "sheets": [
+    "Contents",
+    "Data 1"
+   ]
+  },
+  "numeric": 7452,
+  "rows": 7452
+ },
+ "NG_C4": {
+  "first": "1993-12-20",
+  "last": "2024-04-05",
+  "layout": {
+   "columns": [
+    "Date",
+    "Natural Gas Futures Contract 4 (Dollars per Million Btu)"
+   ],
+   "data_sheet": "Data 1",
+   "header_row": 2,
+   "sheets": [
+    "Contents",
+    "Data 1"
+   ]
+  },
+  "numeric": 7453,
+  "rows": 7453
+ },
+ "RB_C1": {
+  "first": "2005-10-03",
+  "last": "2024-04-05",
+  "layout": {
+   "columns": [
+    "Date",
+    "New York Harbor Reformulated RBOB Regular Gasoline Future Contract 1 (Dollars per Gallon)"
+   ],
+   "data_sheet": "Data 1",
+   "header_row": 2,
+   "sheets": [
+    "Contents",
+    "Data 1"
+   ]
+  },
+  "numeric": 4609,
+  "rows": 4609
+ },
+ "ng_roll": [
+  [
+   "2024-04",
+   "2024-03-27",
+   "2024-03-27",
+   "...=..."
+  ],
+  [
+   "2024-03",
+   "2024-02-27",
+   "2024-02-27",
+   "..=.=.."
+  ],
+  [
+   "2024-02",
+   "2024-01-29",
+   "2024-01-29",
+   "....==."
+  ],
+  [
+   "2024-01",
+   "2023-12-27",
+   "2023-12-27",
+   "......."
+  ],
+  [
+   "2023-12",
+   "2023-11-28",
+   "2023-11-28",
+   "....=.."
+  ],
+  [
+   "2023-11",
+   "2023-10-27",
+   "2023-10-27",
+   "..=.==."
+  ],
+  [
+   "2023-10",
+   "2023-09-27",
+   "2023-09-27",
+   "...==.."
+  ],
+  [
+   "2023-09",
+   "2023-08-29",
+   "2023-08-29",
+   "....=.."
+  ],
+  [
+   "2023-08",
+   "2023-07-27",
+   "2023-07-27",
+   "==..=.."
+  ],
+  [
+   "2023-07",
+   "2023-06-28",
+   "2023-06-28",
+   "==..=.="
+  ],
+  [
+   "2023-06",
+   "2023-05-29",
+   "2023-05-26",
+   "....=.."
+  ],
+  [
+   "2023-05",
+   "2023-04-26",
+   "2023-04-26",
+   "....=.."
+  ],
+  [
+   "2023-04",
+   "2023-03-29",
+   "2023-03-29",
+   "....=.."
+  ],
+  [
+   "2023-03",
+   "2023-02-24",
+   "2023-02-24",
+   ".====.="
+  ],
+  [
+   "2023-02",
+   "2023-01-27",
+   "2023-01-27",
+   "===.=.."
+  ],
+  [
+   "2023-01",
+   "2022-12-28",
+   "2022-12-28",
+   "=..==.="
+  ],
+  [
+   "2022-12",
+   "2022-11-28",
+   "2022-11-28",
+   ".=..==="
+  ],
+  [
+   "2022-11",
+   "2022-10-27",
+   "2022-10-27",
+   ".=..==."
+  ]
+ ]
+}

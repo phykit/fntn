@@ -1,0 +1,28 @@
+== EIA daily NYMEX settlement series (Excel)
+  NG_C1: 420864 bytes; sheets ['Contents', 'Data 1']; data sheet Data 1 header row 2 columns ['Date', 'Natural Gas Futures Contract 1 (Dollars per Million Btu)']; 7496 rows, 7496 numeric, 1994-01-13..2024-04-05
+  NG_C2: 420864 bytes; sheets ['Contents', 'Data 1']; data sheet Data 1 header row 2 columns ['Date', 'Natural Gas Futures Contract 2 (Dollars per Million Btu)']; 7500 rows, 7500 numeric, 1994-01-12..2024-04-05
+  NG_C3: 416256 bytes; sheets ['Contents', 'Data 1']; data sheet Data 1 header row 2 columns ['Date', 'Natural Gas Futures Contract 3 (Dollars per Million Btu)']; 7452 rows, 7452 numeric, 1994-01-19..2024-04-05
+  NG_C4: 415744 bytes; sheets ['Contents', 'Data 1']; data sheet Data 1 header row 2 columns ['Date', 'Natural Gas Futures Contract 4 (Dollars per Million Btu)']; 7453 rows, 7453 numeric, 1993-12-20..2024-04-05
+  HO_C1: 552448 bytes; sheets ['Contents', 'Data 1']; data sheet Data 1 header row 2 columns ['Date', 'New York Harbor No. 2 Heating Oil Future Contract 1 (Dollars per Gallon)']; 9894 rows, 9894 numeric, 1980-01-02..2024-04-05
+  RB_C1: 271872 bytes; sheets ['Contents', 'Data 1']; data sheet Data 1 header row 2 columns ['Date', 'New York Harbor Reformulated RBOB Regular Gasoline Future Contract 1 (Dollars per Gallon)']; 4609 rows, 4609 numeric, 2005-10-03..2024-04-05
+  CL_C1: 494592 bytes; sheets ['Contents', 'Data 1']; data sheet Data 1 header row 2 columns ['Date', 'Cushing, OK Crude Oil Future Contract 1 (Dollars per Barrel)']; 10183 rows, 10183 numeric, 1983-04-04..2024-04-05
+  NG roll convention, offsets -3..+3 trading days around the computed expiry ('=' means c1[t] is nearer c2[t-1] than c1[t-1], the switch day):
+    delivery 2024-04 computed expiry 2024-03-27 last data day on/before 2024-03-27: ...=...
+    delivery 2024-03 computed expiry 2024-02-27 last data day on/before 2024-02-27: ..=.=..
+    delivery 2024-02 computed expiry 2024-01-29 last data day on/before 2024-01-29: ....==.
+    delivery 2024-01 computed expiry 2023-12-27 last data day on/before 2023-12-27: .......
+    delivery 2023-12 computed expiry 2023-11-28 last data day on/before 2023-11-28: ....=..
+    delivery 2023-11 computed expiry 2023-10-27 last data day on/before 2023-10-27: ..=.==.
+    delivery 2023-10 computed expiry 2023-09-27 last data day on/before 2023-09-27: ...==..
+    delivery 2023-09 computed expiry 2023-08-29 last data day on/before 2023-08-29: ....=..
+    delivery 2023-08 computed expiry 2023-07-27 last data day on/before 2023-07-27: ==..=..
+    delivery 2023-07 computed expiry 2023-06-28 last data day on/before 2023-06-28: ==..=.=
+    delivery 2023-06 computed expiry 2023-05-29 last data day on/before 2023-05-26: ....=..
+    delivery 2023-05 computed expiry 2023-04-26 last data day on/before 2023-04-26: ....=..
+    delivery 2023-04 computed expiry 2023-03-29 last data day on/before 2023-03-29: ....=..
+    delivery 2023-03 computed expiry 2023-02-24 last data day on/before 2023-02-24: .====.=
+    delivery 2023-02 computed expiry 2023-01-27 last data day on/before 2023-01-27: ===.=..
+    delivery 2023-01 computed expiry 2022-12-28 last data day on/before 2022-12-28: =..==.=
+    delivery 2022-12 computed expiry 2022-11-28 last data day on/before 2022-11-28: .=..===
+    delivery 2022-11 computed expiry 2022-10-27 last data day on/before 2022-10-27: .=..==.
+probe complete (roll convention only)
