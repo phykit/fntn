@@ -41,7 +41,7 @@ jobs:
         run: |
           set -euo pipefail
           s="$(head -1 "$T/DISPATCH" | awk '{print $1}')"
-          case "$s" in probe|all) ;; *) echo "DISPATCH names no known step: '$s'"; exit 1 ;; esac
+          case "$s" in probe|all|c2) ;; *) echo "DISPATCH names no known step: '$s'"; exit 1 ;; esac
           echo "step=$s" >> "$GITHUB_OUTPUT"
           echo "step: $s"
       - name: Probe (structure only)
@@ -58,6 +58,13 @@ jobs:
           set -euo pipefail
           mkdir -p out
           bash "$T/run_all.sh" 2>&1 | tee out/run_all.log
+      - name: Test C2 (VIX futures basis)
+        if: ${{ steps.step.outputs.step == 'c2' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          bash "$T/c2_vx/run_c2.sh" 2>&1 | tee out/run_all_c2.log
       - name: Remove the inputs
         if: always()
         shell: bash
