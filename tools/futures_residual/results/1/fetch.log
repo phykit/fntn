@@ -1,0 +1,14 @@
+ng_spot (DHHNGSP): 7761 rows, 1997-01-07..2026-10-06, 2059 missing
+ho_spot (DHOILNYH): 10527 rows, 1986-06-02..2026-10-06, 1727 missing
+rb_spot (DGASNYH): 10527 rows, 1986-06-02..2026-10-06, 1376 missing
+tbill (DTB3): 18987 rows, 1954-01-04..2026-10-13, 801 missing
+NG=F: chart api returned only 269 rows, trying the next route
+NG=F: via yfinance
+ng_fut (NG=F): 6562 rows, 2000-08-30..2026-10-15, 0 missing
+HO=F: chart api returned only 269 rows, trying the next route
+HO=F: via yfinance
+ho_fut (HO=F): 6559 rows, 2000-09-01..2026-10-15, 0 missing
+RB=F: chart api returned only 268 rows, trying the next route
+RB=F: via yfinance
+rb_fut (RB=F): 6520 rows, 2000-11-01..2026-10-15, 0 missing
+fetch complete

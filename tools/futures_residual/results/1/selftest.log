@@ -1,0 +1,8 @@
+zero-residual world: M mean +0.00000 p5 -0.00064 p95 +0.00066 (rate rounded to 0.01 and gaps filled, so small); excluded 1931 of 6869; expiries 322
+null: (a) met in 0 of 12 hypothesis-worlds (expect 0 or 1); PASS in 0
+pos: HL verdicts ['PASS (sign +)', 'PASS (sign +)', 'PASS (sign +)', 'PASS (sign +)'] t5 [8.6, 69.0, 24.6, 60.8] signs [1, 1, 1, 1]
+neg: HL verdicts ['PASS (sign -)', 'PASS (sign -)', 'PASS (sign -)', 'PASS (sign -)'] t5 [-61.3, -38.7, -63.1, -60.6] signs [-1, -1, -1, -1]
+change: HC verdicts ['PASS (sign +)', 'PASS (sign +)', 'PASS (sign +)', 'PASS (sign +)'] t5 [15.0, 16.1, 15.2, 16.6]
+momentum: HL incremental t [-0.0, 0.3, 0.1] R2_OS [-0.0023, -0.0039, -0.0035] n1 alone t(h=1) [8.7, 10.5, 12.4]
+roll: steps >5pp 196 of 321 windows (322 expiries); |dM|>5 within contracts 0; max|dM| 3.890
+SELFTEST OK

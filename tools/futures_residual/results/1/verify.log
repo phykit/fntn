@@ -1,0 +1,33 @@
+== ng (primary) N=5315 kept=3541 expiries=315
+  HL h=1  n=3541 b=0.2124 b/sd=2.164 nwt=4.824 p+=0.0002856 p-=1 p2=0.0005713 mds=0.1233
+  HL h=5  n=3541 b=0.5541 b/sd=5.644 nwt=6.094 p+=0.0002856 p-=1 p2=0.0005713 mds=0.2546
+  HL h=20 n=3532 b=0.8653 b/sd=8.822 nwt=8.872 p+=0.0002864 p-=1 p2=0.0005727 mds=0.2731
+  HL halves b1=0.4948 b2=0.575 | inc n=3537 g=0.4857 t=6.606 | oos n=2537 r2os=0.1058 cw=49.02 cwt=4.093 | size Q=5.177 ntop=709 Dq=4.418
+  HL criteria a=Y b=Y c=Y d=Y e=Y f=Y -> PASS s=1
+  HC h=1  n=3283 b=0.2829 b/sd=1.852 nwt=4.13 p+=0.0003084 p-=1 p2=0.0006167 mds=0.1918
+  HC h=5  n=3283 b=0.443 b/sd=2.9 nwt=5.397 p+=0.0003084 p-=1 p2=0.0006167 mds=0.2298
+  HC h=20 n=3274 b=0.519 b/sd=3.402 nwt=5.936 p+=0.0003092 p-=1 p2=0.0006184 mds=0.2448
+  HC halves b1=0.3397 b2=0.4838 | inc n=3281 g=0.2882 t=1.695 | oos n=2281 r2os=-0.01218 cw=-0.5594 cwt=-0.109 | size Q=3.003 ntop=657 Dq=3.139
+  HC criteria a=Y b=Y c=Y d=N e=N f=Y -> WEAK s=1
+== ho (replication, no weight) N=6184 kept=4303 expiries=315
+  HL h=1  n=4303 b=0.03635 b/sd=0.1446 nwt=2.353 p+=0.0002346 p-=1 p2=0.0004692 mds=0.04325
+  HL h=5  n=4303 b=0.1761 b/sd=0.7003 nwt=2.75 p+=0.0002346 p-=1 p2=0.0004692 mds=0.1793
+  HL h=20 n=4292 b=0.5584 b/sd=2.223 nwt=3.407 p+=0.0002352 p-=1 p2=0.0004704 mds=0.4589
+  HL halves b1=0.2368 b2=0.2252 | inc n=4295 g=0.1859 t=2.875 | oos n=3295 r2os=0.01092 cw=0.7282 cwt=2.048 | size Q=5.332 ntop=861 Dq=0.5785
+  HL criteria a=Y b=Y c=Y d=Y e=Y f=Y -> PASS s=1
+  HC h=1  n=3990 b=0.01565 b/sd=0.0176 nwt=0.2465 p+=0.3175 p-=0.6828 p2=0.6349 mds=0.1778
+  HC h=5  n=3990 b=-0.04765 b/sd=-0.05359 nwt=-0.4953 p+=0.779 p-=0.2213 p2=0.4425 mds=0.2693
+  HC h=20 n=3979 b=0.2666 b/sd=0.2999 nwt=1.566 p+=0.01168 p-=0.9886 p2=0.02336 mds=0.4767
+  HC halves b1=-0.2981 b2=0.01016 | inc n=3985 g=0.002956 t=0.02901 | oos n=2985 r2os=-0.002403 cw=-0.05296 cwt=-1.419 | size Q=0.4046 ntop=798 Dq=0.02795
+  HC criteria a=N b=N c=N d=N e=N f=N -> FAIL s=-1
+== rb (replication, no weight) N=6192 kept=4323 expiries=313
+  HL h=1  n=4323 b=0.05334 b/sd=0.2709 nwt=4.855 p+=0.0002335 p-=1 p2=0.000467 mds=0.03076
+  HL h=5  n=4323 b=0.1937 b/sd=0.9835 nwt=5.577 p+=0.0002335 p-=1 p2=0.000467 mds=0.09724
+  HL h=20 n=4312 b=0.6996 b/sd=3.556 nwt=4.871 p+=0.0002341 p-=1 p2=0.0004682 mds=0.4022
+  HL halves b1=0.1833 b2=0.2341 | inc n=4309 g=0.1921 t=5.664 | oos n=3309 r2os=0.03364 cw=2.186 cwt=4.475 | size Q=4.031 ntop=865 Dq=1.138
+  HL criteria a=Y b=Y c=Y d=Y e=Y f=Y -> PASS s=1
+  HC h=1  n=4012 b=0.1251 b/sd=0.1575 nwt=1.363 p+=0.0002518 p-=1 p2=0.0005035 mds=0.2568
+  HC h=5  n=4012 b=0.1335 b/sd=0.1681 nwt=1.39 p+=0.01611 p-=0.9841 p2=0.03223 mds=0.269
+  HC h=20 n=4001 b=0.1202 b/sd=0.1515 nwt=0.6974 p+=0.1644 p-=0.8359 p2=0.3287 mds=0.4825
+  HC halves b1=0.1894 b2=0.09095 | inc n=4000 g=0.1747 t=1.323 | oos n=3000 r2os=-0.000455 cw=0.0502 cwt=0.4763 | size Q=0.569 ntop=803 Dq=-0.04048
+  HC criteria a=N b=Y c=Y d=N e=N f=N -> FAIL s=1

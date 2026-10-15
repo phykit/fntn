@@ -1,0 +1,51 @@
+=== ng (PRIMARY): joint 5315 2000-09-08..2026-10-06; excluded 1774; kept 3541; M defined 3541; rate missing on kept 0
+  M mean +2.178 median +0.638 sd 10.184 p5 -5.872 p95 +16.190 share>0 0.567; tau mean 17.5 d; carry +1291 bp/yr median
+  roll check: n 3283 max|dM| +89.7233 p99 +28.0682 >5pp 729; roll steps 257 median|step| +4.0543 >5pp 112
+  HL (M) sign +1
+    h=1 n=3541 slope/pp=+0.2124 per_sd=+2.1637 NW t=+4.8243 p+=0.0003 p-=1.0000 p2=0.0006 MDE=+0.1233
+    h=5 n=3541 slope/pp=+0.5541 per_sd=+5.6436 NW t=+6.0937 p+=0.0003 p-=1.0000 p2=0.0006 MDE=+0.2546
+    h=20 n=3532 slope/pp=+0.8653 per_sd=+8.8220 NW t=+8.8717 p+=0.0003 p-=1.0000 p2=0.0006 MDE=+0.2731
+    incremental g=+0.4857 t=+6.6062; OOS n=2537 R2_OS=+0.1058 CW t=+4.0933; size Dq=+4.4181 (n_top 709); halves +0.4948 / +0.5750
+    futures Q: h=1 b=+0.0020 t=+0.2519 p2=0.7246; h=5 b=+0.0286 t=+1.1803 p2=0.2138; h=20 b=nan t=nan p2=nan; Dq_Q5=-0.4779
+    criteria {"a_primary": true, "b_horizons": true, "c_halves": true, "d_incremental": true, "e_oos": true, "f_size": true} VERDICT: PASS (sign +)
+  HC (dM) sign +1
+    h=1 n=3283 slope/pp=+0.2829 per_sd=+1.8520 NW t=+4.1301 p+=0.0003 p-=1.0000 p2=0.0006 MDE=+0.1918
+    h=5 n=3283 slope/pp=+0.4430 per_sd=+2.9000 NW t=+5.3968 p+=0.0003 p-=1.0000 p2=0.0006 MDE=+0.2298
+    h=20 n=3274 slope/pp=+0.5190 per_sd=+3.4022 NW t=+5.9358 p+=0.0003 p-=1.0000 p2=0.0006 MDE=+0.2448
+    incremental g=+0.2882 t=+1.6955; OOS n=2281 R2_OS=-0.0122 CW t=-0.1090; size Dq=+3.1390 (n_top 657); halves +0.3397 / +0.4838
+    futures Q: h=1 b=-0.0035 t=-0.2413 p2=0.7019; h=5 b=+0.0102 t=+0.3557 p2=0.5577; h=20 b=nan t=nan p2=nan; Dq_Q5=-0.3079
+    criteria {"a_primary": true, "b_horizons": true, "c_halves": true, "d_incremental": false, "e_oos": false, "f_size": true} VERDICT: WEAK (sign +)
+=== ho (replication, no weight): joint 6184 2000-09-05..2026-10-06; excluded 1881; kept 4303; M defined 4303; rate missing on kept 0
+  M mean +2.675 median +1.729 sd 3.977 p5 -0.907 p95 +8.742 share>0 0.855; tau mean 17.4 d; carry +3893 bp/yr median
+  roll check: n 3990 max|dM| +26.2055 p99 +4.2839 >5pp 26; roll steps 312 median|step| +0.6210 >5pp 8
+  HL (M) sign +1
+    h=1 n=4303 slope/pp=+0.0363 per_sd=+0.1446 NW t=+2.3530 p+=0.0002 p-=1.0000 p2=0.0005 MDE=+0.0433
+    h=5 n=4303 slope/pp=+0.1761 per_sd=+0.7003 NW t=+2.7501 p+=0.0002 p-=1.0000 p2=0.0005 MDE=+0.1793
+    h=20 n=4292 slope/pp=+0.5584 per_sd=+2.2235 NW t=+3.4071 p+=0.0002 p-=1.0000 p2=0.0005 MDE=+0.4589
+    incremental g=+0.1859 t=+2.8750; OOS n=3295 R2_OS=+0.0109 CW t=+2.0482; size Dq=+0.5785 (n_top 861); halves +0.2368 / +0.2252
+    futures Q: h=1 b=-0.0063 t=-0.6347 p2=0.5514; h=5 b=+0.0206 t=+0.4219 p2=0.7283; h=20 b=nan t=nan p2=nan; Dq_Q5=+0.0135
+    criteria {"a_primary": true, "b_horizons": true, "c_halves": true, "d_incremental": true, "e_oos": true, "f_size": true} VERDICT: PASS (sign +)
+  HC (dM) sign -1
+    h=1 n=3990 slope/pp=+0.0156 per_sd=+0.0176 NW t=+0.2465 p+=0.3175 p-=0.6828 p2=0.6349 MDE=+0.1778
+    h=5 n=3990 slope/pp=-0.0476 per_sd=-0.0536 NW t=-0.4953 p+=0.7790 p-=0.2213 p2=0.4425 MDE=+0.2693
+    h=20 n=3979 slope/pp=+0.2666 per_sd=+0.2999 NW t=+1.5660 p+=0.0117 p-=0.9886 p2=0.0234 MDE=+0.4767
+    incremental g=+0.0030 t=+0.0290; OOS n=2985 R2_OS=-0.0024 CW t=-1.4189; size Dq=+0.0280 (n_top 798); halves -0.2981 / +0.0102
+    futures Q: h=1 b=-0.2078 t=-3.6682 p2=0.0005; h=5 b=-0.1800 t=-1.3402 p2=0.0134; h=20 b=nan t=nan p2=nan; Dq_Q5=+0.3162
+    criteria {"a_primary": false, "b_horizons": false, "c_halves": false, "d_incremental": false, "e_oos": false, "f_size": false} VERDICT: FAIL (sign -)
+=== rb (replication, no weight): joint 6192 2000-11-01..2026-10-06; excluded 1869; kept 4323; M defined 4323; rate missing on kept 0
+  M mean +0.531 median +0.041 sd 5.078 p5 -6.995 p95 +8.714 share>0 0.502; tau mean 17.4 d; carry +77 bp/yr median
+  roll check: n 4012 max|dM| +20.8824 p99 +4.2452 >5pp 26; roll steps 310 median|step| +1.5194 >5pp 49
+  HL (M) sign +1
+    h=1 n=4323 slope/pp=+0.0533 per_sd=+0.2709 NW t=+4.8550 p+=0.0002 p-=1.0000 p2=0.0005 MDE=+0.0308
+    h=5 n=4323 slope/pp=+0.1937 per_sd=+0.9835 NW t=+5.5771 p+=0.0002 p-=1.0000 p2=0.0005 MDE=+0.0972
+    h=20 n=4312 slope/pp=+0.6996 per_sd=+3.5556 NW t=+4.8707 p+=0.0002 p-=1.0000 p2=0.0005 MDE=+0.4022
+    incremental g=+0.1921 t=+5.6636; OOS n=3309 R2_OS=+0.0336 CW t=+4.4745; size Dq=+1.1385 (n_top 865); halves +0.1833 / +0.2341
+    futures Q: h=1 b=+0.0044 t=+0.5558 p2=0.5796; h=5 b=+0.0351 t=+1.0237 p2=0.4747; h=20 b=nan t=nan p2=nan; Dq_Q5=+0.3827
+    criteria {"a_primary": true, "b_horizons": true, "c_halves": true, "d_incremental": true, "e_oos": true, "f_size": true} VERDICT: PASS (sign +)
+  HC (dM) sign +1
+    h=1 n=4012 slope/pp=+0.1251 per_sd=+0.1575 NW t=+1.3633 p+=0.0003 p-=1.0000 p2=0.0005 MDE=+0.2568
+    h=5 n=4012 slope/pp=+0.1335 per_sd=+0.1681 NW t=+1.3895 p+=0.0161 p-=0.9841 p2=0.0322 MDE=+0.2690
+    h=20 n=4001 slope/pp=+0.1202 per_sd=+0.1515 NW t=+0.6974 p+=0.1644 p-=0.8359 p2=0.3287 MDE=+0.4825
+    incremental g=+0.1747 t=+1.3231; OOS n=3000 R2_OS=-0.0005 CW t=+0.4763; size Dq=-0.0405 (n_top 803); halves +0.1894 / +0.0910
+    futures Q: h=1 b=-0.1275 t=-1.8618 p2=0.0005; h=5 b=-0.1478 t=-1.8485 p2=0.0661; h=20 b=nan t=nan p2=nan; Dq_Q5=-0.4176
+    criteria {"a_primary": false, "b_horizons": true, "c_halves": true, "d_incremental": false, "e_oos": false, "f_size": false} VERDICT: FAIL (sign +)
