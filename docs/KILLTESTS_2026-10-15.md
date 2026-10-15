@@ -25,3 +25,39 @@ and planted worlds.
 
 The workflow `.github/workflows/killtests-2026-10-15.yml` runs `run_all.sh` on a push to
 `DISPATCH` and commits derived statistics only under `results/<run>/`.
+
+## Results (run 4, specification commit 23e23a5, 15 October 2026 10:25 UTC; `results/4/`)
+
+Freeze record verified on the runner; self-test OK; independent implementations agreed on all
+114 criterion figures.
+
+| Test | Verdict | Primary figures |
+|---|---|---|
+| A gas, expiry window | **FAIL** (sign -) | pooled slope -0.02% per pp of M over 1,224 window days, NW t -0.4, p2 0.60; MDE 0.17% per pp |
+| A heating oil (replication) | WEAK (sign -) | slope -0.14, t -2.7, p2 0.003; R2_OS -0.022; halves -0.25 / -0.03 (the effect is pre-2005) |
+| A gasoline (replication) | FAIL (sign +) | slope +0.04, t 0.8 |
+| B gas calendar spread | **FAIL** (sign -) | b_5 -0.006 pp per pp of M, t -0.4, p2 0.29; MDE 0.04 |
+| C VIX term structure on VIXY | **FAIL** (sign +) | b_5 +0.018% per pp of slope, t 0.4, p2 0.59; MDE 0.13; contango days -1.17% per 5 days, backwardation days -1.81% |
+| D CME bitcoin basis on spot | **WEAK** (sign +) | b_5 +0.57% per pp, t 2.3, p2 0.009; R2_OS -0.002; same-day spot return on M t -3.6 (the stale-futures mechanic); positive in 5 of 9 years |
+
+**Reading.** Nothing here is a tradable strategy. A: the expiring gas contract does not move with
+the spot residual in its final days (nor does it away from them: control slope 0.00, t 0.0), so
+the last open door on the energy dataset is closed; the heating-oil WEAK is a first-half-of-sample
+effect with negative out-of-sample value. B: the calendar spread carries nothing from the residual
+beyond its own level. C: on free data the VIX term-structure slope does not time the long-VIX
+ETF's decay at 1 to 20 days; the decay is unconditional (both contango and backwardation days are
+negative), which is the known short-VIX carry, not a basis-timed signal. D: a positive basis is
+followed by slightly higher spot returns at one to five days, but the sign of the same-day
+relation shows the eight-hour gap between the futures close and the spot close doing the work,
+there is no out-of-sample gain over momentum, and 2018 carries much of the slope.
+
+**Bonus, from B section 8:** the parent result replicates on synchronous 2:30 p.m. NYMEX
+settlements: spot 5-day change on M, slope +0.64% per pp, t 6.5, quintiles -4.9% to +3.7%; and the
+front contract's own 5-day return on M has a slope of 0.0003 (t 0.01). The spot converges, the
+future does not move. That is the finding of the day, stated twice on two data sources.
+
+**Data limits found after the run.** A's switch check is inconclusive (the log-distance detector
+fires at k_X+1 on 58% of expiries and at k_X on 41%, so it cannot separate a one-day switch error
+from noise); B's incremental sample is 976 days, below the 1,005 the out-of-sample rule needs, so
+criterion (e) could not be evaluated (the verdict is FAIL on (a) regardless). Nothing is licensed
+and no §13 row is opened.
