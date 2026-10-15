@@ -103,15 +103,18 @@ def roll_convention(c1, c2, expiry_fn, label):
         k = bisect.bisect_right(dates, X.isoformat()) - 1
         if k >= 4 and k + 3 < len(dates):
             line = ""
+            import math
             for off in range(-3, 4):
                 t = k + off
-                a, b = c1[dates[t]], c2[dates[t - 1]]
-                line += "=" if abs(a - b) < 1e-9 else "."
+                # the switch day: today's contract 1 is nearer yesterday's contract 2 than yesterday's contract 1
+                j2 = abs(math.log(c1[dates[t]]) - math.log(c2[dates[t - 1]]))
+                j1 = abs(math.log(c1[dates[t]]) - math.log(c1[dates[t - 1]]))
+                line += "=" if j2 < j1 else "."
             rows.append((f"{y}-{m:02d}", X.isoformat(), dates[k], line))
         m -= 1
         if m == 0:
             y, m = y - 1, 12
-    print(f"  {label} roll convention, offsets -3..+3 trading days around the computed expiry ('=' means c1[t] == c2[t-1]):")
+    print(f"  {label} roll convention, offsets -3..+3 trading days around the computed expiry ('=' means c1[t] is nearer c2[t-1] than c1[t-1], the switch day):")
     for r in rows:
         print(f"    delivery {r[0]} computed expiry {r[1]} last data day on/before {r[2]}: {r[3]}")
     return rows
@@ -169,6 +172,10 @@ def main():
         time.sleep(1)
     if "NG_C1" in series and "NG_C2" in series:
         rep["ng_roll"] = roll_convention(series["NG_C1"], series["NG_C2"], ng_expiry, "NG")
+    with open(os.path.join(a.out, "probe.json"), "w") as fh:
+        json.dump(rep, fh, indent=1, sort_keys=True, default=str)
+    print("probe complete (roll convention only)")
+    return 0
     print("== Volatility (Yahoo)")
     for sym in ("^VIX", "^VIX3M", "^VIX9D", "VIXY", "VXX", "SVXY", "UVXY", "VX=F"):
         rep[sym] = describe(sym, yf_hist(sym))
