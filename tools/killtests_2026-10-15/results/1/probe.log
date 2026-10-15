@@ -1,0 +1,468 @@
+NGF15.NYM: Period 'max' is invalid, must be one of: 1d, 5d
+NGG15.NYM: Period 'max' is invalid, must be one of: 1d, 5d
+HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: NGH15.NYM"}}}
+$NGH15.NYM: possibly delisted; no timezone found
+HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: NGJ15.NYM"}}}
+$NGJ15.NYM: possibly delisted; no timezone found
+NGK15.NYM: Period 'max' is invalid, must be one of: 1d, 5d
+$NGM15.NYM: possibly delisted; no timezone found
+$NGN15.NYM: possibly delisted; no timezone found
+$NGQ15.NYM: possibly delisted; no timezone found
+$NGU15.NYM: possibly delisted; no timezone found
+$NGV15.NYM: possibly delisted; no timezone found
+$NGX15.NYM: possibly delisted; no timezone found
+$NGZ15.NYM: possibly delisted; no timezone found
+$NGF16.NYM: possibly delisted; no timezone found
+$NGG16.NYM: possibly delisted; no timezone found
+$NGH16.NYM: possibly delisted; no timezone found
+$NGJ16.NYM: possibly delisted; no timezone found
+$NGK16.NYM: possibly delisted; no timezone found
+$NGM16.NYM: possibly delisted; no timezone found
+$NGN16.NYM: possibly delisted; no timezone found
+$NGQ16.NYM: possibly delisted; no timezone found
+$NGU16.NYM: possibly delisted; no timezone found
+$NGV16.NYM: possibly delisted; no timezone found
+$NGX16.NYM: possibly delisted; no timezone found
+$NGZ16.NYM: possibly delisted; no timezone found
+$NGF17.NYM: possibly delisted; no timezone found
+$NGG17.NYM: possibly delisted; no timezone found
+$NGH17.NYM: possibly delisted; no timezone found
+$NGJ17.NYM: possibly delisted; no timezone found
+$NGK17.NYM: possibly delisted; no timezone found
+$NGM17.NYM: possibly delisted; no timezone found
+$NGN17.NYM: possibly delisted; no timezone found
+$NGQ17.NYM: possibly delisted; no timezone found
+$NGU17.NYM: possibly delisted; no timezone found
+$NGV17.NYM: possibly delisted; no timezone found
+$NGX17.NYM: possibly delisted; no timezone found
+$NGZ17.NYM: possibly delisted; no timezone found
+$NGF18.NYM: possibly delisted; no timezone found
+$NGG18.NYM: possibly delisted; no timezone found
+$NGH18.NYM: possibly delisted; no timezone found
+$NGJ18.NYM: possibly delisted; no timezone found
+$NGK18.NYM: possibly delisted; no timezone found
+$NGM18.NYM: possibly delisted; no timezone found
+$NGN18.NYM: possibly delisted; no timezone found
+$NGQ18.NYM: possibly delisted; no timezone found
+$NGU18.NYM: possibly delisted; no timezone found
+$NGV18.NYM: possibly delisted; no timezone found
+$NGX18.NYM: possibly delisted; no timezone found
+$NGZ18.NYM: possibly delisted; no timezone found
+$NGF19.NYM: possibly delisted; no timezone found
+$NGG19.NYM: possibly delisted; no timezone found
+$NGH19.NYM: possibly delisted; no timezone found
+$NGJ19.NYM: possibly delisted; no timezone found
+$NGK19.NYM: possibly delisted; no timezone found
+$NGM19.NYM: possibly delisted; no timezone found
+$NGN19.NYM: possibly delisted; no timezone found
+$NGQ19.NYM: possibly delisted; no timezone found
+$NGU19.NYM: possibly delisted; no timezone found
+$NGV19.NYM: possibly delisted; no timezone found
+$NGX19.NYM: possibly delisted; no timezone found
+$NGZ19.NYM: possibly delisted; no timezone found
+$NGF20.NYM: possibly delisted; no timezone found
+$NGG20.NYM: possibly delisted; no timezone found
+$NGH20.NYM: possibly delisted; no timezone found
+$NGJ20.NYM: possibly delisted; no timezone found
+$NGK20.NYM: possibly delisted; no timezone found
+$NGM20.NYM: possibly delisted; no timezone found
+$NGN20.NYM: possibly delisted; no timezone found
+$NGQ20.NYM: possibly delisted; no timezone found
+$NGU20.NYM: possibly delisted; no timezone found
+$NGV20.NYM: possibly delisted; no timezone found
+$NGX20.NYM: possibly delisted; no timezone found
+$NGZ20.NYM: possibly delisted; no timezone found
+$NGF21.NYM: possibly delisted; no timezone found
+$NGG21.NYM: possibly delisted; no timezone found
+$NGH21.NYM: possibly delisted; no timezone found
+$NGJ21.NYM: possibly delisted; no timezone found
+$NGK21.NYM: possibly delisted; no timezone found
+$NGM21.NYM: possibly delisted; no timezone found
+$NGN21.NYM: possibly delisted; no timezone found
+$NGQ21.NYM: possibly delisted; no timezone found
+$NGU21.NYM: possibly delisted; no timezone found
+$NGV21.NYM: possibly delisted; no timezone found
+$NGX21.NYM: possibly delisted; no timezone found
+$NGZ21.NYM: possibly delisted; no timezone found
+$NGF22.NYM: possibly delisted; no timezone found
+$NGG22.NYM: possibly delisted; no timezone found
+$NGH22.NYM: possibly delisted; no timezone found
+$NGJ22.NYM: possibly delisted; no timezone found
+$NGK22.NYM: possibly delisted; no timezone found
+$NGM22.NYM: possibly delisted; no timezone found
+$NGN22.NYM: possibly delisted; no timezone found
+$NGQ22.NYM: possibly delisted; no timezone found
+$NGU22.NYM: possibly delisted; no timezone found
+$NGV22.NYM: possibly delisted; no timezone found
+$NGX22.NYM: possibly delisted; no timezone found
+$NGZ22.NYM: possibly delisted; no timezone found
+$NGF23.NYM: possibly delisted; no timezone found
+$NGG23.NYM: possibly delisted; no timezone found
+$NGH23.NYM: possibly delisted; no timezone found
+$NGJ23.NYM: possibly delisted; no timezone found
+$NGK23.NYM: possibly delisted; no timezone found
+$NGM23.NYM: possibly delisted; no timezone found
+$NGN23.NYM: possibly delisted; no timezone found
+$NGQ23.NYM: possibly delisted; no timezone found
+$NGU23.NYM: possibly delisted; no timezone found
+$NGV23.NYM: possibly delisted; no timezone found
+$NGX23.NYM: possibly delisted; no timezone found
+$NGZ23.NYM: possibly delisted; no timezone found
+$NGF24.NYM: possibly delisted; no timezone found
+$NGG24.NYM: possibly delisted; no timezone found
+$NGH24.NYM: possibly delisted; no timezone found
+$NGJ24.NYM: possibly delisted; no timezone found
+$NGK24.NYM: possibly delisted; no timezone found
+$NGM24.NYM: possibly delisted; no timezone found
+$NGN24.NYM: possibly delisted; no timezone found
+$NGQ24.NYM: possibly delisted; no timezone found
+$NGU24.NYM: possibly delisted; no timezone found
+$NGV24.NYM: possibly delisted; no timezone found
+$NGX24.NYM: possibly delisted; no timezone found
+$NGZ24.NYM: possibly delisted; no timezone found
+$NGF25.NYM: possibly delisted; no timezone found
+$NGG25.NYM: possibly delisted; no timezone found
+$NGH25.NYM: possibly delisted; no timezone found
+$NGJ25.NYM: possibly delisted; no timezone found
+$NGK25.NYM: possibly delisted; no timezone found
+$NGM25.NYM: possibly delisted; no timezone found
+$NGN25.NYM: possibly delisted; no timezone found
+$NGQ25.NYM: possibly delisted; no timezone found
+$NGU25.NYM: possibly delisted; no timezone found
+$NGV25.NYM: possibly delisted; no timezone found
+$NGX25.NYM: possibly delisted; no timezone found
+$NGZ25.NYM: possibly delisted; no timezone found
+$NGF26.NYM: possibly delisted; no timezone found
+$NGG26.NYM: possibly delisted; no timezone found
+$NGH26.NYM: possibly delisted; no timezone found
+$NGJ26.NYM: possibly delisted; no timezone found
+$NGK26.NYM: possibly delisted; no timezone found
+$NGM26.NYM: possibly delisted; no timezone found
+$NGN26.NYM: possibly delisted; no timezone found
+$NGQ26.NYM: possibly delisted; no timezone found
+$NGU26.NYM: possibly delisted; no timezone found
+$NGV26.NYM: possibly delisted; no timezone found
+$HOF15.NYM: possibly delisted; no timezone found
+$HOG15.NYM: possibly delisted; no timezone found
+$HOH15.NYM: possibly delisted; no timezone found
+$HOJ15.NYM: possibly delisted; no timezone found
+$HOK15.NYM: possibly delisted; no timezone found
+$HOM15.NYM: possibly delisted; no timezone found
+$HON15.NYM: possibly delisted; no timezone found
+$HOQ15.NYM: possibly delisted; no timezone found
+$HOU15.NYM: possibly delisted; no timezone found
+$HOV15.NYM: possibly delisted; no timezone found
+$HOX15.NYM: possibly delisted; no timezone found
+$HOZ15.NYM: possibly delisted; no timezone found
+$HOF16.NYM: possibly delisted; no timezone found
+$HOG16.NYM: possibly delisted; no timezone found
+HOH16.NYM: Period 'max' is invalid, must be one of: 1d, 5d
+$HOJ16.NYM: possibly delisted; no timezone found
+$HOK16.NYM: possibly delisted; no timezone found
+$HOM16.NYM: possibly delisted; no timezone found
+$HON16.NYM: possibly delisted; no timezone found
+$HOQ16.NYM: possibly delisted; no timezone found
+$HOU16.NYM: possibly delisted; no timezone found
+$HOV16.NYM: possibly delisted; no timezone found
+$HOX16.NYM: possibly delisted; no timezone found
+$HOZ16.NYM: possibly delisted; no timezone found
+$HOF17.NYM: possibly delisted; no timezone found
+$HOG17.NYM: possibly delisted; no timezone found
+$HOH17.NYM: possibly delisted; no timezone found
+$HOJ17.NYM: possibly delisted; no timezone found
+$HOK17.NYM: possibly delisted; no timezone found
+$HOM17.NYM: possibly delisted; no timezone found
+$HON17.NYM: possibly delisted; no timezone found
+$HOQ17.NYM: possibly delisted; no timezone found
+$HOU17.NYM: possibly delisted; no timezone found
+$HOV17.NYM: possibly delisted; no timezone found
+$HOX17.NYM: possibly delisted; no timezone found
+$HOZ17.NYM: possibly delisted; no timezone found
+$HOF18.NYM: possibly delisted; no timezone found
+$HOG18.NYM: possibly delisted; no timezone found
+$HOH18.NYM: possibly delisted; no timezone found
+$HOJ18.NYM: possibly delisted; no timezone found
+$HOK18.NYM: possibly delisted; no timezone found
+$HOM18.NYM: possibly delisted; no timezone found
+$HON18.NYM: possibly delisted; no timezone found
+$HOQ18.NYM: possibly delisted; no timezone found
+$HOU18.NYM: possibly delisted; no timezone found
+$HOV18.NYM: possibly delisted; no timezone found
+$HOX18.NYM: possibly delisted; no timezone found
+$HOZ18.NYM: possibly delisted; no timezone found
+$HOF19.NYM: possibly delisted; no timezone found
+$HOG19.NYM: possibly delisted; no timezone found
+$HOH19.NYM: possibly delisted; no timezone found
+$HOJ19.NYM: possibly delisted; no timezone found
+$HOK19.NYM: possibly delisted; no timezone found
+$HOM19.NYM: possibly delisted; no timezone found
+$HON19.NYM: possibly delisted; no timezone found
+$HOQ19.NYM: possibly delisted; no timezone found
+$HOU19.NYM: possibly delisted; no timezone found
+$HOV19.NYM: possibly delisted; no timezone found
+$HOX19.NYM: possibly delisted; no timezone found
+$HOZ19.NYM: possibly delisted; no timezone found
+$HOF20.NYM: possibly delisted; no timezone found
+$HOG20.NYM: possibly delisted; no timezone found
+$HOH20.NYM: possibly delisted; no timezone found
+$HOJ20.NYM: possibly delisted; no timezone found
+$HOK20.NYM: possibly delisted; no timezone found
+$HOM20.NYM: possibly delisted; no timezone found
+$HON20.NYM: possibly delisted; no timezone found
+$HOQ20.NYM: possibly delisted; no timezone found
+$HOU20.NYM: possibly delisted; no timezone found
+$HOV20.NYM: possibly delisted; no timezone found
+$HOX20.NYM: possibly delisted; no timezone found
+$HOZ20.NYM: possibly delisted; no timezone found
+$HOF21.NYM: possibly delisted; no timezone found
+$HOG21.NYM: possibly delisted; no timezone found
+$HOH21.NYM: possibly delisted; no timezone found
+$HOJ21.NYM: possibly delisted; no timezone found
+$HOK21.NYM: possibly delisted; no timezone found
+$HOM21.NYM: possibly delisted; no timezone found
+$HON21.NYM: possibly delisted; no timezone found
+$HOQ21.NYM: possibly delisted; no timezone found
+$HOU21.NYM: possibly delisted; no timezone found
+$HOV21.NYM: possibly delisted; no timezone found
+$HOX21.NYM: possibly delisted; no timezone found
+$HOZ21.NYM: possibly delisted; no timezone found
+$HOF22.NYM: possibly delisted; no timezone found
+$HOG22.NYM: possibly delisted; no timezone found
+$HOH22.NYM: possibly delisted; no timezone found
+$HOJ22.NYM: possibly delisted; no timezone found
+$HOK22.NYM: possibly delisted; no timezone found
+$HOM22.NYM: possibly delisted; no timezone found
+$HON22.NYM: possibly delisted; no timezone found
+$HOQ22.NYM: possibly delisted; no timezone found
+$HOU22.NYM: possibly delisted; no timezone found
+$HOV22.NYM: possibly delisted; no timezone found
+$HOX22.NYM: possibly delisted; no timezone found
+$HOZ22.NYM: possibly delisted; no timezone found
+$HOF23.NYM: possibly delisted; no timezone found
+$HOG23.NYM: possibly delisted; no timezone found
+$HOH23.NYM: possibly delisted; no timezone found
+$HOJ23.NYM: possibly delisted; no timezone found
+$HOK23.NYM: possibly delisted; no timezone found
+$HOM23.NYM: possibly delisted; no timezone found
+$HON23.NYM: possibly delisted; no timezone found
+$HOQ23.NYM: possibly delisted; no timezone found
+$HOU23.NYM: possibly delisted; no timezone found
+$HOV23.NYM: possibly delisted; no timezone found
+$HOX23.NYM: possibly delisted; no timezone found
+$HOZ23.NYM: possibly delisted; no timezone found
+$HOF24.NYM: possibly delisted; no timezone found
+$HOG24.NYM: possibly delisted; no timezone found
+$HOH24.NYM: possibly delisted; no timezone found
+$HOJ24.NYM: possibly delisted; no timezone found
+$HOK24.NYM: possibly delisted; no timezone found
+$HOM24.NYM: possibly delisted; no timezone found
+$HON24.NYM: possibly delisted; no timezone found
+$HOQ24.NYM: possibly delisted; no timezone found
+$HOU24.NYM: possibly delisted; no timezone found
+$HOV24.NYM: possibly delisted; no timezone found
+$HOX24.NYM: possibly delisted; no timezone found
+$HOZ24.NYM: possibly delisted; no timezone found
+$HOF25.NYM: possibly delisted; no timezone found
+$HOG25.NYM: possibly delisted; no timezone found
+$HOH25.NYM: possibly delisted; no timezone found
+$HOJ25.NYM: possibly delisted; no timezone found
+$HOK25.NYM: possibly delisted; no timezone found
+$HOM25.NYM: possibly delisted; no timezone found
+$HOQ25.NYM: possibly delisted; no timezone found
+$HOU25.NYM: possibly delisted; no timezone found
+$HOV25.NYM: possibly delisted; no timezone found
+$HOX25.NYM: possibly delisted; no timezone found
+$HOZ25.NYM: possibly delisted; no timezone found
+$HOF26.NYM: possibly delisted; no timezone found
+$HOG26.NYM: possibly delisted; no timezone found
+$HOH26.NYM: possibly delisted; no timezone found
+$HOJ26.NYM: possibly delisted; no timezone found
+$HOK26.NYM: possibly delisted; no timezone found
+$HOM26.NYM: possibly delisted; no timezone found
+$HON26.NYM: possibly delisted; no timezone found
+$HOQ26.NYM: possibly delisted; no timezone found
+$HOU26.NYM: possibly delisted; no timezone found
+$HOV26.NYM: possibly delisted; no timezone found
+$RBF15.NYM: possibly delisted; no timezone found
+$RBG15.NYM: possibly delisted; no timezone found
+$RBH15.NYM: possibly delisted; no timezone found
+$RBJ15.NYM: possibly delisted; no timezone found
+$RBK15.NYM: possibly delisted; no timezone found
+$RBM15.NYM: possibly delisted; no timezone found
+$RBN15.NYM: possibly delisted; no timezone found
+$RBQ15.NYM: possibly delisted; no timezone found
+$RBU15.NYM: possibly delisted; no timezone found
+$RBV15.NYM: possibly delisted; no timezone found
+$RBX15.NYM: possibly delisted; no timezone found
+$RBZ15.NYM: possibly delisted; no timezone found
+$RBF16.NYM: possibly delisted; no timezone found
+$RBG16.NYM: possibly delisted; no timezone found
+RBH16.NYM: Period 'max' is invalid, must be one of: 1d, 5d
+$RBJ16.NYM: possibly delisted; no timezone found
+$RBK16.NYM: possibly delisted; no timezone found
+$RBM16.NYM: possibly delisted; no timezone found
+$RBN16.NYM: possibly delisted; no timezone found
+$RBQ16.NYM: possibly delisted; no timezone found
+$RBU16.NYM: possibly delisted; no timezone found
+$RBV16.NYM: possibly delisted; no timezone found
+$RBX16.NYM: possibly delisted; no timezone found
+$RBZ16.NYM: possibly delisted; no timezone found
+$RBF17.NYM: possibly delisted; no timezone found
+$RBG17.NYM: possibly delisted; no timezone found
+$RBH17.NYM: possibly delisted; no timezone found
+$RBJ17.NYM: possibly delisted; no timezone found
+$RBK17.NYM: possibly delisted; no timezone found
+$RBM17.NYM: possibly delisted; no timezone found
+$RBN17.NYM: possibly delisted; no timezone found
+$RBQ17.NYM: possibly delisted; no timezone found
+$RBU17.NYM: possibly delisted; no timezone found
+$RBV17.NYM: possibly delisted; no timezone found
+$RBX17.NYM: possibly delisted; no timezone found
+$RBZ17.NYM: possibly delisted; no timezone found
+$RBF18.NYM: possibly delisted; no timezone found
+$RBG18.NYM: possibly delisted; no timezone found
+$RBH18.NYM: possibly delisted; no timezone found
+$RBJ18.NYM: possibly delisted; no timezone found
+$RBK18.NYM: possibly delisted; no timezone found
+$RBM18.NYM: possibly delisted; no timezone found
+$RBN18.NYM: possibly delisted; no timezone found
+$RBQ18.NYM: possibly delisted; no timezone found
+$RBU18.NYM: possibly delisted; no timezone found
+$RBV18.NYM: possibly delisted; no timezone found
+$RBX18.NYM: possibly delisted; no timezone found
+$RBZ18.NYM: possibly delisted; no timezone found
+$RBF19.NYM: possibly delisted; no timezone found
+$RBG19.NYM: possibly delisted; no timezone found
+$RBH19.NYM: possibly delisted; no timezone found
+$RBJ19.NYM: possibly delisted; no timezone found
+$RBK19.NYM: possibly delisted; no timezone found
+$RBM19.NYM: possibly delisted; no timezone found
+$RBN19.NYM: possibly delisted; no timezone found
+$RBQ19.NYM: possibly delisted; no timezone found
+$RBU19.NYM: possibly delisted; no timezone found
+$RBV19.NYM: possibly delisted; no timezone found
+$RBX19.NYM: possibly delisted; no timezone found
+$RBZ19.NYM: possibly delisted; no timezone found
+$RBF20.NYM: possibly delisted; no timezone found
+$RBG20.NYM: possibly delisted; no timezone found
+$RBH20.NYM: possibly delisted; no timezone found
+$RBJ20.NYM: possibly delisted; no timezone found
+$RBK20.NYM: possibly delisted; no timezone found
+$RBM20.NYM: possibly delisted; no timezone found
+$RBN20.NYM: possibly delisted; no timezone found
+$RBQ20.NYM: possibly delisted; no timezone found
+$RBU20.NYM: possibly delisted; no timezone found
+$RBV20.NYM: possibly delisted; no timezone found
+$RBX20.NYM: possibly delisted; no timezone found
+$RBZ20.NYM: possibly delisted; no timezone found
+$RBF21.NYM: possibly delisted; no timezone found
+$RBG21.NYM: possibly delisted; no timezone found
+$RBH21.NYM: possibly delisted; no timezone found
+$RBJ21.NYM: possibly delisted; no timezone found
+$RBK21.NYM: possibly delisted; no timezone found
+$RBM21.NYM: possibly delisted; no timezone found
+$RBN21.NYM: possibly delisted; no timezone found
+$RBQ21.NYM: possibly delisted; no timezone found
+$RBU21.NYM: possibly delisted; no timezone found
+$RBV21.NYM: possibly delisted; no timezone found
+$RBX21.NYM: possibly delisted; no timezone found
+$RBZ21.NYM: possibly delisted; no timezone found
+$RBF22.NYM: possibly delisted; no timezone found
+$RBG22.NYM: possibly delisted; no timezone found
+$RBH22.NYM: possibly delisted; no timezone found
+$RBJ22.NYM: possibly delisted; no timezone found
+$RBK22.NYM: possibly delisted; no timezone found
+$RBM22.NYM: possibly delisted; no timezone found
+$RBN22.NYM: possibly delisted; no timezone found
+$RBQ22.NYM: possibly delisted; no timezone found
+$RBU22.NYM: possibly delisted; no timezone found
+$RBV22.NYM: possibly delisted; no timezone found
+$RBX22.NYM: possibly delisted; no timezone found
+$RBZ22.NYM: possibly delisted; no timezone found
+$RBF23.NYM: possibly delisted; no timezone found
+$RBG23.NYM: possibly delisted; no timezone found
+$RBH23.NYM: possibly delisted; no timezone found
+$RBJ23.NYM: possibly delisted; no timezone found
+$RBK23.NYM: possibly delisted; no timezone found
+$RBM23.NYM: possibly delisted; no timezone found
+$RBN23.NYM: possibly delisted; no timezone found
+$RBQ23.NYM: possibly delisted; no timezone found
+$RBU23.NYM: possibly delisted; no timezone found
+$RBV23.NYM: possibly delisted; no timezone found
+$RBX23.NYM: possibly delisted; no timezone found
+$RBZ23.NYM: possibly delisted; no timezone found
+$RBF24.NYM: possibly delisted; no timezone found
+$RBG24.NYM: possibly delisted; no timezone found
+$RBH24.NYM: possibly delisted; no timezone found
+$RBJ24.NYM: possibly delisted; no timezone found
+$RBK24.NYM: possibly delisted; no timezone found
+$RBM24.NYM: possibly delisted; no timezone found
+$RBN24.NYM: possibly delisted; no timezone found
+$RBQ24.NYM: possibly delisted; no timezone found
+$RBU24.NYM: possibly delisted; no timezone found
+$RBV24.NYM: possibly delisted; no timezone found
+$RBX24.NYM: possibly delisted; no timezone found
+$RBZ24.NYM: possibly delisted; no timezone found
+$RBF25.NYM: possibly delisted; no timezone found
+$RBG25.NYM: possibly delisted; no timezone found
+$RBH25.NYM: possibly delisted; no timezone found
+$RBJ25.NYM: possibly delisted; no timezone found
+$RBK25.NYM: possibly delisted; no timezone found
+$RBM25.NYM: possibly delisted; no timezone found
+$RBN25.NYM: possibly delisted; no timezone found
+$RBQ25.NYM: possibly delisted; no timezone found
+$RBU25.NYM: possibly delisted; no timezone found
+$RBV25.NYM: possibly delisted; no timezone found
+$RBX25.NYM: possibly delisted; no timezone found
+$RBZ25.NYM: possibly delisted; no timezone found
+$RBF26.NYM: possibly delisted; no timezone found
+$RBG26.NYM: possibly delisted; no timezone found
+$RBH26.NYM: possibly delisted; no timezone found
+$RBJ26.NYM: possibly delisted; no timezone found
+$RBK26.NYM: possibly delisted; no timezone found
+$RBM26.NYM: possibly delisted; no timezone found
+$RBN26.NYM: possibly delisted; no timezone found
+$RBQ26.NYM: possibly delisted; no timezone found
+$RBU26.NYM: possibly delisted; no timezone found
+$RBV26.NYM: possibly delisted; no timezone found
+== Individual contracts on Yahoo (NG, HO, RB), 2015 to 2027
+  NG: contracts with any data per year: {2015: '0/12', 2016: '0/12', 2017: '0/12', 2018: '0/12', 2019: '0/12', 2020: '0/12', 2021: '0/12', 2022: '0/12', 2023: '0/12', 2024: '0/12', 2025: '0/12', 2026: '2/12', 2027: '12/12'}
+  NG: rows per contract with data: min 2987 median 2988 max 3239
+  NG: earliest first date among contracts with data: 2013-11-27
+  HO: contracts with any data per year: {2015: '0/12', 2016: '0/12', 2017: '0/12', 2018: '0/12', 2019: '0/12', 2020: '0/12', 2021: '0/12', 2022: '0/12', 2023: '0/12', 2024: '0/12', 2025: '1/12', 2026: '2/12', 2027: '12/12'}
+  HO: rows per contract with data: min 721 median 722 max 974
+  HO: earliest first date among contracts with data: 2021-11-30
+  RB: contracts with any data per year: {2015: '0/12', 2016: '0/12', 2017: '0/12', 2018: '0/12', 2019: '0/12', 2020: '0/12', 2021: '0/12', 2022: '0/12', 2023: '0/12', 2024: '0/12', 2025: '0/12', 2026: '2/12', 2027: '12/12'}
+  RB: rows per contract with data: min 721 median 722 max 973
+  RB: earliest first date among contracts with data: 2022-11-30
+== Continuous series
+  NG=F: 6562 rows, 2000-08-30..2026-10-15
+Traceback (most recent call last):
+  File "/home/runner/work/fntn/fntn/tools/killtests_2026-10-15/probe.py", line 182, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/runner/work/fntn/fntn/tools/killtests_2026-10-15/probe.py", line 157, in main
+    rep["ng_roll_convention"] = roll_convention(cont, con_all)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/fntn/fntn/tools/killtests_2026-10-15/probe.py", line 109, in roll_convention
+    k = idx.searchsorted(pd.Timestamp(X), side="right") - 1
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/base.py", line 1612, in searchsorted
+    return values.searchsorted(value, side=side, sorter=sorter)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/arrays/_mixins.py", line 255, in searchsorted
+    npvalue = self._validate_setitem_value(value)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/arrays/datetimelike.py", line 741, in _validate_setitem_value
+    return self._validate_scalar(value, allow_listlike=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/arrays/datetimelike.py", line 638, in _validate_scalar
+    return self._unbox_scalar(value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/arrays/datetimes.py", line 545, in _unbox_scalar
+    self._check_compatible_with(value)
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/arrays/datetimes.py", line 557, in _check_compatible_with
+    self._assert_tzawareness_compat(other)
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pandas/core/arrays/datetimes.py", line 800, in _assert_tzawareness_compat
+    raise TypeError(
+TypeError: Cannot compare tz-naive and tz-aware datetime-like objects
