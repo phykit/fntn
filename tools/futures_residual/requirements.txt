@@ -1,0 +1,7 @@
+# Environment for the futures-residual side test (Python 3.12, linux x86_64), 15 October 2026.
+# numpy is the only dependency of run.py, verify.py, selftest.py and compare.py, and it is pinned.
+# yfinance is the fallback route in fetch.py if the Yahoo chart endpoint refuses the runner; it is
+# bounded below only, because its current version could not be read from this workspace. fetch.log
+# records which route was used. The parse is to the same DATE,CLOSE rows either way.
+numpy==2.2.6
+yfinance>=0.2.50
