@@ -1,0 +1,23 @@
+joint days N=4977 1997-01-07..2024-04-05; kept=3164; expiries listed=329, with k_X=328
+duplicates skipped spot/c1/c2/tbill = 0/0/0/0
+h=1: n=2920 K=2879 b=0.0010453447865013624 (per sd 0.009092287383777481) nw_t=0.24380155185010324 p+=0.23472222222222222 p-=0.765625 p2=0.46944444444444444
+h=3: n=2465 K=2424 b=-0.007992455033326002 (per sd -0.07062804566949092) nw_t=-0.93186662484222 p+=0.9781443298969072 p-=0.0222680412371134 p2=0.0445360824742268
+h=5: n=2025 K=1984 b=-0.005673366015354669 (per sd -0.05060016272849072) nw_t=-0.43213122321424097 p+=0.8579345088161209 p-=0.14256926952141058 p2=0.28513853904282116
+halves: {'n_first': 1012, 'b_first': 0.014709241867044148, 'n_rest': 1013, 'b_rest': -0.019197872895577107}
+incremental: {'n': 976, 'g': 0.04067391890617257, 'nw_t': 1.6639870548690545}
+oos: {'n_forecasts': 0, 'r2_os': None, 'cw_mean': None, 'cw_nw_t': None}
+size: {'Q': 2.2959426630393858, 'n_top': 405, 'Dq': -0.053776512796242404}
+criteria: {'a': False, 'b': False, 'c': False, 'd': False, 'e': False, 'f': False}; s=-1; verdict=FAIL
+ambiguities resolved (literal reading):
+  A1 Saturday holidays move to the preceding Friday and Sunday holidays to the following Monday, except New Year's Day on a Saturday, which is not observed (A section 3 as amended before freezing: the exchanges trade on that 31 December). A Sunday New Year is observed on Monday 2 January.
+  A2 No closures other than the listed holidays (e.g. national days of mourning, 11 to 14 September 2001, Hurricane Sandy) are treated as non-business days.
+  A3 'Numeric' means a value that parses as a finite float; empty, '.', and anything unparseable are missing. A quantity whose logarithm has a non-positive argument is undefined on that day (the day stays in the joint calendar).
+  A4 Expiries are generated for delivery months from the first joint date's month to the month after the last joint date's month (A section 3). A's amended rule that only expiries on or before the last joint date are used governs A's windows and is NOT applied here: B section 3 uses the full list for X(t) and the exclusions (coordinator's confirmation of 15 October 2026). A kept day with no expiry strictly after it in that list has X(t) undefined, so M, tau and every same-contract quantity are undefined there.
+  A5 The qualifier 'with k_X defined or X after the last joint date' in X(t) is always satisfied for an expiry strictly after date_t (date_t itself is a joint date on or before X), so X(t) is simply the first listed expiry strictly after date_t.
+  A6 Exclusion positions k_X-4..k_X+1 are clipped to 0..N-1. Expiries with k_X undefined exclude nothing.
+  A7 n1 and n5 (spot momentum) require only that positions t-1 / t-5 exist in the joint calendar; the 'both ends kept and in the same contract' condition is read as attaching to dSp1 and dSp5 only. They are taken on kept days t (the test sample), with the lagged end free to be excluded.
+  A8 Lags and leads (t+h, t-1, t-5) are joint-calendar positions; Newey-West lags, halves, rotations and the out-of-sample positions (t >= 1000, fit on 0..t-5) are positions within the statistic's own aligned sample.
+  A9 Out-of-sample positions are counted within the aligned sample of {M, Sp, dSp1, dSp5, n1, n5, D_5} (now explicit in B section 5); for each t >= 1000 both models are fitted on positions 0..t-5 inclusive (t-4 rows). Both models include an intercept (section 4: 'OLS with an intercept'). Clark-West adjusted loss f_t = e_base^2 - (e_aug^2 - (yhat_base - yhat_aug)^2); its Newey-West t is that of the mean (regression on a constant), L = 10.
+  A10 Rotation: x_rot = x shifted circularly by k (np.roll); the slope set is symmetric in direction because k and m-k are both in 21..m-21. Observed and rotated slopes are computed by the same closed form for the p-value comparison. UNSCORABLE when K = m - 41 < 100 at h = 5.
+  A11 Size: Q and n_top are computed literally on s x M even when s = 0, and Dq is then forced to 0. Criterion (e) is False when R2_OS is undefined (fewer than 1001 aligned days or a singular fit).
+  A12 Duplicate dates within one input file: the first occurrence is kept.

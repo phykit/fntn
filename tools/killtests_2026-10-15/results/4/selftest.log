@@ -1,0 +1,6 @@
+null seed 1: {'a_ng': 'FAIL (sign +)', 'a_ho': 'FAIL (sign -)', 'a_rb': 'PASS (sign -)', 'b': 'FAIL (sign -)', 'c': 'FAIL (sign +)', 'd': 'FAIL (sign +)'}
+null seed 2: {'a_ng': 'FAIL (sign +)', 'a_ho': 'FAIL (sign -)', 'a_rb': 'FAIL (sign -)', 'b': 'FAIL (sign +)', 'c': 'FAIL (sign -)', 'd': 'FAIL (sign +)'}
+null seed 3: {'a_ng': 'FAIL (sign -)', 'a_ho': 'FAIL (sign +)', 'a_rb': 'FAIL (sign -)', 'b': 'FAIL (sign -)', 'c': 'PASS (sign -)', 'd': 'FAIL (sign -)'}
+null: (a) met 2 of 18; PASS 2
+planted: {'a_ng': 'PASS (sign -)', 'a_ho': 'PASS (sign -)', 'a_rb': 'PASS (sign -)', 'b': 'PASS (sign -)', 'c': 'PASS (sign -)', 'd': 'PASS (sign +)'}
+SELFTEST OK

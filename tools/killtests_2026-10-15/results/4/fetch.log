@@ -1,0 +1,14 @@
+ng_spot (DHHNGSP): 7761 rows, 1997-01-07..2026-10-06, 2059 with a missing field
+ho_spot (DHOILNYH): 10527 rows, 1986-06-02..2026-10-06, 1727 with a missing field
+rb_spot (DGASNYH): 10527 rows, 1986-06-02..2026-10-06, 1376 with a missing field
+tbill (DTB3): 18987 rows, 1954-01-04..2026-10-13, 801 with a missing field
+ng_c1 (EIA): 7496 rows, 1994-01-13..2024-04-05, 0 with a missing field
+ng_c2 (EIA): 7500 rows, 1994-01-12..2024-04-05, 0 with a missing field
+ho_c1 (EIA): 9894 rows, 1980-01-02..2024-04-05, 0 with a missing field
+rb_c1 (EIA): 4609 rows, 2005-10-03..2024-04-05, 0 with a missing field
+vix (^VIX): 9267 rows, 1990-01-02..2026-10-15, 0 with a missing field
+vix3m (^VIX3M): 5094 rows, 2006-07-17..2026-10-14, 0 with a missing field
+btc_spot (BTC-USD): 4412 rows, 2014-09-17..2026-10-15, 0 with a missing field
+btc_fut (BTC=F): 2221 rows, 2017-12-18..2026-10-15, 0 with a missing field
+etp (VIXY): 3968 rows, 2011-01-04..2026-10-14, 0 with a missing field
+fetch complete

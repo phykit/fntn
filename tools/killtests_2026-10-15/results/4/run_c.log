@@ -1,0 +1,11 @@
+=== C VIX: joint 3968 2011-01-04..2026-10-14
+  B mean +12.691 median +13.202 sd 8.850 p5 -1.753 p95 +26.156 share>0 0.924
+  H (B on VIXY next-open-to-close return): sign +1
+    h=1 n=3967 slope=+0.0007 per_sd=+0.0065 NW t=+0.1084 p2=0.8964 MDE=+0.0189
+    h=5 n=3963 slope=+0.0179 per_sd=+0.1582 NW t=+0.3727 p2=0.5899 MDE=+0.1342
+    h=20 n=3948 slope=+0.0704 per_sd=+0.6242 NW t=+0.5614 p2=0.6013 MDE=+0.3513
+    incremental g=-0.0767 t=-1.5183; OOS n=3193 R2_OS=-0.0125 CW t=-0.4467; size Dq=+0.2719 (n_top 793); halves -0.0038 / +0.0427; holdout +0.1489
+    quintile means R5: [-2.117, -0.87, -1.535, -0.629, -0.948]
+    criteria {"a_primary": false, "b_horizons": true, "c_halves": false, "d_incremental": false, "e_oos": false, "f_size": true} VERDICT: FAIL (sign +)
+  contango vs backwardation h=5: 3662 days mean -1.171; 301 days mean -1.812
+  path in size group: n 793 mean -0.948 p5 -9.084 min -27.708

@@ -1,0 +1,301 @@
+== freeze check
+fea896edf58b44d711dd08d2ad3e183d099f919d5305e46403ed0a6f8e183beb  tools/killtests_2026-10-15/kt.py
+77b6ed9b060b07edba977b2cd469b18c7136d79307cefab305aa60ca4c8e0506  tools/killtests_2026-10-15/cal.py
+0d21d1cceafee3cd184c14e8d75792a425f6a8b53c867edca3c6ffa537c4fe50  tools/killtests_2026-10-15/compare_all.py
+ffc5b5d1f5572753cf015a84bd1a21c9c25497d8937015a989db5be4f097a46d  tools/killtests_2026-10-15/synth.py
+132902c40a5f3f6813e0015c29de6a5e1d07501f91c6fd11533b1aa1808c05be  tools/killtests_2026-10-15/selftest_all.py
+d1ffacf88689dfba5e143223d1ebfae9208ce691ebab6feb3c0c45425c8dcb3e  tools/killtests_2026-10-15/fetch_all.py
+58a624a07fde9090e669bca627180b9531e2f89557b7c93e6897b0f9efa03b79  tools/killtests_2026-10-15/a_expiry/PREREG.md
+459749e15d045f2860f205f179cf743f7cc4c8a7204af3fe2421c3a62498f702  tools/killtests_2026-10-15/a_expiry/run_a.py
+005a99c49a03fa4d91ab72266ef5498604fef0b90c097f591c6f75b10e500c06  tools/killtests_2026-10-15/a_expiry/verify_a.py
+af3f6eed07cff5007b0f63bdf1010bcfe5943c4e9d10a64c7e9b79252611d0b6  tools/killtests_2026-10-15/b_spread/PREREG.md
+371e521fd526dd920f6a0dc9043f5743fe5bdd5fb7c7bccef66fda0b9cf7291b  tools/killtests_2026-10-15/b_spread/run_b.py
+7ac2d4bb8a0bfdc8aca5250d8f50d6735fcc929cdecb952f506c3e854fb35481  tools/killtests_2026-10-15/b_spread/verify_b.py
+402c774e9a58c972cae19c782f07ab572e0dab90eb403c92405494b2bac9fe81  tools/killtests_2026-10-15/c_vix/PREREG.md
+bf3b8cca4f9d0ffe7ce1473934022097b6722e1a48aed20ec4e2a054d0e546c3  tools/killtests_2026-10-15/c_vix/run_c.py
+d03d7c74ad45e35515b4dcf9543c431a78e179de021c726bd26bf6ffbb62d9c9  tools/killtests_2026-10-15/c_vix/verify_c.py
+42aee24ef38e219f6b037eb39f3b91dbef53db5b31445a798a56325aba46c61b  tools/killtests_2026-10-15/d_btc/PREREG.md
+dafe74739870c0875923437397e3534e24e04ef7eb76cfdd9b9256909baeb607  tools/killtests_2026-10-15/d_btc/run_d.py
+d4a8fcfcffddbf66d07dff4efd4a35e679f0959ae0df0265d09f0aa256a652a4  tools/killtests_2026-10-15/d_btc/verify_d.py
+committed FROZEN.sha256:
+fea896edf58b44d711dd08d2ad3e183d099f919d5305e46403ed0a6f8e183beb  tools/killtests_2026-10-15/kt.py
+77b6ed9b060b07edba977b2cd469b18c7136d79307cefab305aa60ca4c8e0506  tools/killtests_2026-10-15/cal.py
+58a624a07fde9090e669bca627180b9531e2f89557b7c93e6897b0f9efa03b79  tools/killtests_2026-10-15/a_expiry/PREREG.md
+459749e15d045f2860f205f179cf743f7cc4c8a7204af3fe2421c3a62498f702  tools/killtests_2026-10-15/a_expiry/run_a.py
+005a99c49a03fa4d91ab72266ef5498604fef0b90c097f591c6f75b10e500c06  tools/killtests_2026-10-15/a_expiry/verify_a.py
+af3f6eed07cff5007b0f63bdf1010bcfe5943c4e9d10a64c7e9b79252611d0b6  tools/killtests_2026-10-15/b_spread/PREREG.md
+371e521fd526dd920f6a0dc9043f5743fe5bdd5fb7c7bccef66fda0b9cf7291b  tools/killtests_2026-10-15/b_spread/run_b.py
+7ac2d4bb8a0bfdc8aca5250d8f50d6735fcc929cdecb952f506c3e854fb35481  tools/killtests_2026-10-15/b_spread/verify_b.py
+402c774e9a58c972cae19c782f07ab572e0dab90eb403c92405494b2bac9fe81  tools/killtests_2026-10-15/c_vix/PREREG.md
+bf3b8cca4f9d0ffe7ce1473934022097b6722e1a48aed20ec4e2a054d0e546c3  tools/killtests_2026-10-15/c_vix/run_c.py
+d03d7c74ad45e35515b4dcf9543c431a78e179de021c726bd26bf6ffbb62d9c9  tools/killtests_2026-10-15/c_vix/verify_c.py
+42aee24ef38e219f6b037eb39f3b91dbef53db5b31445a798a56325aba46c61b  tools/killtests_2026-10-15/d_btc/PREREG.md
+dafe74739870c0875923437397e3534e24e04ef7eb76cfdd9b9256909baeb607  tools/killtests_2026-10-15/d_btc/run_d.py
+d4a8fcfcffddbf66d07dff4efd4a35e679f0959ae0df0265d09f0aa256a652a4  tools/killtests_2026-10-15/d_btc/verify_d.py
+frozen 2026-10-15T10:23:56Z
+freeze record verified
+== self-test
+null seed 1: {'a_ng': 'FAIL (sign +)', 'a_ho': 'FAIL (sign -)', 'a_rb': 'PASS (sign -)', 'b': 'FAIL (sign -)', 'c': 'FAIL (sign +)', 'd': 'FAIL (sign +)'}
+null seed 2: {'a_ng': 'FAIL (sign +)', 'a_ho': 'FAIL (sign -)', 'a_rb': 'FAIL (sign -)', 'b': 'FAIL (sign +)', 'c': 'FAIL (sign -)', 'd': 'FAIL (sign +)'}
+null seed 3: {'a_ng': 'FAIL (sign -)', 'a_ho': 'FAIL (sign +)', 'a_rb': 'FAIL (sign -)', 'b': 'FAIL (sign -)', 'c': 'PASS (sign -)', 'd': 'FAIL (sign -)'}
+null: (a) met 2 of 18; PASS 2
+planted: {'a_ng': 'PASS (sign -)', 'a_ho': 'PASS (sign -)', 'a_rb': 'PASS (sign -)', 'b': 'PASS (sign -)', 'c': 'PASS (sign -)', 'd': 'PASS (sign +)'}
+SELFTEST OK
+== fetch
+ng_spot (DHHNGSP): 7761 rows, 1997-01-07..2026-10-06, 2059 with a missing field
+ho_spot (DHOILNYH): 10527 rows, 1986-06-02..2026-10-06, 1727 with a missing field
+rb_spot (DGASNYH): 10527 rows, 1986-06-02..2026-10-06, 1376 with a missing field
+tbill (DTB3): 18987 rows, 1954-01-04..2026-10-13, 801 with a missing field
+ng_c1 (EIA): 7496 rows, 1994-01-13..2024-04-05, 0 with a missing field
+ng_c2 (EIA): 7500 rows, 1994-01-12..2024-04-05, 0 with a missing field
+ho_c1 (EIA): 9894 rows, 1980-01-02..2024-04-05, 0 with a missing field
+rb_c1 (EIA): 4609 rows, 2005-10-03..2024-04-05, 0 with a missing field
+vix (^VIX): 9267 rows, 1990-01-02..2026-10-15, 0 with a missing field
+vix3m (^VIX3M): 5094 rows, 2006-07-17..2026-10-14, 0 with a missing field
+btc_spot (BTC-USD): 4412 rows, 2014-09-17..2026-10-15, 0 with a missing field
+btc_fut (BTC=F): 2221 rows, 2017-12-18..2026-10-15, 0 with a missing field
+etp (VIXY): 3968 rows, 2011-01-04..2026-10-14, 0 with a missing field
+fetch complete
+== run A
+=== A ng (PRIMARY): joint 5008 1997-01-07..2024-04-05; expiries 327; signal days 1224; M defined 1224
+  pooled: n=1224 slope=-0.0225 per_sd=-0.1436 NW t=-0.3807 p2=0.5980 MDE=+0.1656 sign -1
+  by e: e=1 n=324 b=+0.0145 t=+0.1775; e=2 n=313 b=-0.0698 t=-0.9609; e=3 n=301 b=-0.0534 t=-0.5732; e=4 n=286 b=+0.0222 t=+0.2317; e12 -0.0298 e34 -0.0153
+  incremental g=-0.0250 t=-0.3463; OOS n=527 R2_OS=-0.0072 CW t=-1.3002; size Dq=+1.4751 (n_top 245); halves -0.0236 / -0.0010
+  control away from window (Q4 on M): n=2256 slope=-0.0003 t=-0.0103 p2=0.9513
+  switch check: 314 expiries; share at k_X 0.411, k_X+1 0.580, k_X+2 0.363
+  quintile means Y: [1.587, 0.246, 0.175, -0.951, -0.498]
+  criteria {"a_primary": false, "b_horizons": true, "c_halves": true, "d_incremental": false, "e_oos": false, "f_size": true} VERDICT: FAIL (sign -)
+=== A ho (replication, no weight): joint 7342 1986-06-02..2024-04-05; expiries 454; signal days 1780; M defined 1780
+  pooled: n=1780 slope=-0.1353 per_sd=-0.4746 NW t=-2.6863 p2=0.0034 MDE=+0.1410 sign -1
+  by e: e=1 n=454 b=-0.0463 t=-1.0432; e=2 n=449 b=-0.1199 t=-2.3225; e=3 n=443 b=-0.1809 t=-2.4511; e=4 n=434 b=-0.1751 t=-1.9911; e12 -0.0872 e34 -0.1781
+  incremental g=-0.1631 t=-3.1048; OOS n=1183 R2_OS=-0.0219 CW t=+1.7293; size Dq=+1.1399 (n_top 356); halves -0.2516 / -0.0276
+  control away from window (Q4 on M): n=3096 slope=+0.0121 t=+0.3779 p2=0.7212
+  quintile means Y: [1.531, 0.314, 0.201, -0.352, 0.261]
+  criteria {"a_primary": true, "b_horizons": true, "c_halves": true, "d_incremental": true, "e_oos": false, "f_size": true} VERDICT: WEAK (sign -)
+=== A rb (replication, no weight): joint 4536 2005-10-04..2024-04-05; expiries 222; signal days 888; M defined 888
+  pooled: n=888 slope=+0.0441 per_sd=+0.1695 NW t=+0.7592 p2=0.4316 MDE=+0.1625 sign +1
+  by e: e=1 n=222 b=-0.0009 t=-0.0199; e=2 n=222 b=+0.1200 t=+1.6793; e=3 n=222 b=+0.0461 t=+0.5569; e=4 n=222 b=+0.0185 t=+0.2013; e12 +0.0574 e34 +0.0328
+  incremental g=+0.0473 t=+0.8020; OOS n=488 R2_OS=-0.0059 CW t=-0.5409; size Dq=-0.0075 (n_top 178); halves +0.0315 / +0.0239
+  control away from window (Q4 on M): n=2312 slope=+0.0447 t=+1.2573 p2=0.3257
+  quintile means Y: [-0.469, 1.02, 1.104, 0.19, 0.452]
+  criteria {"a_primary": false, "b_horizons": true, "c_halves": true, "d_incremental": false, "e_oos": false, "f_size": false} VERDICT: FAIL (sign +)
+== run B
+=== B gas spread: joint 4977 1997-01-07..2024-04-05; excluded 1813; kept 3164; M defined 3164
+  Sp mean +2.259 sd 4.428 share>0 0.801; M mean +1.468 sd 8.670
+  H (M on spread change) sign -1
+    h=1 n=2920 slope=+0.0010 per_sd=+0.0091 NW t=+0.2438 p2=0.4694 MDE=+0.0120
+    h=3 n=2465 slope=-0.0080 per_sd=-0.0706 NW t=-0.9319 p2=0.0445 MDE=+0.0240
+    h=5 n=2025 slope=-0.0057 per_sd=-0.0506 NW t=-0.4321 p2=0.2851 MDE=+0.0368
+    incremental g=+0.0407 t=+1.6640; OOS n=0 R2_OS=nan CW t=nan; size Dq=-0.0538 (n_top 405); halves +0.0147 / -0.0192
+    quintile means D5: [-0.142, -0.097, -0.008, -0.113, -0.084]
+    criteria {"a_primary": false, "b_horizons": false, "c_halves": false, "d_incremental": false, "e_oos": false, "f_size": false} VERDICT: FAIL (sign -)
+  parent replication (settlement): spot R5 on M slope=+0.6397 t=+6.5101; quintiles [-4.92, -0.58, -0.54, 1.15, 3.72]; front Q5 on M slope=+0.0003 t=+0.0081
+== run C
+=== C VIX: joint 3968 2011-01-04..2026-10-14
+  B mean +12.691 median +13.202 sd 8.850 p5 -1.753 p95 +26.156 share>0 0.924
+  H (B on VIXY next-open-to-close return): sign +1
+    h=1 n=3967 slope=+0.0007 per_sd=+0.0065 NW t=+0.1084 p2=0.8964 MDE=+0.0189
+    h=5 n=3963 slope=+0.0179 per_sd=+0.1582 NW t=+0.3727 p2=0.5899 MDE=+0.1342
+    h=20 n=3948 slope=+0.0704 per_sd=+0.6242 NW t=+0.5614 p2=0.6013 MDE=+0.3513
+    incremental g=-0.0767 t=-1.5183; OOS n=3193 R2_OS=-0.0125 CW t=-0.4467; size Dq=+0.2719 (n_top 793); halves -0.0038 / +0.0427; holdout +0.1489
+    quintile means R5: [-2.117, -0.87, -1.535, -0.629, -0.948]
+    criteria {"a_primary": false, "b_horizons": true, "c_halves": false, "d_incremental": false, "e_oos": false, "f_size": true} VERDICT: FAIL (sign +)
+  contango vs backwardation h=5: 3662 days mean -1.171; 301 days mean -1.812
+  path in size group: n 793 mean -0.948 p5 -9.084 min -27.708
+== run D
+=== D bitcoin: joint 2221 2017-12-18..2026-10-15; excluded 641; kept 1580; expiries 108; M defined 1580
+  M mean -0.085 median -0.014 sd 1.452 p5 -2.263 p95 +1.857 share>0 0.492; tau mean 16.9 d; carry -26 bp/yr median
+  roll check: n 1473 max|dM| +25.1005 p99 +6.7606; roll steps 106 median|step| +0.7750 >5pp 1
+  same-day n1 on M: slope -0.7747 t -3.5729
+  H (M on spot return): sign +1
+    h=1 n=1580 slope=+0.3589 per_sd=+0.5213 NW t=+3.6995 p2=0.0013 MDE=+0.2716
+    h=5 n=1580 slope=+0.5682 per_sd=+0.8252 NW t=+2.2615 p2=0.0091 MDE=+0.7035
+    h=20 n=1571 slope=+0.6131 per_sd=+0.8930 NW t=+0.8940 p2=0.4193 MDE=+1.9202
+    incremental g=+0.6326 t=+2.2493; OOS n=816 R2_OS=-0.0024 CW t=+1.0863; size Dq=+0.7347 (n_top 316); halves +0.6076 / +0.3811; holdout +0.4820
+    quintile means R5: [-0.354, -0.486, 0.393, 0.664, 0.973]
+    criteria {"a_primary": true, "b_horizons": true, "c_halves": true, "d_incremental": true, "e_oos": false, "f_size": true} VERDICT: WEAK (sign +)
+  futures Q: h=1 b=-0.5803 t=-6.5667; h=5 b=-0.2213 t=-0.7527; h=20 b=nan t=nan; Dq_Q5=-0.9310
+== independent implementations
+[ng] diag n_joint=5008 first=1997-01-07 last=2024-04-05 n_expiries=328 n_expiries_with_window=327 n_expiries_after_last_date_excluded=1 window_position_collisions=85 n_signal_days=1224
+[ng] pooled n=1224 b=-0.02251 t=-0.3807 p+=0.7019 p-=0.299 p2=0.598 mde=0.1656 K=1183 s=-1
+[ng] by_e e1: n=324 b=0.01451 t=0.1775 p2=0.8239 | e2: n=313 b=-0.06984 t=-0.9609 p2=0.2418 | e3: n=301 b=-0.05336 t=-0.5732 p2=0.4674 | e4: n=286 b=0.02224 t=0.2317 p2=0.9024 | e12 n=637 b=-0.02984 | e34 n=587 b=-0.01531
+[ng] halves n1=612 b1=-0.02361 n2=612 b2=-0.00104
+[ng] incremental n=927 g=-0.02505 t=-0.3463
+[ng] oos n=527 r2_os=-0.007156 cw=-0.2974 cw_t=-1.3
+[ng] size Q=2.078 n_top=245 Dq=1.475
+[ng] criteria a=F b=T c=T d=F e=F f=T verdict=FAIL (primary)
+[ho] diag n_joint=7342 first=1986-06-02 last=2024-04-05 n_expiries=455 n_expiries_with_window=454 n_expiries_after_last_date_excluded=1 window_position_collisions=36 n_signal_days=1780
+[ho] pooled n=1780 b=-0.1353 t=-2.686 p+=0.9989 p-=0.001724 p2=0.003448 mde=0.141 K=1739 s=-1
+[ho] by_e e1: n=454 b=-0.04626 t=-1.043 p2=0.1884 | e2: n=449 b=-0.1199 t=-2.323 p2=0.02445 | e3: n=443 b=-0.1809 t=-2.451 p2=0.004963 | e4: n=434 b=-0.1751 t=-1.991 p2=0.005076 | e12 n=903 b=-0.08716 | e34 n=877 b=-0.1781
+[ho] halves n1=890 b1=-0.2516 n2=890 b2=-0.02757
+[ho] incremental n=1583 g=-0.1631 t=-3.105
+[ho] oos n=1183 r2_os=-0.0219 cw=0.8386 cw_t=1.729
+[ho] size Q=0.1667 n_top=356 Dq=1.14
+[ho] criteria a=T b=T c=T d=T e=F f=T verdict=WEAK (replication, no weight)
+[rb] diag n_joint=4536 first=2005-10-04 last=2024-04-05 n_expiries=223 n_expiries_with_window=222 n_expiries_after_last_date_excluded=1 window_position_collisions=0 n_signal_days=888
+[rb] pooled n=888 b=0.04406 t=0.7592 p+=0.2158 p-=0.7854 p2=0.4316 mde=0.1625 K=847 s=1
+[rb] by_e e1: n=222 b=-0.0008611 t=-0.01994 p2=0.8462 | e2: n=222 b=0.12 t=1.679 p2=0.06593 | e3: n=222 b=0.04608 t=0.5569 p2=0.5055 | e4: n=222 b=0.01853 t=0.2013 p2=0.6923 | e12 n=444 b=0.05737 | e34 n=444 b=0.03283
+[rb] halves n1=444 b1=0.03146 n2=444 b2=0.02386
+[rb] incremental n=888 g=0.0473 t=0.802
+[rb] oos n=488 r2_os=-0.005923 cw=-0.06785 cw_t=-0.5409
+[rb] size Q=3.792 n_top=178 Dq=-0.007507
+[rb] criteria a=F b=T c=T d=F e=F f=F verdict=FAIL (replication, no weight)
+wrote out/verify_a.json
+joint days N=4977 1997-01-07..2024-04-05; kept=3164; expiries listed=329, with k_X=328
+duplicates skipped spot/c1/c2/tbill = 0/0/0/0
+h=1: n=2920 K=2879 b=0.0010453447865013624 (per sd 0.009092287383777481) nw_t=0.24380155185010324 p+=0.23472222222222222 p-=0.765625 p2=0.46944444444444444
+h=3: n=2465 K=2424 b=-0.007992455033326002 (per sd -0.07062804566949092) nw_t=-0.93186662484222 p+=0.9781443298969072 p-=0.0222680412371134 p2=0.0445360824742268
+h=5: n=2025 K=1984 b=-0.005673366015354669 (per sd -0.05060016272849072) nw_t=-0.43213122321424097 p+=0.8579345088161209 p-=0.14256926952141058 p2=0.28513853904282116
+halves: {'n_first': 1012, 'b_first': 0.014709241867044148, 'n_rest': 1013, 'b_rest': -0.019197872895577107}
+incremental: {'n': 976, 'g': 0.04067391890617257, 'nw_t': 1.6639870548690545}
+oos: {'n_forecasts': 0, 'r2_os': None, 'cw_mean': None, 'cw_nw_t': None}
+size: {'Q': 2.2959426630393858, 'n_top': 405, 'Dq': -0.053776512796242404}
+criteria: {'a': False, 'b': False, 'c': False, 'd': False, 'e': False, 'f': False}; s=-1; verdict=FAIL
+ambiguities resolved (literal reading):
+  A1 Saturday holidays move to the preceding Friday and Sunday holidays to the following Monday, except New Year's Day on a Saturday, which is not observed (A section 3 as amended before freezing: the exchanges trade on that 31 December). A Sunday New Year is observed on Monday 2 January.
+  A2 No closures other than the listed holidays (e.g. national days of mourning, 11 to 14 September 2001, Hurricane Sandy) are treated as non-business days.
+  A3 'Numeric' means a value that parses as a finite float; empty, '.', and anything unparseable are missing. A quantity whose logarithm has a non-positive argument is undefined on that day (the day stays in the joint calendar).
+  A4 Expiries are generated for delivery months from the first joint date's month to the month after the last joint date's month (A section 3). A's amended rule that only expiries on or before the last joint date are used governs A's windows and is NOT applied here: B section 3 uses the full list for X(t) and the exclusions (coordinator's confirmation of 15 October 2026). A kept day with no expiry strictly after it in that list has X(t) undefined, so M, tau and every same-contract quantity are undefined there.
+  A5 The qualifier 'with k_X defined or X after the last joint date' in X(t) is always satisfied for an expiry strictly after date_t (date_t itself is a joint date on or before X), so X(t) is simply the first listed expiry strictly after date_t.
+  A6 Exclusion positions k_X-4..k_X+1 are clipped to 0..N-1. Expiries with k_X undefined exclude nothing.
+  A7 n1 and n5 (spot momentum) require only that positions t-1 / t-5 exist in the joint calendar; the 'both ends kept and in the same contract' condition is read as attaching to dSp1 and dSp5 only. They are taken on kept days t (the test sample), with the lagged end free to be excluded.
+  A8 Lags and leads (t+h, t-1, t-5) are joint-calendar positions; Newey-West lags, halves, rotations and the out-of-sample positions (t >= 1000, fit on 0..t-5) are positions within the statistic's own aligned sample.
+  A9 Out-of-sample positions are counted within the aligned sample of {M, Sp, dSp1, dSp5, n1, n5, D_5} (now explicit in B section 5); for each t >= 1000 both models are fitted on positions 0..t-5 inclusive (t-4 rows). Both models include an intercept (section 4: 'OLS with an intercept'). Clark-West adjusted loss f_t = e_base^2 - (e_aug^2 - (yhat_base - yhat_aug)^2); its Newey-West t is that of the mean (regression on a constant), L = 10.
+  A10 Rotation: x_rot = x shifted circularly by k (np.roll); the slope set is symmetric in direction because k and m-k are both in 21..m-21. Observed and rotated slopes are computed by the same closed form for the p-value comparison. UNSCORABLE when K = m - 41 < 100 at h = 5.
+  A11 Size: Q and n_top are computed literally on s x M even when s = 0, and Dq is then forced to 0. Criterion (e) is False when R2_OS is undefined (fewer than 1001 aligned days or a singular fit).
+  A12 Duplicate dates within one input file: the first occurrence is kept.
+joint days N=3968 2011-01-04..2026-10-14
+h= 1 n=3967 b=0.0007297703925867996 t=0.1083633566039628 p+=0.4481792717086835 p-=0.5520753756047874 p2=0.896358543417367 mde=0.018856531979817927 K=3926
+h= 5 n=3963 b=0.0178673867876652 t=0.3727355052742504 p+=0.2949273515166964 p-=0.7053275554422636 p2=0.5898547030333928 mde=0.1342203313007506 K=3922
+h=20 n=3948 b=0.07043800158822996 t=0.5613798771427895 p+=0.30066530194472874 p-=0.6995905834186285 p2=0.6013306038894575 mde=0.3513243215108661 K=3907
+halves {'n_first': 1981, 'b_first': -0.0038000828491985008, 'n_rest': 1982, 'b_rest': 0.042683615709413085}
+incremental {'n': 3943, 'g': -0.07674907815238213, 'nw_t': -1.5183045452985686}
+oos {'n_forecasts': 3193, 'r2_os': -0.012462527951133229, 'cw_mean': -0.21247826861884708, 'cw_nw_t': -0.44673759008603625}
+size {'Q': 20.152828097237343, 'n_top': 793, 'Dq': 0.2719140443128921}
+criteria {'a': False, 'b': True, 'c': False, 'd': False, 'e': False, 'f': True}
+verdict FAIL s=1
+joint days N=2221 2017-12-18..2026-10-15; kept=1580; M defined=1580; expiries=108
+h= 1 n=1580 b=0.35891334506203193 t=3.69954885338557 p+=0.0006493506493506494 p-=1.0 p2=0.0012987012987012987 mde=0.27164322083597364
+h= 5 n=1580 b=0.5681756335060981 t=2.2615393892877647 p+=0.004545454545454545 p-=0.9961038961038962 p2=0.00909090909090909 mde=0.7034552576676988
+h=20 n=1571 b=0.6131176236839758 t=0.8940141795639773 p+=0.20966688438928804 p-=0.790986283474853 p2=0.4193337687785761 mde=1.9202484541715032
+s=1 halves={'n_first': 790, 'b_first': 0.6076332399659081, 'n_rest': 790, 'b_rest': 0.38113219187428}
+incremental={'n': 1566, 'g': 0.6325754955916715, 'nw_t': 2.2493473049225448}
+oos={'n_forecasts': 816, 'r2_os': -0.002427313290932931, 'cw_mean': 0.38059051799258864, 'cw_nw_t': 1.0862763052662727}
+size={'Q': 0.721167724102454, 'n_top': 316, 'Dq': 0.7346761998004459}
+criteria={'a': True, 'b': True, 'c': True, 'd': True, 'e': False, 'f': True} verdict=WEAK (direction s=1)
+== compare
+OK   A ng pooled n 1224 1224
+OK   A ng pooled b -0.02251497003101876 -0.022514970031018818
+OK   A ng pooled nw_t -0.3806892073008018 -0.38068920730080275
+OK   A ng pooled p2 0.597972972972973 0.597972972972973
+OK   A ng e1 b 0.014508673558341808 0.014508673558341742
+OK   A ng e2 b -0.0698403238079837 -0.0698403238079838
+OK   A ng e3 b -0.053355976182139796 -0.053355976182139955
+OK   A ng e4 b 0.022244171025730928 0.02224417102573079
+OK   A ng e12 b -0.02983711033346835 -0.029837110333468392
+OK   A ng e34 b -0.015309853999371792 -0.015309853999371936
+OK   A ng half first -0.023611533659628987 -0.02361153365962906
+OK   A ng half second -0.0010399401781092743 -0.001039940178109379
+OK   A ng g -0.025045778716496263 -0.025045778716496332
+OK   A ng g nw_t -0.3462691999548743 -0.3462691999548752
+OK   A ng r2_os -0.007155761019093543 -0.007155761019093987
+OK   A ng cw nw_t -1.3001846249406424 -1.300184624940655
+OK   A ng Dq 1.4750674095686187 1.475067409568619
+OK   A ng verdict FAIL (sign -) | FAIL {'a': False, 'b': True, 'c': True, 'd': False, 'e': False, 'f': True}
+OK   A ho pooled n 1780 1780
+OK   A ho pooled b -0.13527802676784736 -0.1352780267678474
+OK   A ho pooled nw_t -2.6862746012855228 -2.686274601285523
+OK   A ho pooled p2 0.0034482758620689655 0.0034482758620689655
+OK   A ho e1 b -0.04626350134174161 -0.04626350134174169
+OK   A ho e2 b -0.11993796255716947 -0.11993796255716975
+OK   A ho e3 b -0.1809297489386076 -0.1809297489386076
+OK   A ho e4 b -0.1751384072368751 -0.17513840723687502
+OK   A ho e12 b -0.08715774572284678 -0.0871577457228469
+OK   A ho e34 b -0.17811796882463005 -0.17811796882463005
+OK   A ho half first -0.25155748955954926 -0.2515574895595491
+OK   A ho half second -0.02757262686630563 -0.027572626866305714
+OK   A ho g -0.16308220142315175 -0.16308220142315172
+OK   A ho g nw_t -3.1047759489865765 -3.104775948986575
+OK   A ho r2_os -0.021897917235716324 -0.02189791723571677
+OK   A ho cw nw_t 1.7292974702897241 1.729297470289724
+OK   A ho Dq 1.1399406444522853 1.1399406444522855
+OK   A ho verdict WEAK (sign -) | WEAK {'a': True, 'b': True, 'c': True, 'd': True, 'e': False, 'f': True}
+OK   A rb pooled n 888 888
+OK   A rb pooled b 0.04405992830461063 0.04405992830461056
+OK   A rb pooled nw_t 0.7591964931304378 0.7591964931304367
+OK   A rb pooled p2 0.43160377358490565 0.43160377358490565
+OK   A rb e1 b -0.000861063336039916 -0.0008610633360398687
+OK   A rb e2 b 0.12003840167260639 0.12003840167260633
+OK   A rb e3 b 0.046075344705825666 0.046075344705825465
+OK   A rb e4 b 0.018529767677664847 0.018529767677664774
+OK   A rb e12 b 0.05737008737579671 0.057370087375796706
+OK   A rb e34 b 0.03283193936590011 0.03283193936590009
+OK   A rb half first 0.03146343061586735 0.03146343061586717
+OK   A rb half second 0.023856457160691437 0.02385645716069132
+OK   A rb g 0.04729504648225136 0.04729504648225128
+OK   A rb g nw_t 0.8020249517010892 0.802024951701088
+OK   A rb r2_os -0.005922501697975369 -0.005922501697975147
+OK   A rb cw nw_t -0.5409163704596718 -0.5409163704596731
+OK   A rb Dq -0.0075069859608739575 -0.007506985960873569
+OK   A rb verdict FAIL (sign +) | FAIL {'a': False, 'b': True, 'c': True, 'd': False, 'e': False, 'f': False}
+OK   B h1 n 2920 2920
+OK   B h1 slope 0.0010453447865013624 0.0010453447865013624
+OK   B h1 nw_t 0.24380155185010324 0.24380155185010324
+OK   B h1 p2 0.46944444444444444 0.46944444444444444
+OK   B h3 n 2465 2465
+OK   B h3 slope -0.007992455033326002 -0.007992455033326002
+OK   B h3 nw_t -0.93186662484222 -0.93186662484222
+OK   B h3 p2 0.0445360824742268 0.0445360824742268
+OK   B h5 n 2025 2025
+OK   B h5 slope -0.005673366015354669 -0.005673366015354669
+OK   B h5 nw_t -0.43213122321424097 -0.43213122321424097
+OK   B h5 p2 0.28513853904282116 0.28513853904282116
+OK   B half first 0.014709241867044146 0.014709241867044148
+OK   B half second -0.01919787289557709 -0.019197872895577107
+OK   B g 0.040673918906172564 0.04067391890617257
+OK   B g nw_t 1.6639870548690545 1.6639870548690545
+OK   B r2_os nan None
+OK   B cw nw_t nan None
+OK   B Dq -0.053776512796242404 -0.053776512796242404
+OK   B verdict FAIL (sign -) | FAIL {'a': False, 'b': False, 'c': False, 'd': False, 'e': False, 'f': False}
+OK   C h1 n 3967 3967
+OK   C h1 slope 0.0007297703925870191 0.0007297703925867996
+OK   C h1 nw_t 0.10836335660399542 0.1083633566039628
+OK   C h1 p2 0.896358543417367 0.896358543417367
+OK   C h5 n 3963 3963
+OK   C h5 slope 0.0178673867876651 0.0178673867876652
+OK   C h5 nw_t 0.37273550527424826 0.3727355052742504
+OK   C h5 p2 0.5898547030333928 0.5898547030333928
+OK   C h20 n 3948 3948
+OK   C h20 slope 0.07043800158822879 0.07043800158822996
+OK   C h20 nw_t 0.5613798771427803 0.5613798771427895
+OK   C h20 p2 0.6013306038894575 0.6013306038894575
+OK   C half first -0.003800082849198235 -0.0038000828491985008
+OK   C half second 0.04268361570941307 0.042683615709413085
+OK   C g -0.0767490781523868 -0.07674907815238213
+OK   C g nw_t -1.5183045452986361 -1.5183045452985686
+OK   C r2_os -0.01246252795113234 -0.012462527951133229
+OK   C cw nw_t -0.4467375900862056 -0.44673759008603625
+OK   C Dq 0.27191404431289234 0.2719140443128921
+OK   C verdict FAIL (sign +) | FAIL {'a': False, 'b': True, 'c': False, 'd': False, 'e': False, 'f': True}
+OK   D h1 n 1580 1580
+OK   D h1 slope 0.35891334506203193 0.35891334506203193
+OK   D h1 nw_t 3.6995488533855703 3.69954885338557
+OK   D h1 p2 0.0012987012987012987 0.0012987012987012987
+OK   D h5 n 1580 1580
+OK   D h5 slope 0.5681756335060992 0.5681756335060981
+OK   D h5 nw_t 2.2615393892877695 2.2615393892877647
+OK   D h5 p2 0.00909090909090909 0.00909090909090909
+OK   D h20 n 1571 1571
+OK   D h20 slope 0.6131176236839757 0.6131176236839758
+OK   D h20 nw_t 0.8940141795639771 0.8940141795639773
+OK   D h20 p2 0.4193337687785761 0.4193337687785761
+OK   D half first 0.6076332399659081 0.6076332399659081
+OK   D half second 0.38113219187428 0.38113219187428
+OK   D g 0.632575495591671 0.6325754955916715
+OK   D g nw_t 2.249347304922544 2.2493473049225448
+OK   D r2_os -0.002427313290932931 -0.002427313290932931
+OK   D cw nw_t 1.0862763052662674 1.0862763052662727
+OK   D Dq 0.7346761998004459 0.7346761998004459
+OK   D verdict WEAK (sign +) | WEAK {'a': True, 'b': True, 'c': True, 'd': True, 'e': False, 'f': True}
+COMPARE 114 of 114 figures agree; 0 disagree

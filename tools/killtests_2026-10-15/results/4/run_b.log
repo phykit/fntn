@@ -1,0 +1,10 @@
+=== B gas spread: joint 4977 1997-01-07..2024-04-05; excluded 1813; kept 3164; M defined 3164
+  Sp mean +2.259 sd 4.428 share>0 0.801; M mean +1.468 sd 8.670
+  H (M on spread change) sign -1
+    h=1 n=2920 slope=+0.0010 per_sd=+0.0091 NW t=+0.2438 p2=0.4694 MDE=+0.0120
+    h=3 n=2465 slope=-0.0080 per_sd=-0.0706 NW t=-0.9319 p2=0.0445 MDE=+0.0240
+    h=5 n=2025 slope=-0.0057 per_sd=-0.0506 NW t=-0.4321 p2=0.2851 MDE=+0.0368
+    incremental g=+0.0407 t=+1.6640; OOS n=0 R2_OS=nan CW t=nan; size Dq=-0.0538 (n_top 405); halves +0.0147 / -0.0192
+    quintile means D5: [-0.142, -0.097, -0.008, -0.113, -0.084]
+    criteria {"a_primary": false, "b_horizons": false, "c_halves": false, "d_incremental": false, "e_oos": false, "f_size": false} VERDICT: FAIL (sign -)
+  parent replication (settlement): spot R5 on M slope=+0.6397 t=+6.5101; quintiles [-4.92, -0.58, -0.54, 1.15, 3.72]; front Q5 on M slope=+0.0003 t=+0.0081

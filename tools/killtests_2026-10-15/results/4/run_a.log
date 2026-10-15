@@ -1,0 +1,22 @@
+=== A ng (PRIMARY): joint 5008 1997-01-07..2024-04-05; expiries 327; signal days 1224; M defined 1224
+  pooled: n=1224 slope=-0.0225 per_sd=-0.1436 NW t=-0.3807 p2=0.5980 MDE=+0.1656 sign -1
+  by e: e=1 n=324 b=+0.0145 t=+0.1775; e=2 n=313 b=-0.0698 t=-0.9609; e=3 n=301 b=-0.0534 t=-0.5732; e=4 n=286 b=+0.0222 t=+0.2317; e12 -0.0298 e34 -0.0153
+  incremental g=-0.0250 t=-0.3463; OOS n=527 R2_OS=-0.0072 CW t=-1.3002; size Dq=+1.4751 (n_top 245); halves -0.0236 / -0.0010
+  control away from window (Q4 on M): n=2256 slope=-0.0003 t=-0.0103 p2=0.9513
+  switch check: 314 expiries; share at k_X 0.411, k_X+1 0.580, k_X+2 0.363
+  quintile means Y: [1.587, 0.246, 0.175, -0.951, -0.498]
+  criteria {"a_primary": false, "b_horizons": true, "c_halves": true, "d_incremental": false, "e_oos": false, "f_size": true} VERDICT: FAIL (sign -)
+=== A ho (replication, no weight): joint 7342 1986-06-02..2024-04-05; expiries 454; signal days 1780; M defined 1780
+  pooled: n=1780 slope=-0.1353 per_sd=-0.4746 NW t=-2.6863 p2=0.0034 MDE=+0.1410 sign -1
+  by e: e=1 n=454 b=-0.0463 t=-1.0432; e=2 n=449 b=-0.1199 t=-2.3225; e=3 n=443 b=-0.1809 t=-2.4511; e=4 n=434 b=-0.1751 t=-1.9911; e12 -0.0872 e34 -0.1781
+  incremental g=-0.1631 t=-3.1048; OOS n=1183 R2_OS=-0.0219 CW t=+1.7293; size Dq=+1.1399 (n_top 356); halves -0.2516 / -0.0276
+  control away from window (Q4 on M): n=3096 slope=+0.0121 t=+0.3779 p2=0.7212
+  quintile means Y: [1.531, 0.314, 0.201, -0.352, 0.261]
+  criteria {"a_primary": true, "b_horizons": true, "c_halves": true, "d_incremental": true, "e_oos": false, "f_size": true} VERDICT: WEAK (sign -)
+=== A rb (replication, no weight): joint 4536 2005-10-04..2024-04-05; expiries 222; signal days 888; M defined 888
+  pooled: n=888 slope=+0.0441 per_sd=+0.1695 NW t=+0.7592 p2=0.4316 MDE=+0.1625 sign +1
+  by e: e=1 n=222 b=-0.0009 t=-0.0199; e=2 n=222 b=+0.1200 t=+1.6793; e=3 n=222 b=+0.0461 t=+0.5569; e=4 n=222 b=+0.0185 t=+0.2013; e12 +0.0574 e34 +0.0328
+  incremental g=+0.0473 t=+0.8020; OOS n=488 R2_OS=-0.0059 CW t=-0.5409; size Dq=-0.0075 (n_top 178); halves +0.0315 / +0.0239
+  control away from window (Q4 on M): n=2312 slope=+0.0447 t=+1.2573 p2=0.3257
+  quintile means Y: [-0.469, 1.02, 1.104, 0.19, 0.452]
+  criteria {"a_primary": false, "b_horizons": true, "c_halves": true, "d_incremental": false, "e_oos": false, "f_size": false} VERDICT: FAIL (sign +)

@@ -1,0 +1,12 @@
+=== D bitcoin: joint 2221 2017-12-18..2026-10-15; excluded 641; kept 1580; expiries 108; M defined 1580
+  M mean -0.085 median -0.014 sd 1.452 p5 -2.263 p95 +1.857 share>0 0.492; tau mean 16.9 d; carry -26 bp/yr median
+  roll check: n 1473 max|dM| +25.1005 p99 +6.7606; roll steps 106 median|step| +0.7750 >5pp 1
+  same-day n1 on M: slope -0.7747 t -3.5729
+  H (M on spot return): sign +1
+    h=1 n=1580 slope=+0.3589 per_sd=+0.5213 NW t=+3.6995 p2=0.0013 MDE=+0.2716
+    h=5 n=1580 slope=+0.5682 per_sd=+0.8252 NW t=+2.2615 p2=0.0091 MDE=+0.7035
+    h=20 n=1571 slope=+0.6131 per_sd=+0.8930 NW t=+0.8940 p2=0.4193 MDE=+1.9202
+    incremental g=+0.6326 t=+2.2493; OOS n=816 R2_OS=-0.0024 CW t=+1.0863; size Dq=+0.7347 (n_top 316); halves +0.6076 / +0.3811; holdout +0.4820
+    quintile means R5: [-0.354, -0.486, 0.393, 0.664, 0.973]
+    criteria {"a_primary": true, "b_horizons": true, "c_halves": true, "d_incremental": true, "e_oos": false, "f_size": true} VERDICT: WEAK (sign +)
+  futures Q: h=1 b=-0.5803 t=-6.5667; h=5 b=-0.2213 t=-0.7527; h=20 b=nan t=nan; Dq_Q5=-0.9310
