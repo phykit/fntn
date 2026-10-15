@@ -61,3 +61,25 @@ fires at k_X+1 on 58% of expiries and at k_X on 41%, so it cannot separate a one
 from noise); B's incremental sample is 976 days, below the 1,005 the out-of-sample rule needs, so
 criterion (e) could not be evaluated (the verdict is FAIL on (a) regardless). Nothing is licensed
 and no §13 row is opened.
+
+## C2: the VIX futures basis itself (run 5, specification commit d6650c6, 10:41 UTC; `results/5/`)
+
+Test C's one advance-fixed limit was the proxy. C2 repeats it with the futures: 167 monthly VX
+contracts from CBOE's historical files (expiries January 2013 to November 2026), the constant-30-day
+price that VIXY's index holds (linear in days across the first two contracts), B30 = its premium
+over spot VIX; 3,372 joint days from May 2013; independent reimplementation agreed on 20 of 20
+figures; self-test OK.
+
+**Verdict: FAIL (sign +).** b_5 = +0.026% per pp of B30, NW t 0.5, p2 0.38; b_1 -0.001 (t -0.1);
+b_20 +0.12 (t 1.0); incremental over VIX level and momentum g = -0.08, t -1.3; R2_OS -0.004. The
+front basis and the roll per day (section 8) show the same nothing (t 0.4 and 0.9 at five days).
+Quintile means of VIXY's five-day return, lowest B30 to highest: -2.3%, -1.0%, -1.0%, -0.9%,
+-0.7%. Contango days -0.90% per five days (n 2,776), backwardation days -2.37% (n 591).
+
+**Reading.** On the futures basis as on the proxy, the long-VIX ETF loses on average in every
+state of the curve, and loses most after spikes (backwardation), when the VIX mean-reverts. The
+basis carries no timing information at 1 to 20 days beyond the VIX level and its recent moves. The
+literature's result (the basis predicts the futures' convergence to spot) is not contradicted by
+this: it is absorbed by the baseline, because the basis is mostly a function of the VIX level, and
+what is left of it predicts nothing. The tradable content is the unconditional short-VIX carry
+with its tail, not a basis-timed signal. Nothing is licensed; no §13 row is opened.
