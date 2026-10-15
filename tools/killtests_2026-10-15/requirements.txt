@@ -1,0 +1,3 @@
+# Environment for the kill tests of 15 October 2026 (Python 3.12, linux x86_64).
+numpy==2.2.6
+yfinance>=0.2.50

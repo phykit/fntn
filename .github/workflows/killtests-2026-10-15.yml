@@ -1,0 +1,116 @@
+name: Kill tests of 15 October 2026 (follow-ups to the futures residual)
+
+# NON-EVIDENTIARY side tests, not part of the FNTN funnel. See docs/KILLTESTS_2026-10-15.md.
+# Runs when tools/killtests_2026-10-15/DISPATCH changes on this branch. DISPATCH holds one word
+# naming the step (probe, or all) and a counter. Same return channel and the same bounds as
+# futures-residual.yml: plain-text result files only, 3 MB ceiling, nothing cached, data/ removed.
+on:
+  push:
+    branches: [futures-residual-2026-10-15]
+    paths: [tools/killtests_2026-10-15/DISPATCH]
+
+concurrency:
+  group: killtests-2026-10-15
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  killtests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      BRANCH: futures-residual-2026-10-15
+      T: tools/killtests_2026-10-15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 50
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pinned dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --quiet -r "$T/requirements.txt"
+      - name: Resolve the step
+        id: step
+        shell: bash
+        run: |
+          set -euo pipefail
+          s="$(head -1 "$T/DISPATCH" | awk '{print $1}')"
+          case "$s" in probe|all) ;; *) echo "DISPATCH names no known step: '$s'"; exit 1 ;; esac
+          echo "step=$s" >> "$GITHUB_OUTPUT"
+          echo "step: $s"
+      - name: Probe (structure only)
+        if: ${{ steps.step.outputs.step == 'probe' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          python "$T/probe.py" --out out 2>&1 | tee out/probe.log
+      - name: Freeze check, self-tests, fetch, runs, independent checks
+        if: ${{ steps.step.outputs.step == 'all' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          bash "$T/run_all.sh" 2>&1 | tee out/run_all.log
+      - name: Remove the inputs
+        if: always()
+        shell: bash
+        run: rm -rf data
+      - name: Commit the result files to this branch
+        if: always()
+        shell: bash
+        env:
+          STEP: ${{ steps.step.outputs.step }}
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          d="$T/results/${GITHUB_RUN_NUMBER}"
+          if [ "${GITHUB_RUN_ATTEMPT}" != "1" ]; then d="${d}_attempt${GITHUB_RUN_ATTEMPT}"; fi
+          mkdir -p "$d" out
+          {
+            echo "step: ${STEP:-unresolved}"
+            echo "job status at commit time: ${JOB_STATUS}"
+            echo "commit: ${GITHUB_SHA}"
+            echo "run id: ${GITHUB_RUN_ID}"
+            echo "run number: ${GITHUB_RUN_NUMBER}"
+            echo "run attempt: ${GITHUB_RUN_ATTEMPT}"
+            echo "utc: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } > "$d/meta.txt"
+          shopt -s nullglob
+          for f in out/*.log out/*.json out/*.txt; do
+            n=$(stat -c %s "$f")
+            if [ "$n" -gt 3000000 ]; then
+              echo "refused (above the 3 MB ceiling): $f, $n bytes" | tee -a "$d/meta.txt"
+            else
+              cp "$f" "$d/"
+            fi
+          done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$d"
+          git commit -m "kill tests 2026-10-15: results of ${STEP:-unresolved} run ${GITHUB_RUN_NUMBER} on ${GITHUB_SHA::7} (${JOB_STATUS})"
+          for i in 1 2 3 4; do
+            if git pull --rebase origin "$BRANCH" && git push origin "HEAD:${BRANCH}"; then exit 0; fi
+            sleep $((i * 5))
+          done
+          echo "the result files could not be pushed"; exit 1
+      - name: Job summary
+        if: always()
+        shell: bash
+        env:
+          STEP: ${{ steps.step.outputs.step }}
+        run: |
+          set -euo pipefail
+          {
+            echo "## Kill tests 2026-10-15: ${STEP:-unresolved} (non-evidentiary)"
+            for f in out/*.log; do
+              [ -e "$f" ] || continue
+              echo "<details><summary>$(basename "$f")</summary>"; echo ""; echo '```'; tail -200 "$f"; echo '```'; echo "</details>"
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
