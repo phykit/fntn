@@ -1,0 +1,4 @@
+# Environment for the degross-proxy side test (Python 3.12, linux x86_64), 29 October 2026.
+# numpy is the only dependency of run.py, verify.py, selftest.py and compare.py, and it is pinned;
+# fetch.py uses the standard library only.
+numpy==2.2.6
