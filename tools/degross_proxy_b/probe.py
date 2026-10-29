@@ -54,8 +54,8 @@ def p13f():
     print("index status", st)
     links = sorted(set(re.findall(r'href="([^"]+\.zip)"', body.decode("utf-8", "replace"))))
     print("zip links", len(links))
-    for l in links[:3] + ["..."] + links[-3:]:
-        print("  ", l)
+    names = sorted(l.rsplit("/", 1)[-1] for l in links)
+    print("   all names:", names)
     if not links:
         return
     latest = links[-1] if links[-1].startswith("http") else "https://www.sec.gov" + links[-1]
@@ -119,6 +119,15 @@ def peod():
 def pfinra():
     section("FINRA consolidated short interest")
     url = "https://api.finra.org/data/group/otcMarket/name/consolidatedShortInterest"
+    for a, b in (("2010-01-01", "2012-12-31"), ("2013-01-01", "2014-12-31"), ("2015-01-01", "2016-12-31"),
+                 ("2017-01-01", "2018-12-31"), ("2019-01-01", "2020-12-31"), ("2021-01-01", "2021-12-31")):
+        payload = json.dumps({"limit": 1, "dateRangeFilters": [{"fieldName": "settlementDate", "startDate": a, "endDate": b}]}).encode()
+        st, body = get(url, {"Content-Type": "application/json", "Accept": "application/json"}, data=payload)
+        try:
+            rows = json.loads(body)
+            print(f"   window {a}..{b}: status {st}, rows returned {len(rows)}, settlementDate {rows[0].get('settlementDate') if rows else 'none'}")
+        except Exception:  # noqa: BLE001
+            print(f"   window {a}..{b}: status {st}, unparsed {body[:100]!r}")
     tries = [("GET limit", url + "?limit=1", None),
              ("POST limit", url, json.dumps({"limit": 1}).encode()),
              ("POST sorted asc", url, json.dumps({"limit": 1, "sortFields": ["settlementDate"]}).encode()),
@@ -152,7 +161,7 @@ def pyahoo():
 
 
 if __name__ == "__main__":
-    for f in (p13f, pftd, pyahoo, pfinra):
+    for f in (p13f, pfinra):
         try:
             f()
         except Exception as e:  # noqa: BLE001
