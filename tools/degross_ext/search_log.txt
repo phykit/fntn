@@ -105,11 +105,11 @@ bi-2018-2 | Goldman prime book hedge funds largest net selling since 2018 site:b
 bi-2018-3 | hedge funds cut gross leverage Goldman Sachs 2018 site:businessinsider.com | run | 1
 bi-2018-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2018 site:businessinsider.com | run | 0
 bi-2018-5 | hedge funds degross Goldman long sales short covers 2018 site:businessinsider.com | run | 1
-bi-2019-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2019 site:businessinsider.com | NOT RUN (attempted; refused, search budget exhausted) | n/a
-bi-2019-2 | Goldman prime book hedge funds largest net selling since 2019 site:businessinsider.com | NOT RUN (attempted; refused, search budget exhausted) | n/a
-bi-2019-3 | hedge funds cut gross leverage Goldman Sachs 2019 site:businessinsider.com | NOT RUN (attempted; refused, search budget exhausted) | n/a
-bi-2019-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2019 site:businessinsider.com | NOT RUN (attempted; refused, search budget exhausted) | n/a
-bi-2019-5 | hedge funds degross Goldman long sales short covers 2019 site:businessinsider.com | NOT RUN (attempted; refused, search budget exhausted) | n/a
+bi-2019-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2019 site:businessinsider.com | NOT RUN (attempted; refused, WebSearch budget exhausted; re-attempted 29 Oct 2026 via Firecrawl, refused, Firecrawl credits exhausted) | n/a
+bi-2019-2 | Goldman prime book hedge funds largest net selling since 2019 site:businessinsider.com | NOT RUN (attempted; refused, WebSearch budget exhausted; re-attempted 29 Oct 2026 via Firecrawl, refused, Firecrawl credits exhausted) | n/a
+bi-2019-3 | hedge funds cut gross leverage Goldman Sachs 2019 site:businessinsider.com | NOT RUN (attempted; refused, WebSearch budget exhausted; re-attempted 29 Oct 2026 via Firecrawl, refused, Firecrawl credits exhausted) | n/a
+bi-2019-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2019 site:businessinsider.com | NOT RUN (attempted; refused, WebSearch budget exhausted; re-attempted 29 Oct 2026 via Firecrawl, refused, Firecrawl credits exhausted) | n/a
+bi-2019-5 | hedge funds degross Goldman long sales short covers 2019 site:businessinsider.com | NOT RUN (attempted; refused, WebSearch budget exhausted; re-attempted 29 Oct 2026 via Firecrawl, refused, Firecrawl credits exhausted) | n/a
 bi-2020-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2020 site:businessinsider.com | NOT RUN (search budget exhausted) | n/a
 bi-2020-2 | Goldman prime book hedge funds largest net selling since 2020 site:businessinsider.com | NOT RUN (search budget exhausted) | n/a
 bi-2020-3 | hedge funds cut gross leverage Goldman Sachs 2020 site:businessinsider.com | NOT RUN (search budget exhausted) | n/a
@@ -165,4 +165,5 @@ bbg-2020-2 | Goldman prime book hedge funds largest net selling since 2020 site:
 bbg-2020-3 | hedge funds cut gross leverage Goldman Sachs 2020 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
 bbg-2020-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2020 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
 bbg-2020-5 | hedge funds degross Goldman long sales short covers 2020 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+#   Re-attempt 29 Oct 2026 (Firecrawl): bi-2019-1..5 were sent to firecrawl_search and refused for insufficient credits (not performed). No further query was attempted. The 60 queries remain NOT RUN.
 # Totals: protocol queries 160; run 100; not run 60; candidates taken 81
