@@ -4,7 +4,7 @@ name: Follow-up studies 1 to 4 side tests
 # tools/degross_ext, tools/crowd_degross, tools/cross_pb and tools/clone_etfs.
 #
 # Runs when tools/crowd_degross/DISPATCH changes on this branch. DISPATCH holds one word naming the
-# step (crowd_clone: studies 2 and 4; crowd2: studies 2a to 2d; crowd2e: study 2e-ii; final: studies 1 and 3 and study 2's declared secondary) and a
+# step (crowd_clone: studies 2 and 4; crowd2: studies 2a to 2d; crowd2e: study 2e-ii; verify2: check 1; final: studies 1 and 3 and study 2's declared secondary) and a
 # counter. No other trigger.
 #
 # RETURN CHANNEL as on the other side tests: derived statistics only are committed under
@@ -56,7 +56,7 @@ jobs:
         run: |
           set -euo pipefail
           s="$(head -1 "$S2/DISPATCH" | awk '{print $1}')"
-          case "$s" in crowd_clone|crowd2|crowd2e|final) ;; *) echo "DISPATCH names no known step: '$s'"; exit 1 ;; esac
+          case "$s" in crowd_clone|crowd2|crowd2e|final|verify2) ;; *) echo "DISPATCH names no known step: '$s'"; exit 1 ;; esac
           echo "step=$s" >> "$GITHUB_OUTPUT"
           mkdir -p out
       - name: Freeze records
@@ -78,6 +78,9 @@ jobs:
           check "$V" run.py fetch_extra.py
           check "$S2" PREREG.md run.py selftest.py PREREG_2.md crowd2.py selftest2.py PREREG_2e.md crowd2e.py selftest2e.py
           check "$S4" PREREG.md run.py fetch.py selftest.py
+          if [ "${{ steps.step.outputs.step }}" = "verify2" ]; then
+            check tools/checks PREREG.md verify2.py compare2.py
+          fi
           if [ "${{ steps.step.outputs.step }}" = "final" ]; then
             check "$S1" PREREG.md episodes_all.csv episodes_ext.csv score_ext.py
             check "$S3" PREREG.md episodes_other.csv score_xpb.py
@@ -119,6 +122,15 @@ jobs:
         run: |
           set -euo pipefail
           python "$S2/crowd2.py" --bench data_g --data-b data_b --ndx data_a/ndx.csv --episodes "$E/episodes.csv" --out out 2>&1 | tee out/crowd2.log
+      - name: Check 1, independent implementation of study 2
+        if: steps.step.outputs.step == 'verify2'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out/v
+          python tools/checks/verify2.py --bench data_g --data-b data_b --episodes "$E/episodes.csv" --out out/v 2>&1 | tee out/verify2.log
+          cp out/v/verify2.json out/verify2.json
+          python tools/checks/compare2.py --frozen out/results_frozen21.json --verify out/verify2.json 2>&1 | tee out/compare2.log
       - name: Study 2e-ii (2e-i pending the new episode lists)
         if: steps.step.outputs.step == 'crowd2e'
         shell: bash
