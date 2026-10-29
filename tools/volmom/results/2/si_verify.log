@@ -1,0 +1,20 @@
+{
+  "n": 432,
+  "first_signal_month": "1986-01",
+  "last_signal_month": "2021-12",
+  "b": -0.006354895952242937,
+  "b_per_sd": -0.006519124552026631,
+  "p_shift": 0.03170731707317073,
+  "n_shifts": 409,
+  "nw_t": -2.2183648119493125,
+  "r2_in_sample": 0.008817773808236118,
+  "r2_oos": 0.0035002797470884417,
+  "clark_west_t": 2.038750668984077,
+  "n_oos_forecasts": 312,
+  "criteria": {
+    "primary": false,
+    "oos": true
+  },
+  "verdict": "FAIL"
+}
+written out/sv/verify.json

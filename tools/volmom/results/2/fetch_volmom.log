@@ -1,0 +1,8 @@
+  df.drop(
+  df.rename(columns={
+  df.drop(
+  df.rename(columns={
+mom_daily.csv: 26237 rows, 1926-11-03 to 2026-09-30
+MTUM: 3405 rows, 2013-04-18 to 2026-10-29
+SPY: 4232 rows, 2010-01-04 to 2026-10-29
+bench.csv: 4232 days

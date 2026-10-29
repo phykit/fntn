@@ -1,0 +1,78 @@
+{
+  "n": 432,
+  "first_signal_month": "1986-01",
+  "last_signal_month": "2021-12",
+  "b": -0.006354895952242937,
+  "b_per_sd": -0.006519124552026631,
+  "p_shift": 0.03170731707317073,
+  "n_shifts": 409,
+  "nw_t": -2.2183648119493125,
+  "r2_in_sample": 0.008817773808236118,
+  "r2_oos": 0.0035002797470884417,
+  "clark_west_t": 2.038750668984077,
+  "n_oos_forecasts": 312,
+  "criteria": {
+    "primary": false,
+    "oos": true
+  },
+  "verdict": "FAIL",
+  "choices": [
+    "Recursive detrend: the time index is the calendar month count (year * 12 + month), so a gap in sii.csv is a gap in time rather than a shift of row index; for a contiguous series this is identical to the row index.",
+    "Recursive detrend: a residual is taken only where the fit has at least one degree of freedom, i.e. from the third observation of the series; the first two months carry no signal (their residual is identically zero or undefined) and are excluded.",
+    "Recursive detrend: the published index is used as supplied, on the clarification that an affine function of time leaves the recursive residual unchanged; missing SII values (blank, '.', 'NA') are dropped and a duplicated month is an error.",
+    "SII column: a header equal to 'SII' (case-insensitive, stripped) is preferred; otherwise the first header containing 'sii'.",
+    "NDX_t is the last non-missing FRED observation dated inside calendar month t, whatever day of the month that is; a partially covered final month is used as it stands.",
+    "RF_(t+1) is the compounded daily French RF over every daily row dated inside calendar month t+1; log(1 + RF) is formed as the sum of the daily log(1 + rf / 100); a month with no RF row is unavailable, a partially covered month is used as it stands.",
+    "Month t+1 is the next calendar month; a calendar month with no NDX observation breaks the pair on either side of it.",
+    "Aligned sample: every month t with x_t, NDX_t, NDX_(t+1) and RF_(t+1) available, in month order; first_signal_month and last_signal_month are the first and last such t (signal months, not return months).",
+    "Primary: OLS of y_(t+1) on x_t with intercept; rotations np.roll(x, k) for k = 12 .. n-12 inclusive (n_shifts = n - 23); a rotation counts if its slope <= b; p = (1 + count) / (1 + n_shifts).",
+    "Newey-West (nw_t and the Clark-West t): Bartlett weights 1 - j/(L+1), L = 3, no small-sample correction; applied to the OLS moment conditions for b and to the demeaned Clark-West loss for its mean.",
+    "Secondary: forecast for aligned pair i (0-based, i >= 120) is estimated on pairs 0..i-1; the benchmark is the mean of y over pairs 0..i-1; n_oos_forecasts = n - 120.",
+    "INSUFFICIENT (n < 240): per PREREG \u00a72 no regression is run; every statistic is null and both criteria are null, which may not be read as a pass.",
+    "b_per_sd = b * sd(x, ddof=1); r2_in_sample is 1 - SSE/SST of the primary regression."
+  ],
+  "parameters": {
+    "min_months": 240,
+    "initial_window": 120,
+    "shift_margin": 12,
+    "nw_lags": 3,
+    "p_shift_max": 0.025,
+    "cw_t_min": 1.65,
+    "min_detrend_obs": 3
+  },
+  "diagnostics": {
+    "sii": {
+      "sii_column": "siiInSample",
+      "n_rows_with_value": 588,
+      "n_rows_blank": 0,
+      "first_month": "1973-01",
+      "last_month": "2021-12",
+      "n_calendar_gaps": 0
+    },
+    "ndx": {
+      "n_daily_obs": 10287,
+      "n_daily_missing": 362,
+      "n_months": 490,
+      "first_month": "1986-01",
+      "last_month": "2026-10",
+      "last_obs_date": "2026-10-28"
+    },
+    "rf": {
+      "n_months": 759,
+      "n_rows_skipped": 0,
+      "first_month": "1963-07",
+      "last_month": "2026-09",
+      "days_in_last_month": 21
+    },
+    "months_dropped": {
+      "x_undefined": 2,
+      "ndx_t": 154,
+      "ndx_t1": 0,
+      "rf_t1": 0
+    },
+    "sd_x": 1.025842846368827,
+    "mean_y": 0.008517625855722692,
+    "sd_y": 0.06942402696874148,
+    "n_shifts_with_slope_le_b": 12
+  }
+}

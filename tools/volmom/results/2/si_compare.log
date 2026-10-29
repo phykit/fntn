@@ -1,0 +1,17 @@
+item                a (results.json)        b (verify.json)        result    rule / note
+n                   432                     432                    AGREE     exact
+first_signal_month  1986-01                 1986-01                AGREE     exact
+last_signal_month   2021-12                 2021-12                AGREE     exact
+n_shifts            409                     409                    AGREE     exact
+n_oos_forecasts     312                     312                    AGREE     exact
+verdict             FAIL                    FAIL                   AGREE     exact
+p_shift             0.03170731707317073     0.03170731707317073    AGREE     exact
+criteria.primary    false                   false                  AGREE     exact
+criteria.oos        true                    true                   AGREE     exact
+b                   -0.0063548959522428325  -0.006354895952242937  AGREE     rel 1e-09 (abs floor 1e-12); |diff|=1.041e-16 tol=6.355e-12
+b_per_sd            -0.006519124552026525   -0.006519124552026631  AGREE     rel 1e-09 (abs floor 1e-12); |diff|=1.067e-16 tol=6.519e-12
+r2_in_sample        0.008817773808235837    0.008817773808236118   AGREE     rel 1e-09 (abs floor 1e-12); |diff|=2.810e-16 tol=8.818e-12
+r2_oos              0.0035002797470878866   0.0035002797470884417  AGREE     rel 1e-09 (abs floor 1e-12); |diff|=5.551e-16 tol=3.500e-12
+nw_t                -2.2183648119492787     -2.2183648119493125    AGREE     abs 1e-06; |diff|=3.375e-14 tol=1.0e-06
+clark_west_t        2.0387506689840262      2.038750668984077      AGREE     abs 1e-06; |diff|=5.063e-14 tol=1.0e-06
+OVERALL: AGREE (15/15 items agree)

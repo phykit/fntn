@@ -1,0 +1,136 @@
+{
+  "prereg": "tools/volmom/PREREG.md",
+  "implementation": "verify.py (independent second implementation, numpy + stdlib)",
+  "inputs": {
+    "mom_daily": {
+      "path": "data_m/mom_daily.csv",
+      "sha256": "d5d84443319688472697f29d29f418a89397bcf15abb736f8ec5c771bdc02b92",
+      "rows": 26237,
+      "first": "1926-11-03",
+      "last": "2026-09-30"
+    },
+    "bench": {
+      "path": "data_m/bench.csv",
+      "sha256": "d0ed0a4dc1eb054488d3dda25b35dde05e3ac77209dbd66274ffd7ef92189f41",
+      "rows": 4232,
+      "first": "2010-01-04",
+      "last": "2026-10-29"
+    }
+  },
+  "parameters": {
+    "seed": 20261029,
+    "n_boot": 10000,
+    "block": 12,
+    "window": 126,
+    "target_annual_vol": 0.12,
+    "s_T": 0.034641016151377546,
+    "nw_lags": 3,
+    "min_months": 96,
+    "t_crit": 2.0,
+    "sharpe_mult": 1.2,
+    "p_crit": 0.05,
+    "cost_per_unit_turnover": 0.002
+  },
+  "n_is": 1064,
+  "n_oos": 129,
+  "is_first": "1927-05",
+  "is_last": "2015-12",
+  "oos_first": "2016-01",
+  "oos_last": "2026-09",
+  "is_sharpe_raw": 0.4906926228697198,
+  "is_sharpe_managed": 0.8793433790853451,
+  "is_alpha_monthly": 0.007051851242598361,
+  "is_alpha_t": 6.523257111495269,
+  "oos_alpha_monthly": 0.0023908932166114235,
+  "oos_alpha_t": 2.6052474284443146,
+  "oos_b": 0.7429332671424641,
+  "oos_sharpe_raw": 0.1506645364983952,
+  "oos_sharpe_managed": 0.39147114530153615,
+  "oos_sharpe_ratio": 2.5982965494053465,
+  "p_boot": 0.0036996300369963003,
+  "criteria": {
+    "a": true,
+    "b": true
+  },
+  "verdict": "PASS",
+  "oos_maxdd_raw": -0.35341219712069183,
+  "oos_maxdd_managed": -0.20857073779948665,
+  "weight_min": 0.30414873124661046,
+  "weight_median": 0.8318267709250812,
+  "weight_max": 1.5416958023606957,
+  "weight_share_above_2": 0.0,
+  "worst_raw_months": [
+    {
+      "month": "2023-01",
+      "raw": -0.13728690661566223,
+      "managed": -0.06546786592741533
+    },
+    {
+      "month": "2020-04",
+      "raw": -0.12241276601981499,
+      "managed": -0.10677223829892933
+    },
+    {
+      "month": "2020-11",
+      "raw": -0.12004513647085147,
+      "managed": -0.04128979276081202
+    },
+    {
+      "month": "2026-07",
+      "raw": -0.10867112421573988,
+      "managed": -0.061551041495599444
+    },
+    {
+      "month": "2021-03",
+      "raw": -0.08678040216161109,
+      "managed": -0.0331076808049167
+    }
+  ],
+  "mtum": {
+    "n": 155,
+    "first": "2013-11",
+    "last": "2026-09",
+    "alpha_monthly": 0.0023640470429576233,
+    "alpha_t": 2.0321151867651386,
+    "b": 1.2528500228128583,
+    "sharpe_raw": 0.19740961653321082,
+    "sharpe_managed": 0.404745375962619,
+    "sharpe_ratio": 2.0502819623000863,
+    "p_boot": 0.0184981501849815,
+    "criteria": {
+      "a": true,
+      "b": true
+    },
+    "verdict": "PASS",
+    "ann_return_managed": 0.050749735407209604,
+    "cost_estimate_annual": 0.002815067758137323,
+    "maxdd_raw": -0.28702983331170806,
+    "maxdd_managed": -0.31708515944853455,
+    "n_spread_days": 3404,
+    "weight_min": 0.5033739206097237,
+    "weight_median": 1.5916217011214528,
+    "weight_max": 3.14675171528826,
+    "weight_share_above_2": 0.32903225806451614
+  },
+  "choices": [
+    "Months are calendar months of the dates in the file; a month's days are the file rows falling in it; the monthly factor return compounds those rows in file order.",
+    "The 126-day variance window is the 126 rows of the same file immediately preceding the month's first row, regardless of which months those rows fall in; v_m is undefined when fewer than 126 rows precede, and the month is then excluded from every range.",
+    "A realised variance of exactly zero raises rather than producing an infinite weight.",
+    "Completeness: every month before the file's last month is complete; the last month is complete only if the file's last date equals the last Monday-to-Friday calendar day of that month (a holiday falling on that day makes the month incomplete, as the rule is written).",
+    "In-sample = months with v_m defined AND complete, from the first such month to 2015-12 inclusive; OOS = months with v_m defined AND complete from 2016-01 to the last complete month. If the file ends before 2016 the OOS is empty and the verdict INSUFFICIENT.",
+    "A gap (missing calendar month) inside the in-sample or OOS range raises; months are not silently skipped.",
+    "Criterion (a) regresses managed on raw (R* = a + b R + e) with an intercept; the Newey-West sandwich uses Bartlett weights 1 - l/(L+1), L = 3, and no small-sample or degrees-of-freedom correction; t = a / se(a); the test is a > 0 and t >= 2.0.",
+    "Sharpe = sqrt(12) x mean / sd with ddof = 1, applied to monthly returns; the ratio reported is Sharpe(R*) / Sharpe(R), null if Sharpe(R) is exactly zero.",
+    "Criterion (b)'s 'at least 1.2 x the raw Sharpe' is applied as a gain test, per the coordinator's clarification of 29 October 2026 treated as part of the specification: (Sharpe(R*) - Sharpe(R)) >= 0.2 x |Sharpe(R)| and p_boot <= 0.05. For a positive raw Sharpe this is identical to the 1.2 x rule; for a raw Sharpe at or below zero, where a ratio is meaningless, it requires an improvement of 0.2 x |raw|.",
+    "Bootstrap: one rng = default_rng(20261029) per test; each of the 10,000 draws makes one call rng.integers(0, n, size=ceil(n/12)) (sequential calls, not one vectorised call); blocks are start, start+1, ..., start+11 modulo n, concatenated in draw order and truncated to n; the difference is Sharpe(R*[idx]) - Sharpe(R[idx]) with the same formula as the headline Sharpe; a draw with difference <= 0 (or NaN, which fails the comparison) is counted as not positive. The MTUM test re-seeds a fresh rng.",
+    "Criteria a and b are reported as computed even when the verdict is INSUFFICIENT; the 96-month floor sets the verdict only. With fewer than 3 months the statistics are null and the criteria false.",
+    "Maximum drawdown: wealth path W_0 = 1, W_t = W_(t-1)(1 + R_t); drawdown_t = W_t / max(W_0..W_t) - 1; reported value is the minimum (a non-positive fraction, 0 if wealth never falls below its running peak).",
+    "Weight distribution over OOS months: numpy min, median (mean of the two middle values when n is even) and max; share above 2 is the fraction of months with w_m strictly greater than 2.",
+    "Worst months: OOS months sorted ascending by raw R_m (ties by calendar order), the first five, each with the managed return of the same month.",
+    "MTUM version: daily returns r_t = P_t / P_(t-1) - 1 from consecutive rows of bench.csv where both closes are present (NaN otherwise); the spread day series is the set of rows where both r_MTUM and r_SPY are defined; months, monthly products and the 126-day window are taken over that day series only, so the two legs are always compounded over identical days. S_m = prod(1 + r_MTUM) - prod(1 + r_SPY), not prod(1 + d) - 1.",
+    "MTUM completeness is judged against the last date of bench.csv (its last SPY trading day), not against mom_daily.csv.",
+    "MTUM test range: every month with v_m defined and complete, with no in-sample/OOS split; the same 96-month floor, criteria and verdict labels apply.",
+    "Cost estimate: 0.0020 x sum over m = 2..n of |w_m - w_(m-1)|, divided by n/12 years (the first month's establishment of the position is not charged); ann_return_managed is the arithmetic 12 x mean of the managed monthly spread, in the same units as the cost.",
+    "Inputs are validated: dates must be strictly increasing, Mom must not be blank, closes must be positive; any violation raises rather than being repaired."
+  ]
+}

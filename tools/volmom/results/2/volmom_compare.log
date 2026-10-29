@@ -1,0 +1,84 @@
+A = out/results_volmom.json
+B = out/verify_volmom.json
+
+AGREE    n_is                        A=1064 B=1064
+AGREE    n_oos                       A=129 B=129
+AGREE    oos_first                   A="2016-01" B="2016-01"
+AGREE    oos_last                    A="2026-09" B="2026-09"
+AGREE    oos_alpha_monthly           A=0.0023908932166114226 B=0.0023908932166114235 |diff|=8.674e-19
+AGREE    oos_alpha_t                 A=2.605247428444314 B=2.6052474284443146 |diff|=4.441e-16 (tol 1e-06)
+AGREE    oos_b                       A=0.7429332671424638 B=0.7429332671424641 |diff|=3.331e-16
+AGREE    oos_sharpe_raw              A=0.1506645364983952 B=0.1506645364983952 |diff|=0.000e+00
+AGREE    oos_sharpe_managed          A=0.39147114530153615 B=0.39147114530153615 |diff|=0.000e+00
+AGREE    oos_sharpe_ratio            A=2.5982965494053465 B=2.5982965494053465 |diff|=0.000e+00
+AGREE    p_boot                      A=0.0036996300369963003 B=0.0036996300369963003 (exact)
+AGREE    criteria.a                  A=true B=true
+AGREE    criteria.b                  A=true B=true
+AGREE    verdict                     A="PASS" B="PASS"
+AGREE    is_sharpe_raw               A=0.4906926228697198 B=0.4906926228697198 |diff|=0.000e+00
+AGREE    is_sharpe_managed           A=0.8793433790853451 B=0.8793433790853451 |diff|=0.000e+00
+AGREE    is_alpha_monthly            A=0.007051851242598368 B=0.007051851242598361 |diff|=6.939e-18
+AGREE    is_alpha_t                  A=6.523257111495277 B=6.523257111495269 |diff|=7.994e-15 (tol 1e-06)
+AGREE    oos_maxdd_raw               A=-0.35341219712069183 B=-0.35341219712069183 |diff|=0.000e+00
+AGREE    oos_maxdd_managed           A=-0.20857073779948665 B=-0.20857073779948665 |diff|=0.000e+00
+AGREE    weight_min                  A=0.30414873124661046 B=0.30414873124661046 |diff|=0.000e+00
+AGREE    weight_median               A=0.8318267709250812 B=0.8318267709250812 |diff|=0.000e+00
+AGREE    weight_max                  A=1.5416958023606957 B=1.5416958023606957 |diff|=0.000e+00
+AGREE    weight_share_above_2        A=0.0 B=0.0 |diff|=0.000e+00
+AGREE    worst_raw_months.0.month    A="2023-01" B="2023-01"
+AGREE    worst_raw_months.0.raw      A=-0.13728690661566223 B=-0.13728690661566223 |diff|=0.000e+00
+AGREE    worst_raw_months.0.managed  A=-0.06546786592741533 B=-0.06546786592741533 |diff|=0.000e+00
+AGREE    worst_raw_months.1.month    A="2020-04" B="2020-04"
+AGREE    worst_raw_months.1.raw      A=-0.12241276601981499 B=-0.12241276601981499 |diff|=0.000e+00
+AGREE    worst_raw_months.1.managed  A=-0.10677223829892933 B=-0.10677223829892933 |diff|=0.000e+00
+AGREE    worst_raw_months.2.month    A="2020-11" B="2020-11"
+AGREE    worst_raw_months.2.raw      A=-0.12004513647085147 B=-0.12004513647085147 |diff|=0.000e+00
+AGREE    worst_raw_months.2.managed  A=-0.04128979276081202 B=-0.04128979276081202 |diff|=0.000e+00
+AGREE    worst_raw_months.3.month    A="2026-07" B="2026-07"
+AGREE    worst_raw_months.3.raw      A=-0.10867112421573988 B=-0.10867112421573988 |diff|=0.000e+00
+AGREE    worst_raw_months.3.managed  A=-0.061551041495599444 B=-0.061551041495599444 |diff|=0.000e+00
+AGREE    worst_raw_months.4.month    A="2021-03" B="2021-03"
+AGREE    worst_raw_months.4.raw      A=-0.08678040216161109 B=-0.08678040216161109 |diff|=0.000e+00
+AGREE    worst_raw_months.4.managed  A=-0.0331076808049167 B=-0.0331076808049167 |diff|=0.000e+00
+AGREE    mtum.n                      A=155 B=155
+AGREE    mtum.first                  A="2013-11" B="2013-11"
+AGREE    mtum.last                   A="2026-09" B="2026-09"
+AGREE    mtum.alpha_monthly          A=0.002364047042957621 B=0.0023640470429576233 |diff|=2.168e-18
+AGREE    mtum.alpha_t                A=2.0321151867651372 B=2.0321151867651386 |diff|=1.332e-15 (tol 1e-06)
+SKIP     mtum.b                      absent in A (optional key)
+AGREE    mtum.sharpe_raw             A=0.19740961653321082 B=0.19740961653321082 |diff|=0.000e+00
+AGREE    mtum.sharpe_managed         A=0.404745375962619 B=0.404745375962619 |diff|=0.000e+00
+AGREE    mtum.sharpe_ratio           A=2.0502819623000863 B=2.0502819623000863 |diff|=0.000e+00
+AGREE    mtum.p_boot                 A=0.0184981501849815 B=0.0184981501849815 (exact)
+SKIP     mtum.criteria.a             absent in A (optional key)
+SKIP     mtum.criteria.b             absent in A (optional key)
+AGREE    mtum.verdict                A="PASS" B="PASS"
+DISAGREE mtum.ann_return_managed     A=0.04381682065683634 B=0.050749735407209604 |diff|=6.933e-03
+AGREE    mtum.cost_estimate_annual   A=0.002815067758137323 B=0.002815067758137323 |diff|=0.000e+00
+AGREE    mtum.maxdd_raw              A=-0.28702983331170806 B=-0.28702983331170806 |diff|=0.000e+00
+AGREE    mtum.maxdd_managed          A=-0.31708515944853455 B=-0.31708515944853455 |diff|=0.000e+00
+
+top-level keys only in B: choices, implementation, inputs, is_last, parameters, prereg
+
+B recorded 19 choice(s):
+  - Months are calendar months of the dates in the file; a month's days are the file rows falling in it; the monthly factor return compounds those rows in file order.
+  - The 126-day variance window is the 126 rows of the same file immediately preceding the month's first row, regardless of which months those rows fall in; v_m is undefined when fewer than 126 rows precede, and the month is then excluded from every range.
+  - A realised variance of exactly zero raises rather than producing an infinite weight.
+  - Completeness: every month before the file's last month is complete; the last month is complete only if the file's last date equals the last Monday-to-Friday calendar day of that month (a holiday falling on that day makes the month incomplete, as the rule is written).
+  - In-sample = months with v_m defined AND complete, from the first such month to 2015-12 inclusive; OOS = months with v_m defined AND complete from 2016-01 to the last complete month. If the file ends before 2016 the OOS is empty and the verdict INSUFFICIENT.
+  - A gap (missing calendar month) inside the in-sample or OOS range raises; months are not silently skipped.
+  - Criterion (a) regresses managed on raw (R* = a + b R + e) with an intercept; the Newey-West sandwich uses Bartlett weights 1 - l/(L+1), L = 3, and no small-sample or degrees-of-freedom correction; t = a / se(a); the test is a > 0 and t >= 2.0.
+  - Sharpe = sqrt(12) x mean / sd with ddof = 1, applied to monthly returns; the ratio reported is Sharpe(R*) / Sharpe(R), null if Sharpe(R) is exactly zero.
+  - Criterion (b)'s 'at least 1.2 x the raw Sharpe' is applied as a gain test, per the coordinator's clarification of 29 October 2026 treated as part of the specification: (Sharpe(R*) - Sharpe(R)) >= 0.2 x |Sharpe(R)| and p_boot <= 0.05. For a positive raw Sharpe this is identical to the 1.2 x rule; for a raw Sharpe at or below zero, where a ratio is meaningless, it requires an improvement of 0.2 x |raw|.
+  - Bootstrap: one rng = default_rng(20261029) per test; each of the 10,000 draws makes one call rng.integers(0, n, size=ceil(n/12)) (sequential calls, not one vectorised call); blocks are start, start+1, ..., start+11 modulo n, concatenated in draw order and truncated to n; the difference is Sharpe(R*[idx]) - Sharpe(R[idx]) with the same formula as the headline Sharpe; a draw with difference <= 0 (or NaN, which fails the comparison) is counted as not positive. The MTUM test re-seeds a fresh rng.
+  - Criteria a and b are reported as computed even when the verdict is INSUFFICIENT; the 96-month floor sets the verdict only. With fewer than 3 months the statistics are null and the criteria false.
+  - Maximum drawdown: wealth path W_0 = 1, W_t = W_(t-1)(1 + R_t); drawdown_t = W_t / max(W_0..W_t) - 1; reported value is the minimum (a non-positive fraction, 0 if wealth never falls below its running peak).
+  - Weight distribution over OOS months: numpy min, median (mean of the two middle values when n is even) and max; share above 2 is the fraction of months with w_m strictly greater than 2.
+  - Worst months: OOS months sorted ascending by raw R_m (ties by calendar order), the first five, each with the managed return of the same month.
+  - MTUM version: daily returns r_t = P_t / P_(t-1) - 1 from consecutive rows of bench.csv where both closes are present (NaN otherwise); the spread day series is the set of rows where both r_MTUM and r_SPY are defined; months, monthly products and the 126-day window are taken over that day series only, so the two legs are always compounded over identical days. S_m = prod(1 + r_MTUM) - prod(1 + r_SPY), not prod(1 + d) - 1.
+  - MTUM completeness is judged against the last date of bench.csv (its last SPY trading day), not against mom_daily.csv.
+  - MTUM test range: every month with v_m defined and complete, with no in-sample/OOS split; the same 96-month floor, criteria and verdict labels apply.
+  - Cost estimate: 0.0020 x sum over m = 2..n of |w_m - w_(m-1)|, divided by n/12 years (the first month's establishment of the position is not charged); ann_return_managed is the arithmetic 12 x mean of the managed monthly spread, in the same units as the cost.
+  - Inputs are validated: dates must be strictly increasing, Mom must not be blank, closes must be positive; any violation raises rather than being repaired.
+
+OVERALL DISAGREE: 52 agree, 1 disagree, 0 note(s), 3 skipped

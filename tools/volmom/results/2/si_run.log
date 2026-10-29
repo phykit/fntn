@@ -1,0 +1,41 @@
+sii.csv: header ['date', 'siiInSample', 'siiOutOfSample']; 588 months, (1973, 1) to (2021, 12)
+ndx.csv: 490 months, (1986, 1) to (2026, 10)
+{
+ "n": 432,
+ "first_signal_month": "1986-01",
+ "last_signal_month": "2021-12",
+ "sii_months": 588,
+ "sii_first": "1973-01",
+ "sii_last": "2021-12",
+ "b": -0.0063548959522428325,
+ "b_per_sd": -0.006519124552026525,
+ "p_shift": 0.03170731707317073,
+ "n_shifts": 409,
+ "nw_t": -2.2183648119492787,
+ "r2_in_sample": 0.008817773808235837,
+ "r2_oos": 0.0035002797470878866,
+ "clark_west_t": 2.0387506689840262,
+ "n_oos_forecasts": 312,
+ "criteria": {
+  "primary": false,
+  "oos": true
+ },
+ "verdict": "FAIL",
+ "minimum_detectable_r2_80pct_power": 0.014149015484022026,
+ "halves": [
+  {
+   "first": "1986-01",
+   "slope": -0.011775615635233267
+  },
+  {
+   "first": "2004-01",
+   "slope": -0.0067174399379913525
+  }
+ ],
+ "post_2014 (no weight)": {
+  "n": 84,
+  "slope": -0.005322367085777669,
+  "nw_t": -0.5042302965931862
+ }
+}
+VERDICT: FAIL

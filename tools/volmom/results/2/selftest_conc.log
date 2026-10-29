@@ -1,0 +1,5 @@
+ok   conc, seed 1: CONCENTRATION EXPLAINS (n 118, a t -0.41, b 1.10 t 18.72, 2016-12 to 2026-09)
+ok   conc, seed 2: CONCENTRATION EXPLAINS (n 118, a t -1.34, b 0.99 t 12.76, 2016-12 to 2026-09)
+ok   short, seed 3: RESIDUAL SHORTFALL (n 118, a t -2.73, b -0.05 t -0.62, 2016-12 to 2026-09)
+ok   short, seed 4: RESIDUAL SHORTFALL (n 118, a t -2.55, b 0.15 t 2.89, 2016-12 to 2026-09)
+SELFTEST PASSED
