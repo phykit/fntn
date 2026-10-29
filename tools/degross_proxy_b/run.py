@@ -134,7 +134,7 @@ def signals(Ww, Lw, Mw):
             win = P[t - Z_WIN:t]
             if not np.isnan(win).any() and not np.isnan(P[t]):
                 z[t] = (P[t] - win.mean()) / win.std(ddof=1)
-        if t - S_WIN >= 0:
+        if t - S_WIN >= 0 and not (np.isnan(Ww[t]) or np.isnan(Lw[t]) or np.isnan(Mw[t])):
             win = P[t - S_WIN:t]
             if not np.isnan(win).any():
                 S[t] = win.sum()

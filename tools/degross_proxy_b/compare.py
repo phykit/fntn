@@ -41,7 +41,12 @@ def main(argv=None):
         bad.append("baskets")
 
     def same(name, x, y, tol=None):
-        ok = (abs(x - y) <= tol) if tol is not None else (x == y)
+        def undef(v):
+            return v is None or (isinstance(v, float) and v != v)
+        if tol is not None and (undef(x) or undef(y)):
+            ok = undef(x) and undef(y)
+        else:
+            ok = (abs(x - y) <= tol) if tol is not None else (x == y)
         print(("agree    " if ok else "DISAGREE ") + f"{name}: run={x} verify={y}")
         return ok
 

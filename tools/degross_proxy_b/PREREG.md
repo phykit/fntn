@@ -158,3 +158,7 @@ short baskets:
    -like filers hold puts, which includes hedges of long positions and long-volatility trades as
    well as bearish views; it is a proxy for crowded short exposure, not a measure of it.
 6. Non-evidentiary, outside the FNTN funnel; not investment advice.
+7. **Readings settled before freezing**, after the independent implementation was written and
+   before any input was retrieved: (i) a long row whose `VALUE` cannot be parsed counts as a held
+   CUSIP with value 0; (ii) the crowding sum S_t is undefined in a week whose W, L or M is
+   undefined. Both implementations apply both readings.

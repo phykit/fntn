@@ -117,7 +117,7 @@ def scan_infotables(zips, acc_period):
                     try:
                         v = float(c[iv].strip() or 0)
                     except ValueError:
-                        continue
+                        v = 0.0  # an unparseable VALUE still counts as a held CUSIP
                     d = longs.setdefault(acc, {})
                     d[cusip] = d.get(cusip, 0.0) + v
         seen = set(longs) | opt | set(puts)
