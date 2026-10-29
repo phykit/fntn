@@ -1,0 +1,211 @@
+# cross_pb search log, 29 October 2026. WebSearch mode standard. 'cands' = NEW candidate articles first logged from that query
+# (an article already logged from an earlier query is not counted again). Candidates and decisions: candidates_log.csv.
+# Order run: MS annual, JPM annual, then MS monthly from January 2021.
+
+A001	Morgan Stanley prime brokerage hedge funds de-grossing 2021	cands=2
+A002	Morgan Stanley prime book hedge funds largest net selling since 2021	cands=5
+A003	hedge funds cut gross leverage Morgan Stanley 2021	cands=4
+A004	Morgan Stanley prime hedge funds dumped tech stocks fastest pace 2021	cands=5
+A005	hedge funds degross Morgan Stanley long sales short covers 2021	cands=4
+A006	Morgan Stanley prime brokerage hedge funds de-grossing 2022	cands=0
+A007	Morgan Stanley prime book hedge funds largest net selling since 2022	cands=1
+A008	hedge funds cut gross leverage Morgan Stanley 2022	cands=0
+A009	Morgan Stanley prime hedge funds dumped tech stocks fastest pace 2022	cands=3
+A010	hedge funds degross Morgan Stanley long sales short covers 2022	cands=0
+A011	Morgan Stanley prime brokerage hedge funds de-grossing 2023	cands=0
+A012	Morgan Stanley prime book hedge funds largest net selling since 2023	cands=1
+A013	hedge funds cut gross leverage Morgan Stanley 2023	cands=2
+A014	Morgan Stanley prime hedge funds dumped tech stocks fastest pace 2023	cands=1
+A015	hedge funds degross Morgan Stanley long sales short covers 2023	cands=1
+A016	Morgan Stanley prime brokerage hedge funds de-grossing 2024	cands=1
+A017	Morgan Stanley prime book hedge funds largest net selling since 2024	cands=0
+A018	hedge funds cut gross leverage Morgan Stanley 2024	cands=2
+A019	Morgan Stanley prime hedge funds dumped tech stocks fastest pace 2024	cands=3
+A020	hedge funds degross Morgan Stanley long sales short covers 2024	cands=2
+A021	Morgan Stanley prime brokerage hedge funds de-grossing 2025	cands=0
+A022	Morgan Stanley prime book hedge funds largest net selling since 2025	cands=1
+A023	hedge funds cut gross leverage Morgan Stanley 2025	cands=2
+A024	Morgan Stanley prime hedge funds dumped tech stocks fastest pace 2025	cands=3
+A025	hedge funds degross Morgan Stanley long sales short covers 2025	cands=0
+A026	Morgan Stanley prime brokerage hedge funds de-grossing 2026	cands=0
+A027	Morgan Stanley prime book hedge funds largest net selling since 2026	cands=1
+A028	hedge funds cut gross leverage Morgan Stanley 2026	cands=2
+A029	Morgan Stanley prime hedge funds dumped tech stocks fastest pace 2026	cands=2
+A030	hedge funds degross Morgan Stanley long sales short covers 2026	cands=2
+A031	JPMorgan prime brokerage hedge funds de-grossing 2021	cands=2
+A032	JPMorgan prime book hedge funds largest net selling since 2021	cands=4
+A033	hedge funds cut gross leverage JPMorgan 2021	cands=2
+A034	JPMorgan prime hedge funds dumped tech stocks fastest pace 2021	cands=0
+A035	hedge funds degross JPMorgan long sales short covers 2021	cands=2
+A036	JPMorgan prime brokerage hedge funds de-grossing 2022	cands=0
+A037	JPMorgan prime book hedge funds largest net selling since 2022	cands=3
+A038	hedge funds cut gross leverage JPMorgan 2022	cands=0
+A039	JPMorgan prime hedge funds dumped tech stocks fastest pace 2022	cands=2
+A040	hedge funds degross JPMorgan long sales short covers 2022	cands=0
+A041	JPMorgan prime brokerage hedge funds de-grossing 2023	cands=1
+A042	JPMorgan prime book hedge funds largest net selling since 2023	cands=0
+A043	hedge funds cut gross leverage JPMorgan 2023	cands=1
+A044	JPMorgan prime hedge funds dumped tech stocks fastest pace 2023	cands=0
+A045	hedge funds degross JPMorgan long sales short covers 2023	cands=0
+A046	JPMorgan prime brokerage hedge funds de-grossing 2024	cands=0
+A047	JPMorgan prime book hedge funds largest net selling since 2024	cands=0
+A048	hedge funds cut gross leverage JPMorgan 2024	cands=0
+A049	JPMorgan prime hedge funds dumped tech stocks fastest pace 2024	cands=2
+A050	hedge funds degross JPMorgan long sales short covers 2024	cands=0
+A051	JPMorgan prime brokerage hedge funds de-grossing 2025	cands=0
+A052	JPMorgan prime book hedge funds largest net selling since 2025	cands=1
+A053	hedge funds cut gross leverage JPMorgan 2025	cands=0
+A054	JPMorgan prime hedge funds dumped tech stocks fastest pace 2025	cands=0
+A055	hedge funds degross JPMorgan long sales short covers 2025	cands=2
+A056	JPMorgan prime brokerage hedge funds de-grossing 2026	cands=0
+A057	JPMorgan prime book hedge funds largest net selling since 2026	cands=1
+A058	hedge funds cut gross leverage JPMorgan 2026	cands=1
+A059	JPMorgan prime hedge funds dumped tech stocks fastest pace 2026	cands=1
+A060	hedge funds degross JPMorgan long sales short covers 2026	cands=2
+M001	Morgan Stanley prime brokerage hedge funds January 2021	cands=0
+M002	Morgan Stanley prime brokerage hedge funds February 2021	cands=0
+M003	Morgan Stanley prime brokerage hedge funds March 2021	cands=0
+M004	Morgan Stanley prime brokerage hedge funds April 2021	cands=0
+M005	Morgan Stanley prime brokerage hedge funds May 2021	cands=0
+M006	Morgan Stanley prime brokerage hedge funds June 2021	cands=0
+M007	Morgan Stanley prime brokerage hedge funds July 2021	cands=0
+M008	Morgan Stanley prime brokerage hedge funds August 2021	cands=0
+M009	Morgan Stanley prime brokerage hedge funds September 2021	cands=0
+M010	Morgan Stanley prime brokerage hedge funds October 2021	cands=0
+M011	Morgan Stanley prime brokerage hedge funds November 2021	cands=0
+M012	Morgan Stanley prime brokerage hedge funds December 2021	cands=0
+M013	Morgan Stanley prime brokerage hedge funds January 2022	cands=1
+M014	Morgan Stanley prime brokerage hedge funds February 2022	cands=0
+M015	Morgan Stanley prime brokerage hedge funds March 2022	cands=0
+M016	Morgan Stanley prime brokerage hedge funds April 2022	cands=0
+M017	Morgan Stanley prime brokerage hedge funds May 2022	cands=0
+M018	Morgan Stanley prime brokerage hedge funds June 2022	cands=0
+M019	Morgan Stanley prime brokerage hedge funds July 2022	cands=0
+M020	Morgan Stanley prime brokerage hedge funds August 2022	cands=0
+M021	Morgan Stanley prime brokerage hedge funds September 2022	cands=0
+M022	Morgan Stanley prime brokerage hedge funds October 2022	cands=0
+M023	Morgan Stanley prime brokerage hedge funds November 2022	cands=0
+M024	Morgan Stanley prime brokerage hedge funds December 2022	cands=0
+M025	Morgan Stanley prime brokerage hedge funds January 2023	cands=0
+M026	Morgan Stanley prime brokerage hedge funds February 2023	cands=0
+M027	Morgan Stanley prime brokerage hedge funds March 2023	cands=0
+M028	Morgan Stanley prime brokerage hedge funds April 2023	cands=0
+M029	Morgan Stanley prime brokerage hedge funds May 2023	cands=0
+M030	Morgan Stanley prime brokerage hedge funds June 2023	cands=0
+M031	Morgan Stanley prime brokerage hedge funds July 2023	cands=0
+M032	Morgan Stanley prime brokerage hedge funds August 2023	cands=0
+M033	Morgan Stanley prime brokerage hedge funds September 2023	cands=2
+M034	Morgan Stanley prime brokerage hedge funds October 2023	cands=0
+M035	Morgan Stanley prime brokerage hedge funds November 2023	cands=0
+M036	Morgan Stanley prime brokerage hedge funds December 2023	cands=0
+M037	Morgan Stanley prime brokerage hedge funds January 2024	cands=0
+M038	Morgan Stanley prime brokerage hedge funds February 2024	cands=0
+M039	Morgan Stanley prime brokerage hedge funds March 2024	cands=0
+
+# SEARCH BUDGET EXHAUSTED. The query 'Morgan Stanley prime brokerage hedge funds April 2024' and every query after it
+# returned 'web search budget is used up (limit: 200 WebSearch calls per turn, shared by every agent in it)'.
+# NOT RUN (101 of the 140 monthly queries): Morgan Stanley April 2024 to October 2026 (31); JPMorgan January 2021 to October 2026 (70).
+NOT_RUN	Morgan Stanley prime brokerage hedge funds April 2024
+NOT_RUN	Morgan Stanley prime brokerage hedge funds May 2024
+NOT_RUN	Morgan Stanley prime brokerage hedge funds June 2024
+NOT_RUN	Morgan Stanley prime brokerage hedge funds July 2024
+NOT_RUN	Morgan Stanley prime brokerage hedge funds August 2024
+NOT_RUN	Morgan Stanley prime brokerage hedge funds September 2024
+NOT_RUN	Morgan Stanley prime brokerage hedge funds October 2024
+NOT_RUN	Morgan Stanley prime brokerage hedge funds November 2024
+NOT_RUN	Morgan Stanley prime brokerage hedge funds December 2024
+NOT_RUN	Morgan Stanley prime brokerage hedge funds January 2025
+NOT_RUN	Morgan Stanley prime brokerage hedge funds February 2025
+NOT_RUN	Morgan Stanley prime brokerage hedge funds March 2025
+NOT_RUN	Morgan Stanley prime brokerage hedge funds April 2025
+NOT_RUN	Morgan Stanley prime brokerage hedge funds May 2025
+NOT_RUN	Morgan Stanley prime brokerage hedge funds June 2025
+NOT_RUN	Morgan Stanley prime brokerage hedge funds July 2025
+NOT_RUN	Morgan Stanley prime brokerage hedge funds August 2025
+NOT_RUN	Morgan Stanley prime brokerage hedge funds September 2025
+NOT_RUN	Morgan Stanley prime brokerage hedge funds October 2025
+NOT_RUN	Morgan Stanley prime brokerage hedge funds November 2025
+NOT_RUN	Morgan Stanley prime brokerage hedge funds December 2025
+NOT_RUN	Morgan Stanley prime brokerage hedge funds January 2026
+NOT_RUN	Morgan Stanley prime brokerage hedge funds February 2026
+NOT_RUN	Morgan Stanley prime brokerage hedge funds March 2026
+NOT_RUN	Morgan Stanley prime brokerage hedge funds April 2026
+NOT_RUN	Morgan Stanley prime brokerage hedge funds May 2026
+NOT_RUN	Morgan Stanley prime brokerage hedge funds June 2026
+NOT_RUN	Morgan Stanley prime brokerage hedge funds July 2026
+NOT_RUN	Morgan Stanley prime brokerage hedge funds August 2026
+NOT_RUN	Morgan Stanley prime brokerage hedge funds September 2026
+NOT_RUN	Morgan Stanley prime brokerage hedge funds October 2026
+NOT_RUN	JPMorgan prime brokerage hedge funds January 2021
+NOT_RUN	JPMorgan prime brokerage hedge funds February 2021
+NOT_RUN	JPMorgan prime brokerage hedge funds March 2021
+NOT_RUN	JPMorgan prime brokerage hedge funds April 2021
+NOT_RUN	JPMorgan prime brokerage hedge funds May 2021
+NOT_RUN	JPMorgan prime brokerage hedge funds June 2021
+NOT_RUN	JPMorgan prime brokerage hedge funds July 2021
+NOT_RUN	JPMorgan prime brokerage hedge funds August 2021
+NOT_RUN	JPMorgan prime brokerage hedge funds September 2021
+NOT_RUN	JPMorgan prime brokerage hedge funds October 2021
+NOT_RUN	JPMorgan prime brokerage hedge funds November 2021
+NOT_RUN	JPMorgan prime brokerage hedge funds December 2021
+NOT_RUN	JPMorgan prime brokerage hedge funds January 2022
+NOT_RUN	JPMorgan prime brokerage hedge funds February 2022
+NOT_RUN	JPMorgan prime brokerage hedge funds March 2022
+NOT_RUN	JPMorgan prime brokerage hedge funds April 2022
+NOT_RUN	JPMorgan prime brokerage hedge funds May 2022
+NOT_RUN	JPMorgan prime brokerage hedge funds June 2022
+NOT_RUN	JPMorgan prime brokerage hedge funds July 2022
+NOT_RUN	JPMorgan prime brokerage hedge funds August 2022
+NOT_RUN	JPMorgan prime brokerage hedge funds September 2022
+NOT_RUN	JPMorgan prime brokerage hedge funds October 2022
+NOT_RUN	JPMorgan prime brokerage hedge funds November 2022
+NOT_RUN	JPMorgan prime brokerage hedge funds December 2022
+NOT_RUN	JPMorgan prime brokerage hedge funds January 2023
+NOT_RUN	JPMorgan prime brokerage hedge funds February 2023
+NOT_RUN	JPMorgan prime brokerage hedge funds March 2023
+NOT_RUN	JPMorgan prime brokerage hedge funds April 2023
+NOT_RUN	JPMorgan prime brokerage hedge funds May 2023
+NOT_RUN	JPMorgan prime brokerage hedge funds June 2023
+NOT_RUN	JPMorgan prime brokerage hedge funds July 2023
+NOT_RUN	JPMorgan prime brokerage hedge funds August 2023
+NOT_RUN	JPMorgan prime brokerage hedge funds September 2023
+NOT_RUN	JPMorgan prime brokerage hedge funds October 2023
+NOT_RUN	JPMorgan prime brokerage hedge funds November 2023
+NOT_RUN	JPMorgan prime brokerage hedge funds December 2023
+NOT_RUN	JPMorgan prime brokerage hedge funds January 2024
+NOT_RUN	JPMorgan prime brokerage hedge funds February 2024
+NOT_RUN	JPMorgan prime brokerage hedge funds March 2024
+NOT_RUN	JPMorgan prime brokerage hedge funds April 2024
+NOT_RUN	JPMorgan prime brokerage hedge funds May 2024
+NOT_RUN	JPMorgan prime brokerage hedge funds June 2024
+NOT_RUN	JPMorgan prime brokerage hedge funds July 2024
+NOT_RUN	JPMorgan prime brokerage hedge funds August 2024
+NOT_RUN	JPMorgan prime brokerage hedge funds September 2024
+NOT_RUN	JPMorgan prime brokerage hedge funds October 2024
+NOT_RUN	JPMorgan prime brokerage hedge funds November 2024
+NOT_RUN	JPMorgan prime brokerage hedge funds December 2024
+NOT_RUN	JPMorgan prime brokerage hedge funds January 2025
+NOT_RUN	JPMorgan prime brokerage hedge funds February 2025
+NOT_RUN	JPMorgan prime brokerage hedge funds March 2025
+NOT_RUN	JPMorgan prime brokerage hedge funds April 2025
+NOT_RUN	JPMorgan prime brokerage hedge funds May 2025
+NOT_RUN	JPMorgan prime brokerage hedge funds June 2025
+NOT_RUN	JPMorgan prime brokerage hedge funds July 2025
+NOT_RUN	JPMorgan prime brokerage hedge funds August 2025
+NOT_RUN	JPMorgan prime brokerage hedge funds September 2025
+NOT_RUN	JPMorgan prime brokerage hedge funds October 2025
+NOT_RUN	JPMorgan prime brokerage hedge funds November 2025
+NOT_RUN	JPMorgan prime brokerage hedge funds December 2025
+NOT_RUN	JPMorgan prime brokerage hedge funds January 2026
+NOT_RUN	JPMorgan prime brokerage hedge funds February 2026
+NOT_RUN	JPMorgan prime brokerage hedge funds March 2026
+NOT_RUN	JPMorgan prime brokerage hedge funds April 2026
+NOT_RUN	JPMorgan prime brokerage hedge funds May 2026
+NOT_RUN	JPMorgan prime brokerage hedge funds June 2026
+NOT_RUN	JPMorgan prime brokerage hedge funds July 2026
+NOT_RUN	JPMorgan prime brokerage hedge funds August 2026
+NOT_RUN	JPMorgan prime brokerage hedge funds September 2026
+NOT_RUN	JPMorgan prime brokerage hedge funds October 2026
+
+# totals: annual run 60 of 60; monthly run 39 of 140; not run 101; queries run 99 of 200.
+# Links followed: WebFetch of candidate pages (and one web.archive.org attempt, blocked) as recorded in candidates_log.csv.

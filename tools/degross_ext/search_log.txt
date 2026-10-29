@@ -1,0 +1,168 @@
+# Protocol searches (tools/degross_ext/PREREG.md section 1), WebSearch tool, standard mode, run 29 Oct 2026
+# Format: <query id> | <query> | <status> | candidates taken (articles logged in candidates_log.csv whose FIRST appearance was this query)
+# Results that were only generic prime-brokerage industry, ranking or regulatory-filing pages are not counted as candidates (no flow data).
+# Query ids: M<YYYY-MM> = calendar query (item 1); <site>-<Y>-<n> = original query n restricted to site (item 2).
+# NOTE: the session's shared WebSearch budget (200 calls per turn) was exhausted after 100 protocol queries.
+#   The 5 queries bi-2019-1..5 were attempted and refused by the budget (not performed); bi-2020, all cnbc.com and all bloomberg.com queries were never attempted.
+#   60 of the 160 protocol queries are therefore NOT RUN. The site: operator appeared to be ignored by the engine on every query run (results were not site-restricted).
+M2016-01 | Goldman Sachs prime brokerage hedge funds January 2016 | run | 0
+M2016-02 | Goldman Sachs prime brokerage hedge funds February 2016 | run | 0
+M2016-03 | Goldman Sachs prime brokerage hedge funds March 2016 | run | 0
+M2016-04 | Goldman Sachs prime brokerage hedge funds April 2016 | run | 0
+M2016-05 | Goldman Sachs prime brokerage hedge funds May 2016 | run | 0
+M2016-06 | Goldman Sachs prime brokerage hedge funds June 2016 | run | 1
+M2016-07 | Goldman Sachs prime brokerage hedge funds July 2016 | run | 0
+M2016-08 | Goldman Sachs prime brokerage hedge funds August 2016 | run | 1
+M2016-09 | Goldman Sachs prime brokerage hedge funds September 2016 | run | 0
+M2016-10 | Goldman Sachs prime brokerage hedge funds October 2016 | run | 0
+M2016-11 | Goldman Sachs prime brokerage hedge funds November 2016 | run | 0
+M2016-12 | Goldman Sachs prime brokerage hedge funds December 2016 | run | 0
+M2017-01 | Goldman Sachs prime brokerage hedge funds January 2017 | run | 0
+M2017-02 | Goldman Sachs prime brokerage hedge funds February 2017 | run | 0
+M2017-03 | Goldman Sachs prime brokerage hedge funds March 2017 | run | 0
+M2017-04 | Goldman Sachs prime brokerage hedge funds April 2017 | run | 0
+M2017-05 | Goldman Sachs prime brokerage hedge funds May 2017 | run | 0
+M2017-06 | Goldman Sachs prime brokerage hedge funds June 2017 | run | 0
+M2017-07 | Goldman Sachs prime brokerage hedge funds July 2017 | run | 1
+M2017-08 | Goldman Sachs prime brokerage hedge funds August 2017 | run | 0
+M2017-09 | Goldman Sachs prime brokerage hedge funds September 2017 | run | 0
+M2017-10 | Goldman Sachs prime brokerage hedge funds October 2017 | run | 1
+M2017-11 | Goldman Sachs prime brokerage hedge funds November 2017 | run | 0
+M2017-12 | Goldman Sachs prime brokerage hedge funds December 2017 | run | 0
+M2018-01 | Goldman Sachs prime brokerage hedge funds January 2018 | run | 0
+M2018-02 | Goldman Sachs prime brokerage hedge funds February 2018 | run | 0
+M2018-03 | Goldman Sachs prime brokerage hedge funds March 2018 | run | 0
+M2018-04 | Goldman Sachs prime brokerage hedge funds April 2018 | run | 0
+M2018-05 | Goldman Sachs prime brokerage hedge funds May 2018 | run | 0
+M2018-06 | Goldman Sachs prime brokerage hedge funds June 2018 | run | 0
+M2018-07 | Goldman Sachs prime brokerage hedge funds July 2018 | run | 0
+M2018-08 | Goldman Sachs prime brokerage hedge funds August 2018 | run | 1
+M2018-09 | Goldman Sachs prime brokerage hedge funds September 2018 | run | 0
+M2018-10 | Goldman Sachs prime brokerage hedge funds October 2018 | run | 0
+M2018-11 | Goldman Sachs prime brokerage hedge funds November 2018 | run | 0
+M2018-12 | Goldman Sachs prime brokerage hedge funds December 2018 | run | 0
+M2019-01 | Goldman Sachs prime brokerage hedge funds January 2019 | run | 0
+M2019-02 | Goldman Sachs prime brokerage hedge funds February 2019 | run | 0
+M2019-03 | Goldman Sachs prime brokerage hedge funds March 2019 | run | 0
+M2019-04 | Goldman Sachs prime brokerage hedge funds April 2019 | run | 0
+M2019-05 | Goldman Sachs prime brokerage hedge funds May 2019 | run | 0
+M2019-06 | Goldman Sachs prime brokerage hedge funds June 2019 | run | 0
+M2019-07 | Goldman Sachs prime brokerage hedge funds July 2019 | run | 1
+M2019-08 | Goldman Sachs prime brokerage hedge funds August 2019 | run | 1
+M2019-09 | Goldman Sachs prime brokerage hedge funds September 2019 | run | 2
+M2019-10 | Goldman Sachs prime brokerage hedge funds October 2019 | run | 0
+M2019-11 | Goldman Sachs prime brokerage hedge funds November 2019 | run | 0
+M2019-12 | Goldman Sachs prime brokerage hedge funds December 2019 | run | 0
+M2020-01 | Goldman Sachs prime brokerage hedge funds January 2020 | run | 0
+M2020-02 | Goldman Sachs prime brokerage hedge funds February 2020 | run | 0
+M2020-03 | Goldman Sachs prime brokerage hedge funds March 2020 | run | 0
+M2020-04 | Goldman Sachs prime brokerage hedge funds April 2020 | run | 0
+M2020-05 | Goldman Sachs prime brokerage hedge funds May 2020 | run | 0
+M2020-06 | Goldman Sachs prime brokerage hedge funds June 2020 | run | 0
+M2020-07 | Goldman Sachs prime brokerage hedge funds July 2020 | run | 1
+M2020-08 | Goldman Sachs prime brokerage hedge funds August 2020 | run | 0
+M2020-09 | Goldman Sachs prime brokerage hedge funds September 2020 | run | 0
+M2020-10 | Goldman Sachs prime brokerage hedge funds October 2020 | run | 0
+M2020-11 | Goldman Sachs prime brokerage hedge funds November 2020 | run | 1
+M2020-12 | Goldman Sachs prime brokerage hedge funds December 2020 | run | 0
+zh-2016-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2016 site:zerohedge.com | run | 3
+zh-2016-2 | Goldman prime book hedge funds largest net selling since 2016 site:zerohedge.com | run | 10
+zh-2016-3 | hedge funds cut gross leverage Goldman Sachs 2016 site:zerohedge.com | run | 5
+zh-2016-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2016 site:zerohedge.com | run | 9
+zh-2016-5 | hedge funds degross Goldman long sales short covers 2016 site:zerohedge.com | run | 8
+zh-2017-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2017 site:zerohedge.com | run | 0
+zh-2017-2 | Goldman prime book hedge funds largest net selling since 2017 site:zerohedge.com | run | 1
+zh-2017-3 | hedge funds cut gross leverage Goldman Sachs 2017 site:zerohedge.com | run | 1
+zh-2017-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2017 site:zerohedge.com | run | 1
+zh-2017-5 | hedge funds degross Goldman long sales short covers 2017 site:zerohedge.com | run | 1
+zh-2018-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2018 site:zerohedge.com | run | 0
+zh-2018-2 | Goldman prime book hedge funds largest net selling since 2018 site:zerohedge.com | run | 2
+zh-2018-3 | hedge funds cut gross leverage Goldman Sachs 2018 site:zerohedge.com | run | 3
+zh-2018-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2018 site:zerohedge.com | run | 1
+zh-2018-5 | hedge funds degross Goldman long sales short covers 2018 site:zerohedge.com | run | 0
+zh-2019-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2019 site:zerohedge.com | run | 0
+zh-2019-2 | Goldman prime book hedge funds largest net selling since 2019 site:zerohedge.com | run | 3
+zh-2019-3 | hedge funds cut gross leverage Goldman Sachs 2019 site:zerohedge.com | run | 2
+zh-2019-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2019 site:zerohedge.com | run | 2
+zh-2019-5 | hedge funds degross Goldman long sales short covers 2019 site:zerohedge.com | run | 2
+zh-2020-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2020 site:zerohedge.com | run | 1
+zh-2020-2 | Goldman prime book hedge funds largest net selling since 2020 site:zerohedge.com | run | 3
+zh-2020-3 | hedge funds cut gross leverage Goldman Sachs 2020 site:zerohedge.com | run | 2
+zh-2020-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2020 site:zerohedge.com | run | 3
+zh-2020-5 | hedge funds degross Goldman long sales short covers 2020 site:zerohedge.com | run | 0
+bi-2016-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2016 site:businessinsider.com | run | 1
+bi-2016-2 | Goldman prime book hedge funds largest net selling since 2016 site:businessinsider.com | run | 0
+bi-2016-3 | hedge funds cut gross leverage Goldman Sachs 2016 site:businessinsider.com | run | 1
+bi-2016-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2016 site:businessinsider.com | run | 0
+bi-2016-5 | hedge funds degross Goldman long sales short covers 2016 site:businessinsider.com | run | 1
+bi-2017-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2017 site:businessinsider.com | run | 0
+bi-2017-2 | Goldman prime book hedge funds largest net selling since 2017 site:businessinsider.com | run | 0
+bi-2017-3 | hedge funds cut gross leverage Goldman Sachs 2017 site:businessinsider.com | run | 2
+bi-2017-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2017 site:businessinsider.com | run | 0
+bi-2017-5 | hedge funds degross Goldman long sales short covers 2017 site:businessinsider.com | run | 0
+bi-2018-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2018 site:businessinsider.com | run | 0
+bi-2018-2 | Goldman prime book hedge funds largest net selling since 2018 site:businessinsider.com | run | 0
+bi-2018-3 | hedge funds cut gross leverage Goldman Sachs 2018 site:businessinsider.com | run | 1
+bi-2018-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2018 site:businessinsider.com | run | 0
+bi-2018-5 | hedge funds degross Goldman long sales short covers 2018 site:businessinsider.com | run | 1
+bi-2019-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2019 site:businessinsider.com | NOT RUN (attempted; refused, search budget exhausted) | n/a
+bi-2019-2 | Goldman prime book hedge funds largest net selling since 2019 site:businessinsider.com | NOT RUN (attempted; refused, search budget exhausted) | n/a
+bi-2019-3 | hedge funds cut gross leverage Goldman Sachs 2019 site:businessinsider.com | NOT RUN (attempted; refused, search budget exhausted) | n/a
+bi-2019-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2019 site:businessinsider.com | NOT RUN (attempted; refused, search budget exhausted) | n/a
+bi-2019-5 | hedge funds degross Goldman long sales short covers 2019 site:businessinsider.com | NOT RUN (attempted; refused, search budget exhausted) | n/a
+bi-2020-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2020 site:businessinsider.com | NOT RUN (search budget exhausted) | n/a
+bi-2020-2 | Goldman prime book hedge funds largest net selling since 2020 site:businessinsider.com | NOT RUN (search budget exhausted) | n/a
+bi-2020-3 | hedge funds cut gross leverage Goldman Sachs 2020 site:businessinsider.com | NOT RUN (search budget exhausted) | n/a
+bi-2020-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2020 site:businessinsider.com | NOT RUN (search budget exhausted) | n/a
+bi-2020-5 | hedge funds degross Goldman long sales short covers 2020 site:businessinsider.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2016-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2016 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2016-2 | Goldman prime book hedge funds largest net selling since 2016 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2016-3 | hedge funds cut gross leverage Goldman Sachs 2016 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2016-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2016 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2016-5 | hedge funds degross Goldman long sales short covers 2016 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2017-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2017 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2017-2 | Goldman prime book hedge funds largest net selling since 2017 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2017-3 | hedge funds cut gross leverage Goldman Sachs 2017 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2017-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2017 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2017-5 | hedge funds degross Goldman long sales short covers 2017 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2018-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2018 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2018-2 | Goldman prime book hedge funds largest net selling since 2018 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2018-3 | hedge funds cut gross leverage Goldman Sachs 2018 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2018-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2018 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2018-5 | hedge funds degross Goldman long sales short covers 2018 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2019-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2019 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2019-2 | Goldman prime book hedge funds largest net selling since 2019 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2019-3 | hedge funds cut gross leverage Goldman Sachs 2019 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2019-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2019 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2019-5 | hedge funds degross Goldman long sales short covers 2019 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2020-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2020 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2020-2 | Goldman prime book hedge funds largest net selling since 2020 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2020-3 | hedge funds cut gross leverage Goldman Sachs 2020 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2020-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2020 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+cnbc-2020-5 | hedge funds degross Goldman long sales short covers 2020 site:cnbc.com | NOT RUN (search budget exhausted) | n/a
+bbg-2016-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2016 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2016-2 | Goldman prime book hedge funds largest net selling since 2016 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2016-3 | hedge funds cut gross leverage Goldman Sachs 2016 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2016-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2016 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2016-5 | hedge funds degross Goldman long sales short covers 2016 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2017-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2017 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2017-2 | Goldman prime book hedge funds largest net selling since 2017 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2017-3 | hedge funds cut gross leverage Goldman Sachs 2017 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2017-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2017 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2017-5 | hedge funds degross Goldman long sales short covers 2017 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2018-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2018 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2018-2 | Goldman prime book hedge funds largest net selling since 2018 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2018-3 | hedge funds cut gross leverage Goldman Sachs 2018 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2018-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2018 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2018-5 | hedge funds degross Goldman long sales short covers 2018 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2019-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2019 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2019-2 | Goldman prime book hedge funds largest net selling since 2019 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2019-3 | hedge funds cut gross leverage Goldman Sachs 2019 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2019-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2019 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2019-5 | hedge funds degross Goldman long sales short covers 2019 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2020-1 | Goldman Sachs prime brokerage hedge funds de-grossing 2020 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2020-2 | Goldman prime book hedge funds largest net selling since 2020 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2020-3 | hedge funds cut gross leverage Goldman Sachs 2020 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2020-4 | Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2020 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+bbg-2020-5 | hedge funds degross Goldman long sales short covers 2020 site:bloomberg.com | NOT RUN (search budget exhausted) | n/a
+# Totals: protocol queries 160; run 100; not run 60; candidates taken 81
