@@ -1,0 +1,21 @@
+13F files: 1
+kept 13F-HR filings: 14
+  2021q2_form13f.zip: filings summarised 14
+  2021-03-31 eff 2021-05-17: filings 14, hf-like 12, long 10/10, short 3/3
+basket rows: 13, symbols: 13
+ok   long basket is CUSIPs 1..10 in order (11, 12 never in a top 10)
+ok   FTD symbol with '.' becomes '-'
+ok   short basket is the three put names, CUSIP order on ties
+ok   effective date is the first SPY day after period + 45 days (2021-05-17)
+ok   kept filings exclude the amendment and the late filing (14 kept)
+ok   hf-like filings exclude long-only and 250-position filers (12)
+ok   no return before the first basket earns
+ok   day 2: mean of A (0%) and B (+10%), C entered at E (5.0 present)
+ok   day 3 (next effective day) still earned by the first basket
+ok   day 4 earned by the second basket (B only; B missing): undefined
+ok   short leg day 5: A from 12.1 to 12.1
+ok   coverage counts
+null worlds passing: 3 of 40; planted worlds passing: 8 of 8
+ok   null worlds pass at most 4 of 40
+ok   planted worlds pass 8 of 8
+SELFTEST PASSED

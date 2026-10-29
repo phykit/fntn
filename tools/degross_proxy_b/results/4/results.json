@@ -1,0 +1,457 @@
+{
+ "gate": {
+  "status": "FAIL",
+  "available": [
+   "2021-01-29",
+   "2026-05-01",
+   "2026-10-16"
+  ],
+  "matched": [
+   "2021-01-29"
+  ],
+  "base_rate": 0.009615384615384616,
+  "n_signal_evaluable": 520,
+  "last_week_end": "2026-10-28",
+  "chance_of_at_least_matched": 0.08328366810261291,
+  "first_signal_evaluable_week": "2016-11-18",
+  "z_near_refs": {
+   "2021-01-29": [
+    [
+     "2021-01-22",
+     -0.161,
+     0.0154,
+     0.03051
+    ],
+    [
+     "2021-01-29",
+     -3.802,
+     -0.02657,
+     0.07663
+    ],
+    [
+     "2021-02-05",
+     0.507,
+     0.03811,
+     0.04163
+    ]
+   ],
+   "2026-05-01": [
+    [
+     "2026-04-24",
+     0.495,
+     0.00087,
+     -0.00721
+    ],
+    [
+     "2026-05-01",
+     1.947,
+     0.0203,
+     -0.00641
+    ],
+    [
+     "2026-05-08",
+     0.74,
+     0.03254,
+     0.02603
+    ]
+   ],
+   "2026-10-16": [
+    [
+     "2026-10-09",
+     -0.097,
+     -0.00035,
+     0.00288
+    ],
+    [
+     "2026-10-16",
+     -1.599,
+     -0.05989,
+     -0.0435
+    ],
+    [
+     "2026-10-23",
+     -1.327,
+     -0.01519,
+     0.00234
+    ]
+   ]
+  }
+ },
+ "coverage": [
+  {
+   "effective": "2013-08-15",
+   "long_listed": 50,
+   "long_entered": 32,
+   "short_listed": 50,
+   "short_entered": 32
+  },
+  {
+   "effective": "2013-11-15",
+   "long_listed": 50,
+   "long_entered": 27,
+   "short_listed": 50,
+   "short_entered": 38
+  },
+  {
+   "effective": "2014-02-18",
+   "long_listed": 50,
+   "long_entered": 31,
+   "short_listed": 50,
+   "short_entered": 35
+  },
+  {
+   "effective": "2014-05-16",
+   "long_listed": 50,
+   "long_entered": 31,
+   "short_listed": 49,
+   "short_entered": 33
+  },
+  {
+   "effective": "2014-08-15",
+   "long_listed": 50,
+   "long_entered": 29,
+   "short_listed": 50,
+   "short_entered": 35
+  },
+  {
+   "effective": "2014-11-17",
+   "long_listed": 50,
+   "long_entered": 32,
+   "short_listed": 50,
+   "short_entered": 33
+  },
+  {
+   "effective": "2015-02-17",
+   "long_listed": 50,
+   "long_entered": 33,
+   "short_listed": 49,
+   "short_entered": 31
+  },
+  {
+   "effective": "2015-05-18",
+   "long_listed": 50,
+   "long_entered": 31,
+   "short_listed": 48,
+   "short_entered": 36
+  },
+  {
+   "effective": "2015-08-17",
+   "long_listed": 50,
+   "long_entered": 33,
+   "short_listed": 38,
+   "short_entered": 24
+  },
+  {
+   "effective": "2015-11-16",
+   "long_listed": 50,
+   "long_entered": 37,
+   "short_listed": 39,
+   "short_entered": 22
+  },
+  {
+   "effective": "2016-02-16",
+   "long_listed": 50,
+   "long_entered": 35,
+   "short_listed": 46,
+   "short_entered": 29
+  },
+  {
+   "effective": "2016-05-16",
+   "long_listed": 50,
+   "long_entered": 37,
+   "short_listed": 50,
+   "short_entered": 32
+  },
+  {
+   "effective": "2016-08-15",
+   "long_listed": 50,
+   "long_entered": 40,
+   "short_listed": 47,
+   "short_entered": 34
+  },
+  {
+   "effective": "2016-11-15",
+   "long_listed": 50,
+   "long_entered": 37,
+   "short_listed": 50,
+   "short_entered": 36
+  },
+  {
+   "effective": "2017-02-15",
+   "long_listed": 50,
+   "long_entered": 35,
+   "short_listed": 41,
+   "short_entered": 29
+  },
+  {
+   "effective": "2017-05-16",
+   "long_listed": 50,
+   "long_entered": 33,
+   "short_listed": 50,
+   "short_entered": 34
+  },
+  {
+   "effective": "2017-08-15",
+   "long_listed": 50,
+   "long_entered": 35,
+   "short_listed": 40,
+   "short_entered": 26
+  },
+  {
+   "effective": "2017-11-15",
+   "long_listed": 50,
+   "long_entered": 34,
+   "short_listed": 42,
+   "short_entered": 35
+  },
+  {
+   "effective": "2018-02-15",
+   "long_listed": 50,
+   "long_entered": 35,
+   "short_listed": 47,
+   "short_entered": 37
+  },
+  {
+   "effective": "2018-05-16",
+   "long_listed": 50,
+   "long_entered": 40,
+   "short_listed": 46,
+   "short_entered": 34
+  },
+  {
+   "effective": "2018-08-15",
+   "long_listed": 50,
+   "long_entered": 34,
+   "short_listed": 44,
+   "short_entered": 36
+  },
+  {
+   "effective": "2018-11-15",
+   "long_listed": 50,
+   "long_entered": 35,
+   "short_listed": 42,
+   "short_entered": 33
+  },
+  {
+   "effective": "2019-02-15",
+   "long_listed": 50,
+   "long_entered": 42,
+   "short_listed": 47,
+   "short_entered": 40
+  },
+  {
+   "effective": "2019-05-16",
+   "long_listed": 50,
+   "long_entered": 38,
+   "short_listed": 32,
+   "short_entered": 27
+  },
+  {
+   "effective": "2019-08-15",
+   "long_listed": 50,
+   "long_entered": 39,
+   "short_listed": 40,
+   "short_entered": 34
+  },
+  {
+   "effective": "2019-11-15",
+   "long_listed": 50,
+   "long_entered": 39,
+   "short_listed": 30,
+   "short_entered": 23
+  },
+  {
+   "effective": "2020-02-18",
+   "long_listed": 50,
+   "long_entered": 41,
+   "short_listed": 22,
+   "short_entered": 19
+  },
+  {
+   "effective": "2020-05-18",
+   "long_listed": 50,
+   "long_entered": 41,
+   "short_listed": 31,
+   "short_entered": 25
+  },
+  {
+   "effective": "2020-08-17",
+   "long_listed": 50,
+   "long_entered": 45,
+   "short_listed": 32,
+   "short_entered": 26
+  },
+  {
+   "effective": "2020-11-16",
+   "long_listed": 50,
+   "long_entered": 46,
+   "short_listed": 41,
+   "short_entered": 34
+  },
+  {
+   "effective": "2021-02-16",
+   "long_listed": 50,
+   "long_entered": 45,
+   "short_listed": 37,
+   "short_entered": 33
+  },
+  {
+   "effective": "2021-05-17",
+   "long_listed": 49,
+   "long_entered": 43,
+   "short_listed": 38,
+   "short_entered": 34
+  },
+  {
+   "effective": "2021-08-16",
+   "long_listed": 49,
+   "long_entered": 43,
+   "short_listed": 28,
+   "short_entered": 27
+  },
+  {
+   "effective": "2021-11-15",
+   "long_listed": 49,
+   "long_entered": 44,
+   "short_listed": 46,
+   "short_entered": 45
+  },
+  {
+   "effective": "2022-02-15",
+   "long_listed": 49,
+   "long_entered": 44,
+   "short_listed": 18,
+   "short_entered": 17
+  },
+  {
+   "effective": "2022-05-16",
+   "long_listed": 49,
+   "long_entered": 45,
+   "short_listed": 39,
+   "short_entered": 36
+  },
+  {
+   "effective": "2022-08-15",
+   "long_listed": 49,
+   "long_entered": 47,
+   "short_listed": 25,
+   "short_entered": 23
+  },
+  {
+   "effective": "2022-11-15",
+   "long_listed": 50,
+   "long_entered": 45,
+   "short_listed": 40,
+   "short_entered": 34
+  },
+  {
+   "effective": "2023-02-15",
+   "long_listed": 49,
+   "long_entered": 43,
+   "short_listed": 20,
+   "short_entered": 19
+  },
+  {
+   "effective": "2023-05-16",
+   "long_listed": 50,
+   "long_entered": 45,
+   "short_listed": 41,
+   "short_entered": 37
+  },
+  {
+   "effective": "2023-08-15",
+   "long_listed": 50,
+   "long_entered": 42,
+   "short_listed": 38,
+   "short_entered": 38
+  },
+  {
+   "effective": "2023-11-15",
+   "long_listed": 50,
+   "long_entered": 44,
+   "short_listed": 44,
+   "short_entered": 42
+  },
+  {
+   "effective": "2024-02-15",
+   "long_listed": 50,
+   "long_entered": 45,
+   "short_listed": 37,
+   "short_entered": 34
+  },
+  {
+   "effective": "2024-05-16",
+   "long_listed": 50,
+   "long_entered": 44,
+   "short_listed": 48,
+   "short_entered": 45
+  },
+  {
+   "effective": "2024-08-15",
+   "long_listed": 50,
+   "long_entered": 44,
+   "short_listed": 46,
+   "short_entered": 44
+  },
+  {
+   "effective": "2024-11-15",
+   "long_listed": 49,
+   "long_entered": 42,
+   "short_listed": 44,
+   "short_entered": 42
+  },
+  {
+   "effective": "2025-02-18",
+   "long_listed": 49,
+   "long_entered": 40,
+   "short_listed": 44,
+   "short_entered": 43
+  },
+  {
+   "effective": "2025-05-16",
+   "long_listed": 49,
+   "long_entered": 41,
+   "short_listed": 44,
+   "short_entered": 40
+  },
+  {
+   "effective": "2025-08-15",
+   "long_listed": 49,
+   "long_entered": 43,
+   "short_listed": 37,
+   "short_entered": 37
+  },
+  {
+   "effective": "2025-11-17",
+   "long_listed": 50,
+   "long_entered": 43,
+   "short_listed": 42,
+   "short_entered": 41
+  },
+  {
+   "effective": "2026-02-17",
+   "long_listed": 49,
+   "long_entered": 48,
+   "short_listed": 24,
+   "short_entered": 24
+  },
+  {
+   "effective": "2026-05-18",
+   "long_listed": 49,
+   "long_entered": 44,
+   "short_listed": 41,
+   "short_entered": 41
+  },
+  {
+   "effective": "2026-08-17",
+   "long_listed": 49,
+   "long_entered": 45,
+   "short_listed": 41,
+   "short_entered": 41
+  }
+ ],
+ "primary": null,
+ "secondary_21d_5pct": null,
+ "secondary_no_sign_filter": null,
+ "verdict": "CLOSED (gate FAIL)"
+}

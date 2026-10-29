@@ -1,0 +1,959 @@
+{
+ "gate": {
+  "status": "FAIL",
+  "available": [
+   "2021-01-29",
+   "2026-05-01",
+   "2026-10-16"
+  ],
+  "matched": [
+   "2021-01-29"
+  ],
+  "n_available": 3,
+  "n_matched": 1,
+  "base_rate": 0.009615384615384616,
+  "n_signal_evaluable": 520,
+  "last_week_end": "2026-10-28",
+  "chance_of_match_info_only": 0.08328366810261291
+ },
+ "gate_diagnostics": [
+  {
+   "reference": "2021-01-29",
+   "week_end": "2021-01-22",
+   "z": -0.16104838161691187,
+   "W": 0.015395172291038595,
+   "L": 0.030507630317631262,
+   "D": false
+  },
+  {
+   "reference": "2021-01-29",
+   "week_end": "2021-01-29",
+   "z": -3.802339207323941,
+   "W": -0.0265713200699339,
+   "L": 0.07662724611342075,
+   "D": true
+  },
+  {
+   "reference": "2021-01-29",
+   "week_end": "2021-02-05",
+   "z": 0.5070533539310832,
+   "W": 0.038112790013950626,
+   "L": 0.041630809686165726,
+   "D": false
+  },
+  {
+   "reference": "2026-05-01",
+   "week_end": "2026-04-24",
+   "z": 0.4953146147048095,
+   "W": 0.0008693264093184716,
+   "L": -0.00721297723862413,
+   "D": false
+  },
+  {
+   "reference": "2026-05-01",
+   "week_end": "2026-05-01",
+   "z": 1.947017663293707,
+   "W": 0.02030159999448622,
+   "L": -0.006408743116318227,
+   "D": false
+  },
+  {
+   "reference": "2026-05-01",
+   "week_end": "2026-05-08",
+   "z": 0.7401085268337361,
+   "W": 0.032538104499625575,
+   "L": 0.026030389352271532,
+   "D": false
+  },
+  {
+   "reference": "2026-10-16",
+   "week_end": "2026-10-09",
+   "z": -0.09653203030207426,
+   "W": -0.0003465265160585984,
+   "L": 0.0028813786307795297,
+   "D": false
+  },
+  {
+   "reference": "2026-10-16",
+   "week_end": "2026-10-16",
+   "z": -1.598993306474526,
+   "W": -0.05989340614027472,
+   "L": -0.04350334645604992,
+   "D": false
+  },
+  {
+   "reference": "2026-10-16",
+   "week_end": "2026-10-23",
+   "z": -1.3272330324664274,
+   "W": -0.015192986404939712,
+   "L": 0.0023444151048284123,
+   "D": false
+  }
+ ],
+ "n_weeks": 774,
+ "n_D": 5,
+ "n_T": 0,
+ "D_weeks": [
+  "2017-09-08",
+  "2017-12-01",
+  "2020-01-03",
+  "2021-01-29",
+  "2026-08-21"
+ ],
+ "T_weeks": [],
+ "primary": null,
+ "secondary_21d_5pct": null,
+ "secondary_no_sign_filter": null,
+ "baskets_summary": [
+  {
+   "period": "2013-06-30",
+   "effective": "2013-08-15",
+   "n_kept_filings": 3051,
+   "n_hf_like": 347,
+   "long_n": 50,
+   "short_n": 50,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2013-09-30",
+   "effective": "2013-11-15",
+   "n_kept_filings": 3227,
+   "n_hf_like": 373,
+   "long_n": 50,
+   "short_n": 50,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2013-12-31",
+   "effective": "2014-02-18",
+   "n_kept_filings": 3552,
+   "n_hf_like": 422,
+   "long_n": 50,
+   "short_n": 50,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2014-03-31",
+   "effective": "2014-05-16",
+   "n_kept_filings": 3594,
+   "n_hf_like": 417,
+   "long_n": 50,
+   "short_n": 49,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2014-06-30",
+   "effective": "2014-08-15",
+   "n_kept_filings": 3571,
+   "n_hf_like": 431,
+   "long_n": 50,
+   "short_n": 50,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2014-09-30",
+   "effective": "2014-11-17",
+   "n_kept_filings": 3622,
+   "n_hf_like": 445,
+   "long_n": 50,
+   "short_n": 50,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2014-12-31",
+   "effective": "2015-02-17",
+   "n_kept_filings": 3029,
+   "n_hf_like": 213,
+   "long_n": 50,
+   "short_n": 49,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2015-03-31",
+   "effective": "2015-05-18",
+   "n_kept_filings": 3930,
+   "n_hf_like": 474,
+   "long_n": 50,
+   "short_n": 48,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2015-06-30",
+   "effective": "2015-08-17",
+   "n_kept_filings": 3935,
+   "n_hf_like": 471,
+   "long_n": 50,
+   "short_n": 38,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2015-09-30",
+   "effective": "2015-11-16",
+   "n_kept_filings": 3035,
+   "n_hf_like": 206,
+   "long_n": 50,
+   "short_n": 39,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2015-12-31",
+   "effective": "2016-02-16",
+   "n_kept_filings": 3015,
+   "n_hf_like": 201,
+   "long_n": 50,
+   "short_n": 46,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2016-03-31",
+   "effective": "2016-05-16",
+   "n_kept_filings": 3066,
+   "n_hf_like": 207,
+   "long_n": 50,
+   "short_n": 50,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2016-06-30",
+   "effective": "2016-08-15",
+   "n_kept_filings": 2993,
+   "n_hf_like": 188,
+   "long_n": 50,
+   "short_n": 47,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2016-09-30",
+   "effective": "2016-11-15",
+   "n_kept_filings": 3850,
+   "n_hf_like": 426,
+   "long_n": 50,
+   "short_n": 50,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2016-12-31",
+   "effective": "2017-02-15",
+   "n_kept_filings": 4066,
+   "n_hf_like": 457,
+   "long_n": 50,
+   "short_n": 41,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2017-03-31",
+   "effective": "2017-05-16",
+   "n_kept_filings": 4184,
+   "n_hf_like": 436,
+   "long_n": 50,
+   "short_n": 50,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2017-06-30",
+   "effective": "2017-08-15",
+   "n_kept_filings": 4107,
+   "n_hf_like": 453,
+   "long_n": 50,
+   "short_n": 40,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2017-09-30",
+   "effective": "2017-11-15",
+   "n_kept_filings": 4142,
+   "n_hf_like": 441,
+   "long_n": 50,
+   "short_n": 42,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2017-12-31",
+   "effective": "2018-02-15",
+   "n_kept_filings": 4418,
+   "n_hf_like": 465,
+   "long_n": 50,
+   "short_n": 47,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2018-03-31",
+   "effective": "2018-05-16",
+   "n_kept_filings": 4539,
+   "n_hf_like": 468,
+   "long_n": 50,
+   "short_n": 46,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2018-06-30",
+   "effective": "2018-08-15",
+   "n_kept_filings": 4488,
+   "n_hf_like": 482,
+   "long_n": 50,
+   "short_n": 44,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2018-09-30",
+   "effective": "2018-11-15",
+   "n_kept_filings": 4513,
+   "n_hf_like": 481,
+   "long_n": 50,
+   "short_n": 42,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2018-12-31",
+   "effective": "2019-02-15",
+   "n_kept_filings": 4815,
+   "n_hf_like": 480,
+   "long_n": 50,
+   "short_n": 47,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2019-03-31",
+   "effective": "2019-05-16",
+   "n_kept_filings": 4895,
+   "n_hf_like": 500,
+   "long_n": 50,
+   "short_n": 32,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2019-06-30",
+   "effective": "2019-08-15",
+   "n_kept_filings": 4804,
+   "n_hf_like": 503,
+   "long_n": 50,
+   "short_n": 40,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2019-09-30",
+   "effective": "2019-11-15",
+   "n_kept_filings": 4794,
+   "n_hf_like": 495,
+   "long_n": 50,
+   "short_n": 30,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2019-12-31",
+   "effective": "2020-02-18",
+   "n_kept_filings": 5228,
+   "n_hf_like": 538,
+   "long_n": 50,
+   "short_n": 22,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2020-03-31",
+   "effective": "2020-05-18",
+   "n_kept_filings": 5216,
+   "n_hf_like": 515,
+   "long_n": 50,
+   "short_n": 31,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2020-06-30",
+   "effective": "2020-08-17",
+   "n_kept_filings": 5192,
+   "n_hf_like": 545,
+   "long_n": 50,
+   "short_n": 32,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2020-09-30",
+   "effective": "2020-11-16",
+   "n_kept_filings": 4149,
+   "n_hf_like": 304,
+   "long_n": 50,
+   "short_n": 41,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2020-12-31",
+   "effective": "2021-02-16",
+   "n_kept_filings": 4111,
+   "n_hf_like": 308,
+   "long_n": 50,
+   "short_n": 37,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2021-03-31",
+   "effective": "2021-05-17",
+   "n_kept_filings": 4447,
+   "n_hf_like": 321,
+   "long_n": 49,
+   "short_n": 38,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2021-06-30",
+   "effective": "2021-08-16",
+   "n_kept_filings": 4486,
+   "n_hf_like": 318,
+   "long_n": 49,
+   "short_n": 28,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2021-09-30",
+   "effective": "2021-11-15",
+   "n_kept_filings": 4200,
+   "n_hf_like": 303,
+   "long_n": 49,
+   "short_n": 46,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2021-12-31",
+   "effective": "2022-02-15",
+   "n_kept_filings": 6202,
+   "n_hf_like": 575,
+   "long_n": 49,
+   "short_n": 18,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2022-03-31",
+   "effective": "2022-05-16",
+   "n_kept_filings": 4943,
+   "n_hf_like": 307,
+   "long_n": 49,
+   "short_n": 39,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2022-06-30",
+   "effective": "2022-08-15",
+   "n_kept_filings": 4994,
+   "n_hf_like": 290,
+   "long_n": 49,
+   "short_n": 25,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2022-09-30",
+   "effective": "2022-11-15",
+   "n_kept_filings": 6445,
+   "n_hf_like": 537,
+   "long_n": 50,
+   "short_n": 40,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2022-12-31",
+   "effective": "2023-02-15",
+   "n_kept_filings": 6606,
+   "n_hf_like": 591,
+   "long_n": 49,
+   "short_n": 20,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2023-03-31",
+   "effective": "2023-05-16",
+   "n_kept_filings": 6639,
+   "n_hf_like": 562,
+   "long_n": 50,
+   "short_n": 41,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2023-06-30",
+   "effective": "2023-08-15",
+   "n_kept_filings": 6654,
+   "n_hf_like": 596,
+   "long_n": 50,
+   "short_n": 38,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2023-09-30",
+   "effective": "2023-11-15",
+   "n_kept_filings": 6680,
+   "n_hf_like": 602,
+   "long_n": 50,
+   "short_n": 44,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2023-12-31",
+   "effective": "2024-02-15",
+   "n_kept_filings": 6950,
+   "n_hf_like": 601,
+   "long_n": 50,
+   "short_n": 37,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2024-03-31",
+   "effective": "2024-05-16",
+   "n_kept_filings": 7091,
+   "n_hf_like": 594,
+   "long_n": 50,
+   "short_n": 48,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2024-06-30",
+   "effective": "2024-08-15",
+   "n_kept_filings": 7067,
+   "n_hf_like": 589,
+   "long_n": 50,
+   "short_n": 46,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2024-09-30",
+   "effective": "2024-11-15",
+   "n_kept_filings": 7146,
+   "n_hf_like": 605,
+   "long_n": 49,
+   "short_n": 44,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2024-12-31",
+   "effective": "2025-02-18",
+   "n_kept_filings": 7733,
+   "n_hf_like": 662,
+   "long_n": 49,
+   "short_n": 44,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2025-03-31",
+   "effective": "2025-05-16",
+   "n_kept_filings": 7828,
+   "n_hf_like": 623,
+   "long_n": 49,
+   "short_n": 44,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2025-06-30",
+   "effective": "2025-08-15",
+   "n_kept_filings": 7833,
+   "n_hf_like": 648,
+   "long_n": 49,
+   "short_n": 37,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2025-09-30",
+   "effective": "2025-11-17",
+   "n_kept_filings": 7813,
+   "n_hf_like": 684,
+   "long_n": 50,
+   "short_n": 42,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2025-12-31",
+   "effective": "2026-02-17",
+   "n_kept_filings": 6829,
+   "n_hf_like": 453,
+   "long_n": 49,
+   "short_n": 24,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2026-03-31",
+   "effective": "2026-05-18",
+   "n_kept_filings": 8572,
+   "n_hf_like": 792,
+   "long_n": 49,
+   "short_n": 41,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  },
+  {
+   "period": "2026-06-30",
+   "effective": "2026-08-17",
+   "n_kept_filings": 8695,
+   "n_hf_like": 831,
+   "long_n": 49,
+   "short_n": 41,
+   "long_pre_map": 50,
+   "short_pre_map": 50,
+   "quarter_end": true
+  }
+ ],
+ "priced_share": [
+  {
+   "period": "2013-06-30",
+   "long_priced_share": 0.64,
+   "short_priced_share": 0.64
+  },
+  {
+   "period": "2013-09-30",
+   "long_priced_share": 0.54,
+   "short_priced_share": 0.76
+  },
+  {
+   "period": "2013-12-31",
+   "long_priced_share": 0.62,
+   "short_priced_share": 0.7
+  },
+  {
+   "period": "2014-03-31",
+   "long_priced_share": 0.62,
+   "short_priced_share": 0.673469387755102
+  },
+  {
+   "period": "2014-06-30",
+   "long_priced_share": 0.58,
+   "short_priced_share": 0.7
+  },
+  {
+   "period": "2014-09-30",
+   "long_priced_share": 0.64,
+   "short_priced_share": 0.66
+  },
+  {
+   "period": "2014-12-31",
+   "long_priced_share": 0.66,
+   "short_priced_share": 0.6326530612244898
+  },
+  {
+   "period": "2015-03-31",
+   "long_priced_share": 0.62,
+   "short_priced_share": 0.75
+  },
+  {
+   "period": "2015-06-30",
+   "long_priced_share": 0.66,
+   "short_priced_share": 0.631578947368421
+  },
+  {
+   "period": "2015-09-30",
+   "long_priced_share": 0.74,
+   "short_priced_share": 0.5641025641025641
+  },
+  {
+   "period": "2015-12-31",
+   "long_priced_share": 0.7,
+   "short_priced_share": 0.6304347826086957
+  },
+  {
+   "period": "2016-03-31",
+   "long_priced_share": 0.74,
+   "short_priced_share": 0.64
+  },
+  {
+   "period": "2016-06-30",
+   "long_priced_share": 0.8,
+   "short_priced_share": 0.723404255319149
+  },
+  {
+   "period": "2016-09-30",
+   "long_priced_share": 0.74,
+   "short_priced_share": 0.72
+  },
+  {
+   "period": "2016-12-31",
+   "long_priced_share": 0.7,
+   "short_priced_share": 0.7073170731707317
+  },
+  {
+   "period": "2017-03-31",
+   "long_priced_share": 0.66,
+   "short_priced_share": 0.68
+  },
+  {
+   "period": "2017-06-30",
+   "long_priced_share": 0.7,
+   "short_priced_share": 0.65
+  },
+  {
+   "period": "2017-09-30",
+   "long_priced_share": 0.68,
+   "short_priced_share": 0.8333333333333334
+  },
+  {
+   "period": "2017-12-31",
+   "long_priced_share": 0.7,
+   "short_priced_share": 0.7872340425531915
+  },
+  {
+   "period": "2018-03-31",
+   "long_priced_share": 0.8,
+   "short_priced_share": 0.7391304347826086
+  },
+  {
+   "period": "2018-06-30",
+   "long_priced_share": 0.68,
+   "short_priced_share": 0.8181818181818182
+  },
+  {
+   "period": "2018-09-30",
+   "long_priced_share": 0.7,
+   "short_priced_share": 0.7857142857142857
+  },
+  {
+   "period": "2018-12-31",
+   "long_priced_share": 0.84,
+   "short_priced_share": 0.851063829787234
+  },
+  {
+   "period": "2019-03-31",
+   "long_priced_share": 0.76,
+   "short_priced_share": 0.84375
+  },
+  {
+   "period": "2019-06-30",
+   "long_priced_share": 0.78,
+   "short_priced_share": 0.85
+  },
+  {
+   "period": "2019-09-30",
+   "long_priced_share": 0.78,
+   "short_priced_share": 0.7666666666666667
+  },
+  {
+   "period": "2019-12-31",
+   "long_priced_share": 0.82,
+   "short_priced_share": 0.8636363636363636
+  },
+  {
+   "period": "2020-03-31",
+   "long_priced_share": 0.82,
+   "short_priced_share": 0.8064516129032258
+  },
+  {
+   "period": "2020-06-30",
+   "long_priced_share": 0.9,
+   "short_priced_share": 0.8125
+  },
+  {
+   "period": "2020-09-30",
+   "long_priced_share": 0.92,
+   "short_priced_share": 0.8292682926829268
+  },
+  {
+   "period": "2020-12-31",
+   "long_priced_share": 0.9,
+   "short_priced_share": 0.8918918918918919
+  },
+  {
+   "period": "2021-03-31",
+   "long_priced_share": 0.8775510204081632,
+   "short_priced_share": 0.8947368421052632
+  },
+  {
+   "period": "2021-06-30",
+   "long_priced_share": 0.8775510204081632,
+   "short_priced_share": 0.9642857142857143
+  },
+  {
+   "period": "2021-09-30",
+   "long_priced_share": 0.8979591836734694,
+   "short_priced_share": 0.9782608695652174
+  },
+  {
+   "period": "2021-12-31",
+   "long_priced_share": 0.8979591836734694,
+   "short_priced_share": 0.9444444444444444
+  },
+  {
+   "period": "2022-03-31",
+   "long_priced_share": 0.9183673469387755,
+   "short_priced_share": 0.9230769230769231
+  },
+  {
+   "period": "2022-06-30",
+   "long_priced_share": 0.9591836734693877,
+   "short_priced_share": 0.92
+  },
+  {
+   "period": "2022-09-30",
+   "long_priced_share": 0.9,
+   "short_priced_share": 0.85
+  },
+  {
+   "period": "2022-12-31",
+   "long_priced_share": 0.8775510204081632,
+   "short_priced_share": 0.95
+  },
+  {
+   "period": "2023-03-31",
+   "long_priced_share": 0.9,
+   "short_priced_share": 0.9024390243902439
+  },
+  {
+   "period": "2023-06-30",
+   "long_priced_share": 0.84,
+   "short_priced_share": 1.0
+  },
+  {
+   "period": "2023-09-30",
+   "long_priced_share": 0.88,
+   "short_priced_share": 0.9545454545454546
+  },
+  {
+   "period": "2023-12-31",
+   "long_priced_share": 0.9,
+   "short_priced_share": 0.918918918918919
+  },
+  {
+   "period": "2024-03-31",
+   "long_priced_share": 0.88,
+   "short_priced_share": 0.9375
+  },
+  {
+   "period": "2024-06-30",
+   "long_priced_share": 0.88,
+   "short_priced_share": 0.9565217391304348
+  },
+  {
+   "period": "2024-09-30",
+   "long_priced_share": 0.8571428571428571,
+   "short_priced_share": 0.9545454545454546
+  },
+  {
+   "period": "2024-12-31",
+   "long_priced_share": 0.8163265306122449,
+   "short_priced_share": 0.9772727272727273
+  },
+  {
+   "period": "2025-03-31",
+   "long_priced_share": 0.8367346938775511,
+   "short_priced_share": 0.9090909090909091
+  },
+  {
+   "period": "2025-06-30",
+   "long_priced_share": 0.8775510204081632,
+   "short_priced_share": 1.0
+  },
+  {
+   "period": "2025-09-30",
+   "long_priced_share": 0.86,
+   "short_priced_share": 0.9761904761904762
+  },
+  {
+   "period": "2025-12-31",
+   "long_priced_share": 0.9795918367346939,
+   "short_priced_share": 1.0
+  },
+  {
+   "period": "2026-03-31",
+   "long_priced_share": 0.8979591836734694,
+   "short_priced_share": 1.0
+  },
+  {
+   "period": "2026-06-30",
+   "long_priced_share": 0.9183673469387755,
+   "short_priced_share": 1.0
+  }
+ ]
+}

@@ -1,0 +1,5 @@
+baskets: build rows 4791, verify rows 4791, only in build 0, only in verify 0
+agree    gate.status: run=FAIL verify=FAIL
+agree    gate.matched: run=['2021-01-29'] verify=['2021-01-29']
+agree    gate.base_rate: run=0.009615384615384616 verify=0.009615384615384616
+COMPARE PASSED
