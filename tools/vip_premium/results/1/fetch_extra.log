@@ -1,0 +1,6 @@
+ff5_daily.csv: 15918 rows, 1963-07-01 to 2026-09-30
+mom_daily.csv: 26237 rows, 1926-11-03 to 2026-09-30
+SPY: 3728 rows
+QQQ: 3728 rows
+RSP: 3728 rows
+bench.csv: 3728 days
