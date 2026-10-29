@@ -28,6 +28,12 @@ def main(argv=None):
     fa = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(fa)
     fa.fred(os.path.join(a.data, "ndx.csv"))
+    # Version A's fetcher writes the header DATE,NASDAQ100; the stated interface for this test is
+    # FRED's own header, observation_date,NASDAQ100, which both implementations read.
+    rows = list(csv.reader(open(os.path.join(a.data, "ndx.csv"), newline="")))
+    rows[0] = ["observation_date", "NASDAQ100"]
+    with open(os.path.join(a.data, "ndx.csv"), "w", newline="") as fh:
+        csv.writer(fh).writerows(rows)
     req = urllib.request.Request(SHEET, headers={"User-Agent": "Mozilla/5.0 (fntn side test)"})
     with urllib.request.urlopen(req, timeout=120) as r:
         raw = r.read()
