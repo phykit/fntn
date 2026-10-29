@@ -1,0 +1,100 @@
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/yfinance/utils.py:568: Pandas4Warning: The inplace keyword in DataFrame.sort_index is deprecated and will be removed in a future version (PDEP-8).
+See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+  quotes.sort_index(inplace=True)
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/yfinance/utils.py:585: Pandas4Warning: The inplace keyword in DataFrame.set_index is deprecated and will be removed in a future version (PDEP-8).
+See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+  dividends.set_index("date", inplace=True)
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/yfinance/utils.py:587: Pandas4Warning: The inplace keyword in DataFrame.sort_index is deprecated and will be removed in a future version (PDEP-8).
+See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+  dividends.sort_index(inplace=True)
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/yfinance/utils.py:514: Pandas4Warning: The inplace keyword in DataFrame.drop is deprecated and will be removed in a future version (PDEP-8).
+See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+  df.drop(
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/yfinance/utils.py:518: Pandas4Warning: The inplace keyword in DataFrame.rename is deprecated and will be removed in a future version (PDEP-8).
+See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+  df.rename(columns={
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/yfinance/utils.py:568: Pandas4Warning: The inplace keyword in DataFrame.sort_index is deprecated and will be removed in a future version (PDEP-8).
+See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+  quotes.sort_index(inplace=True)
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/yfinance/utils.py:585: Pandas4Warning: The inplace keyword in DataFrame.set_index is deprecated and will be removed in a future version (PDEP-8).
+See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+  dividends.set_index("date", inplace=True)
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/yfinance/utils.py:587: Pandas4Warning: The inplace keyword in DataFrame.sort_index is deprecated and will be removed in a future version (PDEP-8).
+See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+  dividends.sort_index(inplace=True)
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/yfinance/utils.py:604: Pandas4Warning: The inplace keyword in DataFrame.set_index is deprecated and will be removed in a future version (PDEP-8).
+See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+  splits.set_index("date", inplace=True)
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/yfinance/utils.py:606: Pandas4Warning: The inplace keyword in DataFrame.sort_index is deprecated and will be removed in a future version (PDEP-8).
+See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+  splits.sort_index(inplace=True)
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/yfinance/utils.py:514: Pandas4Warning: The inplace keyword in DataFrame.drop is deprecated and will be removed in a future version (PDEP-8).
+See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+  df.drop(
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/yfinance/utils.py:518: Pandas4Warning: The inplace keyword in DataFrame.rename is deprecated and will be removed in a future version (PDEP-8).
+See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+  df.rename(columns={
+$TWTR: possibly delisted; no timezone found
+$ATVI: possibly delisted; no timezone found
+$SIVB: possibly delisted; no timezone found
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/yfinance/utils.py:568: Pandas4Warning: The inplace keyword in DataFrame.sort_index is deprecated and will be removed in a future version (PDEP-8).
+See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+  quotes.sort_index(inplace=True)
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/yfinance/utils.py:585: Pandas4Warning: The inplace keyword in DataFrame.set_index is deprecated and will be removed in a future version (PDEP-8).
+See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+  dividends.set_index("date", inplace=True)
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/yfinance/utils.py:587: Pandas4Warning: The inplace keyword in DataFrame.sort_index is deprecated and will be removed in a future version (PDEP-8).
+See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+  dividends.sort_index(inplace=True)
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/yfinance/utils.py:604: Pandas4Warning: The inplace keyword in DataFrame.set_index is deprecated and will be removed in a future version (PDEP-8).
+See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+  splits.set_index("date", inplace=True)
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/yfinance/utils.py:606: Pandas4Warning: The inplace keyword in DataFrame.sort_index is deprecated and will be removed in a future version (PDEP-8).
+See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+  splits.sort_index(inplace=True)
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/yfinance/utils.py:514: Pandas4Warning: The inplace keyword in DataFrame.drop is deprecated and will be removed in a future version (PDEP-8).
+See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+  df.drop(
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/yfinance/utils.py:518: Pandas4Warning: The inplace keyword in DataFrame.rename is deprecated and will be removed in a future version (PDEP-8).
+See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+  df.rename(columns={
+
+== SEC Form 13F data sets
+index status 200
+zip links 54
+   /files/datastandardsinnovation/data/form-13f-data-sets/01jun2026-31aug2026_form13f.zip
+   /files/structureddata/data/form-13f-data-sets/01dec2024-28feb2025_form13f.zip
+   /files/structureddata/data/form-13f-data-sets/01dec2025-28feb2026_form13f.zip
+   ...
+   /files/structureddata/data/form-13f-data-sets/2023q2_form13f.zip
+   /files/structureddata/data/form-13f-data-sets/2023q3_form13f.zip
+   /files/structureddata/data/form-13f-data-sets/2023q4_form13f.zip
+latest zip https://www.sec.gov/files/structureddata/data/form-13f-data-sets/2023q4_form13f.zip status 200 bytes 73022463
+   member COVERPAGE.tsv (1684601 bytes) header: ACCESSION_NUMBER	REPORTCALENDARORQUARTER	ISAMENDMENT	AMENDMENTNO	AMENDMENTTYPE	CONFDENIEDEXPIRED	DATEDENIEDEXPIRED	DATEREPORTED	REASONFORNONCONFIDENTIALITY	FILINGMANAGER_NAME	FILINGMANAGER_STREET1	FILINGMANAGER_STREET2	FILINGMANAGER_CITY	FILINGMANAGER_STATEORCOUNTRY	FILINGMANAGER_ZIPCODE	REPORTTYPE	
+   member INFOTABLE.tsv (293749010 bytes) header: ACCESSION_NUMBER	INFOTABLE_SK	NAMEOFISSUER	TITLEOFCLASS	CUSIP	FIGI	VALUE	SSHPRNAMT	SSHPRNAMTTYPE	PUTCALL	INVESTMENTDISCRETION	OTHERMANAGER	VOTING_AUTH_SOLE	VOTING_AUTH_SHARED	VOTING_AUTH_NONE
+   member OTHERMANAGER.tsv (311442 bytes) header: ACCESSION_NUMBER	OTHERMANAGER_SK	CIK	FORM13FFILENUMBER	CRDNUMBER	SECFILENUMBER	NAME
+   member OTHERMANAGER2.tsv (237207 bytes) header: ACCESSION_NUMBER	SEQUENCENUMBER	CIK	FORM13FFILENUMBER	CRDNUMBER	SECFILENUMBER	NAME
+   member SIGNATURE.tsv (1050838 bytes) header: ACCESSION_NUMBER	NAME	TITLE	PHONE	SIGNATURE	CITY	STATEORCOUNTRY	SIGNATUREDATE
+   member SUBMISSION.tsv (579996 bytes) header: ACCESSION_NUMBER	FILING_DATE	SUBMISSIONTYPE	CIK	PERIODOFREPORT
+   member SUMMARYPAGE.tsv (287887 bytes) header: ACCESSION_NUMBER	OTHERINCLUDEDMANAGERSCOUNT	TABLEENTRYTOTAL	TABLEVALUETOTAL	ISCONFIDENTIALOMITTED
+   member FORM13F_metadata.json (17199 bytes) header: {
+   member FORM13F_readme.htm (447226 bytes) header: <html xmlns:v="urn:schemas-microsoft-com:vml"
+
+== SEC fails-to-deliver files (CUSIP to symbol)
+index status 200
+zip links 414 first ['/files/data/fails-deliver-data/cnsfails201706b.zip'] last ['/files/node/add/data_distribution/cnsfails202004b.zip']
+   cnsfails202004b.txt: header SETTLEMENT DATE|CUSIP|SYMBOL|QUANTITY (FAILS)|DESCRIPTION|PRICE rows 58641
+
+== Yahoo via yfinance
+   SPY: rows 3727, first 2012-01-03, last 2026-10-28
+   AAPL: rows 3727, first 2012-01-03, last 2026-10-28
+   TWTR: no rows
+   ATVI: no rows
+   SIVB: no rows
+   GME: rows 3727, first 2012-01-03, last 2026-10-28
+
+== FINRA consolidated short interest
+   GET limit: status 200, fields ['accountingYearMonthNumber', 'averageDailyVolumeQuantity', 'changePercent', 'changePreviousNumber', 'currentShortPositionQuantity', 'daysToCoverQuantity', 'issueName', 'issuerServicesGroupExchangeCode', 'marketClassCode', 'previousShortPositionQuantity', 'revisionFlag', 'settlementDate', 'stockSplitFlag', 'symbolCode'], settlementDate 2020-04-15
+   POST limit: status 200, fields ['accountingYearMonthNumber', 'averageDailyVolumeQuantity', 'changePercent', 'changePreviousNumber', 'currentShortPositionQuantity', 'daysToCoverQuantity', 'issueName', 'issuerServicesGroupExchangeCode', 'marketClassCode', 'previousShortPositionQuantity', 'revisionFlag', 'settlementDate', 'stockSplitFlag', 'symbolCode'], settlementDate 2020-04-15
+   POST sorted asc: status 400, unparsed (0 bytes) b''
+   POST sorted desc: status 400, unparsed (0 bytes) b''
