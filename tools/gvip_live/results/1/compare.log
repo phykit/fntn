@@ -1,0 +1,10 @@
+agree    n_months: run=118 verify=118
+agree    first_month: run=2016-12 verify=2016-12
+agree    last_month: run=2026-09 verify=2026-09
+agree    verdict: run=FAIL verify=FAIL
+agree    alpha_annual: run=-0.005160344611580516 verify=-0.005160344611580516
+agree    t: run=-0.300994800321619 verify=-0.300994800321619
+agree    capm_alpha_annual (no weight): run=-0.003286348625878511 verify=-0.003286348625878511
+agree    qqq_alpha_annual (no weight): run=-0.030659301484577933 verify=-0.030659301484577933
+agree    share_months_beat_spy (no weight): run=0.5169491525423728 verify=0.5169491525423728
+COMPARE PASSED

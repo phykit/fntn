@@ -1,0 +1,9 @@
+ok   Newey-West with 0 lags equals White
+ok   monthly compounding
+null worlds passing 3 of 40; planted (12% a year) passing 8 of 8
+ok   null worlds pass at most 4 of 40
+ok   planted worlds pass 8 of 8
+SELFTEST PASSED
+ok   110 months, planted 10%: PASS (n 110, t 4.06)
+ok   80 months, planted 10%: INSUFFICIENT (n 80, t 2.71)
+SELFTEST PASSED
