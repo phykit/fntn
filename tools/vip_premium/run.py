@@ -67,7 +67,7 @@ def monthly(days, daily, ok):
 
 
 def maxdd(r):
-    v = np.cumprod(1 + np.array(r))
+    v = np.concatenate([[1.0], np.cumprod(1 + np.array(r))])  # wealth starts at 1 before the first month
     return float(np.min(v / np.maximum.accumulate(v)) - 1)
 
 
