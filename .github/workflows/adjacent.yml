@@ -1,4 +1,4 @@
-name: Adjacent side tests (vol-managed momentum; GVIP concentration)
+name: Adjacent side tests (vol-managed momentum; GVIP concentration; short interest)
 
 # NON-EVIDENTIARY side tests outside the FNTN funnel. PREREGs: tools/volmom/PREREG.md and
 # tools/gvip_concentration/PREREG.md. Runs when tools/volmom/DISPATCH changes on this branch.
@@ -25,6 +25,7 @@ jobs:
       M: tools/volmom
       G: tools/gvip_concentration
       V: tools/vip_premium
+      S: tools/short_interest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -33,7 +34,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install pinned dependencies
-        run: python -m pip install --quiet "numpy==2.2.6" "pandas" "yfinance>=0.2.50"
+        run: python -m pip install --quiet "numpy==2.2.6" "pandas" "openpyxl" "yfinance>=0.2.50"
       - name: Freeze records
         shell: bash
         run: |
@@ -48,18 +49,21 @@ jobs:
           check "$M" PREREG.md run.py selftest.py fetch.py verify.py compare.py
           check "$G" PREREG.md run.py selftest.py fetch.py verify.py compare.py
           check "$V" run.py fetch_extra.py
+          check "$S" PREREG.md run.py selftest.py fetch.py verify.py compare.py
       - name: Self-tests
         shell: bash
         run: |
           set -euo pipefail
           python "$M/selftest.py" 2>&1 | tee out/selftest_volmom.log
           python "$G/selftest.py" 2>&1 | tee out/selftest_conc.log
+          python "$S/selftest.py" 2>&1 | tee out/selftest_si.log
       - name: Fetch (structure printed, never a value)
         shell: bash
         run: |
           set -euo pipefail
           python "$M/fetch.py" --data data_m 2>&1 | grep -v -i -e "warning" -e "inplace" | tee out/fetch_volmom.log
           python "$G/fetch.py" --data data_g 2>&1 | grep -v -i -e "warning" -e "inplace" | tee out/fetch_conc.log
+          python "$S/fetch.py" --data data_s 2>&1 | tee out/fetch_si.log
       - name: Vol-managed momentum, both implementations
         shell: bash
         run: |
@@ -78,9 +82,18 @@ jobs:
           python "$G/verify.py" --data data_g --out out/gv 2>&1 | tee out/conc_verify.log
           cp out/g/results.json out/results_conc.json; cp out/gv/verify.json out/verify_conc.json
           python "$G/compare.py" --a out/results_conc.json --b out/verify_conc.json 2>&1 | tee out/conc_compare.log
+      - name: Short interest, both implementations
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out/s out/sv
+          python "$S/run.py" --data data_s --out out/s 2>&1 | tee out/si_run.log
+          python "$S/verify.py" --data data_s --out out/sv 2>&1 | tee out/si_verify.log
+          cp out/s/results.json out/results_si.json; cp out/sv/verify.json out/verify_si.json
+          python "$S/compare.py" --a out/results_si.json --b out/verify_si.json 2>&1 | tee out/si_compare.log
       - name: Remove the inputs
         if: always()
-        run: rm -rf data_m data_g
+        run: rm -rf data_m data_g data_s
       - name: Commit the result files to this branch
         if: always()
         shell: bash
