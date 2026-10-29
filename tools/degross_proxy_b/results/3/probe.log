@@ -1,0 +1,27 @@
+
+== SEC Form 13F data sets
+index status 200
+zip links 54
+   all names: ['01dec2024-28feb2025_form13f.zip', '01dec2025-28feb2026_form13f.zip', '01jan2024-29feb2024_form13f.zip', '01jun2024-31aug2024_form13f.zip', '01jun2025-31aug2025_form13f.zip', '01jun2026-31aug2026_form13f.zip', '01mar2024-31may2024_form13f.zip', '01mar2025-31may2025_form13f.zip', '01mar2026-31may2026_form13f.zip', '01sep2024-30nov2024_form13f.zip', '01sep2025-30nov2025_form13f.zip', '2013q2_form13f.zip', '2013q3_form13f.zip', '2013q4_form13f.zip', '2014q1_form13f.zip', '2014q2_form13f.zip', '2014q3_form13f.zip', '2014q4_form13f.zip', '2015q1_form13f.zip', '2015q2_form13f.zip', '2015q3_form13f.zip', '2015q4_form13f.zip', '2016q1_form13f.zip', '2016q2_form13f.zip', '2016q3_form13f.zip', '2016q4_form13f.zip', '2017q1_form13f.zip', '2017q2_form13f.zip', '2017q3_form13f.zip', '2017q4_form13f.zip', '2018q1_form13f.zip', '2018q2_form13f.zip', '2018q3_form13f.zip', '2018q4_form13f.zip', '2019q1_form13f.zip', '2019q2_form13f.zip', '2019q3_form13f.zip', '2019q4_form13f.zip', '2020q1_form13f.zip', '2020q2_form13f.zip', '2020q3_form13f.zip', '2020q4_form13f.zip', '2021q1_form13f.zip', '2021q2_form13f.zip', '2021q3_form13f.zip', '2021q4_form13f.zip', '2022q1_form13f.zip', '2022q2_form13f.zip', '2022q3_form13f.zip', '2022q4_form13f.zip', '2023q1_form13f.zip', '2023q2_form13f.zip', '2023q3_form13f.zip', '2023q4_form13f.zip']
+latest zip https://www.sec.gov/files/structureddata/data/form-13f-data-sets/2023q4_form13f.zip status 200 bytes 73022463
+   member COVERPAGE.tsv (1684601 bytes) header: ACCESSION_NUMBER	REPORTCALENDARORQUARTER	ISAMENDMENT	AMENDMENTNO	AMENDMENTTYPE	CONFDENIEDEXPIRED	DATEDENIEDEXPIRED	DATEREPORTED	REASONFORNONCONFIDENTIALITY	FILINGMANAGER_NAME	FILINGMANAGER_STREET1	FILINGMANAGER_STREET2	FILINGMANAGER_CITY	FILINGMANAGER_STATEORCOUNTRY	FILINGMANAGER_ZIPCODE	REPORTTYPE	
+   member INFOTABLE.tsv (293749010 bytes) header: ACCESSION_NUMBER	INFOTABLE_SK	NAMEOFISSUER	TITLEOFCLASS	CUSIP	FIGI	VALUE	SSHPRNAMT	SSHPRNAMTTYPE	PUTCALL	INVESTMENTDISCRETION	OTHERMANAGER	VOTING_AUTH_SOLE	VOTING_AUTH_SHARED	VOTING_AUTH_NONE
+   member OTHERMANAGER.tsv (311442 bytes) header: ACCESSION_NUMBER	OTHERMANAGER_SK	CIK	FORM13FFILENUMBER	CRDNUMBER	SECFILENUMBER	NAME
+   member OTHERMANAGER2.tsv (237207 bytes) header: ACCESSION_NUMBER	SEQUENCENUMBER	CIK	FORM13FFILENUMBER	CRDNUMBER	SECFILENUMBER	NAME
+   member SIGNATURE.tsv (1050838 bytes) header: ACCESSION_NUMBER	NAME	TITLE	PHONE	SIGNATURE	CITY	STATEORCOUNTRY	SIGNATUREDATE
+   member SUBMISSION.tsv (579996 bytes) header: ACCESSION_NUMBER	FILING_DATE	SUBMISSIONTYPE	CIK	PERIODOFREPORT
+   member SUMMARYPAGE.tsv (287887 bytes) header: ACCESSION_NUMBER	OTHERINCLUDEDMANAGERSCOUNT	TABLEENTRYTOTAL	TABLEVALUETOTAL	ISCONFIDENTIALOMITTED
+   member FORM13F_metadata.json (17199 bytes) header: {
+   member FORM13F_readme.htm (447226 bytes) header: <html xmlns:v="urn:schemas-microsoft-com:vml"
+
+== FINRA consolidated short interest
+   window 2010-01-01..2012-12-31: status 204, unparsed b''
+   window 2013-01-01..2014-12-31: status 204, unparsed b''
+   window 2015-01-01..2016-12-31: status 204, unparsed b''
+   window 2017-01-01..2018-12-31: status 200, rows returned 1, settlementDate 2018-12-31
+   window 2019-01-01..2020-12-31: status 200, rows returned 1, settlementDate 2020-04-15
+   window 2021-01-01..2021-12-31: status 200, rows returned 1, settlementDate 2021-12-31
+   GET limit: status 200, fields ['accountingYearMonthNumber', 'averageDailyVolumeQuantity', 'changePercent', 'changePreviousNumber', 'currentShortPositionQuantity', 'daysToCoverQuantity', 'issueName', 'issuerServicesGroupExchangeCode', 'marketClassCode', 'previousShortPositionQuantity', 'revisionFlag', 'settlementDate', 'stockSplitFlag', 'symbolCode'], settlementDate 2020-04-15
+   POST limit: status 200, fields ['accountingYearMonthNumber', 'averageDailyVolumeQuantity', 'changePercent', 'changePreviousNumber', 'currentShortPositionQuantity', 'daysToCoverQuantity', 'issueName', 'issuerServicesGroupExchangeCode', 'marketClassCode', 'previousShortPositionQuantity', 'revisionFlag', 'settlementDate', 'stockSplitFlag', 'symbolCode'], settlementDate 2020-04-15
+   POST sorted asc: status 400, unparsed (0 bytes) b''
+   POST sorted desc: status 400, unparsed (0 bytes) b''
