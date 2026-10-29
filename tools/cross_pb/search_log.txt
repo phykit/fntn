@@ -105,107 +105,117 @@ M039	Morgan Stanley prime brokerage hedge funds March 2024	cands=0
 # SEARCH BUDGET EXHAUSTED. The query 'Morgan Stanley prime brokerage hedge funds April 2024' and every query after it
 # returned 'web search budget is used up (limit: 200 WebSearch calls per turn, shared by every agent in it)'.
 # NOT RUN (101 of the 140 monthly queries): Morgan Stanley April 2024 to October 2026 (31); JPMorgan January 2021 to October 2026 (70).
-NOT_RUN	Morgan Stanley prime brokerage hedge funds April 2024
-NOT_RUN	Morgan Stanley prime brokerage hedge funds May 2024
-NOT_RUN	Morgan Stanley prime brokerage hedge funds June 2024
-NOT_RUN	Morgan Stanley prime brokerage hedge funds July 2024
-NOT_RUN	Morgan Stanley prime brokerage hedge funds August 2024
-NOT_RUN	Morgan Stanley prime brokerage hedge funds September 2024
-NOT_RUN	Morgan Stanley prime brokerage hedge funds October 2024
-NOT_RUN	Morgan Stanley prime brokerage hedge funds November 2024
-NOT_RUN	Morgan Stanley prime brokerage hedge funds December 2024
-NOT_RUN	Morgan Stanley prime brokerage hedge funds January 2025
-NOT_RUN	Morgan Stanley prime brokerage hedge funds February 2025
-NOT_RUN	Morgan Stanley prime brokerage hedge funds March 2025
-NOT_RUN	Morgan Stanley prime brokerage hedge funds April 2025
-NOT_RUN	Morgan Stanley prime brokerage hedge funds May 2025
-NOT_RUN	Morgan Stanley prime brokerage hedge funds June 2025
-NOT_RUN	Morgan Stanley prime brokerage hedge funds July 2025
-NOT_RUN	Morgan Stanley prime brokerage hedge funds August 2025
-NOT_RUN	Morgan Stanley prime brokerage hedge funds September 2025
-NOT_RUN	Morgan Stanley prime brokerage hedge funds October 2025
-NOT_RUN	Morgan Stanley prime brokerage hedge funds November 2025
-NOT_RUN	Morgan Stanley prime brokerage hedge funds December 2025
-NOT_RUN	Morgan Stanley prime brokerage hedge funds January 2026
-NOT_RUN	Morgan Stanley prime brokerage hedge funds February 2026
-NOT_RUN	Morgan Stanley prime brokerage hedge funds March 2026
-NOT_RUN	Morgan Stanley prime brokerage hedge funds April 2026
-NOT_RUN	Morgan Stanley prime brokerage hedge funds May 2026
-NOT_RUN	Morgan Stanley prime brokerage hedge funds June 2026
-NOT_RUN	Morgan Stanley prime brokerage hedge funds July 2026
-NOT_RUN	Morgan Stanley prime brokerage hedge funds August 2026
-NOT_RUN	Morgan Stanley prime brokerage hedge funds September 2026
-NOT_RUN	Morgan Stanley prime brokerage hedge funds October 2026
-NOT_RUN	JPMorgan prime brokerage hedge funds January 2021
-NOT_RUN	JPMorgan prime brokerage hedge funds February 2021
-NOT_RUN	JPMorgan prime brokerage hedge funds March 2021
-NOT_RUN	JPMorgan prime brokerage hedge funds April 2021
-NOT_RUN	JPMorgan prime brokerage hedge funds May 2021
-NOT_RUN	JPMorgan prime brokerage hedge funds June 2021
-NOT_RUN	JPMorgan prime brokerage hedge funds July 2021
-NOT_RUN	JPMorgan prime brokerage hedge funds August 2021
-NOT_RUN	JPMorgan prime brokerage hedge funds September 2021
-NOT_RUN	JPMorgan prime brokerage hedge funds October 2021
-NOT_RUN	JPMorgan prime brokerage hedge funds November 2021
-NOT_RUN	JPMorgan prime brokerage hedge funds December 2021
-NOT_RUN	JPMorgan prime brokerage hedge funds January 2022
-NOT_RUN	JPMorgan prime brokerage hedge funds February 2022
-NOT_RUN	JPMorgan prime brokerage hedge funds March 2022
-NOT_RUN	JPMorgan prime brokerage hedge funds April 2022
-NOT_RUN	JPMorgan prime brokerage hedge funds May 2022
-NOT_RUN	JPMorgan prime brokerage hedge funds June 2022
-NOT_RUN	JPMorgan prime brokerage hedge funds July 2022
-NOT_RUN	JPMorgan prime brokerage hedge funds August 2022
-NOT_RUN	JPMorgan prime brokerage hedge funds September 2022
-NOT_RUN	JPMorgan prime brokerage hedge funds October 2022
-NOT_RUN	JPMorgan prime brokerage hedge funds November 2022
-NOT_RUN	JPMorgan prime brokerage hedge funds December 2022
-NOT_RUN	JPMorgan prime brokerage hedge funds January 2023
-NOT_RUN	JPMorgan prime brokerage hedge funds February 2023
-NOT_RUN	JPMorgan prime brokerage hedge funds March 2023
-NOT_RUN	JPMorgan prime brokerage hedge funds April 2023
-NOT_RUN	JPMorgan prime brokerage hedge funds May 2023
-NOT_RUN	JPMorgan prime brokerage hedge funds June 2023
-NOT_RUN	JPMorgan prime brokerage hedge funds July 2023
-NOT_RUN	JPMorgan prime brokerage hedge funds August 2023
-NOT_RUN	JPMorgan prime brokerage hedge funds September 2023
-NOT_RUN	JPMorgan prime brokerage hedge funds October 2023
-NOT_RUN	JPMorgan prime brokerage hedge funds November 2023
-NOT_RUN	JPMorgan prime brokerage hedge funds December 2023
-NOT_RUN	JPMorgan prime brokerage hedge funds January 2024
-NOT_RUN	JPMorgan prime brokerage hedge funds February 2024
-NOT_RUN	JPMorgan prime brokerage hedge funds March 2024
-NOT_RUN	JPMorgan prime brokerage hedge funds April 2024
-NOT_RUN	JPMorgan prime brokerage hedge funds May 2024
-NOT_RUN	JPMorgan prime brokerage hedge funds June 2024
-NOT_RUN	JPMorgan prime brokerage hedge funds July 2024
-NOT_RUN	JPMorgan prime brokerage hedge funds August 2024
-NOT_RUN	JPMorgan prime brokerage hedge funds September 2024
-NOT_RUN	JPMorgan prime brokerage hedge funds October 2024
-NOT_RUN	JPMorgan prime brokerage hedge funds November 2024
-NOT_RUN	JPMorgan prime brokerage hedge funds December 2024
-NOT_RUN	JPMorgan prime brokerage hedge funds January 2025
-NOT_RUN	JPMorgan prime brokerage hedge funds February 2025
-NOT_RUN	JPMorgan prime brokerage hedge funds March 2025
-NOT_RUN	JPMorgan prime brokerage hedge funds April 2025
-NOT_RUN	JPMorgan prime brokerage hedge funds May 2025
-NOT_RUN	JPMorgan prime brokerage hedge funds June 2025
-NOT_RUN	JPMorgan prime brokerage hedge funds July 2025
-NOT_RUN	JPMorgan prime brokerage hedge funds August 2025
-NOT_RUN	JPMorgan prime brokerage hedge funds September 2025
-NOT_RUN	JPMorgan prime brokerage hedge funds October 2025
-NOT_RUN	JPMorgan prime brokerage hedge funds November 2025
-NOT_RUN	JPMorgan prime brokerage hedge funds December 2025
-NOT_RUN	JPMorgan prime brokerage hedge funds January 2026
-NOT_RUN	JPMorgan prime brokerage hedge funds February 2026
-NOT_RUN	JPMorgan prime brokerage hedge funds March 2026
-NOT_RUN	JPMorgan prime brokerage hedge funds April 2026
-NOT_RUN	JPMorgan prime brokerage hedge funds May 2026
-NOT_RUN	JPMorgan prime brokerage hedge funds June 2026
-NOT_RUN	JPMorgan prime brokerage hedge funds July 2026
-NOT_RUN	JPMorgan prime brokerage hedge funds August 2026
-NOT_RUN	JPMorgan prime brokerage hedge funds September 2026
-NOT_RUN	JPMorgan prime brokerage hedge funds October 2026
+M040	Morgan Stanley prime brokerage hedge funds April 2024	cands=0
+M041	Morgan Stanley prime brokerage hedge funds May 2024	cands=0
+M042	Morgan Stanley prime brokerage hedge funds June 2024	cands=1
+M043	Morgan Stanley prime brokerage hedge funds July 2024	cands=0
+M044	Morgan Stanley prime brokerage hedge funds August 2024	cands=1
+M045	Morgan Stanley prime brokerage hedge funds September 2024	cands=0
+M046	Morgan Stanley prime brokerage hedge funds October 2024	cands=1
+M047	Morgan Stanley prime brokerage hedge funds November 2024	cands=0
+M048	Morgan Stanley prime brokerage hedge funds December 2024	cands=0
+M049	Morgan Stanley prime brokerage hedge funds January 2025	cands=0
+M050	Morgan Stanley prime brokerage hedge funds February 2025	cands=0
+M051	Morgan Stanley prime brokerage hedge funds March 2025	cands=0
+M052	Morgan Stanley prime brokerage hedge funds April 2025	cands=0
+M053	Morgan Stanley prime brokerage hedge funds May 2025	cands=0
+M054	Morgan Stanley prime brokerage hedge funds June 2025	cands=0
+M055	Morgan Stanley prime brokerage hedge funds July 2025	cands=0
+M056	Morgan Stanley prime brokerage hedge funds August 2025	cands=1
+M057	Morgan Stanley prime brokerage hedge funds September 2025	cands=0
+M058	Morgan Stanley prime brokerage hedge funds October 2025	cands=0
+M059	Morgan Stanley prime brokerage hedge funds November 2025	cands=0
+M060	Morgan Stanley prime brokerage hedge funds December 2025	cands=0
+M061	Morgan Stanley prime brokerage hedge funds January 2026	cands=0
+M062	Morgan Stanley prime brokerage hedge funds February 2026	cands=0
+M063	Morgan Stanley prime brokerage hedge funds March 2026	cands=0
+M064	Morgan Stanley prime brokerage hedge funds April 2026	cands=0
+M065	Morgan Stanley prime brokerage hedge funds May 2026	cands=1
+M066	Morgan Stanley prime brokerage hedge funds June 2026	cands=0
+M067	Morgan Stanley prime brokerage hedge funds July 2026	cands=0
+M068	Morgan Stanley prime brokerage hedge funds August 2026	cands=0
+M069	Morgan Stanley prime brokerage hedge funds September 2026	cands=0
+M070	Morgan Stanley prime brokerage hedge funds October 2026	cands=0
+M071	JPMorgan prime brokerage hedge funds January 2021	cands=0
+M072	JPMorgan prime brokerage hedge funds February 2021	cands=0
+M073	JPMorgan prime brokerage hedge funds March 2021	cands=2
+M074	JPMorgan prime brokerage hedge funds April 2021	cands=1
+M075	JPMorgan prime brokerage hedge funds May 2021	cands=1
+M076	JPMorgan prime brokerage hedge funds June 2021	cands=0
+M077	JPMorgan prime brokerage hedge funds July 2021	cands=0
+M078	JPMorgan prime brokerage hedge funds August 2021	cands=1
+M079	JPMorgan prime brokerage hedge funds September 2021	cands=1
+M080	JPMorgan prime brokerage hedge funds October 2021	cands=3
+M081	JPMorgan prime brokerage hedge funds November 2021	cands=0
+M082	JPMorgan prime brokerage hedge funds December 2021	cands=0
+M083	JPMorgan prime brokerage hedge funds January 2022	cands=0
+M084	JPMorgan prime brokerage hedge funds February 2022	cands=0
+M085	JPMorgan prime brokerage hedge funds March 2022	cands=0
+M086	JPMorgan prime brokerage hedge funds April 2022	cands=0
+M087	JPMorgan prime brokerage hedge funds May 2022	cands=0
+M088	JPMorgan prime brokerage hedge funds June 2022	cands=0
+M089	JPMorgan prime brokerage hedge funds July 2022	cands=1
+M090	JPMorgan prime brokerage hedge funds August 2022	cands=0
+M091	JPMorgan prime brokerage hedge funds September 2022	cands=0
+M092	JPMorgan prime brokerage hedge funds October 2022	cands=0
+M093	JPMorgan prime brokerage hedge funds November 2022	cands=0
+M094	JPMorgan prime brokerage hedge funds December 2022	cands=0
+M095	JPMorgan prime brokerage hedge funds January 2023	cands=1
+M096	JPMorgan prime brokerage hedge funds February 2023	cands=0
+M097	JPMorgan prime brokerage hedge funds March 2023	cands=0
+M098	JPMorgan prime brokerage hedge funds April 2023	cands=0
+M099	JPMorgan prime brokerage hedge funds May 2023	cands=0
+M100	JPMorgan prime brokerage hedge funds June 2023	cands=0
+M101	JPMorgan prime brokerage hedge funds July 2023	cands=2
+M102	JPMorgan prime brokerage hedge funds August 2023	cands=1
+M103	JPMorgan prime brokerage hedge funds September 2023	cands=0
+M104	JPMorgan prime brokerage hedge funds October 2023	cands=0
+M105	JPMorgan prime brokerage hedge funds November 2023	cands=0
+M106	JPMorgan prime brokerage hedge funds December 2023	cands=1
+M107	JPMorgan prime brokerage hedge funds January 2024	cands=1
+M108	JPMorgan prime brokerage hedge funds February 2024	cands=0
+M109	JPMorgan prime brokerage hedge funds March 2024	cands=0
+M110	JPMorgan prime brokerage hedge funds April 2024	cands=0
+M111	JPMorgan prime brokerage hedge funds May 2024	cands=0
+M112	JPMorgan prime brokerage hedge funds June 2024	cands=0
+M113	JPMorgan prime brokerage hedge funds July 2024	cands=0
+M114	JPMorgan prime brokerage hedge funds August 2024	cands=1
+M115	JPMorgan prime brokerage hedge funds September 2024	cands=0
+M116	JPMorgan prime brokerage hedge funds October 2024	cands=0
+M117	JPMorgan prime brokerage hedge funds November 2024	cands=0
+M118	JPMorgan prime brokerage hedge funds December 2024	cands=0
+M119	JPMorgan prime brokerage hedge funds January 2025	cands=0
+M120	JPMorgan prime brokerage hedge funds February 2025	cands=0
+M121	JPMorgan prime brokerage hedge funds March 2025	cands=0
+M122	JPMorgan prime brokerage hedge funds April 2025	cands=0
+M123	JPMorgan prime brokerage hedge funds May 2025	cands=1
+M124	JPMorgan prime brokerage hedge funds June 2025	cands=1
+M125	JPMorgan prime brokerage hedge funds July 2025	cands=0
+M126	JPMorgan prime brokerage hedge funds August 2025	cands=0
+M127	JPMorgan prime brokerage hedge funds September 2025	cands=2
+M128	JPMorgan prime brokerage hedge funds October 2025	cands=0
+M129	JPMorgan prime brokerage hedge funds November 2025	cands=3
+M130	JPMorgan prime brokerage hedge funds December 2025	cands=1
+M131	JPMorgan prime brokerage hedge funds January 2026	cands=0
+M132	JPMorgan prime brokerage hedge funds February 2026	cands=2
+M133	JPMorgan prime brokerage hedge funds March 2026	cands=1
+M134	JPMorgan prime brokerage hedge funds April 2026	cands=1
+M135	JPMorgan prime brokerage hedge funds May 2026	cands=0
+M136	JPMorgan prime brokerage hedge funds June 2026	cands=0
+M137	JPMorgan prime brokerage hedge funds July 2026	cands=0
+M138	JPMorgan prime brokerage hedge funds August 2026	cands=0
+M139	JPMorgan prime brokerage hedge funds September 2026	cands=0
+M140	JPMorgan prime brokerage hedge funds October 2026	cands=0
 
 # totals: annual run 60 of 60; monthly run 39 of 140; not run 101; queries run 99 of 200.
 # Links followed: WebFetch of candidate pages (and one web.archive.org attempt, blocked) as recorded in candidates_log.csv.
+
+# SECOND RUN, 29 October 2026 (resumed collector): the 101 queries above formerly marked NOT_RUN were run in order
+# (Morgan Stanley April 2024 to October 2026 = M040..M070, then JPMorgan January 2021 to October 2026 = M071..M140),
+# WebSearch mode standard, exact form '<bank> prime brokerage hedge funds <Month> <Year>'. The budget was not exhausted.
+# New candidates: 34 (MS queries 5, JPM queries 29), each logged with its decision in build_other.py / candidates_log.csv.
+# Two URLs were not logged as they are mirrors of articles already logged: itiger.com/hans/news/1183433964 (locale
+# mirror of logged itiger.com/news/1183433964) and dawn.com/news/amp/1946691 (AMP copy of dawn.com/news/1946691).
+# Business-of-prime-brokerage results (launches, rankings, earnings, hiring) were not logged as candidates unless opened.
+# Links followed by WebFetch of candidate pages; web.archive.org not needed.
+# totals after second run: annual 60 of 60; monthly 140 of 140; not run 0; queries run 200 of 200.
