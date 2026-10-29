@@ -1,0 +1,19 @@
+ok   two weekly rows
+ok   weekly compounding
+ok   week end is last day
+ok   flat path has no episodes
+ok   drawdown formula ~ -0.15
+ok   episode merging (10, 20, 22 -> one; 40 -> another)
+ok   gate available drops October 2026
+ok   gate PASS on two matches
+ok   gate UNTESTABLE with one available
+ok   gate FAIL on one match
+ok   gate FAIL when base rate above 5%
+ok   rebound squeeze (winners up outright) excluded by the raw-return sign filter
+ok   true de-gross week flagged
+ok   no-sign variant keeps the squeeze if z <= -2
+null worlds passing: 3 of 40
+planted worlds passing: 8 of 8 (episodes [14, 22, 29, 25, 22, 29, 24, 23])
+ok   null worlds pass at most 4 of 40
+ok   planted worlds pass 8 of 8
+SELFTEST PASSED
