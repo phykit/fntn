@@ -1,0 +1,105 @@
+name: Adjacent side tests (vol-managed momentum; GVIP concentration)
+
+# NON-EVIDENTIARY side tests outside the FNTN funnel. PREREGs: tools/volmom/PREREG.md and
+# tools/gvip_concentration/PREREG.md. Runs when tools/volmom/DISPATCH changes on this branch.
+# Derived statistics only are committed under tools/volmom/results/<run>/; inputs live under data*/
+# for the job only.
+on:
+  push:
+    branches: [degross-proxy-2026-10-29]
+    paths: [tools/volmom/DISPATCH]
+
+concurrency:
+  group: adjacent
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      BRANCH: degross-proxy-2026-10-29
+      M: tools/volmom
+      G: tools/gvip_concentration
+      V: tools/vip_premium
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 50
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pinned dependencies
+        run: python -m pip install --quiet "numpy==2.2.6" "pandas" "yfinance>=0.2.50"
+      - name: Freeze records
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          check() { local d="$1"; shift
+            for f in "$@"; do
+              want="$(grep " $d/$f\$" "$d/FROZEN.sha256" | awk '{print $1}')"; have="$(sha256sum "$d/$f" | awk '{print $1}')"
+              if [ -z "$want" ] || [ "$want" != "$have" ]; then echo "::error::$d/$f differs from its freeze record"; exit 1; fi
+              echo "verified $d/$f $have" | tee -a out/frozen_as_run.sha256.txt
+            done; }
+          check "$M" PREREG.md run.py selftest.py fetch.py verify.py compare.py
+          check "$G" PREREG.md run.py selftest.py fetch.py verify.py compare.py
+          check "$V" run.py fetch_extra.py
+      - name: Self-tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$M/selftest.py" 2>&1 | tee out/selftest_volmom.log
+          python "$G/selftest.py" 2>&1 | tee out/selftest_conc.log
+      - name: Fetch (structure printed, never a value)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$M/fetch.py" --data data_m 2>&1 | grep -v -i -e "warning" -e "inplace" | tee out/fetch_volmom.log
+          python "$G/fetch.py" --data data_g 2>&1 | grep -v -i -e "warning" -e "inplace" | tee out/fetch_conc.log
+      - name: Vol-managed momentum, both implementations
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out/m out/mv
+          python "$M/run.py" --data data_m --out out/m 2>&1 | tee out/volmom_run.log
+          python "$M/verify.py" --data data_m --out out/mv 2>&1 | tee out/volmom_verify.log
+          cp out/m/results.json out/results_volmom.json; cp out/mv/verify.json out/verify_volmom.json
+          python "$M/compare.py" --a out/results_volmom.json --b out/verify_volmom.json 2>&1 | tee out/volmom_compare.log
+      - name: GVIP concentration, both implementations
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out/g out/gv
+          python "$G/run.py" --data data_g --out out/g 2>&1 | tee out/conc_run.log
+          python "$G/verify.py" --data data_g --out out/gv 2>&1 | tee out/conc_verify.log
+          cp out/g/results.json out/results_conc.json; cp out/gv/verify.json out/verify_conc.json
+          python "$G/compare.py" --a out/results_conc.json --b out/verify_conc.json 2>&1 | tee out/conc_compare.log
+      - name: Remove the inputs
+        if: always()
+        run: rm -rf data_m data_g
+      - name: Commit the result files to this branch
+        if: always()
+        shell: bash
+        env:
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          d="$M/results/${GITHUB_RUN_NUMBER}"
+          if [ "${GITHUB_RUN_ATTEMPT}" != "1" ]; then d="${d}_attempt${GITHUB_RUN_ATTEMPT}"; fi
+          mkdir -p "$d" out
+          { echo "job status at commit time: ${JOB_STATUS}"; echo "commit: ${GITHUB_SHA}"; echo "run id: ${GITHUB_RUN_ID}"; echo "utc: $(date -u +%Y-%m-%dT%H:%M:%SZ)"; } > "$d/meta.txt"
+          shopt -s nullglob
+          for f in out/*.log out/*.json out/*.txt; do cp "$f" "$d/"; done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$d"
+          git commit -m "adjacent tests: results of run ${GITHUB_RUN_NUMBER} on ${GITHUB_SHA::7} (${JOB_STATUS})"
+          for i in 1 2 3 4; do
+            if git pull --rebase origin "$BRANCH" && git push origin "HEAD:${BRANCH}"; then exit 0; fi
+            sleep $((i * 5))
+          done
+          exit 1
