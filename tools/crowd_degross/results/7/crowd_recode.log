@@ -1,0 +1,24 @@
+recode class D GVIP-QQQ E0: n 7, mean -0.0142 vs -0.0009, p_lower 0.0027, p_upper 0.9974, share neg 1.00
+recode class D GVIP-QQQ E1_4: n 7, mean +0.0040 vs -0.0037, p_lower 0.8216, p_upper 0.1785, share neg 0.43
+recode class D basket-QQQ E0: n 7, mean -0.0108 vs -0.0006, p_lower 0.0074, p_upper 0.9927, share neg 0.86
+recode class D basket-QQQ E1_4: n 7, mean +0.0062 vs -0.0025, p_lower 0.8672, p_upper 0.1329, share neg 0.29
+recode class D GVIP-SPY E0: n 7, mean -0.0101 vs +0.0001, p_lower 0.0094, p_upper 0.9907, share neg 1.00
+recode class D GVIP-SPY E1_4: n 7, mean +0.0050 vs +0.0006, p_lower 0.7130, p_upper 0.2871, share neg 0.43
+recode class D GVIP-resid-QQQ E0: n 7, mean -0.0134 vs -0.0007, p_lower 0.0055, p_upper 0.9946, share neg 1.00
+recode class D GVIP-resid-QQQ E1_4: n 7, mean +0.0041 vs -0.0031, p_lower 0.7923, p_upper 0.2078, share neg 0.43
+recode class N GVIP-QQQ E0: n 11, mean +0.0039 vs -0.0009, p_lower 0.9116, p_upper 0.0885, share neg 0.36
+recode class N GVIP-QQQ E1_4: n 10, mean -0.0059 vs -0.0037, p_lower 0.3630, p_upper 0.6371, share neg 0.70
+recode class N basket-QQQ E0: n 11, mean +0.0105 vs -0.0006, p_lower 0.9992, p_upper 0.0009, share neg 0.27
+recode class N basket-QQQ E1_4: n 10, mean +0.0006 vs -0.0025, p_lower 0.6861, p_upper 0.3140, share neg 0.50
+recode class N GVIP-SPY E0: n 11, mean -0.0100 vs +0.0001, p_lower 0.0024, p_upper 0.9977, share neg 0.73
+recode class N GVIP-SPY E1_4: n 10, mean -0.0051 vs +0.0006, p_lower 0.1941, p_upper 0.8060, share neg 0.60
+recode class N GVIP-resid-QQQ E0: n 11, mean +0.0008 vs -0.0007, p_lower 0.6597, p_upper 0.3404, share neg 0.55
+recode class N GVIP-resid-QQQ E1_4: n 10, mean -0.0038 vs -0.0031, p_lower 0.4490, p_upper 0.5511, share neg 0.60
+  R01 2021-01-29 E0 -0.00743253024097934 E1_4 0.06573640510173673
+  R03 2023-02-03 E0 -0.01781771290767664 E1_4 0.011356731595265734
+  R07 2024-06-14 E0 -0.03067037919855653 E1_4 -0.002770260955481607
+  R09 2025-02-21 E0 -0.013531602410735144 E1_4 0.01132226596481034
+  R10 2025-03-28 E0 -0.005980435611629864 E1_4 0.00849613345334399
+  R14 2026-04-24 E0 -0.01921367916592076 E1_4 -0.03558269739047959
+  R17 2026-08-21 E0 -0.004491040518235345 E1_4 -0.030344586531016904
+H-crowd: INSUFFICIENT
