@@ -92,3 +92,43 @@ explained out of sample is not a signal a reader could act on, and the series en
 3. No test here used the de-gross episode data; the multiplicity of today's programme (three
    further tests) is noted, and the one PASS is a replication of a published result, not a
    discovery.
+
+## 4. The long-only translation: FAIL
+
+Run 29 October 2026, GitHub Actions run id 40963516138 on commit `f8c261a`; pre-registration
+`tools/volmom_lo/PREREG.md`, committed at `b0ec77f` before any figure. The strategy: a sleeve split
+between MTUM and SPY, with the MTUM weight = 12% / realised volatility of the MTUM-minus-SPY spread
+(126 days), **capped at one** because the account cannot borrow or short; monthly, one-day delay,
+10 bp a leg. November 2013 to September 2026, 155 months. Both implementations agree on every
+headline figure (the six comparator disagreements are one extra executed weight in the weight
+statistics and a structural difference in how the live weight is written; the live weights agree
+exactly).
+
+| Criterion | Requirement | Result |
+|---|---|---|
+| (a) alpha of the tilt over MTUM-minus-SPY held | a > 0, t >= 2 | 0.02% a month, **t 0.8** |
+| (b) active Sharpe at least 1.2 x static | | 0.22 against 0.20 (ratio 1.14), bootstrap **p 0.11** |
+| (c) strategy Sharpe >= SPY's | | 0.859 against 0.850: met, barely |
+
+| November 2013 to September 2026 | Annual return | Volatility | Sharpe | Maximum drawdown |
+|---|---|---|---|---|
+| SPY | 13.9% | 14.4% | 0.85 | -23.9% |
+| MTUM held | 15.6% | 16.8% | 0.84 | -30.2% |
+| 50/50 rebalanced | 14.8% | 15.0% | 0.88 | -25.6% |
+| **Strategy** | 15.7% | 16.4% | 0.86 | **-30.2%** |
+
+**Why it fails.** The spread's realised volatility is below the 12% target in 85% of months, so the
+cap binds and the strategy is MTUM held with the weight halved in storms (minimum 0.50; turnover
+0.18 a year; cost 4 bp a year). The passed long-short result drew on both halves of the scaling:
+levering up in calm periods (weights up to 1.5) as well as cutting back in volatile ones. Long-only
+keeps the second half only, and that half, on this sample, added 0.1% a year over holding MTUM and
+left the worst drawdown unchanged. The strategy beat SPY in 9 of 14 calendar years and lost to it by
+10 to 17 points in 2016, 2021 and 2023.
+
+**Live weight (reported, no verdict weight):** 0.50 as at 30 September 2026 and 0.49 as at
+29 October 2026: the spread's volatility is currently high, so the rule would hold half MTUM, half
+SPY.
+
+**Reading.** The published effect does not survive the translation to a long-only account at the
+published target. A re-specification with a lower target would make the scaling bite more often;
+it would also be a parameter chosen after seeing this result, and is not run here.
