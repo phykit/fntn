@@ -4,7 +4,7 @@ name: Follow-up studies 1 to 4 side tests
 # tools/degross_ext, tools/crowd_degross, tools/cross_pb and tools/clone_etfs.
 #
 # Runs when tools/crowd_degross/DISPATCH changes on this branch. DISPATCH holds one word naming the
-# step (crowd_clone: studies 2 and 4; crowd2: studies 2a to 2d; crowd2e: study 2e-ii; verify2: check 1; recode: check 2; final: studies 1 and 3 and study 2's declared secondary) and a
+# step (crowd_clone: studies 2 and 4; crowd2: studies 2a to 2d; crowd2e: study 2e-ii; verify2: check 1; recode: check 2; rebound: study R; final: studies 1 and 3 and study 2's declared secondary) and a
 # counter. No other trigger.
 #
 # RETURN CHANNEL as on the other side tests: derived statistics only are committed under
@@ -56,7 +56,7 @@ jobs:
         run: |
           set -euo pipefail
           s="$(head -1 "$S2/DISPATCH" | awk '{print $1}')"
-          case "$s" in crowd_clone|crowd2|crowd2e|final|verify2|recode) ;; *) echo "DISPATCH names no known step: '$s'"; exit 1 ;; esac
+          case "$s" in crowd_clone|crowd2|crowd2e|final|verify2|recode|rebound) ;; *) echo "DISPATCH names no known step: '$s'"; exit 1 ;; esac
           echo "step=$s" >> "$GITHUB_OUTPUT"
           mkdir -p out
       - name: Freeze records
@@ -78,6 +78,10 @@ jobs:
           check "$V" run.py fetch_extra.py
           check "$S2" PREREG.md run.py selftest.py PREREG_2.md crowd2.py selftest2.py PREREG_2e.md crowd2e.py selftest2e.py
           check "$S4" PREREG.md run.py fetch.py selftest.py
+          if [ "${{ steps.step.outputs.step }}" = "rebound" ]; then
+            check "$S2" PREREG_rebound.md rebound.py selftest_rebound.py
+            check tools/checks verify_rebound.py compare_rebound.py
+          fi
           if [ "${{ steps.step.outputs.step }}" = "recode" ]; then
             check tools/checks PREREG.md recode.csv episodes_recode.csv agree.py
           fi
@@ -125,6 +129,17 @@ jobs:
         run: |
           set -euo pipefail
           python "$S2/crowd2.py" --bench data_g --data-b data_b --ndx data_a/ndx.csv --episodes "$E/episodes.csv" --out out 2>&1 | tee out/crowd2.log
+      - name: Study R, rebound after a bad week, with the independent implementation
+        if: steps.step.outputs.step == 'rebound'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$S2/selftest_rebound.py" 2>&1 | tee out/selftest_rebound.log
+          python "$S2/rebound.py" --bench data_g --data-b data_b --episodes "$E/episodes.csv" --out out 2>&1 | tee out/rebound.log
+          mkdir -p out/v
+          python tools/checks/verify_rebound.py --bench data_g --data-b data_b --episodes "$E/episodes.csv" --out out/v 2>&1 | tee out/verify_rebound.log
+          cp out/v/verify_rebound.json out/verify_rebound.json
+          python tools/checks/compare_rebound.py --a out/results_rebound.json --b out/verify_rebound.json 2>&1 | tee out/compare_rebound.log
       - name: Check 2, study 2 on the re-coded episode list (sensitivity)
         if: steps.step.outputs.step == 'recode'
         shell: bash
