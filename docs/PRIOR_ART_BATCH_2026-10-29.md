@@ -43,3 +43,59 @@ momentum (passed long-short today; the long-only form failed).
 Tests 2, 3 and 4 are pre-registered (`fc34da3`), built with independent second implementations,
 and run on GitHub Actions in one job. Tests 1 and 5 need an EODHD key as the repository secret
 `EODHD_KEY`; test 1 then runs unchanged under its frozen rule in a day, and test 5 is a two-day build.
+
+## Results (run 40968724411, 29 October 2026, commit `83dcf6e`)
+
+All three FAIL under their pre-registered primary criteria. Every verdict, every primary statistic
+and every count agrees between the frozen implementation and the independent second implementation;
+the only disagreements are the two definitional ones named before the run (below). Results and both
+implementations' outputs are under `tools/halloween/results/1/`. The frozen hashes verified as run.
+
+| Test | OOS sample | Primary | Verdict | Strategy, net | Comparator |
+|---|---|---|---|---|---|
+| Halloween, NDX | 2003-01 to 2026-09, 285 months | c = −0.27% a month, t = −0.45 (need c > 0, t ≥ 2) | **FAIL** | NDX in winter, bills in summer: 7.6% a year, Sharpe 0.51, drawdown −28% | NDX held: 15.5%, Sharpe 0.80, drawdown −50% |
+| Pre-FOMC drift, NDX | 2016-01 to 2026-10, 2,701 days, 85 announcements | d = +11.9 bp, shift p = 0.219 (need p ≤ 0.025) | **FAIL** | QQQ on announcement days only, 2 bp a trade: 3.4% a year, Sharpe 0.27, invested 3.1% of days | QQQ held: 20.1%, Sharpe 0.83 |
+| Dividend month, S&P 500 | 2010-01 to 2026-09, 201 months | D = −10.3 bp a month, t = −2.00 (need D > 0, t ≥ 2) | **FAIL** | Predicted payers, 10 bp a leg: 14.1% a year, Sharpe 0.85, turnover 85% a month one-way | Universe: 17.8%, Sharpe 1.05 |
+
+**Halloween.** The sign is wrong out of sample: winter months averaged 1.07% excess and summer
+months 1.34%. The replication sample (1986 to 2002, 203 months) gives c = +1.67% a month at t =
+1.55, so the effect was not significant on this index even in the period the literature covers.
+Winter beat the following summer in 12 of 22 pairs. The full sample (488 months) gives c = +0.54%,
+t = 0.94.
+
+**Pre-FOMC drift.** Announcement days averaged 18.6 bp against 6.7 bp on other days, and 55% of
+them were positive against 56% of all days. The full sample from 1994 (261 announcements) gives d
+= +30 bp at shift p = 0.003, so the Lucca and Moench effect is in the data and is concentrated
+before 2016, which is the post-publication decay the prior art describes. The day-before window
+is null (d = +2 bp, p = 0.45) and the two-day window is not better (d = +14 bp, p = 0.23). By year,
+2022 was the one large positive year (+8.0% summed over eight announcement days in a year the index
+lost 36%); 2016, 2018 and 2026 to date were negative. The Newey-West t is 0.72 (coefficient on the
+indicator) or 1.15 (the announcement-day mean); neither reaches 2. No announcement day in the list
+fell on a non-trading day (`n_dropped` 0); 2020 has seven scheduled meetings because the March
+meeting was cancelled.
+
+**Dividend month.** Predicted payers underperformed the universe by 10 bp a month out of sample
+and by 14 bp a month (t = −2.58) over 2001 to 2026; both OOS halves are negative. The universe is
+the current S&P 500 (502 tickers, 87 with no dividend history), so it is survivor-biased, and the
+bias runs *against* the hypothesis: the names that grew into the index without paying dividends sit
+permanently in the non-payer group. The FAIL is therefore a failure to find the premium in a
+universe tilted away from it, not clean evidence that the premium is absent in the full
+cross-section; a CRSP-grade test is the only way to settle that, and the tradeable question for a
+long-only book of large caps is answered either way, because this is the universe such a book
+would trade. Turnover is 85% a month one-way, so costs alone take about 2% a year.
+
+**The two definitional disagreements, both named before the run.** (i) FOMC `nw_t_oos`: the
+frozen rule reports the t of the coefficient on the announcement indicator (0.72); the second
+implementation reports the t of the announcement-day mean, intercept plus coefficient (1.15), and
+flags that its `nw_t_diff_oos` equals the frozen figure to 1e-6, so the arithmetic agrees and the
+reading differs. The statistic is secondary and both readings are below 2. (ii) Dividend month
+strategy figures: the frozen rule runs the strategy from 2001 and reads the OOS subset, so the first
+OOS month's turnover is measured against December 2009 holdings; the second implementation starts
+the strategy in January 2010 from cash. Mean turnover 0.8460 against 0.8441, Sharpe 0.8512 against
+0.8515; the second implementation's `mean_turnover_excluding_first_month` (0.8459) reconciles the
+two. Neither disagreement touches a verdict or a primary statistic.
+
+**What this leaves of the five.** Three of the five free candidates failed; the two that remain
+(insider purchases, buyback drift) are the two whose prior art reports persistence after
+publication and the two that need the EODHD key. The insider test has been frozen since 7 October
+and runs unchanged once the key exists.
