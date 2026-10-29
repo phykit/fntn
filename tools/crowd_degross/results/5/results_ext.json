@@ -1,0 +1,308 @@
+{
+ "combined (primary)": {
+  "n_episodes": 21,
+  "n_D": 9,
+  "study2": {
+   "A_momentum": {
+    "class_D": {
+     "n_scored": 9,
+     "hits": 0,
+     "hit_rate": 0.0,
+     "base_rate": 0.01353846153846154,
+     "chance_per_episode": 0.040067996256713534,
+     "p": 1.0,
+     "verdict": "DOES NOT SEE",
+     "hit_ids": [],
+     "scored_ids": [
+      "E01",
+      "E03",
+      "E05",
+      "E07",
+      "E08",
+      "E12",
+      "E14",
+      "E17",
+      "E20"
+     ],
+     "range": [
+      "1933-05-06",
+      "2026-09-30"
+     ]
+    },
+    "class_N (no weight)": {
+     "n_scored": 11,
+     "hits": 0,
+     "hit_rate": 0.0,
+     "base_rate": 0.01353846153846154,
+     "chance_per_episode": 0.040067996256713534,
+     "p": 1.0,
+     "verdict": "DOES NOT SEE",
+     "hit_ids": [],
+     "scored_ids": [
+      "E02",
+      "E04",
+      "E06",
+      "E09",
+      "E10",
+      "E11",
+      "E13",
+      "E15",
+      "E16",
+      "E18",
+      "E19"
+     ],
+     "range": [
+      "1933-05-06",
+      "2026-09-30"
+     ]
+    }
+   },
+   "B_13f": {
+    "class_D": {
+     "n_scored": 9,
+     "hits": 2,
+     "hit_rate": 0.2222222222222222,
+     "base_rate": 0.009615384615384616,
+     "chance_per_episode": 0.028569675978607045,
+     "p": 0.025708968803458944,
+     "verdict": "DOES NOT SEE",
+     "hit_ids": [
+      "E01",
+      "E20"
+     ],
+     "scored_ids": [
+      "E01",
+      "E03",
+      "E05",
+      "E07",
+      "E08",
+      "E12",
+      "E14",
+      "E17",
+      "E20"
+     ],
+     "range": [
+      "2016-11-18",
+      "2026-10-29"
+     ]
+    },
+    "class_N (no weight)": {
+     "n_scored": 12,
+     "hits": 0,
+     "hit_rate": 0.0,
+     "base_rate": 0.009615384615384616,
+     "chance_per_episode": 0.028569675978607045,
+     "p": 1.0,
+     "verdict": "DOES NOT SEE",
+     "hit_ids": [],
+     "scored_ids": [
+      "E02",
+      "E04",
+      "E06",
+      "E09",
+      "E10",
+      "E11",
+      "E13",
+      "E15",
+      "E16",
+      "E18",
+      "E19",
+      "E21"
+     ],
+     "range": [
+      "2016-11-18",
+      "2026-10-29"
+     ]
+    }
+   }
+  },
+  "study3": {
+   "episodes": [
+    {
+     "id": "E01",
+     "week_end": "2021-01-29",
+     "pre10": 0.00206920237636532,
+     "post21_pub": -0.0154972488398607,
+     "post63_pub": 0.06016861580229782
+    },
+    {
+     "id": "E03",
+     "week_end": "2023-02-03",
+     "pre10": 0.08213508356549548,
+     "post21_pub": -0.01999115889834424,
+     "post63_pub": 0.06635880592177301
+    },
+    {
+     "id": "E05",
+     "week_end": "2023-11-17",
+     "pre10": 0.048908936659450175,
+     "post21_pub": 0.03288812795359841,
+     "post63_pub": 0.12339381021846818
+    },
+    {
+     "id": "E07",
+     "week_end": "2024-06-14",
+     "pre10": 0.06059077557163772,
+     "post21_pub": -0.009931290902011058,
+     "post63_pub": -0.023632412606298003
+    },
+    {
+     "id": "E08",
+     "week_end": "2024-07-19",
+     "pre10": -0.04263197719494494,
+     "post21_pub": -0.005198540877279556,
+     "post63_pub": 0.025282413696906758
+    },
+    {
+     "id": "E12",
+     "week_end": "2025-02-21",
+     "pre10": -0.007347730580456346,
+     "post21_pub": -0.049842919284678544,
+     "post63_pub": -0.020439694868134684
+    },
+    {
+     "id": "E14",
+     "week_end": "2025-07-25",
+     "pre10": 0.021581960088847607,
+     "post21_pub": 0.02055061412421999,
+     "post63_pub": 0.13053901212082075
+    },
+    {
+     "id": "E17",
+     "week_end": "2026-04-24",
+     "pre10": 0.08708792762002737,
+     "post21_pub": 0.09770458014596217,
+     "post63_pub": 0.016752924666223246
+    },
+    {
+     "id": "E20",
+     "week_end": "2026-08-21",
+     "pre10": -0.013910094440874321,
+     "post21_pub": 0.04346673979423632,
+     "post63_pub": null
+    }
+   ],
+   "n_unconditional": {
+    "pre10": 565,
+    "post21_pub": 560,
+    "post63_pub": 551
+   },
+   "pre10": {
+    "n": 9,
+    "mean": 0.02649823151839423,
+    "median": 0.021581960088847607,
+    "unconditional_mean": 0.006942064013819766,
+    "p_lower": 0.9432056794320568,
+    "share_negative": 0.3333333333333333,
+    "unconditional_share_negative": 0.36460176991150445
+   },
+   "post21_pub": {
+    "n": 9,
+    "mean": 0.010460989246204755,
+    "median": -0.005198540877279556,
+    "unconditional_mean": 0.0177788400677866,
+    "p_lower": 0.33526647335266474,
+    "share_negative": 0.5555555555555556,
+    "unconditional_share_negative": 0.32142857142857145
+   },
+   "post63_pub": {
+    "n": 8,
+    "mean": 0.047302934369007135,
+    "median": 0.04272551474960229,
+    "unconditional_mean": 0.05104039948724461,
+    "p_lower": 0.44855514448555145,
+    "share_negative": 0.25,
+    "unconditional_share_negative": 0.2323049001814882
+   },
+   "verdict_H_lag": "NOT SUPPORTED"
+  }
+ },
+ "extension 2016-2020 only (secondary)": {
+  "n_episodes": 0,
+  "n_D": 0,
+  "study2": {
+   "A_momentum": {
+    "class_D": {
+     "n_scored": 0,
+     "hits": 0,
+     "hit_rate": NaN,
+     "base_rate": 0.01353846153846154,
+     "chance_per_episode": 0.040067996256713534,
+     "p": NaN,
+     "verdict": "INSUFFICIENT",
+     "hit_ids": [],
+     "scored_ids": [],
+     "range": [
+      "1933-05-06",
+      "2026-09-30"
+     ]
+    },
+    "class_N (no weight)": {
+     "n_scored": 0,
+     "hits": 0,
+     "hit_rate": NaN,
+     "base_rate": 0.01353846153846154,
+     "chance_per_episode": 0.040067996256713534,
+     "p": NaN,
+     "verdict": "INSUFFICIENT",
+     "hit_ids": [],
+     "scored_ids": [],
+     "range": [
+      "1933-05-06",
+      "2026-09-30"
+     ]
+    }
+   },
+   "B_13f": {
+    "class_D": {
+     "n_scored": 0,
+     "hits": 0,
+     "hit_rate": NaN,
+     "base_rate": 0.009615384615384616,
+     "chance_per_episode": 0.028569675978607045,
+     "p": NaN,
+     "verdict": "INSUFFICIENT",
+     "hit_ids": [],
+     "scored_ids": [],
+     "range": [
+      "2016-11-18",
+      "2026-10-29"
+     ]
+    },
+    "class_N (no weight)": {
+     "n_scored": 0,
+     "hits": 0,
+     "hit_rate": NaN,
+     "base_rate": 0.009615384615384616,
+     "chance_per_episode": 0.028569675978607045,
+     "p": NaN,
+     "verdict": "INSUFFICIENT",
+     "hit_ids": [],
+     "scored_ids": [],
+     "range": [
+      "2016-11-18",
+      "2026-10-29"
+     ]
+    }
+   }
+  },
+  "study3": {
+   "episodes": [],
+   "n_unconditional": {
+    "pre10": 565,
+    "post21_pub": 560,
+    "post63_pub": 551
+   },
+   "pre10": {
+    "n": 0
+   },
+   "post21_pub": {
+    "n": 0
+   },
+   "post63_pub": {
+    "n": 0
+   },
+   "verdict_H_lag": "INSUFFICIENT"
+  }
+ }
+}

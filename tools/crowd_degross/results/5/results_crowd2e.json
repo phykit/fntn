@@ -1,0 +1,94 @@
+{
+ "weeks": 774,
+ "2e-ii GVIP-QQQ (primary)": {
+  "eligible_weeks": 307,
+  "signal_weeks": 29,
+  "n": 29,
+  "mean_next": -0.004352435275404953,
+  "unconditional_next": -0.0011050640971847982,
+  "p_lower": 0.06879312068793121,
+  "share_next_negative": 0.5517241379310345,
+  "unconditional_share_negative": 0.5179153094462541,
+  "slope_next_on_this": -0.08413119319348472,
+  "slope_t": -0.8165387441778907,
+  "two_week": {
+   "n": 27,
+   "mean": -0.006333162451746475,
+   "unconditional": -0.0022168026571845623,
+   "p_lower": 0.09049095090490951
+  }
+ },
+ "2e-ii basket-QQQ (no weight)": {
+  "eligible_weeks": 476,
+  "signal_weeks": 51,
+  "n": 51,
+  "mean_next": 0.0020649769653030797,
+  "unconditional_next": -0.0009982043482689492,
+  "p_lower": 0.9818018198180182,
+  "share_next_negative": 0.43137254901960786,
+  "unconditional_share_negative": 0.5546218487394958,
+  "slope_next_on_this": -0.08241326589205532,
+  "slope_t": -1.2467635178986298,
+  "two_week": {
+   "n": 50,
+   "mean": -0.0005108555251290126,
+   "unconditional": -0.0018912470714578362,
+   "p_lower": 0.7529247075292471
+  }
+ },
+ "2e-i": {
+  "episodes": [
+   {
+    "id": "O01",
+    "week_end": "2023-07-28",
+    "E-1": 0.013425226242229638,
+    "E0": -0.013883581351523455
+   }
+  ],
+  "E-1 GVIP-QQQ (primary)": {
+   "n": 1,
+   "mean": 0.013425226242229638,
+   "unconditional_mean": -0.0008652957333088491,
+   "p_lower": 0.9024097590240976,
+   "p_upper": 0.09979002099790021,
+   "share_negative": 0.0
+  },
+  "E-1 basket-QQQ (no weight)": {
+   "n": 1,
+   "mean": 0.01778437928037735,
+   "unconditional_mean": -0.0006080963258572312,
+   "p_lower": 0.9588041195880412,
+   "p_upper": 0.041995800419958006,
+   "share_negative": 0.0
+  },
+  "E0 GVIP-QQQ (no weight)": {
+   "n": 1,
+   "mean": -0.013883581351523455,
+   "unconditional_mean": -0.0008652957333088491,
+   "p_lower": 0.11078892110788921,
+   "p_upper": 0.891010898910109,
+   "share_negative": 1.0
+  },
+  "frozen N E-1 GVIP-QQQ (no weight)": {
+   "n": 12,
+   "mean": 0.007492317829219802,
+   "unconditional_mean": -0.0008652957333088491,
+   "p_lower": 0.9945005499450055,
+   "p_upper": 0.005599440055994401,
+   "share_negative": 0.3333333333333333
+  }
+ },
+ "verdicts": {
+  "2e-i": {
+   "p_raw": 0.9024097590240976,
+   "n": 1,
+   "verdict": "INSUFFICIENT"
+  },
+  "2e-ii": {
+   "p_raw": 0.06879312068793121,
+   "p_used": 0.06879312068793121,
+   "n": 29,
+   "verdict": "NOT SUPPORTED"
+  }
+ }
+}

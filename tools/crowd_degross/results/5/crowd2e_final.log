@@ -1,0 +1,10 @@
+2e-ii GVIP-QQQ (primary): eligible 307, signal 29, next-week mean -0.0044 vs -0.0011, p_lower 0.0688, share neg 0.55 vs 0.52; slope -0.084 (t -0.82)
+   two-week: n 27, mean -0.0063 vs -0.0022, p_lower 0.0905
+2e-ii basket-QQQ (no weight): eligible 476, signal 51, next-week mean +0.0021 vs -0.0010, p_lower 0.9818, share neg 0.43 vs 0.55; slope -0.082 (t -1.25)
+   two-week: n 50, mean -0.0005 vs -0.0019, p_lower 0.7529
+2e-i E-1 GVIP-QQQ (primary): n 1, mean +0.0134 vs -0.0009, p_lower 0.9024
+2e-i E-1 basket-QQQ (no weight): n 1, mean +0.0178 vs -0.0006, p_lower 0.9588
+2e-i E0 GVIP-QQQ (no weight): n 1, mean -0.0139 vs -0.0009, p_lower 0.1108
+2e-i frozen N E-1 GVIP-QQQ (no weight): n 12, mean +0.0075 vs -0.0009, p_lower 0.9945
+   {'id': 'O01', 'week_end': '2023-07-28', 'E-1': 0.013425226242229638, 'E0': -0.013883581351523455}
+verdicts: {"2e-i": {"p_raw": 0.9024097590240976, "n": 1, "verdict": "INSUFFICIENT"}, "2e-ii": {"p_raw": 0.06879312068793121, "p_used": 0.06879312068793121, "n": 29, "verdict": "NOT SUPPORTED"}}

@@ -1,0 +1,8 @@
+weeks 304; Goldman episodes 21; other-PB episodes 2 (D 1)
+G_to_O (primary): 0 of 9 [], chance 0.020, p 1.0000, INSUFFICIENT
+O_to_G: 0 of 1 [], chance 0.193, p 1.0000, INSUFFICIENT
+G_DN_to_O (no weight): 0 of 21 [], chance 0.020, p 1.0000, INSUFFICIENT
+timing pre10: n 1, mean +0.0119 vs +0.0069, p_lower 0.5099
+timing post21_pub: n 1, mean -0.0241 vs +0.0178, p_lower 0.1900
+timing post63_pub: n 1, mean -0.1001 vs +0.0510, p_lower 0.0669
+timing H-lag on other-PB D: INSUFFICIENT

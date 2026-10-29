@@ -1,0 +1,80 @@
+{
+ "weeks": 304,
+ "n_goldman": 21,
+ "n_other": 2,
+ "n_other_D": 1,
+ "G_to_O (primary)": {
+  "n": 9,
+  "matched": 0,
+  "rate": 0.0,
+  "density": 0.006578947368421052,
+  "chance_per_episode": 0.019607279213442075,
+  "p": 1.0,
+  "verdict": "INSUFFICIENT",
+  "matched_ids": []
+ },
+ "O_to_G": {
+  "n": 1,
+  "matched": 0,
+  "rate": 0.0,
+  "density": 0.06907894736842106,
+  "chance_per_episode": 0.1932507770925972,
+  "p": 1.0,
+  "verdict": "INSUFFICIENT",
+  "matched_ids": []
+ },
+ "G_DN_to_O (no weight)": {
+  "n": 21,
+  "matched": 0,
+  "rate": 0.0,
+  "density": 0.006578947368421052,
+  "chance_per_episode": 0.019607279213442075,
+  "p": 0.9999999999999999,
+  "verdict": "INSUFFICIENT",
+  "matched_ids": []
+ },
+ "timing_other_D": {
+  "episodes": [
+   {
+    "id": "O01",
+    "week_end": "2023-07-28",
+    "pre10": 0.011906383306778956,
+    "post21_pub": -0.024144824522434494,
+    "post63_pub": -0.10005584819445323
+   }
+  ],
+  "n_unconditional": {
+   "pre10": 565,
+   "post21_pub": 560,
+   "post63_pub": 551
+  },
+  "pre10": {
+   "n": 1,
+   "mean": 0.011906383306778956,
+   "median": 0.011906383306778956,
+   "unconditional_mean": 0.006942064013819766,
+   "p_lower": 0.50994900509949,
+   "share_negative": 0.0,
+   "unconditional_share_negative": 0.36460176991150445
+  },
+  "post21_pub": {
+   "n": 1,
+   "mean": -0.024144824522434494,
+   "median": -0.024144824522434494,
+   "unconditional_mean": 0.0177788400677866,
+   "p_lower": 0.18998100189981001,
+   "share_negative": 1.0,
+   "unconditional_share_negative": 0.32142857142857145
+  },
+  "post63_pub": {
+   "n": 1,
+   "mean": -0.10005584819445323,
+   "median": -0.10005584819445323,
+   "unconditional_mean": 0.05104039948724461,
+   "p_lower": 0.0668933106689331,
+   "share_negative": 1.0,
+   "unconditional_share_negative": 0.2323049001814882
+  },
+  "verdict_H_lag": "INSUFFICIENT"
+ }
+}

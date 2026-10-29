@@ -1,0 +1,11 @@
+MOM10: https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/10_Portfolios_Prior_12_2_Daily_CSV.zip
+  zip members: ['10_Portfolios_Prior_12_2_Daily.csv']
+  title lines before the first table (last 3): ['The portfolios are constructed daily.  PRIOR_RET is from - 250 to - 21.', 'Missing data are indicated by -99.99 or -999.', 'Average Value Weighted Returns -- Daily']
+  rows 26237, first 1926-11-03, last 2026-09-30, empty cells 0
+FF3: https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/F-F_Research_Data_Factors_daily_CSV.zip
+  zip members: ['F-F_Research_Data_Factors_daily.csv']
+  title lines before the first table (last 3): ['This file was created by using the 202609 CRSP database.', 'The Tbill return is the simple daily rate that, over the number of trading days', 'compounds to 1-month TBill rate. The 1-month TBill rate data until 202405 are from Ibbotson Associates. Starting from 202406, the 1-month TBill rate is from ICE BofA US 1-Month Treasury Bill Index.']
+  rows 26338, first 1926-07-01, last 2026-09-30, empty cells 0
+NDX: https://fred.stlouisfed.org/graph/fredgraph.csv?id=NASDAQ100
+  header ['observation_date', 'NASDAQ100']
+  rows 10649, first 1986-01-02, last 2026-10-28, empty 362

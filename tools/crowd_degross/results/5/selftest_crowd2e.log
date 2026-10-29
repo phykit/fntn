@@ -1,0 +1,4 @@
+ok   phi 0.3, lag 3%, seed 1: ('SUPPORTED', 'SUPPORTED')
+ok   phi 0.0, lag 0%, seed 2: ('NOT SUPPORTED', 'NOT SUPPORTED')
+ok   phi 0.0, lag 0%, seed 3: ('NOT SUPPORTED', 'NOT SUPPORTED')
+SELFTEST PASSED
