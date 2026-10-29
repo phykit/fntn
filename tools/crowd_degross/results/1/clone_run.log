@@ -1,0 +1,10 @@
+GURU: 171 months 2012-07 to 2026-09, alpha -0.0165 (t -1.16), vs QQQ -0.0707, vs SPY -0.0230
+ACTX: 200 months 2010-02 to 2026-09, alpha +1.0345 (t 1.20), vs QQQ +0.8424, vs SPY +0.8923
+GURI: 0 complete months, not admitted
+ALFA: 0 complete months, not admitted
+ALFI: 0 complete months, not admitted
+IBLN: 0 complete months, not admitted
+GVIP: 118 months 2016-12 to 2026-09, alpha -0.0052 (t -0.30), vs QQQ -0.0492, vs SPY +0.0094
+composite of 2: 200 months, alpha +0.6801 (t 1.25), vs QQQ +0.5025 (t 0.97)
+admitted: ['GURU', 'ACTX']
+VERDICT: FAIL

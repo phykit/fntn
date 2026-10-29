@@ -1,0 +1,35 @@
+  df.drop(
+  df.rename(columns={
+  df.drop(
+  df.rename(columns={
+HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: GURI"}}}
+$GURI: possibly delisted; no timezone found
+HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: ALFA"}}}
+$ALFA: possibly delisted; no timezone found
+$ALFI: possibly delisted; no timezone found
+$IBLN: possibly delisted; no timezone found
+  df.drop(
+  df.rename(columns={
+  df.drop(
+  df.rename(columns={
+  df.drop(
+  df.rename(columns={
+  df.drop(
+  df.rename(columns={
+ff5_daily.csv: 15918 rows, 1963-07-01 to 2026-09-30
+mom_daily.csv: 26237 rows, 1926-11-03 to 2026-09-30
+GURU: 3622 rows, 2012-06-05 to 2026-10-29, source yahoo
+ACTX: 4231 rows, 2010-01-04 to 2026-10-28, source yahoo
+  stooq GURI: no CSV returned
+GURI: no history from either source
+  stooq ALFA: no CSV returned
+ALFA: no history from either source
+  stooq ALFI: no CSV returned
+ALFI: no history from either source
+  stooq IBLN: no CSV returned
+IBLN: no history from either source
+GVIP: 2504 rows, 2016-11-11 to 2026-10-29, source yahoo
+SPY: 4232 rows, 2010-01-04 to 2026-10-29, source yahoo
+QQQ: 4232 rows, 2010-01-04 to 2026-10-29, source yahoo
+RSP: 4232 rows, 2010-01-04 to 2026-10-29, source yahoo
+funds.csv: 4232 days

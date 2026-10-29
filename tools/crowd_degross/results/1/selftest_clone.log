@@ -1,0 +1,4 @@
+ok   alpha 10%, ['GURU', 'ALFA']: PASS (admitted ['GURU', 'ALFA'])
+ok   alpha 0%, ['GURU', 'ALFA']: FAIL (admitted ['GURU', 'ALFA'])
+ok   alpha 10%, ['GURU', 'IBLN']: INSUFFICIENT (admitted ['GURU'])
+SELFTEST PASSED
