@@ -1,0 +1,73 @@
+{
+  "n_oos": 285,
+  "first_oos": "2003-01",
+  "last_oos": "2026-09",
+  "c": -0.0026690315970220382,
+  "c_t": -0.4471473829457516,
+  "a": 0.013395915751017853,
+  "mean_winter": 0.010726884153995815,
+  "mean_summer": 0.013395915751017853,
+  "share_winter_beats_summer": 0.5454545454545454,
+  "full": {
+    "n": 488,
+    "c": 0.0054102050801394345,
+    "c_t": 0.9413291327180822
+  },
+  "replication": {
+    "n": 203,
+    "c": 0.0167488144932237,
+    "c_t": 1.5525339459416567
+  },
+  "strategy": {
+    "ann_return": 0.07576846331056752,
+    "ann_vol": 0.12459832509564572,
+    "sharpe": 0.5139653852397564,
+    "max_drawdown": -0.27560850982538954
+  },
+  "held": {
+    "ann_return": 0.15539707483595855,
+    "ann_vol": 0.18040388608648064,
+    "sharpe": 0.8017530560550632,
+    "max_drawdown": -0.5011165798711915
+  },
+  "criteria": {
+    "primary": "FAIL"
+  },
+  "verdict": "FAIL",
+  "choices": {
+    "monthly_return": "Last non-missing close of the month over the last non-missing close of the immediately preceding calendar month, minus one. A month with no close breaks the chain: neither it nor the month after it has a return.",
+    "complete_month": "Applied to the NDX file only, as the PREREG states it under the NDX bullet. A month is complete if any row date in the file falls in a later month, or the last row date in the file (whether or not its value is blank) is the final Monday-to-Friday day of that month. The French file is not tested for completeness; months with no French RF row are dropped, as the binding details say.",
+    "monthly_rf": "Product of (1 + RF_d / 100) over the French rows dated in the month, minus one. A month with no French row is dropped from every sample.",
+    "sample_start": "Full sample and replication begin at the first month for which a return exists, which is the second calendar month in the NDX file; this is read as 'the first full month after the NDX start'. The replication runs from that month to 2002-12 inclusive; OOS runs from 2003-01 to the last complete month, both after dropping months without RF.",
+    "regression": "e_m = a + c W_m + u_m by OLS; Newey-West covariance with Bartlett weights 1 - l / (L + 1), L = 3, no small-sample correction (no n / (n - k) factor). t = c / sqrt(V[c, c]). The regression is not scored (null) with fewer than three months or with no variation in W.",
+    "verdict": "INSUFFICIENT if the OOS month count is below 120; otherwise PASS if c > 0 and t >= 2.0, FAIL otherwise. criteria.primary carries the same three-way label.",
+    "winter_beats_summer": "A winter is Nov(Y) to Apr(Y+1) and its following summer is May(Y+1) to Oct(Y+1). Only pairs with all twelve months inside the OOS sample are counted, so the winter straddling the 2003-01 OOS start is excluded. Cumulative return of a season is the compounded NDX total return (not the excess return) over its six months. Share = pairs where winter > summer, over pairs counted; null if no pair.",
+    "strategy_stats": "Monthly total return: NDX return in winter months, compounded monthly RF in summer months (held: NDX return every month). Annual return = (product of (1 + s_m)) ^ (12 / n) - 1. Volatility = sample standard deviation (n - 1) of s_m times sqrt(12). Sharpe = sqrt(12) times mean(s_m - rf_m) over sample standard deviation (n - 1) of (s_m - rf_m). Max drawdown = minimum over months of wealth / running peak - 1, with the starting wealth of 1 included in the peak; reported as a non-positive fraction.",
+    "missing_values": "In ndx.csv a value that is blank, '.', 'NA', 'NaN' or otherwise unparseable is a missing close for that date; the date still counts for the complete-month rule. In ff5_daily.csv a row whose first cell is not a date (YYYYMMDD or YYYY-MM-DD) is skipped, which covers French's preamble and footer lines; a row whose RF cell is not a number is skipped and counted."
+  },
+  "aux": {
+    "a_t": 3.0321051243114705,
+    "n_winter_oos": 142,
+    "n_summer_oos": 143,
+    "winter_summer_pairs": 22,
+    "winter_summer_pairs_winter_won": 12,
+    "full_first": "1986-02",
+    "full_last": "2026-09",
+    "full_a": 0.008290797253145635,
+    "replication_first": "1986-02",
+    "replication_last": "2002-12",
+    "replication_a": 0.0011336213198541827,
+    "nw_lags": 3,
+    "t_threshold": 2.0,
+    "min_months": 120,
+    "ndx_rows": 10649,
+    "ndx_rows_skipped": 0,
+    "rf_rows": 15918,
+    "rf_rows_skipped_nondate": 0,
+    "rf_rows_skipped_nonnumeric": 0,
+    "last_complete_month": "2026-09",
+    "months_with_close": 490,
+    "months_dropped_no_prior_close": 1,
+    "months_dropped_no_rf": 0
+  }
+}

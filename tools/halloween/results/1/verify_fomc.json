@@ -1,0 +1,159 @@
+{
+  "n_oos_days": 2701,
+  "n_oos_announcements": 85,
+  "n_dropped": 0,
+  "d_oos": 0.0011871480069097914,
+  "p_shift_oos": 0.21871518752320832,
+  "n_shifts": 2692,
+  "nw_t_oos": 1.154089579595515,
+  "nw_t_diff_oos": 0.7248705590269745,
+  "mean_ann_bp_oos": 18.593178058794102,
+  "mean_other_bp_oos": 6.721697989696188,
+  "share_positive_ann": 0.5529411764705883,
+  "share_positive_all": 0.5597926693817105,
+  "d_full": 0.0030258101081869397,
+  "p_shift_full": 0.00267933260260626,
+  "n_full_announcements": 261,
+  "day_before": {
+    "d": 0.00021073394739805319,
+    "p": 0.45302636464909024
+  },
+  "two_day": {
+    "d": 0.0014035419997910918,
+    "p": 0.23393984404010398
+  },
+  "by_year": [
+    {
+      "year": 2016,
+      "ann_sum": -0.0226130504221026,
+      "total_sum": 0.07023329803690781,
+      "n_ann": 8
+    },
+    {
+      "year": 2017,
+      "ann_sum": 0.007907485596747033,
+      "total_sum": 0.2793514587230319,
+      "n_ann": 8
+    },
+    {
+      "year": 2018,
+      "ann_sum": -0.032312901866683535,
+      "total_sum": -0.009864102925875709,
+      "n_ann": 8
+    },
+    {
+      "year": 2019,
+      "ann_sum": 0.027454262458222495,
+      "total_sum": 0.31014733277232287,
+      "n_ann": 8
+    },
+    {
+      "year": 2020,
+      "ann_sum": 0.07595701263664577,
+      "total_sum": 0.4499928728626055,
+      "n_ann": 7
+    },
+    {
+      "year": 2021,
+      "ann_sum": 0.016539886647228275,
+      "total_sum": 0.2533531588559931,
+      "n_ann": 8
+    },
+    {
+      "year": 2022,
+      "ann_sum": 0.0800463213490112,
+      "total_sum": -0.36008023084942475,
+      "n_ann": 8
+    },
+    {
+      "year": 2023,
+      "ann_sum": 0.018842426823325202,
+      "total_sum": 0.39706463194037867,
+      "n_ann": 8
+    },
+    {
+      "year": 2024,
+      "ann_sum": 0.0017960307315495984,
+      "total_sum": 0.18845457001809124,
+      "n_ann": 8
+    },
+    {
+      "year": 2025,
+      "ann_sum": 0.02074459698233082,
+      "total_sum": 0.1611354134644611,
+      "n_ann": 8
+    },
+    {
+      "year": 2026,
+      "ann_sum": -0.036320057436524424,
+      "total_sum": 0.17664980470578073,
+      "n_ann": 6
+    }
+  ],
+  "strategy": {
+    "ann_return": 0.033701555247794834,
+    "sharpe": 0.2672312012011235,
+    "invested_share": 0.031469825990373936,
+    "qqq_ann_return": 0.2012085987688481,
+    "qqq_sharpe": 0.8335647051696407,
+    "n_days": 2701,
+    "n_announcement_days": 85,
+    "first_day": "2016-01-04",
+    "last_day": "2026-09-30"
+  },
+  "criteria": {
+    "primary": false
+  },
+  "verdict": "FAIL",
+  "choices": {
+    "return_definition": "x_t = NDX_t / NDX_(t-1) - 1 - RF_t / 100, with NDX_(t-1) the previous NDX close (the previous trading day), computed before any day is dropped for want of RF",
+    "trading_day_without_rf": "dropped from the sample after its return is computed; the next day's return is still taken against that dropped day's close",
+    "n_dropped_scope": "every listed announcement day that is not an NDX day with a close, over the whole NDX file, irrespective of sample window; an announcement day that is an NDX trading day but lacks RF is not in n_dropped and is counted separately below",
+    "sample_windows": "full = sample days with date >= 1994-02-01; OOS = sample days with date >= 2016-01-01, both to the last day with a return and RF",
+    "shift_range": "k = 5 .. n - 5 inclusive at both ends, n the number of days in the window being tested; n_shifts = n - 9",
+    "shift_comparison": "a rotation counts when its difference is >= the observed difference (float comparison, no tolerance)",
+    "day_before": "the announcement indicator moved one trading day earlier on the sample series (A_before[i] = A[i+1], last element 0), then restricted to the window; shift test rotates A_before",
+    "two_day": "w_t = x_(t-1) + x_t on the sample series (sum, not compounded), compared on announcement days against all other days with w defined; shift test rotates A over those days",
+    "nw_t_oos": "t of the announcement-day mean a + b from x = a + b A + e, Newey-West Bartlett L = 5, weights 1 - l / (L + 1), no small-sample correction; nw_t_diff_oos is the t of b alone",
+    "mean_bp": "means of x in basis points (x * 1e4)",
+    "share_positive_all": "share of all OOS sample days (announcement days included) with x > 0",
+    "by_year_units": "sums of x in decimals; one row per calendar year present in the OOS sample, including years with no announcement day",
+    "criteria_primary": "d_oos > 0 and p_shift_oos <= 0.025, evaluated regardless of the sample floor; the verdict applies the floor (INSUFFICIENT below 60 OOS announcement days)",
+    "strategy_days": "QQQ trading days (rows with an adjusted close) from 2016-01-01 with RF, QQQ return against QQQ's previous close; announcement days are listed days that are NDX trading days",
+    "strategy_cost": "window return minus 2 x 2 bp = 4 bp on each announcement day; cash days earn RF_t / 100",
+    "annual_return": "(prod(1 + r)) ** (252 / n_days) - 1",
+    "sharpe": "mean(r - RF) / std(r - RF, ddof = 1) * sqrt(252)",
+    "diagnostics": {
+      "ndx_rows": 10649,
+      "ndx_rows_unparsed_date": 0,
+      "ndx_rows_without_close": 362,
+      "ndx_trading_days": 10287,
+      "ndx_first": "1986-01-02",
+      "ndx_last": "2026-10-28",
+      "ff5_rows": 15918,
+      "ff5_rows_unparsed_date": 0,
+      "ff5_rows_without_rf": 0,
+      "ff5_last": "2026-09-30",
+      "qqq_price_column": "QQQ",
+      "qqq_rows": 6954,
+      "qqq_rows_unparsed_date": 0,
+      "qqq_rows_without_close": 0,
+      "qqq_first": "1999-03-10",
+      "qqq_last": "2026-10-29",
+      "fomc_rows": 262,
+      "fomc_duplicate_days": 0,
+      "fomc_first": "1994-02-04",
+      "fomc_last": "2026-10-28",
+      "trading_days_without_rf": 23,
+      "trading_days_without_rf_after_last_rf_date": 20,
+      "announcement_days_trading_but_without_rf": 1,
+      "sample_first": "1986-01-03",
+      "sample_last": "2026-09-30",
+      "n_full_days": 8219,
+      "n_shifts_full": 8210,
+      "n_shifts_day_before": 2692,
+      "n_shifts_two_day": 2692,
+      "n_two_day_days": 2701
+    }
+  }
+}

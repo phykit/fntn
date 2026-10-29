@@ -1,0 +1,2 @@
+verdict=FAIL n_oos_days=2701 n_oos_announcements=85 n_dropped=0 d_oos=0.0011871480069097914 p_shift_oos=0.21871518752320832 n_shifts=2692 nw_t_oos=1.154089579595515
+wrote out/fv/verify.json

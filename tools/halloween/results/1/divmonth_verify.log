@@ -1,0 +1,10 @@
+verify.py: 502 tickers, 87 without dividend history, last complete month 2026-09
+OOS 2010-01 to 2026-09: n = 201, mean D = -0.001032, t = -2.000; mean S = -0.001593, t = -2.073
+full 2001-01 to 2026-09: n = 309, mean D = -0.001418, t = -2.578
+half 1 2010-01 to 2018-04: n = 100, mean D = -0.000975, t = -1.809
+half 2 2018-05 to 2026-09: n = 101, mean D = -0.001088, t = -1.237
+strategy net: ann 0.1413 vol 0.1518 sharpe 0.852 mdd -0.2565 turnover 0.8441
+universe:     ann 0.1782 vol 0.1548 sharpe 1.046 mdd -0.2385
+skipped months: 0 (OOS 0); mean |P| = 146.83, mean |U| = 469.06
+primary: FAIL; verdict: FAIL
+wrote out/dv/verify.json

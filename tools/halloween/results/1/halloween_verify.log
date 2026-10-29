@@ -1,0 +1,3 @@
+verify.py: out/hv/verify.json
+  OOS 2003-01 to 2026-09, n = 285
+  c = -0.00266903, t = -0.447147, verdict = FAIL

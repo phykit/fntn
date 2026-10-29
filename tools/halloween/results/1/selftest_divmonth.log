@@ -1,0 +1,5 @@
+ok   plant 0.01, seed 1: PASS (n 201, D +95.6 bp t 17.87, S t 17.96; P 33 of 200; turnover 1.00)
+ok   plant 0.01, seed 2: PASS (n 201, D +86.9 bp t 12.87, S t 12.90; P 33 of 200; turnover 1.00)
+ok   plant 0.0, seed 3: FAIL (n 201, D +4.9 bp t 0.75, S t 0.73; P 33 of 200; turnover 1.00)
+ok   plant 0.0, seed 4: FAIL (n 201, D -3.4 bp t -0.53, S t -0.51; P 33 of 200; turnover 1.00)
+SELFTEST PASSED

@@ -1,0 +1,10 @@
+ok   plant 0.012, seed 1: PASS (n 285, c +0.0203 t 3.14; pairs 22, 2003-01 to 2026-09)
+ok   plant 0.012, seed 2: PASS (n 285, c +0.0136 t 2.22; pairs 22, 2003-01 to 2026-09)
+ok   plant 0.0, seed 3: PASS (n 285, c +0.0144 t 2.23; pairs 22, 2003-01 to 2026-09)
+ok   plant 0.0, seed 4: FAIL (n 285, c +0.0052 t 0.75; pairs 22, 2003-01 to 2026-09)
+ok   plant 0.0, seed 5: FAIL (n 285, c +0.0037 t 0.57; pairs 22, 2003-01 to 2026-09)
+ok   plant 0.0, seed 6: FAIL (n 285, c +0.0013 t 0.20; pairs 22, 2003-01 to 2026-09)
+ok   plant 0.0, seed 7: FAIL (n 285, c +0.0063 t 1.00; pairs 22, 2003-01 to 2026-09)
+ok   plant 0.0, seed 8: FAIL (n 285, c -0.0031 t -0.43; pairs 22, 2003-01 to 2026-09)
+null worlds passing: 1 of 6 (at most 1 allowed: the one-sided t >= 2 rule passes about 2% of nulls)
+SELFTEST PASSED

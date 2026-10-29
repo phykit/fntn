@@ -1,0 +1,28 @@
+item                       status    a                         b                         note
+n_oos                      AGREE     285                       285                       
+first_oos                  AGREE     2003-01                   2003-01                   
+last_oos                   AGREE     2026-09                   2026-09                   
+verdict                    AGREE     FAIL                      FAIL                      
+criteria.primary           AGREE     False                     FAIL                      
+c                          AGREE     -0.00266903159702         -0.00266903159702         
+c_t                        AGREE     -0.447147382946           -0.447147382946           diff -3.886e-16
+a                          AGREE     0.013395915751            0.013395915751            
+mean_winter                AGREE     0.010726884154            0.010726884154            
+mean_summer                AGREE     0.013395915751            0.013395915751            
+share_winter_beats_summer  AGREE     0.545454545455            0.545454545455            
+full.n                     AGREE     488                       488                       
+full.c                     AGREE     0.00541020508014          0.00541020508014          
+full.c_t                   AGREE     0.941329132718            0.941329132718            diff -6.661e-16
+replication.n              AGREE     203                       203                       
+replication.c              AGREE     0.0167488144932           0.0167488144932           
+replication.c_t            AGREE     1.55253394594             1.55253394594             diff 0.000e+00
+strategy.ann_return        AGREE     0.0757684633106           0.0757684633106           
+strategy.ann_vol           AGREE     0.124598325096            0.124598325096            
+strategy.sharpe            AGREE     0.51396538524             0.51396538524             
+strategy.max_drawdown      AGREE     -0.275608509825           -0.275608509825           
+held.ann_return            AGREE     0.155397074836            0.155397074836            
+held.ann_vol               AGREE     0.180403886086            0.180403886086            
+held.sharpe                AGREE     0.801753056055            0.801753056055            
+held.max_drawdown          AGREE     -0.501116579871           -0.501116579871           
+
+OVERALL AGREE  (25 agree, 0 disagree, 0 missing of 25 items)

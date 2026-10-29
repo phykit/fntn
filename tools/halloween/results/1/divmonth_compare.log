@@ -1,0 +1,37 @@
+AGREE    n_oos                      exact a=201 b=201
+AGREE    first_oos                  exact a=2010-01 b=2010-01
+AGREE    last_oos                   exact a=2026-09 b=2026-09
+AGREE    mean_D                     mean  a=-0.001031777702391084 b=-0.0010317777023910839  [diff 2.168e-19 tol 1.0e-12]
+AGREE    t_D                        t     a=-1.9995627320441558 b=-1.9995627320441551  [diff 6.661e-16 tol 1.0e-06]
+AGREE    mean_S                     mean  a=-0.001593173950158857 b=-0.001593173950158857  [diff 0.000e+00 tol 1.6e-12]
+AGREE    t_S                        t     a=-2.0732595225528105 b=-2.0732595225528105  [diff 0.000e+00 tol 1.0e-06]
+AGREE    full.n                     exact a=309 b=309
+AGREE    full.mean_D                mean  a=-0.0014175083936747474 b=-0.001417508393674748  [diff 6.505e-19 tol 1.4e-12]
+AGREE    full.t_D                   t     a=-2.577586373001561 b=-2.5775863730015622  [diff 1.332e-15 tol 1.0e-06]
+AGREE    full.mean_S                mean  a=-0.0020147275543194666 b=-0.0020147275543194684  [diff 1.735e-18 tol 2.0e-12]
+AGREE    full.t_S                   t     a=-2.6127156703578254 b=-2.6127156703578276  [diff 2.220e-15 tol 1.0e-06]
+AGREE    halves.0.first             exact a=2010-01 b=2010-01
+AGREE    halves.0.last              exact a=2018-04 b=2018-04
+AGREE    halves.0.mean_D            mean  a=-0.0009745490485358801 b=-0.0009745490485358799  [diff 2.168e-19 tol 1.0e-12]
+AGREE    halves.0.t_D               t     a=-1.808972535151272 b=-1.8089725351512718  [diff 2.220e-16 tol 1.0e-06]
+AGREE    halves.1.first             exact a=2018-05 b=2018-05
+AGREE    halves.1.last              exact a=2026-09 b=2026-09
+AGREE    halves.1.mean_D            mean  a=-0.001088439735911088 b=-0.001088439735911088  [diff 0.000e+00 tol 1.1e-12]
+AGREE    halves.1.t_D               t     a=-1.236808906846679 b=-1.236808906846679  [diff 0.000e+00 tol 1.0e-06]
+DISAGREE strategy.ann_return        mean  a=0.14128028492449052 b=0.14133229125372382  [diff 5.201e-05 tol 1.4e-10]
+DISAGREE strategy.ann_vol           mean  a=0.1518145422331936 b=0.1518037202464732  [diff 1.082e-05 tol 1.5e-10]
+DISAGREE strategy.sharpe            mean  a=0.8511554071601629 b=0.8515051744088412  [diff 3.498e-04 tol 8.5e-10]
+AGREE    strategy.max_drawdown      mean  a=-0.2564756899384305 b=-0.2564756899384306  [diff 1.110e-16 tol 2.6e-10]
+DISAGREE strategy.mean_turnover     mean  a=0.8459831157210592 b=0.8441314716855974  [diff 1.852e-03 tol 8.5e-10]
+AGREE    universe.ann_return        mean  a=0.17824449665130215 b=0.17824449665130215  [diff 0.000e+00 tol 1.8e-10]
+AGREE    universe.ann_vol           mean  a=0.15476557204912803 b=0.15476557204912803  [diff 0.000e+00 tol 1.5e-10]
+AGREE    universe.sharpe            mean  a=1.0464335423858526 b=1.0464335423858526  [diff 0.000e+00 tol 1.0e-09]
+AGREE    universe.max_drawdown      mean  a=-0.23849426826830322 b=-0.23849426826830322  [diff 0.000e+00 tol 2.4e-10]
+AGREE    counts.mean_P              mean  a=146.83084577114428 b=146.83084577114428  [diff 0.000e+00 tol 1.5e-07]
+AGREE    counts.mean_U              mean  a=469.06467661691545 b=469.06467661691545  [diff 0.000e+00 tol 4.7e-07]
+AGREE    counts.tickers             exact a=502 b=502
+AGREE    counts.no_dividend_history exact a=87 b=87
+AGREE    counts.skipped_months      exact a=0 b=0
+AGREE    criteria.primary           exact a=False b=FAIL
+AGREE    verdict                    exact a=FAIL b=FAIL
+OVERALL: DISAGREE (32 of 36 items agree)

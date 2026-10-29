@@ -1,0 +1,6 @@
+ok   plant 0.006, seed 1, 8/yr: PASS (ann 88, d +83.4 bp, p 0.0004, t 5.54, strat 0.089)
+ok   plant 0.006, seed 2, 8/yr: PASS (ann 88, d +83.2 bp, p 0.0004, t 6.41, strat 0.095)
+ok   plant 0.0, seed 3, 8/yr: FAIL (ann 88, d -10.3 bp, p 0.7486, t -0.71, strat 0.017)
+ok   plant 0.0, seed 4, 8/yr: FAIL (ann 88, d -6.1 bp, p 0.6776, t -0.46, strat 0.024)
+ok   plant 0.006, seed 5, 4/yr: INSUFFICIENT (ann 44, d +35.2 bp, p 0.0288, t 1.88, strat 0.041)
+SELFTEST PASSED
