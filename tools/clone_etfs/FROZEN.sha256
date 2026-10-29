@@ -1,0 +1,4 @@
+4571e9c836651a2f14ea6e7a7ff55199ec71e68bfba5864bf888621cfa22cffa  tools/clone_etfs/PREREG.md
+ea35c8fc3d1ea912a874ccd8592f183ce7c36d7977adb1856b4f7b4eb206b4ca  tools/clone_etfs/run.py
+07f9dee2be4c510adade48b247d0c5c3996ce5b717d616a9f8d58fd415226dc9  tools/clone_etfs/fetch.py
+be55188bd40b5e511a607426b739a07d33fc9dbf3291fe8489bc2a0aba010232  tools/clone_etfs/selftest.py
