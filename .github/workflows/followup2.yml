@@ -4,7 +4,7 @@ name: Follow-up studies 1 to 4 side tests
 # tools/degross_ext, tools/crowd_degross, tools/cross_pb and tools/clone_etfs.
 #
 # Runs when tools/crowd_degross/DISPATCH changes on this branch. DISPATCH holds one word naming the
-# step (crowd_clone: studies 2 and 4; crowd2: studies 2a to 2d; final: studies 1 and 3 and study 2's declared secondary) and a
+# step (crowd_clone: studies 2 and 4; crowd2: studies 2a to 2d; crowd2e: study 2e-ii; final: studies 1 and 3 and study 2's declared secondary) and a
 # counter. No other trigger.
 #
 # RETURN CHANNEL as on the other side tests: derived statistics only are committed under
@@ -56,7 +56,7 @@ jobs:
         run: |
           set -euo pipefail
           s="$(head -1 "$S2/DISPATCH" | awk '{print $1}')"
-          case "$s" in crowd_clone|crowd2|final) ;; *) echo "DISPATCH names no known step: '$s'"; exit 1 ;; esac
+          case "$s" in crowd_clone|crowd2|crowd2e|final) ;; *) echo "DISPATCH names no known step: '$s'"; exit 1 ;; esac
           echo "step=$s" >> "$GITHUB_OUTPUT"
           mkdir -p out
       - name: Freeze records
@@ -76,10 +76,10 @@ jobs:
           check "$E" PREREG.md score.py episodes.csv
           check "$G" PREREG.md run.py
           check "$V" run.py fetch_extra.py
-          check "$S2" PREREG.md run.py selftest.py PREREG_2.md crowd2.py selftest2.py
+          check "$S2" PREREG.md run.py selftest.py PREREG_2.md crowd2.py selftest2.py PREREG_2e.md crowd2e.py selftest2e.py
           check "$S4" PREREG.md run.py fetch.py selftest.py
           if [ "${{ steps.step.outputs.step }}" = "final" ]; then
-            check "$S1" PREREG.md episodes_all.csv score_ext.py
+            check "$S1" PREREG.md episodes_all.csv episodes_ext.csv score_ext.py
             check "$S3" PREREG.md episodes_other.csv score_xpb.py
           fi
       - name: Self-tests
@@ -89,6 +89,7 @@ jobs:
           python "$S2/selftest.py" 2>&1 | tee out/selftest_crowd.log
           python "$S4/selftest.py" 2>&1 | tee out/selftest_clone.log
           python "$S2/selftest2.py" 2>&1 | tee out/selftest_crowd2.log
+          python "$S2/selftest2e.py" 2>&1 | tee out/selftest_crowd2e.log
       - name: Study 4, copycat ETFs
         if: steps.step.outputs.step == 'crowd_clone'
         shell: bash
@@ -118,6 +119,12 @@ jobs:
         run: |
           set -euo pipefail
           python "$S2/crowd2.py" --bench data_g --data-b data_b --ndx data_a/ndx.csv --episodes "$E/episodes.csv" --out out 2>&1 | tee out/crowd2.log
+      - name: Study 2e-ii (2e-i pending the new episode lists)
+        if: steps.step.outputs.step == 'crowd2e'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$S2/crowd2e.py" --bench data_g --data-b data_b --episodes "$E/episodes.csv" --out out 2>&1 | tee out/crowd2e.log
       - name: Studies 1 and 3, and study 2 on the combined list
         if: steps.step.outputs.step == 'final'
         shell: bash
@@ -126,6 +133,7 @@ jobs:
           python "$S2/run.py" --bench data_g --data-b data_b --episodes "$S1/episodes_all.csv" --out out --tag combined 2>&1 | tee out/crowd_combined.log
           python "$S1/score_ext.py" --data-a data_a --data-b data_b --out out 2>&1 | tee out/ext_score.log
           python "$S3/score_xpb.py" --data-a data_a --out out 2>&1 | tee out/xpb_score.log
+          python "$S2/crowd2e.py" --bench data_g --data-b data_b --episodes "$E/episodes.csv" --new "$S1/episodes_ext.csv" --new-other "$S3/episodes_other.csv" --out out 2>&1 | tee out/crowd2e_final.log
       - name: Remove the inputs
         if: always()
         shell: bash
