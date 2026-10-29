@@ -1,0 +1,6 @@
+2e-ii GVIP-QQQ (primary): eligible 307, signal 29, next-week mean -0.0044 vs -0.0011, p_lower 0.0688, share neg 0.55 vs 0.52; slope -0.084 (t -0.82)
+   two-week: n 27, mean -0.0063 vs -0.0022, p_lower 0.0905
+2e-ii basket-QQQ (no weight): eligible 476, signal 51, next-week mean +0.0021 vs -0.0010, p_lower 0.9818, share neg 0.43 vs 0.55; slope -0.082 (t -1.25)
+   two-week: n 50, mean -0.0005 vs -0.0019, p_lower 0.7529
+2e-i: PENDING: new episode lists not yet frozen
+verdicts: {"2e-i": {"p_raw": NaN, "n": 0, "verdict": "PENDING"}, "2e-ii": {"p_raw": 0.06879312068793121, "p_used": 0.06879312068793121, "n": 29, "verdict": "NOT SUPPORTED"}}

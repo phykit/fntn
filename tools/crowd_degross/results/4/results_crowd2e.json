@@ -1,0 +1,53 @@
+{
+ "weeks": 774,
+ "2e-ii GVIP-QQQ (primary)": {
+  "eligible_weeks": 307,
+  "signal_weeks": 29,
+  "n": 29,
+  "mean_next": -0.004352396933641886,
+  "unconditional_next": -0.001105064398283202,
+  "p_lower": 0.06879312068793121,
+  "share_next_negative": 0.5517241379310345,
+  "unconditional_share_negative": 0.5179153094462541,
+  "slope_next_on_this": -0.08413082402367515,
+  "slope_t": -0.816542167616579,
+  "two_week": {
+   "n": 27,
+   "mean": -0.00633325197924947,
+   "unconditional": -0.002216804793851791,
+   "p_lower": 0.09049095090490951
+  }
+ },
+ "2e-ii basket-QQQ (no weight)": {
+  "eligible_weeks": 476,
+  "signal_weeks": 51,
+  "n": 51,
+  "mean_next": 0.0020650212678106706,
+  "unconditional_next": -0.000998203924162996,
+  "p_lower": 0.9818018198180182,
+  "share_next_negative": 0.43137254901960786,
+  "unconditional_share_negative": 0.5546218487394958,
+  "slope_next_on_this": -0.08241417458713665,
+  "slope_t": -1.246788050856375,
+  "two_week": {
+   "n": 50,
+   "mean": -0.0005108296789618994,
+   "unconditional": -0.0018912477784616129,
+   "p_lower": 0.7529247075292471
+  }
+ },
+ "2e-i": "PENDING: new episode lists not yet frozen",
+ "verdicts": {
+  "2e-i": {
+   "p_raw": NaN,
+   "n": 0,
+   "verdict": "PENDING"
+  },
+  "2e-ii": {
+   "p_raw": 0.06879312068793121,
+   "p_used": 0.06879312068793121,
+   "n": 29,
+   "verdict": "NOT SUPPORTED"
+  }
+ }
+}
