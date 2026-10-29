@@ -7,8 +7,9 @@ in per cent). Writes results.json to --out.
 Choices where the PREREG is silent, fixed before any figure was computed: the spread day series is
 the rows where both daily returns exist; a month-end is the last spread day of a calendar month;
 holdings drift with prices between rebalances and are reset to (w, 1 - w) after the execution
-day's return; the first decided weight is charged against a prior all-SPY holding; comparator
-"MTUM held" buys at the start of the first strategy month and never trades; the 50/50 comparator
+day's return; the first decided weight is charged against a prior all-SPY holding; comparators
+"MTUM held" and SPY are in place from the first day of the first strategy month (no delay, no
+cost) and never trade; the weight statistics and turnover cover the executed weights; the 50/50 comparator
 resets to 0.5/0.5 on each execution day with the same 20 bp x |traded fraction| cost.
 
 Usage: python run.py --data DATA_DIR --out OUT_DIR
@@ -81,17 +82,15 @@ def simulate(sd, rm, rs, weights_at, policy):
     pending = {decided[j] + 1: weights_at[decided[j]] for j in range(len(decided)) if decided[j] + 1 < n}
     for t in range(start, n):
         if t == start:
-            if policy == "strategy":
-                w = pending[t]
-            elif policy == "fifty":
-                w = 0.5
+            if policy in ("strategy", "fifty"):
+                w = pending[t] if policy == "strategy" else 0.5
+                out[t] = rs[t] - COST * abs(w - w_prev)  # earned at the prior all-SPY holding, then switched
+                trades.append((sd[t], w))
+                w_prev = w
             else:
-                w = float(policy)
-            cost = COST * abs(w - w_prev) if policy in ("strategy", "fifty") else 0.0
-            out[t] = rs[t] - cost  # earned at the prior all-SPY holding
+                w = float(policy)  # a static holding is in place from the first day: no delay, no cost
+                out[t] = w * rm[t] + (1 - w) * rs[t]
             xm, xs = w, 1 - w
-            w_prev = w
-            trades.append((sd[t], w))
             continue
         r = xm * rm[t] + xs * rs[t]
         xm, xs = xm * (1 + rm[t]), xs * (1 + rs[t])
@@ -170,7 +169,7 @@ def main(argv=None):
         x = R[name]
         res["stats"][name] = {"ann_return": float(np.prod(1 + x) ** (12 / nm) - 1), "ann_vol": float(math.sqrt(12) * x.std(ddof=1)),
                               "sharpe": sharpe_fn(x - RF), "max_drawdown": maxdd(x)}
-    w = np.array([weights_at[i] for i in sorted(weights_at)])
+    w = np.array([t[1] for t in trades])  # the executed weights, as PREREG section 3 reports them
     res["weight"] = {"min": float(w.min()), "median": float(np.median(w)), "max": float(w.max()),
                      "share_capped": float(np.mean(w >= 1.0)), "share_below_half": float(np.mean(w < 0.5))}
     tw = np.array([t[1] for t in trades])
