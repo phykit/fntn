@@ -1,0 +1,104 @@
+cand_id,decision,class,stated_period_end,week_end,region,sector,reason,phrase
+C001,include,N,n/a (one-day record undated),2025-04-04,Global,All equities,GS prime brokerage desk; record one-day net selling; no stated period so pub-7; 'historic' deleveraging fails,Largest-ever one-day net sales of global equities
+C002,exclude,n/a,2026-02-05,n/a,US,Single stocks,"GS prime; record attaches to short selling, not net selling or de-grossing",Notional short selling biggest on record
+C003,include,D,last week (week before 2025-03-31),2025-03-28,US/Global,Information technology,GS prime desk; tech ditched fastest in six months via long sales and short covers,Funds ditched tech at fastest pace in six months
+C004,exclude,n/a,n/a,n/a,US (implied),Technology,No prime attribution and no superlative on fund flows,Hedge funds moving away from tech companies
+C005,include,D,this week (GS note Fri 2021-01-29),2021-01-29,US,All sectors,GS Prime Services; largest active de-grossing since Feb 2009; long sales and short covers,Largest active hedge fund de-grossing since February 2009
+C006,exclude,n/a,2021-04-16,n/a,Global (NA-led),All sectors,"GS Prime; largest net selling only since 18 March, under six months",Largest net selling since Mar 18th
+C007,exclude,n/a,last week (week before 2025-07-29),n/a,North America and Europe,Technology,Attributed only to 'a note from Goldman Sachs'; no prime wording,Tech's largest weekly sell-off in a year
+C008,exclude,n/a,past week (to 2021-01-29),n/a,US,All sectors,Attributed only to 'Goldman Sachs'; no prime wording,Dumped stock holdings at fastest rate since 2009
+C009,exclude,n/a,n/a,n/a,All regions,n/a,"Morgan Stanley prime brokerage data, not Goldman","Very large active de-grossing, Morgan Stanley"
+C010,include,N,last week (to 2025-04-04),2025-04-04,Global,All equities,GS prime brokerage desk; record one-day net selling within last week,Largest-ever one-day net sales of global equities
+C011,exclude,n/a,last week (to 2026-03-20),n/a,Global,Multiple sectors,Attributed only to 'a Goldman Sachs note'; no prime wording (else Class N),Largest net selling since April 2025
+C012,exclude,n/a,n/a (eight weeks to ~2024-08-02),n/a,US,"All, IT led",Net selling superlative only six weeks; ETF short build is not net selling,Selling of US stocks most intense in six weeks
+C013,exclude,n/a,last week (week before 2024-11-25),n/a,US,Multiple sectors,Superlative only three months; also generic Goldman attribution,Fastest pace of net selling in three months
+C014,include,D,Tuesday 2021-01-26 (four sessions),2021-01-29,Not stated (whole book),All equities,"GS prime-brokerage unit; exposure slashed fastest in six years, shorts covered and longs trimmed",Slashing stock exposure at fastest rate in six years
+C015,exclude,n/a,2021-12-31,n/a,US,Technology,"13F holdings analysis, not prime data",13F filings show tech positions slashed
+C016,include,N,June 2024 (2024-06-30),2024-06-28,Global,"All, IT led","GS prime brokerage desk; global net selling fastest since June 2022, short-led",Global equities sold at fastest pace since June 2022
+C017,include,D,last week (pub ~2026-08-25),2026-08-21,Global,Information technology,GS Prime Services; IT largest percentage de-grossing in over two years,IT's largest percentage de-grossing in more than two years
+C018,exclude,n/a,Q4 2023,n/a,Not stated,Mag 7 / tech,"Goldman holdings analysis, no prime attribution; no flow superlative",Funds pared Magnificent Seven exposure in fourth quarter
+C019,exclude,n/a,Thursday 2025-04-03,n/a,Global,All equities,Attributed only to 'Goldman Sachs said in a note'; no prime wording,Largest one-day net selling since 2010
+C020,exclude,n/a,Q1 2025,n/a,US,Big Tech,"13F Hedge Fund Trend Monitor, not prime data","Funds cut US Big Tech, 13F trend monitor"
+C021,exclude,n/a,2022-01-04,n/a,Not stated,Technology,Attributed to Goldman via CNBC; no prime wording,Tech selling fastest rate in a decade
+C022,exclude,n/a,2026-02-19,n/a,Global,Multiple sectors,Attributed to 'Goldman Sachs data'; no prime wording,Global net sales fastest since April 2025
+C023,include,N,2026-10-15 (five days ending),2026-10-16,Global,Information technology,GS Prime desk/Prime book; tech cut by biggest share since 2016; gross cut only two-month superlative,Hedge funds dump tech at fastest pace since 2016
+C024,exclude,n/a,n/a,n/a,US,Technology,Aggregator summary; no prime attribution and no period,Hedge funds sell US tech at record pace
+C025,include,N,"n/a (past five sessions, undated)",2024-07-12,US,"All, IT led",GS prime brokerage division; US stocks sold most since Nov 2022; no dated period,Largest sell-off since November 2022
+C026,exclude,n/a,last week (to 2023-09-22),n/a,US (Japan de-gross),Multiple sectors,Superlative is on short selling; de-gross superlative is Japan only,Notional short selling largest since Sept 22
+C027,include,N,2026-10-15,2026-10-16,Global,Information technology,"GS prime book; tech sold fastest in a decade, long liquidation; gross cut two months only",Tech sold at fastest rate in at least a decade
+C028,exclude,n/a,July 2023,n/a,Not stated,n/a,Hedged superlative ('close to record levels for the last decade'),De-risk in July close to record levels
+C029,include,N,"n/a (weekly, undated)",2026-06-26,US,Information technology,GS Prime Brokerage; US IT largest net selling in over ten years,US Information Technology largest net selling in 10+ years
+C030,exclude,n/a,last week,n/a,Not stated,n/a,"JPMorgan prime brokerage data, not Goldman","De-grossing fastest since 2021 short squeeze, JPMorgan"
+C031,include,N,Thursday 2026-10-22 (pub inferred),2026-10-23,Not stated,Information technology,GS Prime Brokerage; largest net selling since Sept 2024; 'historic' de-grossing fails,Overall largest net selling since September 2024
+C032,include,N,2026-02-19 (week ended),2026-02-20,Global,All sectors,"GS Prime Services Desk; global net selling fastest since April 2025, short-led",Net selling fastest pace since April 2025
+C033,include,N,last week (to 2025-04-04),2025-04-04,Global,"All, IT led",GS prime brokerage unit; record one-day net selling,Record one-day equity sell-off since tracking began 2010
+C034,include,D,last week (GS note 2025-02-21),2025-02-21,US,TMT,Goldman Prime; US TMT notional de-grossing largest since July 2024,US TMT de-grossing largest since July '24
+C035,exclude,n/a,October 2025,n/a,Europe,Multiple,European equities; no superlative,Hedge funds cut European equity exposure
+C036,include,D,last week (week before 2026-04-28),2026-04-24,US,"All, IT and discretionary",GS prime desk; long and short cut fastest since Sept 2025; de-grossing most in seven months,Most significant notional de-grossing in seven months
+C037,exclude,n/a,July 2023,n/a,Global,n/a,Hedged ('one of the largest'); generic Goldman report,One of largest active de-grossing months in recent years
+C038,include,D,last week (week before 2026-04-27),2026-04-24,US,Tech and discretionary,GS prime desk; US L/S gross leverage cut biggest since September,Largest de-grossing since September
+C039,include,N,last week (week before 2026-03-31),2026-03-27,Global,"Multiple, IT led","GS Prime Services; largest global net selling since April 2025, short-led",Largest net selling since April 2025
+C040,include,N,n/a (undated),2025-03-28,Global (US 75%),Information technology,"GS Prime Services; global IT fastest decline in six months, long sales plus short adds",Global tech selloff fastest in six months
+C041,include,N,2024-07-19 (week ending),2024-07-19,Not stated (US context),Technology,GS prime desk; selling winners fastest since Jan 2021; de-gross itself has no superlative,Selling winners at fastest pace since January 2021
+C042,exclude,n/a,March 2026,n/a,Global,Multiple,Attributed to 'data compiled by Goldman Sachs'; no prime wording,Global stocks sold at fastest pace in 13 years
+C043,exclude,n/a,late Aug 2018,n/a,US,n/a,Morgan Stanley and HFR data; Goldman not the source,"Net leverage lowest this year, Morgan Stanley"
+C044,exclude,n/a,Monday 2025-01-27,n/a,US,Technology,Attributed to 'Goldman Sachs trading update'; no prime wording,US single-stock selling largest in six months
+C045,exclude,n/a,July 2026,n/a,US,Technology/AI,Goldman VIP list (13F) data,VIP list worst month in over 20 years
+C046,exclude,n/a,2018-11-15,n/a,Not stated,All equities,"Superlative attaches to exposure level, not to the reduction",Net and gross exposures lowest since H1 2017
+C047,include,D,2025-02-21 (two weeks to),2025-02-21,US,Tech and media,"Goldman note citing 'our Prime book'; exited fastest in six months, dumped longs and shorts","Exited tech, media at fastest pace in six months"
+C048,exclude,n/a,Thursday 2026-10-22,n/a,Not stated,Technology,Attributed to Bloomberg citing Goldman; no prime wording,Tech sold at fastest pace in two years
+C049,include,N,Thursday 2024-02-22 (four sessions),2024-02-23,Not stated,Technology,GS prime brokerage division; selling fastest in seven months,Selling holdings at fastest pace in seven months
+C050,exclude,n/a,June 2024,n/a,US,TMT,Excerpt cites Reuters quoting Goldman; no prime wording,US TMT sold at fastest pace since 2016
+C051,include,N,2026-10-15 (five sessions to),2026-10-16,Global,Information technology,GS prime brokerage data; tech exposure cut fastest in a decade; gross cut two months only,Tech exposure slashed at fastest pace in a decade
+C052,include,N,June 2024 (2024-06-30),2024-06-28,Global,"All, IT led","GS prime brokerage division; June selling fastest in two years, short-led",Global equities sold in June fastest in two years
+C053,include,N,2023-11-24 (week to),2023-11-24,US,Tech and media,GS prime note; long bets dropped fastest in nearly eight months; net-sale superlative only since July,Dropped bets at fastest pace in nearly eight months
+C054,include,N,"n/a (last eight weeks, undated)",2026-07-17,US,Information technology,"GS Prime Services; US tech withdrawal on record, longs cut and shorts added",Most significant withdrawal from US tech on record
+C055,exclude,n/a,n/a,n/a,Global,All but comm services,Attributed to 'a report from Goldman Sachs'; no prime wording,Hedge funds sell stocks at fastest pace in a year
+C056,include,D,January 2021 (2021-01-31),2021-01-29,US (context),All equities,GS prime brokerage unit; largest week of de-leveraging since Feb 2009,Largest week of de-leveraging since 2009
+C057,exclude,n/a,Thursday 2023-11-16,n/a,Global,Technology,"Read via syndicated Reuters copy; Goldman client note, no prime wording",Exited tech at fastest weekly pace in seven months
+C058,include,D,last week (week before 2026-05-04),2026-05-01,Not stated (whole book),Information technology,"GS Prime Book; IT largest de-grossing in ten years, long sales and short covers",Largest de-grossing in information technology in ten years
+C059,exclude,n/a,mid-March 2026,n/a,Global/US,Financials,Financials sector is outside the region/sector rule,Financials unloaded at fastest pace in nearly a decade
+C060,exclude,n/a,n/a (five sessions to ~2024-07-17),n/a,US,"All, IT led",Goldman note; no prime wording (prime appears only re Morgan Stanley),Value ditched biggest since November 2022
+C061,exclude,n/a,n/a,n/a,US (context),n/a,"Generic Goldman; 'near-record' gross level, no superlative on reduction","Near-record gross exposure, degrossing under way"
+C062,include,D,last week (to 2021-01-29),2021-01-29,US,All sectors,GS Prime Services; largest active de-grossing since Feb 2009,Largest active hedge fund de-grossing since February 2009
+C063,exclude,n/a,n/a,n/a,Not stated,Technology,Record pace attaches to tech short covering only; de-grossing just 'sharp increase',Covered tech shorts at a record pace
+C064,include,D,last week (week before 2026-08-25),2026-08-21,Global,Information technology,GS Prime Services; IT sharpest gross exposure decline in over two years,IT sharpest decline in gross exposure in two years
+C065,include,N,Tuesday 2022-01-04 (four sessions),2022-01-07,Not stated,Technology,GS prime broker; tech sales highest in dollar terms in over ten years,Tech sales highest in dollar terms in 10+ years
+C066,include,N,Tuesday 2022-01-04 (Dec 30 to Tue),2022-01-07,Not stated,Technology,GS prime brokerage; tech biggest dollar sale in over ten years (excerpt),Biggest tech sale in dollar terms in 10 years
+C067,include,D,last week (week before 2026-04-27),2026-04-24,US,"All, IT and discretionary",GS prime desk; long and short positions cut fastest since Sept 2025,Cut long and short fastest since September
+C068,exclude,n/a,Q1 2025,n/a,US,Multiple,"Hedge Fund Trend Monitor (13F); gross leverage at record, no de-gross","Shorts strike back, trend monitor"
+C069,include,N,"n/a (past four weeks, undated)",2025-07-25,US,TMT,GS prime desk report; US TMT unwound fastest in a year,TMT exposure unwound at fastest pace in a year
+C070,include,N,2026-02-19 (week through),2026-02-20,Global,n/a,GS Prime Services Desk; global net sales fastest since April 2025,Net sales fastest since April 2025 tariff meltdown
+C071,exclude,n/a,~2025-01-03,n/a,US/Global,Multiple,Attributed to Goldman strategist; no prime wording,Net sold fastest pace in more than 7 months
+C072,include,N,2026-10-15 (five sessions through),2026-10-16,Global,Information technology,"GS prime-brokerage; tech cut fastest since 2016, long liquidation; gross cut two months",Tech dumped at fastest pace in 10 years
+C073,exclude,n/a,this week (to 2023-11-10),n/a,US/Global,Financials,Net selling largest only in seven weeks; financials,Largest net selling in seven weeks
+C074,include,D,June 2024 month to date,2024-06-28,US,Information technology,"GS prime data; June US tech net selling record since 2017, long sales and short covers",US tech net selling on track for record
+C075,exclude,n/a,June 2024,n/a,US,TMT,Excerpt cites Reuters quoting Goldman; no prime wording,US TMT sold at fastest pace since 2016
+C076,exclude,n/a,this week (~Dec 2021),n/a,US (context),All,GS prime net leverage at one-year low is a level; BofA selling,Net leverage at one-year low
+C077,exclude,n/a,last week (week before 2024-04-09),n/a,Global,n/a,Superlative only three months,Fastest selling pace in 3 months
+C078,include,N,Tuesday 2022-01-04 (Dec 30 to Tue),2022-01-07,Not stated,Technology,"GS prime brokerage; tech biggest dollar sale in over ten years, long-led",Tech biggest sale in dollar terms in 10 years
+C079,include,N,2026-02-19 (net selling through),2026-02-20,Global,All sectors,GS Prime Services Desk; global net sales fastest since April 2025,Global net sales fastest since April
+C080,exclude,n/a,August 2024 MTD,n/a,Global,Multiple,Attributed to Goldman analysts; no prime wording,On track to net sell fastest since March '22
+C081,exclude,n/a,2024-05-24 (week ending),n/a,US,All sectors,"Superlative only since early January, under six months",US stocks sold at fastest rate since January
+C082,exclude,n/a,earlier this month (Oct 2022),n/a,Global,n/a,"Net leverage at a year low is a level, not a reduction superlative",Net leverage at a year low of 66%
+C083,exclude,n/a,2025-04-24,n/a,Global,"Staples, financials",Short covering and net buying; no selling superlative,Hedge funds covered shorts en masse
+C084,exclude,n/a,this week (~early Jan 2024),n/a,US,Information technology,No prime wording; superlative only four months,IT dumped at fastest pace in four months
+C085,include,D,n/a (undated),2026-04-24,US,All equities,GS prime brokerage data; long and short cut most since Sept 2025,Long and short cut most since September
+C086,exclude,n/a,n/a (past two months),n/a,US,Information technology,Attributed to Goldman analysts; no prime wording,US tech sold at a record pace
+C087,include,D,Thursday 2023-02-02 (week through),2023-02-03,US,"All, tech noted","GS prime brokerage; largest overall retreat since Jan 2021, longs trimmed, shorts covered",Largest overall retreat since January 2021
+C088,include,D,n/a (excerpt undated),2024-06-14,Not stated,n/a,GS prime desk; L/S gross leverage cut most since March 2022,Gross leverage cut by most since March 2022
+C089,include,D,last week (week before 2024-06-18),2024-06-14,US,All equities,GS prime desk; L/S gross leverage largest decrease since March 2022,Largest gross leverage decrease since March 2022
+C090,exclude,n/a,Q1 2021,n/a,Global,Multiple,Hedge Fund Trend Monitor holdings; no superlative,"Rotated growth to value, reduced leverage"
+C091,include,D,2025-02-21 (two weeks to),2025-02-21,US,Tech and media,"GS prime unit; exited fastest in six months, dumped longs and shorts",Tech and media unloaded fastest in six months
+C092,include,D,"n/a (past two weeks, undated)",2026-05-01,Not stated (whole book),Information technology,"GS Prime Book; IT exposure cut fastest in a decade, long sales and short covers",IT exposure cut at fastest pace in a decade
+C093,exclude,n/a,2026-10-14,n/a,Global,AI stocks,'Second only to July' is largest only in about three months,AI sell-off second only to July crash
+C094,include,D,"n/a (two weeks, undated)",2026-05-01,Not stated (whole book),Technology,"GS Prime Book; most aggressive tech retreat in ten years, long exits and short covers",Most aggressive retreat from tech in ten years
+C095,include,N,"n/a (roughly two months, undated)",2026-07-17,US,Information technology,GS Prime Services; US tech exposure cut fastest since tracking began,US tech cut fastest since tracking began
+C096,include,N,last week (week before 2023-09-25),2023-09-22,US (context),Multiple,"GS prime brokerage; net selling highest since Jan 2022; leverage fall is net, gross rising",Net selling highest since January 2022
+C097,exclude,n/a,June 2024,n/a,US/Global,TMT,Reuters; 'the bank' compiles positioning; no prime wording,US TMT dumped at fastest pace since 2016
+C098,include,N,"n/a ('this week', first_public inferred)",2025-03-28,Global,Information technology,GS Prime Services desk; global IT sharpest selloff in six months,IT sector's sharpest selloff in six months
+C099,include,N,2024-07-19 (week ending),2024-07-19,Not stated (US context),Technology,GS prime desk; winners offloaded fastest since Jan 2021; de-gross has no superlative,Offloaded winners at fastest rate since January 2021
+C100,include,D,last week (week before 2026-04-27),2026-04-24,US,Discretionary and tech,GS Prime Brokerage; US notional de-grossing largest in seven months,US de-grossing largest in 7 months
+C101,exclude,n/a,2024-01-06 (week to),n/a,US/Europe,Technology,"Superlative only since Sept 2023, under six months",Fled tech at fastest pace since September 2023
+C102,exclude,n/a,~2025-03-07,n/a,US,Multiple,Superlative only since Nov 2024; gross at record highs,Single stocks net sold fastest since November
+C103,exclude,n/a,last week (~2025-07-25),n/a,US and Europe,Technology,Goldman client note via Reuters; no prime wording,Largest tech exodus since July 2024

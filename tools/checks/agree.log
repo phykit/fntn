@@ -1,0 +1,33 @@
+articles 103; original D/N/X 28/43/32; re-code D/N/X 22/29/52
+class agreement 0.757, Cohen's kappa (D/N/excluded) 0.636
+include/exclude agreement 0.806, kappa 0.613
+cross-tab original x re-code: {'D->D': 21, 'D->N': 4, 'D->X': 3, 'N->D': 1, 'N->N': 25, 'N->X': 17, 'X->X': 32}
+both include: 51; same week-end: 49
+  C003: original N (Same as Fortune 31 Mar 2025) | re-code D (GS prime desk; tech ditched fastest in six months via long sales and s)
+  C007: original N (Goldman note: tech outflow biggest since July 2024 (12m); long exits, ) | re-code X (Attributed only to 'a note from Goldman Sachs'; no prime wording)
+  C008: original D (Goldman: funds sold longs and covered shorts in every sector; fastest ) | re-code X (Attributed only to 'Goldman Sachs'; no prime wording)
+  C011: original N (Goldman: global net selling largest since April 2025; gross leverage f) | re-code X (Attributed only to 'a Goldman Sachs note'; no prime wording (else Clas)
+  C019: original N (Global one-day net selling largest since 2010 (Thursday 3 Apr 2025)) | re-code X (Attributed only to 'Goldman Sachs said in a note'; no prime wording)
+  C021: original N (Same episode (four sessions to 4 Jan 2022)) | re-code X (Attributed to Goldman via CNBC; no prime wording)
+  C022: original N (Same; gross leverage cut from 5y high but no superlative on the cut) | re-code X (Attributed to 'Goldman Sachs data'; no prime wording)
+  C041: original D (Goldman prime: risk unwound across long and short books, fastest since) | re-code N (GS prime desk; selling winners fastest since Jan 2021; de-gross itself)
+  C042: original N (Goldman: March global selling fastest in 13 years, second-largest sinc) | re-code X (Attributed to 'data compiled by Goldman Sachs'; no prime wording)
+  C044: original N (Goldman: US single-stock selling largest in six months (DeepSeek day);) | re-code X (Attributed to 'Goldman Sachs trading update'; no prime wording)
+  C048: original N (Goldman: US tech sell-off fastest in two years; net and gross being re) | re-code X (Attributed to Bloomberg citing Goldman; no prime wording)
+  C050: original N (Same June 2024 data (TMT since 2016)) | re-code X (Excerpt cites Reuters quoting Goldman; no prime wording)
+  C053: original D (Goldman prime: long bets dropped at fastest pace in nearly 8 months, w) | re-code N (GS prime note; long bets dropped fastest in nearly eight months; net-s)
+  C055: original N (Goldman report: stocks sold fastest pace in a year across regions; net) | re-code X (Attributed to 'a report from Goldman Sachs'; no prime wording)
+  C057: original D (Goldman: global tech sold at fastest weekly pace in 7 months, cutting ) | re-code X (Read via syndicated Reuters copy; Goldman client note, no prime wordin)
+  C060: original N (Value of US stocks ditched over 5 sessions biggest since Nov 2022; net) | re-code X (Goldman note; no prime wording (prime appears only re Morgan Stanley))
+  C063: original D (Same week: Goldman Prime de-grossing, tech short covers at record pace) | re-code X (Record pace attaches to tech short covering only; de-grossing just 'sh)
+  C069: original D (Goldman prime (via Bloomberg): US equities sold over 4 weeks, long sal) | re-code N (GS prime desk report; US TMT unwound fastest in a year)
+  C071: original N (Goldman (Vincent Lin): US equities net sold at fastest pace in >7 mont) | re-code X (Attributed to Goldman strategist; no prime wording)
+  C075: original N (Same June 2024 data (TMT since 2016)) | re-code X (Excerpt cites Reuters quoting Goldman; no prime wording)
+  C080: original N (Goldman: on track to net sell global equities at fastest pace since Ma) | re-code X (Attributed to Goldman analysts; no prime wording)
+  C086: original N (Goldman (Snider/Lin): US tech sold at record pace over 2 months, net s) | re-code X (Attributed to Goldman analysts; no prime wording)
+  C097: original N (US TMT sold fastest since 2016; global net selling largest since June ) | re-code X (Reuters; 'the bank' compiles positioning; no prime wording)
+  C099: original D (Same week as Bloomberg 22 Jul 2024) | re-code N (GS prime desk; winners offloaded fastest since Jan 2021; de-gross has )
+  C103: original N (Same as Reuters 28 Jul 2025) | re-code X (Goldman client note via Reuters; no prime wording)
+re-coded episodes: 18 (D 7, N 11); frozen 21 (D 9, N 12)
+class D: frozen matched 6 of 9 ['E01', 'E03', 'E07', 'E12', 'E17', 'E20']; re-code only ['2025-03-28']
+class N: frozen matched 8 of 12 ['E02', 'E04', 'E06', 'E15', 'E16', 'E18', 'E19', 'E21']; re-code only ['2023-11-24', '2024-07-19', '2025-07-25']
