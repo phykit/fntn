@@ -1,0 +1,6 @@
+verify.json written to out/lov/verify.json
+months 155 (2013-11 to 2026-09), RF months 155
+(a) alpha +0.00020/month, t 0.799, b 0.916 -> False
+(b) Sharpe(A) 0.224 vs Sharpe(S) 0.197, p_boot 0.1137 -> False
+(c) Sharpe strategy 0.8594034015871412 vs SPY 0.8498859385370812 -> True
+verdict FAIL

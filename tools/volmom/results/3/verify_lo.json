@@ -1,0 +1,176 @@
+{
+  "n_months": 155,
+  "first_month": "2013-11",
+  "last_month": "2026-09",
+  "alpha_monthly": 0.00020283433656770883,
+  "alpha_t": 0.7989979629809919,
+  "b": 0.9158546705610736,
+  "sharpe_active": 0.22447595151135927,
+  "sharpe_static_active": 0.19740899606303874,
+  "p_boot": 0.1136886311368863,
+  "sharpe_strategy": 0.8594034015871412,
+  "sharpe_spy": 0.8498859385370812,
+  "criteria": {
+    "a": false,
+    "b": false,
+    "c": true
+  },
+  "verdict": "FAIL",
+  "stats": {
+    "spy": {
+      "ann_return": 0.13941992084581067,
+      "ann_vol": 0.14411719397203285,
+      "sharpe": 0.8498859385370812,
+      "max_drawdown": -0.23927191604488895
+    },
+    "mtum": {
+      "ann_return": 0.15566906666666536,
+      "ann_vol": 0.16769219272083793,
+      "sharpe": 0.8369556012131477,
+      "max_drawdown": -0.30169624669426165
+    },
+    "fifty": {
+      "ann_return": 0.14847357544142215,
+      "ann_vol": 0.1496993006107213,
+      "sharpe": 0.8767207918621351,
+      "max_drawdown": -0.2564478710256656
+    },
+    "strategy": {
+      "ann_return": 0.1573819683012001,
+      "ann_vol": 0.16442827858905684,
+      "sharpe": 0.8594034015871412,
+      "max_drawdown": -0.30169624669426187
+    }
+  },
+  "weight": {
+    "min": 0.5033739109858845,
+    "median": 1.0,
+    "max": 1.0,
+    "share_capped": 0.8516129032258064,
+    "share_below_half": 0.0
+  },
+  "turnover_annual": 0.17910260904285452,
+  "cost_annual": 0.000358205218085709,
+  "live_weight_last_complete_month": 0.5031852049780138,
+  "live_weight_latest": 0.49138331351165376,
+  "yearly": [
+    {
+      "year": 2013,
+      "strategy": 0.056713985328500804,
+      "spy": 0.056332894977538794,
+      "months": 2
+    },
+    {
+      "year": 2014,
+      "strategy": 0.14621080756054794,
+      "spy": 0.13463766449175907,
+      "months": 12
+    },
+    {
+      "year": 2015,
+      "strategy": 0.08914161516152252,
+      "spy": 0.012343214115364098,
+      "months": 12
+    },
+    {
+      "year": 2016,
+      "strategy": 0.049980427189261434,
+      "spy": 0.11997852982524382,
+      "months": 12
+    },
+    {
+      "year": 2017,
+      "strategy": 0.3749614636095828,
+      "spy": 0.21705461407484794,
+      "months": 12
+    },
+    {
+      "year": 2018,
+      "strategy": -0.01673464626976573,
+      "spy": -0.045690395572301035,
+      "months": 12
+    },
+    {
+      "year": 2019,
+      "strategy": 0.27252637603873997,
+      "spy": 0.3122387289323132,
+      "months": 12
+    },
+    {
+      "year": 2020,
+      "strategy": 0.29818659242539347,
+      "spy": 0.18331662445825025,
+      "months": 12
+    },
+    {
+      "year": 2021,
+      "strategy": 0.14394637871855087,
+      "spy": 0.28728748497047785,
+      "months": 12
+    },
+    {
+      "year": 2022,
+      "strategy": -0.1827393464044087,
+      "spy": -0.18175359575500882,
+      "months": 12
+    },
+    {
+      "year": 2023,
+      "strategy": 0.09517394579841443,
+      "spy": 0.26175769221147815,
+      "months": 12
+    },
+    {
+      "year": 2024,
+      "strategy": 0.32886845847815693,
+      "spy": 0.24886462945796906,
+      "months": 12
+    },
+    {
+      "year": 2025,
+      "strategy": 0.22149842271882947,
+      "spy": 0.17719063776702826,
+      "months": 12
+    },
+    {
+      "year": 2026,
+      "strategy": 0.28478535512320535,
+      "spy": 0.1270921455083649,
+      "months": 9
+    }
+  ],
+  "active_vs_mtum": {
+    "mean_monthly": 7.756895186979364e-05,
+    "sharpe": 0.06589331224342883
+  },
+  "n_months_rf": 155,
+  "sigma_last_complete_month": 0.06884347116861506,
+  "sigma_latest": 0.07049693222958006,
+  "choices": {
+    "returns": "P_t / P_(t-1) - 1 over consecutive file rows (sorted by date) on which both closes exist; spread days are rows with both r_MTUM and r_SPY defined",
+    "month_end": "the last spread day of the calendar month; v_m over the 126 spread days ending at and including it; a zero realised variance gives w = 1",
+    "first_month_end": "the first month-end with 126 spread days available (m0); the first strategy month is the calendar month after m0",
+    "last_month": "the last complete month of bench.csv: complete if the file has a date in a later month or its last date is the final weekday (Mon-Fri) of the month",
+    "execution": "on the first spread day of each strategy month the day's return is earned at the drifted old holdings, then holdings reset to (w, 1 - w) and 0.002 x |w - w_prev| is deducted from that day's return; the sleeve starts all in SPY with w_prev = 0",
+    "monthly_returns": "all four series compound daily returns over the strategy month's spread days; no other SPY trading days are used",
+    "mtum_held": "pure MTUM daily returns from the first spread day of the first strategy month, no cost, no delay; so S_m is the raw ETF difference, as the regressor in (a) should be",
+    "fifty_fifty": "the same daily engine with w = 0.5 every month and the same cost rule on decided weights: 0.002 x |0.5 - 0| at establishment and 0.002 x |0.5 - 0.5| = 0 thereafter, i.e. the drift re-balance is not charged because the rule charges |w_m - w_(m-1)|, not the drifted fraction",
+    "costs": "no drift cost for the strategy either: the charge is on the decided-weight change only, as the PREREG defines the traded fraction; the cost is deducted additively from the execution day's return, 1 + r_day = 1 + x.r - 0.002 x |w - w_prev|, not multiplicatively",
+    "rf": "RF per month = prod(1 + RF / 100) - 1 over all ff5_daily.csv rows in the calendar month; a month the French file has not completed (same completeness rule) is treated as missing; (c) and the four Sharpes then use only the months with RF, and rf_months_missing lists the rest",
+    "sharpe_b_threshold": "Sharpe(S) > 0: Sharpe(A) >= 1.2 x Sharpe(S); otherwise Sharpe(A) >= Sharpe(S) + 0.2 x |Sharpe(S)|",
+    "bootstrap": "tools/volmom/PREREG.md 3(b) verbatim; a nan Sharpe difference in a resample is counted on the <= 0 side",
+    "newey_west": "sandwich with Bartlett weights 1 - l / (L + 1), L = 3, no n / (n - k) factor",
+    "verdict": "INSUFFICIENT below 96 months; UNSCORABLE if (c) has no RF month at all; else PASS / WEAK / FAIL per the PREREG",
+    "stats": "ann_return geometric ((prod(1 + r))^(12 / n) - 1); ann_vol sqrt(12) x sd (ddof 1); sharpe over RF; max_drawdown from monthly wealth starting at 1, reported as a negative fraction",
+    "weight_series": "the n executed weights (decided at the month-ends from m0 to the month before the last complete month); share_capped is w >= 1; share_below_half is w < 0.5",
+    "turnover": "sum of |w_m - w_(m-1)| over the executed rebalances, the first term being |w_m0 - 0|, annualised by 12 / n; cost_annual = 0.002 x turnover_annual",
+    "yearly": "calendar-year compounding of the strategy months in that year; partial first and last years included as they stand, with the month count",
+    "live_weight": "last_complete_month: the weight decided at the last spread day of the last complete month; latest: the weight over the 126 spread days ending at the last spread day in the file",
+    "rf_months_missing": [],
+    "ff_last_complete_month": "2026-09",
+    "bench_last_date": "2026-10-29",
+    "first_spread_day": "2013-04-19",
+    "first_decided_month_end": "2013-10",
+    "sharpe_threshold_b": 0.2368907952756465
+  }
+}

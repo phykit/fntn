@@ -1,0 +1,5 @@
+ok   clustered True, seed 1: PASS (n 155, alpha t 4.64, active Sharpe -0.01 -> 0.44, p 0.0006, capped 0.69, strat/spy Sharpe 0.68/0.51, 2013-11 to 2026-09)
+ok   clustered True, seed 2: PASS (n 155, alpha t 3.70, active Sharpe 0.73 -> 1.04, p 0.0016, capped 0.64, strat/spy Sharpe 0.93/0.46, 2013-11 to 2026-09)
+ok   clustered False, seed 3: FAIL (n 155, alpha t -0.18, active Sharpe 0.39 -> 0.39, p 0.5469, capped 0.82, strat/spy Sharpe 0.49/0.30, 2013-11 to 2026-09)
+ok   clustered False, seed 4: FAIL (n 155, alpha t 0.68, active Sharpe 1.00 -> 1.01, p 0.3631, capped 0.94, strat/spy Sharpe 1.04/0.65, 2013-11 to 2026-09)
+SELFTEST PASSED
