@@ -1,4 +1,4 @@
-name: Adjacent side tests (vol-managed momentum; GVIP concentration; short interest)
+name: Adjacent side tests (vol-managed momentum; GVIP concentration; short interest; long-only momentum)
 
 # NON-EVIDENTIARY side tests outside the FNTN funnel. PREREGs: tools/volmom/PREREG.md and
 # tools/gvip_concentration/PREREG.md. Runs when tools/volmom/DISPATCH changes on this branch.
@@ -26,6 +26,7 @@ jobs:
       G: tools/gvip_concentration
       V: tools/vip_premium
       S: tools/short_interest
+      LO: tools/volmom_lo
     steps:
       - uses: actions/checkout@v4
         with:
@@ -35,6 +36,14 @@ jobs:
           python-version: "3.12"
       - name: Install pinned dependencies
         run: python -m pip install --quiet "numpy==2.2.6" "pandas" "openpyxl" "yfinance>=0.2.50"
+      - name: Resolve the step
+        id: step
+        shell: bash
+        run: |
+          set -euo pipefail
+          st="$(head -1 "$M/DISPATCH" | awk '{print $1}')"
+          case "$st" in all|lo) ;; *) echo "DISPATCH names no known step: '$st'"; exit 1 ;; esac
+          echo "step=$st" >> "$GITHUB_OUTPUT"
       - name: Freeze records
         shell: bash
         run: |
@@ -50,7 +59,9 @@ jobs:
           check "$G" PREREG.md run.py selftest.py fetch.py verify.py compare.py
           check "$V" run.py fetch_extra.py
           check "$S" PREREG.md run.py selftest.py fetch.py verify.py compare.py
+          if [ "${{ steps.step.outputs.step }}" = "lo" ]; then check "$LO" PREREG.md run.py selftest.py verify.py compare.py; fi
       - name: Self-tests
+        if: steps.step.outputs.step == 'all'
         shell: bash
         run: |
           set -euo pipefail
@@ -58,6 +69,7 @@ jobs:
           python "$G/selftest.py" 2>&1 | tee out/selftest_conc.log
           python "$S/selftest.py" 2>&1 | tee out/selftest_si.log
       - name: Fetch (structure printed, never a value)
+        if: steps.step.outputs.step == 'all'
         shell: bash
         run: |
           set -euo pipefail
@@ -65,6 +77,7 @@ jobs:
           python "$G/fetch.py" --data data_g 2>&1 | grep -v -i -e "warning" -e "inplace" | tee out/fetch_conc.log
           python "$S/fetch.py" --data data_s 2>&1 | tee out/fetch_si.log
       - name: Vol-managed momentum, both implementations
+        if: steps.step.outputs.step == 'all'
         shell: bash
         run: |
           set -euo pipefail
@@ -74,6 +87,7 @@ jobs:
           cp out/m/results.json out/results_volmom.json; cp out/mv/verify.json out/verify_volmom.json
           python "$M/compare.py" --a out/results_volmom.json --b out/verify_volmom.json 2>&1 | tee out/volmom_compare.log
       - name: GVIP concentration, both implementations
+        if: steps.step.outputs.step == 'all'
         shell: bash
         run: |
           set -euo pipefail
@@ -83,6 +97,7 @@ jobs:
           cp out/g/results.json out/results_conc.json; cp out/gv/verify.json out/verify_conc.json
           python "$G/compare.py" --a out/results_conc.json --b out/verify_conc.json 2>&1 | tee out/conc_compare.log
       - name: Short interest, both implementations
+        if: steps.step.outputs.step == 'all'
         shell: bash
         run: |
           set -euo pipefail
@@ -91,6 +106,20 @@ jobs:
           python "$S/verify.py" --data data_s --out out/sv 2>&1 | tee out/si_verify.log
           cp out/s/results.json out/results_si.json; cp out/sv/verify.json out/verify_si.json
           python "$S/compare.py" --a out/results_si.json --b out/verify_si.json 2>&1 | tee out/si_compare.log
+      - name: Long-only momentum, both implementations
+        if: steps.step.outputs.step == 'lo'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$LO/selftest.py" 2>&1 | tee out/selftest_lo.log
+          python "$M/fetch.py" --data data_m 2>&1 | grep -v -i -e "warning" -e "inplace" | tee out/fetch_lo.log
+          python "$S/fetch.py" --data data_s 2>&1 | grep -v -i -e "warning" -e "inplace" | tail -3 | tee out/fetch_lo_rf.log
+          cp data_s/ff5_daily.csv data_m/ff5_daily.csv
+          mkdir -p out/lo out/lov
+          python "$LO/run.py" --data data_m --out out/lo 2>&1 | tee out/lo_run.log
+          python "$LO/verify.py" --data data_m --out out/lov 2>&1 | tee out/lo_verify.log
+          cp out/lo/results.json out/results_lo.json; cp out/lov/verify.json out/verify_lo.json
+          python "$LO/compare.py" --a out/results_lo.json --b out/verify_lo.json 2>&1 | tee out/lo_compare.log
       - name: Remove the inputs
         if: always()
         run: rm -rf data_m data_g data_s
