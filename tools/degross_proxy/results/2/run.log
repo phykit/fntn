@@ -1,0 +1,3 @@
+french days 26237, weeks 5213, first 1926-11-03, last 2026-09-30
+GATE: {"status": "FAIL", "available": ["2021-01-29", "2026-05-01"], "matched": [], "base_rate": 0.01353846153846154, "n_signal_evaluable": 4875, "last_french_date": "2026-09-30", "chance_of_at_least_matched": 1.0}
+VERDICT: CLOSED (gate FAIL) - no outcome computed

@@ -1,0 +1,18 @@
+{
+ "gate": {
+  "status": "FAIL",
+  "available": [
+   "2021-01-29",
+   "2026-05-01"
+  ],
+  "matched": [],
+  "base_rate": 0.01353846153846154,
+  "n_signal_evaluable": 4875,
+  "last_french_date": "2026-09-30",
+  "chance_info_only": 1.0
+ },
+ "primary": null,
+ "secondary_21d_5pct": null,
+ "secondary_no_sign_filter": null,
+ "secondary_french_market": null
+}

@@ -1,0 +1,4 @@
+agree    gate.status: run=FAIL verify=FAIL
+agree    gate.matched: run=[] verify=[]
+agree    gate.base_rate: run=0.01353846153846154 verify=0.01353846153846154
+COMPARE PASSED
