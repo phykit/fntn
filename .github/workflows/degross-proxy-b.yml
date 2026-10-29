@@ -66,9 +66,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          sha256sum "$T/PREREG.md" "$T/run.py" "$T/verify.py" "$T/selftest.py" "$T/compare.py" "$T/fetch.py" | tee out/frozen_as_run.sha256.txt
+          sha256sum "$T/PREREG.md" "$T/build.py" "$T/run.py" "$T/verify.py" "$T/selftest.py" "$T/compare.py" "$T/fetch_raw.py" "$T/fetch_prices.py" | tee out/frozen_as_run.sha256.txt
           cat "$T/FROZEN.sha256" | tee -a out/frozen_as_run.sha256.txt
-          for f in PREREG.md run.py verify.py; do
+          for f in PREREG.md build.py run.py verify.py; do
             want="$(grep " $T/$f\$" "$T/FROZEN.sha256" | awk '{print $1}')"
             have="$(sha256sum "$T/$f" | awk '{print $1}')"
             if [ "$want" != "$have" ]; then echo "::error::$f differs from the freeze record"; exit 1; fi
@@ -80,12 +80,14 @@ jobs:
         run: |
           set -euo pipefail
           python "$T/selftest.py" 2>&1 | tee out/selftest.log
-      - name: Fetch inputs (structure printed, never a value)
+      - name: Fetch inputs, build baskets, fetch prices (structure printed, never a value)
         if: ${{ steps.step.outputs.step != 'probe' }}
         shell: bash
         run: |
           set -euo pipefail
-          python "$T/fetch.py" --data data 2>&1 | sed -e "s/${EODHD_KEY:-__none__}/***/g" | tee out/fetch.log
+          python "$T/fetch_raw.py" --data data 2>&1 | tee out/fetch.log
+          python "$T/build.py" --data data --out out 2>&1 | tee out/build.log
+          python "$T/fetch_prices.py" --data data 2>&1 | grep -v -i -e "warning" -e "inplace" -e "^  " | tee out/prices.log
       - name: Run the frozen test
         if: ${{ steps.step.outputs.step == 'all' }}
         shell: bash
@@ -98,7 +100,7 @@ jobs:
         run: |
           set -euo pipefail
           python "$T/verify.py" --data data --out out 2>&1 | tee out/verify.log
-          python "$T/compare.py" --out out 2>&1 | tee out/compare.log
+          python "$T/compare.py" --out out --data data 2>&1 | tee out/compare.log
       - name: Remove the inputs
         if: always()
         shell: bash
