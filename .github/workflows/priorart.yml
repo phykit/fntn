@@ -1,0 +1,113 @@
+name: Prior-art batch side tests (FOMC drift; dividend month; Halloween)
+
+# NON-EVIDENTIARY side tests outside the FNTN funnel. PREREGs under tools/fomc_drift, tools/divmonth,
+# tools/halloween. Runs when tools/halloween/DISPATCH changes on this branch. Derived statistics only
+# are committed under tools/halloween/results/<run>/; inputs live under data*/ for the job only.
+on:
+  push:
+    branches: [degross-proxy-2026-10-29]
+    paths: [tools/halloween/DISPATCH]
+
+concurrency:
+  group: priorart
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      BRANCH: degross-proxy-2026-10-29
+      F: tools/fomc_drift
+      D: tools/divmonth
+      H: tools/halloween
+      V: tools/vip_premium
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 50
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pinned dependencies
+        run: python -m pip install --quiet "numpy==2.2.6" "pandas" "yfinance>=0.2.50"
+      - name: Freeze records
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          check() { local d="$1"; shift
+            for f in "$@"; do
+              want="$(grep " $d/$f\$" "$d/FROZEN.sha256" | awk '{print $1}')"; have="$(sha256sum "$d/$f" | awk '{print $1}')"
+              if [ -z "$want" ] || [ "$want" != "$have" ]; then echo "::error::$d/$f differs from its freeze record"; exit 1; fi
+              echo "verified $d/$f $have" | tee -a out/frozen_as_run.sha256.txt
+            done; }
+          check "$F" PREREG.md run.py selftest.py fetch.py verify.py compare.py fomc_dates.csv
+          check "$D" PREREG.md run.py selftest.py fetch.py verify.py compare.py
+          check "$H" PREREG.md run.py selftest.py fetch.py verify.py compare.py
+          check "$V" run.py fetch_extra.py
+      - name: Self-tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$F/selftest.py" 2>&1 | tee out/selftest_fomc.log
+          python "$H/selftest.py" 2>&1 | tee out/selftest_halloween.log
+          python "$D/selftest.py" 2>&1 | tee out/selftest_divmonth.log
+      - name: Halloween
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$H/fetch.py" --data data_h 2>&1 | tee out/fetch_halloween.log
+          mkdir -p out/h out/hv
+          python "$H/run.py" --data data_h --out out/h 2>&1 | tee out/halloween_run.log
+          python "$H/verify.py" --data data_h --out out/hv 2>&1 | tee out/halloween_verify.log
+          cp out/h/results.json out/results_halloween.json; cp out/hv/verify.json out/verify_halloween.json
+          python "$H/compare.py" --a out/results_halloween.json --b out/verify_halloween.json 2>&1 | tee out/halloween_compare.log
+      - name: FOMC drift
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$F/fetch.py" --data data_f 2>&1 | grep -v -i -e "warning" -e "inplace" | tee out/fetch_fomc.log
+          mkdir -p out/f out/fv
+          python "$F/run.py" --data data_f --dates "$F/fomc_dates.csv" --out out/f 2>&1 | tee out/fomc_run.log
+          python "$F/verify.py" --data data_f --dates "$F/fomc_dates.csv" --out out/fv 2>&1 | tee out/fomc_verify.log
+          cp out/f/results.json out/results_fomc.json; cp out/fv/verify.json out/verify_fomc.json
+          python "$F/compare.py" --a out/results_fomc.json --b out/verify_fomc.json 2>&1 | tee out/fomc_compare.log
+      - name: Dividend month
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$D/fetch.py" --data data_d 2>&1 | grep -v -i -e "warning" -e "inplace" -e "Failed download" | tee out/fetch_divmonth.log
+          mkdir -p out/d out/dv
+          python "$D/run.py" --data data_d --out out/d 2>&1 | tee out/divmonth_run.log
+          python "$D/verify.py" --data data_d --out out/dv 2>&1 | tee out/divmonth_verify.log
+          cp out/d/results.json out/results_divmonth.json; cp out/dv/verify.json out/verify_divmonth.json
+          python "$D/compare.py" --a out/results_divmonth.json --b out/verify_divmonth.json 2>&1 | tee out/divmonth_compare.log
+      - name: Remove the inputs
+        if: always()
+        run: rm -rf data_h data_f data_d
+      - name: Commit the result files to this branch
+        if: always()
+        shell: bash
+        env:
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          d="$H/results/${GITHUB_RUN_NUMBER}"
+          if [ "${GITHUB_RUN_ATTEMPT}" != "1" ]; then d="${d}_attempt${GITHUB_RUN_ATTEMPT}"; fi
+          mkdir -p "$d" out
+          { echo "job status at commit time: ${JOB_STATUS}"; echo "commit: ${GITHUB_SHA}"; echo "run id: ${GITHUB_RUN_ID}"; echo "utc: $(date -u +%Y-%m-%dT%H:%M:%SZ)"; } > "$d/meta.txt"
+          shopt -s nullglob
+          for f in out/*.log out/*.json out/*.txt; do cp "$f" "$d/"; done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$d"
+          git commit -m "prior-art batch: results of run ${GITHUB_RUN_NUMBER} on ${GITHUB_SHA::7} (${JOB_STATUS})"
+          for i in 1 2 3 4; do
+            if git pull --rebase origin "$BRANCH" && git push origin "HEAD:${BRANCH}"; then exit 0; fi
+            sleep $((i * 5))
+          done
+          exit 1
