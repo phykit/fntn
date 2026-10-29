@@ -1,0 +1,26 @@
+frozen21 class D GVIP-QQQ E0: n 9, mean -0.0097 vs -0.0009, p_lower 0.0173, p_upper 0.9828, share neg 0.78
+frozen21 class D GVIP-QQQ E1_4: n 9, mean +0.0063 vs -0.0037, p_lower 0.9076, p_upper 0.0925, share neg 0.44
+frozen21 class D basket-QQQ E0: n 9, mean -0.0070 vs -0.0006, p_lower 0.0409, p_upper 0.9592, share neg 0.67
+frozen21 class D basket-QQQ E1_4: n 9, mean +0.0075 vs -0.0025, p_lower 0.9299, p_upper 0.0702, share neg 0.22
+frozen21 class D GVIP-SPY E0: n 9, mean -0.0089 vs +0.0001, p_lower 0.0075, p_upper 0.9926, share neg 1.00
+frozen21 class D GVIP-SPY E1_4: n 9, mean +0.0043 vs +0.0006, p_lower 0.6934, p_upper 0.3067, share neg 0.44
+frozen21 class D GVIP-resid-QQQ E0: n 9, mean -0.0091 vs -0.0007, p_lower 0.0239, p_upper 0.9762, share neg 0.89
+frozen21 class D GVIP-resid-QQQ E1_4: n 9, mean +0.0072 vs -0.0031, p_lower 0.9077, p_upper 0.0924, share neg 0.44
+frozen21 class N GVIP-QQQ E0: n 12, mean +0.0028 vs -0.0009, p_lower 0.8679, p_upper 0.1322, share neg 0.50
+frozen21 class N GVIP-QQQ E1_4: n 11, mean +0.0004 vs -0.0037, p_lower 0.7206, p_upper 0.2795, share neg 0.36
+frozen21 class N basket-QQQ E0: n 12, mean +0.0070 vs -0.0006, p_lower 0.9934, p_upper 0.0067, share neg 0.50
+frozen21 class N basket-QQQ E1_4: n 11, mean +0.0067 vs -0.0025, p_lower 0.9337, p_upper 0.0664, share neg 0.36
+frozen21 class N GVIP-SPY E0: n 12, mean -0.0069 vs +0.0001, p_lower 0.0135, p_upper 0.9866, share neg 0.58
+frozen21 class N GVIP-SPY E1_4: n 11, mean -0.0031 vs +0.0006, p_lower 0.2814, p_upper 0.7187, share neg 0.36
+frozen21 class N GVIP-resid-QQQ E0: n 12, mean +0.0011 vs -0.0007, p_lower 0.6962, p_upper 0.3039, share neg 0.42
+frozen21 class N GVIP-resid-QQQ E1_4: n 11, mean +0.0005 vs -0.0031, p_lower 0.6928, p_upper 0.3073, share neg 0.45
+  E01 2021-01-29 E0 -0.00743226346349124 E1_4 0.0657362044745754
+  E03 2023-02-03 E0 -0.017817716430992503 E1_4 0.011356631942074369
+  E05 2023-11-17 E0 0.0020599175554725235 E1_4 0.006979413381515975
+  E07 2024-06-14 E0 -0.030670314754748906 E1_4 -0.0027704589457799855
+  E08 2024-07-19 E0 0.007889471309153628 E1_4 0.03362252530448795
+  E12 2025-02-21 E0 -0.013531602410735144 E1_4 0.011322207462657441
+  E14 2025-07-25 E0 -0.004308648104519586 E1_4 -0.0036274994796900994
+  E17 2026-04-24 E0 -0.01921367916592076 E1_4 -0.03558269739047959
+  E20 2026-08-21 E0 -0.004491040518235345 E1_4 -0.030344586531016904
+H-crowd: SUPPORTED

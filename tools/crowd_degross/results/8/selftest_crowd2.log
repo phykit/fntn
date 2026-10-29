@@ -1,0 +1,5 @@
+ok   Holm [0.04, 0.09, 0.09, 0.5]
+ok   plant 5%, seed 1: {'2a': 'SUPPORTED', '2b': 'SUPPORTED', '2c': 'SUPPORTED', '2d': 'SEES'}
+ok   plant 0%, seed 2: {'2a': 'NOT SUPPORTED', '2b': 'NOT SUPPORTED', '2c': 'NOT SUPPORTED', '2d': 'DOES NOT SEE'}
+ok   plant 0%, seed 3: {'2a': 'NOT SUPPORTED', '2b': 'NOT SUPPORTED', '2c': 'NOT SUPPORTED', '2d': 'DOES NOT SEE'}
+SELFTEST PASSED

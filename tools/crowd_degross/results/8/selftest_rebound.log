@@ -1,0 +1,4 @@
+ok   rebound 0.5, seed 1: SUPPORTED (n 70, mean +0.0136 vs +0.0025, p 0.0004; trades 53)
+ok   rebound 0.0, seed 2: NOT SUPPORTED (n 67, mean +0.0030 vs +0.0050, p 0.7315; trades 45)
+ok   rebound 0.0, seed 3: NOT SUPPORTED (n 62, mean -0.0018 vs -0.0005, p 0.6509; trades 46)
+SELFTEST PASSED

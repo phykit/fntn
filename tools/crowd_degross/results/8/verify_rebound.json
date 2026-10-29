@@ -1,0 +1,71 @@
+{
+  "n_eligible": 319,
+  "n_signal": 31,
+  "mean_signal": -0.008654105499356116,
+  "mean_eligible": -0.004627040101810394,
+  "p_upper": 0.8438156184381562,
+  "verdict": "NOT SUPPORTED",
+  "basket": {
+    "n_eligible": 488,
+    "n_signal": 53,
+    "mean_signal": -0.005454667001230035,
+    "mean_eligible": -0.00411041106414569,
+    "p_upper": 0.676032396760324,
+    "verdict": "NOT SUPPORTED"
+  },
+  "h5": {
+    "n_signal": 31,
+    "mean_signal": -0.0016906939073486186,
+    "mean_eligible": -0.0009444820486965811,
+    "p_upper": 0.6566343365663434
+  },
+  "h10": {
+    "n_signal": 31,
+    "mean_signal": -0.004967556168770555,
+    "mean_eligible": -0.0022089903570041165,
+    "p_upper": 0.8455154484551545
+  },
+  "declustered": {
+    "n_signal": 15,
+    "mean_signal": -0.014443076983776507,
+    "mean_eligible": -0.004627040101810394,
+    "p_upper": 0.9492050794920508
+  },
+  "trade_gvip": {
+    "trades": 17,
+    "share_profitable": 0.29411764705882354,
+    "mean_net": -0.01656964530044162,
+    "median_net": -0.0173011601290558,
+    "t_mean": -2.927165174646783,
+    "worst": -0.07108165865105565,
+    "sum_net_per_year": -0.03584845647448332
+  },
+  "trade_basket": {
+    "trades": 36,
+    "share_profitable": 0.25,
+    "mean_net": -0.012472321520983733,
+    "median_net": -0.009385893790102682,
+    "t_mean": -3.6562853323690807,
+    "worst": -0.06355718988062775,
+    "sum_net_per_year": -0.04046349757695907
+  },
+  "choices": [
+    "Weeks are ISO (isoyear, isoweek) groups of bench rows; week t-k means the k-th preceding week present in the bench, not a calendar offset.",
+    "Weekly return is the product of (1 + daily return) over the week's bench days, a daily return being close/previous bench row's close - 1; the week is undefined if any GVIP or QQQ daily return in it is undefined, including the first day's link to the prior week.",
+    "Basket weekly return compounds W over the week's bench days; undefined if any W in the week is NaN (or QQQ's week is undefined).",
+    "W is mapped onto bench days by date: W[k] on B's day k is taken as the return on that date; bench days absent from B's days get NaN. A B day missing from the bench is dropped.",
+    "Signal: x_t <= numpy.percentile(x[t-104..t-1], 10) (linear), requiring all 104 window weeks defined and x_t defined.",
+    "Week end for the episode rule is the date of week t's last bench row; excluded when |week_end - episode week_end| <= 14 calendar days for any episode row (D or N).",
+    "Entry is the bench row after week t's last bench row; exit is entry + h rows. For GVIP and QQQ the forward window is defined when both closes at entry and exit are present (intermediate days not required).",
+    "Basket R_t = prod(1 + W) over rows entry+1..exit - 1, minus (QQQ exit/entry - 1); defined only if every W in that span is present and QQQ endpoints are present.",
+    "The basket test uses its own signal (basket weekly minus QQQ weekly, own 104-week window) and its own eligible set.",
+    "For h5 and h10 the eligible set is recomputed with that horizon's forward window; the signal definition is unchanged. h5/h10/declustered are GVIP-QQQ only.",
+    "De-clustered: an eligible signal week is kept if none of the 4 preceding bench weeks is a signal week, a signal week being any week meeting the signal definition whether eligible or not. The permutation pool is the full eligible set at 20 days.",
+    "Permutation: pool = eligible R in date order; n = number of (relevant) signal weeks; observed = mean of the signal weeks' R; 10,000 draws rng.choice(pool, n, replace=False).mean() from a fresh default_rng(20261029) per test; p = (1 + #(draw >= observed)) / 10001. p is null when n is 0 or n exceeds the pool.",
+    "Verdict: INSUFFICIENT if n_signal < 20; else SUPPORTED if p_upper <= 0.05; else NOT SUPPORTED. The same rule is applied to the basket.",
+    "Trade: eligible signals in date order; a signal is skipped when its week's last bench row (the moment it is read) is before the open trade's exit row, i.e. entry_idx <= prev exit_idx.",
+    "Trade net = R - 0.004 - 0.005 * 20 / 252, days_held being trading rows between entry and exit.",
+    "t_mean = mean / (sample sd ddof=1 / sqrt(n)); null when fewer than 2 trades or sd is 0. share_profitable is the share with net > 0.",
+    "Years spanned = (last eligible week end - first eligible week end) in days / 365.25, using that series' 20-day eligible set (GVIP for trade_gvip, basket for trade_basket)."
+  ]
+}

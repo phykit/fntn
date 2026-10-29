@@ -1,0 +1,61 @@
+{
+ "n_eligible": 319,
+ "n_signal": 31,
+ "mean_signal": -0.008654105499356097,
+ "mean_eligible": -0.004627040101810365,
+ "p_upper": 0.8438156184381562,
+ "share_positive": 0.41935483870967744,
+ "verdict": "NOT SUPPORTED",
+ "basket": {
+  "n_eligible": 488,
+  "n_signal": 53,
+  "mean_signal": -0.005454667001230085,
+  "mean_eligible": -0.004110411064145727,
+  "p_upper": 0.676032396760324,
+  "share_positive": 0.37735849056603776
+ },
+ "h5": {
+  "n_eligible": 319,
+  "n_signal": 31,
+  "mean_signal": -0.0016906939073485935,
+  "mean_eligible": -0.0009444820486965592,
+  "p_upper": 0.6566343365663434,
+  "share_positive": 0.5161290322580645
+ },
+ "h10": {
+  "n_eligible": 319,
+  "n_signal": 31,
+  "mean_signal": -0.004967556168770576,
+  "mean_eligible": -0.002208990357004095,
+  "p_upper": 0.8455154484551545,
+  "share_positive": 0.45161290322580644
+ },
+ "declustered": {
+  "n_eligible": 319,
+  "n_signal": 15,
+  "mean_signal": -0.014443076983776419,
+  "mean_eligible": -0.004627040101810365,
+  "p_upper": 0.9492050794920508,
+  "share_positive": 0.3333333333333333
+ },
+ "trade_gvip": {
+  "trades": 17,
+  "share_profitable": 0.29411764705882354,
+  "mean_net": -0.016569645300441554,
+  "median_net": -0.017301160129055467,
+  "t_mean": -2.927165174646763,
+  "worst": -0.07108165865105631,
+  "sum_net_per_year": -0.03584845647448318
+ },
+ "trade_basket": {
+  "trades": 36,
+  "share_profitable": 0.25,
+  "mean_net": -0.0124723215209838,
+  "median_net": -0.009385893790102904,
+  "t_mean": -3.6562853323690847,
+  "worst": -0.06355718988062775,
+  "sum_net_per_year": -0.04046349757695928
+ },
+ "first_eligible": "2018-11-16",
+ "last_eligible": "2026-09-25"
+}
