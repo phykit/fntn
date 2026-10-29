@@ -1,0 +1,22 @@
+episode_id,class,week_end,first_public,region,sector,outlet,tier,url,phrase
+E01,D,2021-01-29,2021-01-27,US,all,Bloomberg (BloombergQuint),T2,https://www.bloomberg.com/news/articles/2021-01-27/hedge-fund-favorites-are-telltale-leaders-in-broad-stock-selloff,Equity exposure cut at fastest pace since 2014
+E02,N,2022-01-07,2022-01-06,US,IT,Bloomberg (BloombergQuint/Daily Maverick),T2,https://www.bloombergquint.com/markets/heaviest-tech-selling-in-a-decade-fueled-stock-market-rate-rout,Heaviest hedge-fund tech selling in a decade
+E03,D,2023-02-03,2023-02-06,US,all,Bloomberg (BNN/Investing.com),T2,https://www.bnnbloomberg.ca/hedge-funds-cut-risky-bets-at-fastest-pace-in-two-years-1.1880170,Largest de-grossing retreat since January 2021
+E04,N,2023-09-22,2023-09-25,US,all,Bloomberg (BNN),T2,https://www.bnnbloomberg.ca/hedge-funds-cut-stock-leverage-at-fastest-pace-since-2020-crash-1.1976104,Net selling highest since January 2022
+E05,D,2023-11-17,2023-11-20,Global,IT,Reuters (via Investing.com),T2,https://m.investing.com/news/economy/hedge-funds-ghost-tech-stocks-and-sell-consumer-staples--goldman-sachs-3238715?ampMode=1,"Tech sold fastest in seven months, longs and shorts cut"
+E06,N,2024-02-23,2024-02-26,US,IT,Bloomberg (via Hedgeweek/HFA),T2,https://www.hedgeweek.com/hedge-funds-dump-tech-stocks-after-buying-spree/,Tech selling fastest pace in seven months
+E07,D,2024-06-14,2024-06-17,US,all,Bloomberg,T2,https://www.bloomberg.com/news/articles/2024-06-17/hedge-funds-turn-cautious-as-wall-street-strategists-get-bullish,Gross leverage cut most since March 2022
+E08,D,2024-07-19,2024-07-22,US,all,Bloomberg,T2,https://www.bloomberg.com/news/articles/2024-07-22/hedge-funds-aggressively-cut-risks-in-stocks-amid-big-tech-rout,Risk unwound fastest since meme-stock January 2021
+E09,N,2024-08-16,2024-08-22,Global,all,Investing.com,T3,https://ca.investing.com/news/stock-market-news/markets-bounced-back-but-hedge-funds-are-fading-the-rally-3567737,Global net selling fastest since March 2022
+E10,N,2025-01-03,2025-01-07,US,all,Okonomisk Ugebrev (citing Goldman note),T3,https://ugebrev.dk/?p=4556415,US equities net sold fastest in over seven months
+E11,N,2025-01-31,2025-01-30,US,all,Hedgeweek,T3,https://www.hedgeweek.com/hedge-funds-take-big-hit-in-deepseek-tech-sell-off/,US single-stock selling largest in six months
+E12,D,2025-02-21,2025-02-24,US,TMT,Reuters (via The Wealth Advisor),T2,https://www.thewealthadvisor.com/article/hedge-funds-exit-tech-media-stocks-fastest-pace-six-months-goldman-sachs-says,Tech and media exited fastest in six months
+E13,N,2025-03-28,2025-03-31,Global,IT,Fortune (Reuters/Goldman Prime Services),T2,https://fortune.com/2025/03/31/tech-stocks-hedge-fund-selloff-trump-tariffs-goldman-sachs/,Global tech exposure cut fastest in six months
+E14,D,2025-07-25,2025-08-01,US,TMT,Political Wire (Bloomberg),T3,https://politicalwire.com/2025/08/01/hedge-funds-dump-u-s-stocks/,TMT unwound at fastest pace in a year
+E15,N,2026-02-20,2026-02-23,Global,all,Bloomberg (via Bloomberg Law/BGov),T2,https://news.bloomberglaw.com/international-trade/hedge-funds-sold-most-global-equities-since-april-goldman-says,Global equities net sold most since April 2025
+E16,N,2026-03-20,2026-03-23,Global,all,Reuters (via Freedom 96.9),T2,https://www.freedom969.com/?p=443843,Largest global net selling since April 2025
+E17,D,2026-04-24,2026-04-27,US,all,Okonomisk Ugebrev (citing Goldman Prime),T3,https://ugebrev.dk/?p=4582302,US de-grossing biggest since September 2025
+E18,N,2026-06-26,2026-06-30,US,IT,Tickmill blog (Goldman positioning),T3,https://www.tickmill.com/blog/institutional-insights-goldman-sachs-sp500-positioning-key-levels-30626,US tech largest net selling in over decade
+E19,N,2026-07-17,2026-07-20,US,IT,TipRanks,T3,https://www.tipranks.com/news/hedge-funds-are-selling-tech-stocks-at-a-record-pace-says-goldman-sachs-gs,US tech sold at record pace
+E20,D,2026-08-21,2026-08-25,Global,IT,Hedgeweek (Investing.com),T3,https://www.hedgeweek.com/goldman-sachs-data-shows-hedge-funds-cut-equity-exposure-at-fastest-rate-in-two-months/,IT de-grossing largest in over two years
+E21,N,2026-10-16,2026-10-19,Global,IT,Bloomberg (via Briefs),T2,https://www.briefs.co/?p=26794,Tech cut at fastest pace since 2016
