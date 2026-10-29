@@ -45,8 +45,10 @@ def legs_b(data_b, days, bench_dir=None):
                                for d in days]) for c in ("W", "L"))
     if data_b == "none":
         return np.full(len(days), np.nan), np.full(len(days), np.nan)
-    sys.path.insert(0, os.path.join(HERE, "..", "degross_proxy_b"))
-    import run as vb  # noqa: E402
+    import importlib.util  # B's run.py by path: "run" is already study 2's module in sys.modules
+    spec = importlib.util.spec_from_file_location("run_b", os.path.join(HERE, "..", "degross_proxy_b", "run.py"))
+    vb = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(vb)
     bd, col, px = vb.load_prices(data_b)
     W, L, _, _ = vb.daily_legs(bd, col, px, vb.load_baskets(data_b))
     mw, ml = dict(zip(bd, W)), dict(zip(bd, L))
