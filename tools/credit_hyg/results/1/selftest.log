@@ -1,0 +1,4 @@
+ok   lead 1.0, seed 1: PASS (b 0.5528, p 0.0113, exits 30)
+ok   lead 0.0, seed 2: FAIL (b -0.0099, p 0.5004, exits 23)
+ok   lead 0.0, seed 3: FAIL (b -0.1079, p 0.7327, exits 39)
+SELFTEST PASSED

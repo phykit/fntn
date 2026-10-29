@@ -1,0 +1,10 @@
+  df.drop(
+  df.rename(columns={
+  df.drop(
+  df.rename(columns={
+  df.drop(
+  df.rename(columns={
+HYG: 4921 rows, 2007-04-11 to 2026-10-29
+IEF: 6103 rows, 2002-07-30 to 2026-10-29
+QQQ: 6247 rows, 2002-01-02 to 2026-10-29
+prices.csv: 6247 days

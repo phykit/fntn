@@ -1,0 +1,55 @@
+{
+ "n": 4880,
+ "first": "2007-05-09",
+ "last_signal": "2026-09-30",
+ "last_price": "2026-10-29",
+ "b": -0.009656724758132855,
+ "p_shift": 0.5362848014605203,
+ "n_shifts": 4381,
+ "b_incremental": 0.00521828260516013,
+ "t_incremental": 0.04537935446908718,
+ "b_half1": 0.06423714769911462,
+ "b_half2": -0.24285064933048867,
+ "b_h5": -0.010067791269990878,
+ "b_h10": -0.012631397513927035,
+ "criteria": {
+  "a": false,
+  "b": false,
+  "c": false,
+  "d": false
+ },
+ "verdict": "FAIL",
+ "corr_contemporaneous": 0.6115535054785644,
+ "reverse_b": 0.01421217137859026,
+ "reverse_t": 0.31774294147568655,
+ "b_info": -0.024378476521029313,
+ "p_info": 0.6169290440337668,
+ "rule": {
+  "ann_return": 0.15043594650462766,
+  "volatility": 0.1756448352870972,
+  "max_drawdown": -0.40721229306219586,
+  "invested_share": 0.9056174664544008,
+  "exits": 22,
+  "false_alarms": 14,
+  "declines_10pct": 18,
+  "missed_declines": 12,
+  "qqq_logret_while_out": 0.6986802678608464
+ },
+ "mom_rule": {
+  "ann_return": 0.13825948616266137,
+  "volatility": 0.16148280570304233,
+  "max_drawdown": -0.32208950892438337,
+  "invested_share": 0.8555833522856493,
+  "exits": 34,
+  "false_alarms": 21,
+  "declines_10pct": 18,
+  "missed_declines": 5,
+  "qqq_logret_while_out": 0.8603270372084091
+ },
+ "bh": {
+  "ann_return": 0.2004560379051541,
+  "volatility": 0.2055446221115968,
+  "max_drawdown": -0.3511873430192255
+ },
+ "evaluation_start": "2009-05-08"
+}
