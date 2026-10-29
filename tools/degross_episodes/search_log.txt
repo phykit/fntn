@@ -1,0 +1,75 @@
+# Protocol searches (PREREG section 2), WebSearch tool, standard mode, run 29 Oct 2026
+# Query numbers 1-5 as in PREREG section 2; Y = year
+2016 Q1: Goldman Sachs prime brokerage hedge funds de-grossing 2016
+2016 Q2: Goldman prime book hedge funds largest net selling since 2016
+2016 Q3: hedge funds cut gross leverage Goldman Sachs 2016
+2016 Q4: Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2016
+2016 Q5: hedge funds degross Goldman long sales short covers 2016
+2017 Q1: Goldman Sachs prime brokerage hedge funds de-grossing 2017
+2017 Q2: Goldman prime book hedge funds largest net selling since 2017
+2017 Q3: hedge funds cut gross leverage Goldman Sachs 2017
+2017 Q4: Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2017
+2017 Q5: hedge funds degross Goldman long sales short covers 2017
+2018 Q1: Goldman Sachs prime brokerage hedge funds de-grossing 2018
+2018 Q2: Goldman prime book hedge funds largest net selling since 2018
+2018 Q3: hedge funds cut gross leverage Goldman Sachs 2018
+2018 Q4: Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2018
+2018 Q5: hedge funds degross Goldman long sales short covers 2018
+2019 Q1: Goldman Sachs prime brokerage hedge funds de-grossing 2019
+2019 Q2: Goldman prime book hedge funds largest net selling since 2019
+2019 Q3: hedge funds cut gross leverage Goldman Sachs 2019
+2019 Q4: Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2019
+2019 Q5: hedge funds degross Goldman long sales short covers 2019
+2020 Q1: Goldman Sachs prime brokerage hedge funds de-grossing 2020
+2020 Q2: Goldman prime book hedge funds largest net selling since 2020
+2020 Q3: hedge funds cut gross leverage Goldman Sachs 2020
+2020 Q4: Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2020
+2020 Q5: hedge funds degross Goldman long sales short covers 2020
+2021 Q1: Goldman Sachs prime brokerage hedge funds de-grossing 2021
+2021 Q2: Goldman prime book hedge funds largest net selling since 2021
+2021 Q3: hedge funds cut gross leverage Goldman Sachs 2021
+2021 Q4: Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2021
+2021 Q5: hedge funds degross Goldman long sales short covers 2021
+2022 Q1: Goldman Sachs prime brokerage hedge funds de-grossing 2022
+2022 Q2: Goldman prime book hedge funds largest net selling since 2022
+2022 Q3: hedge funds cut gross leverage Goldman Sachs 2022
+2022 Q4: Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2022
+2022 Q5: hedge funds degross Goldman long sales short covers 2022
+2023 Q1: Goldman Sachs prime brokerage hedge funds de-grossing 2023
+2023 Q2: Goldman prime book hedge funds largest net selling since 2023
+2023 Q3: hedge funds cut gross leverage Goldman Sachs 2023
+2023 Q4: Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2023
+2023 Q5: hedge funds degross Goldman long sales short covers 2023
+2024 Q1: Goldman Sachs prime brokerage hedge funds de-grossing 2024
+2024 Q2: Goldman prime book hedge funds largest net selling since 2024
+2024 Q3: hedge funds cut gross leverage Goldman Sachs 2024
+2024 Q4: Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2024
+2024 Q5: hedge funds degross Goldman long sales short covers 2024
+2025 Q1: Goldman Sachs prime brokerage hedge funds de-grossing 2025
+2025 Q2: Goldman prime book hedge funds largest net selling since 2025
+2025 Q3: hedge funds cut gross leverage Goldman Sachs 2025
+2025 Q4: Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2025
+2025 Q5: hedge funds degross Goldman long sales short covers 2025
+2026 Q1: Goldman Sachs prime brokerage hedge funds de-grossing 2026
+2026 Q2: Goldman prime book hedge funds largest net selling since 2026
+2026 Q3: hedge funds cut gross leverage Goldman Sachs 2026
+2026 Q4: Goldman Sachs prime hedge funds dumped tech stocks fastest pace 2026
+2026 Q5: hedge funds degross Goldman long sales short covers 2026
+
+# Confirmation searches (query_no C), run only to confirm dates/wording of candidates already found
+C1: zerohedge "historic degrossing" hedge funds dump most tech stock since September 2024 Goldman prime
+C2: Goldman prime hedge funds US tech stocks fastest pace since tracking began July 2026
+C3: Bloomberg Goldman hedge funds unload US stocks tech media telecom fastest pace in a year July 2025
+C4: "Historic Degrossing" zerohedge hedge funds tech Goldman VIP worst since 2011
+C5: Goldman hedge funds largest-ever one-day net sales global equities April 2025 de-grossing
+C6: Bloomberg July 2026 Goldman hedge funds selling US tech stocks record pace prime
+C7: Goldman prime hedge funds US information technology largest net selling in more than 10 years June 2026
+C8: zerohedge Goldman prime "largest net selling since September 2024" info tech de-grossed October 2026
+C9: "Biggest Tech Selling in a Decade as Rate Rout Spooks Hedge Funds" Bloomberg January 2022
+C10: Reuters "hedge funds dump global tech stocks at fastest pace in six months" Goldman March 2025
+C11: "Historic Degrossing" hedge funds dump most tech stock since Sept 2024 zerohedge October 2026
+C12: Investing.com Goldman hedge funds cut equity positions fastest pace in two months information technology de-grossing August 2026
+C13: Reuters July 28 2025 hedge funds sell tech stocks fastest pace since July 2024 buy consumer staples Goldman
+
+# Note: the same small set of articles recurred across years; the search engine does not honour the year
+# term strongly, so 2016-2020 queries returned mainly 2021-2026 articles.
