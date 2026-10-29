@@ -30,7 +30,7 @@ jobs:
     env:
       BRANCH: degross-proxy-2026-10-29
       T: tools/degross_proxy_b
-      SEC_CONTACT: ${{ secrets.SEC_CONTACT }}
+      SEC_CONTACT: ${{ secrets.SEC_CONTACT || 'Simon Kittson skittson@gmail.com' }}   # contact authorised by the operator, 29 Oct 2026
       EODHD_KEY: ${{ secrets.EODHD_KEY }}
     steps:
       - uses: actions/checkout@v4
@@ -43,7 +43,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python -m pip install --quiet "numpy==2.2.6"
+          python -m pip install --quiet "numpy==2.2.6" "yfinance>=0.2.50"
       - name: Resolve the step
         id: step
         shell: bash

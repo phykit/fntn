@@ -119,18 +119,40 @@ def peod():
 def pfinra():
     section("FINRA consolidated short interest")
     url = "https://api.finra.org/data/group/otcMarket/name/consolidatedShortInterest"
-    for order in ("ASCENDING", "DESCENDING"):
-        payload = json.dumps({"limit": 1, "sortFields": [("-" if order == "DESCENDING" else "") + "settlementDate"]}).encode()
-        st, body = get(url, {"Content-Type": "application/json", "Accept": "application/json"}, data=payload)
+    tries = [("GET limit", url + "?limit=1", None),
+             ("POST limit", url, json.dumps({"limit": 1}).encode()),
+             ("POST sorted asc", url, json.dumps({"limit": 1, "sortFields": ["settlementDate"]}).encode()),
+             ("POST sorted desc", url, json.dumps({"limit": 1, "sortFields": ["-settlementDate"]}).encode())]
+    for name, u, data in tries:
+        st, body = get(u, {"Content-Type": "application/json", "Accept": "application/json"}, data=data)
         try:
             rows = json.loads(body)
-            print(f"   {order}: status {st}, fields {sorted(rows[0])}, settlementDate {rows[0].get('settlementDate')}")
+            r0 = rows[0] if isinstance(rows, list) and rows else rows
+            print(f"   {name}: status {st}, fields {sorted(r0)[:20]}, settlementDate {r0.get('settlementDate') if isinstance(r0, dict) else 'n/a'}")
         except Exception:  # noqa: BLE001
-            print(f"   {order}: status {st}, unparsed ({len(body)} bytes)")
+            print(f"   {name}: status {st}, unparsed ({len(body)} bytes) {body[:120]!r}")
+
+
+def pyahoo():
+    section("Yahoo via yfinance")
+    try:
+        import yfinance as yf
+    except Exception as e:  # noqa: BLE001
+        print("yfinance import failed", type(e).__name__)
+        return
+    for sym in ("SPY", "AAPL", "TWTR", "ATVI", "SIVB", "GME"):
+        try:
+            h = yf.Ticker(sym).history(start="2012-01-01", auto_adjust=True)
+            if len(h):
+                print(f"   {sym}: rows {len(h)}, first {h.index[0].date()}, last {h.index[-1].date()}")
+            else:
+                print(f"   {sym}: no rows")
+        except Exception as e:  # noqa: BLE001
+            print(f"   {sym}: {type(e).__name__}")
 
 
 if __name__ == "__main__":
-    for f in (p13f, pftd, peod, pfinra):
+    for f in (p13f, pftd, pyahoo, pfinra):
         try:
             f()
         except Exception as e:  # noqa: BLE001
