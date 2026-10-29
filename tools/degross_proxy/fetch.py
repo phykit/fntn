@@ -33,10 +33,21 @@ class Refusal(Exception):
     pass
 
 
-def get(url):
-    req = urllib.request.Request(url, headers=UA)
-    with urllib.request.urlopen(req, timeout=120) as r:
-        return r.read()
+def get(url, tries=5):
+    """Fetch with retries. Added after run 1, in which FRED timed out once on the runner; the
+    precedent fetcher (futures-residual-2026-10-15) retries the same endpoint four times."""
+    import time
+    last = None
+    for i in range(tries):
+        try:
+            req = urllib.request.Request(url, headers={**UA, "Accept": "*/*"})
+            with urllib.request.urlopen(req, timeout=90) as r:
+                return r.read()
+        except Exception as e:  # noqa: BLE001
+            last = e
+            print(f"  attempt {i + 1} failed: {type(e).__name__}")
+            time.sleep(10 * (i + 1))
+    raise Refusal(f"{url}: no response after {tries} attempts ({type(last).__name__})")
 
 
 def unzip_text(blob):
