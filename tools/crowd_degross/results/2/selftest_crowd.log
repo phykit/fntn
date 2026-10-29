@@ -1,0 +1,6 @@
+ok   plant 3%, 9 episodes, seed 1: SUPPORTED
+ok   plant 3%, 9 episodes, seed 2: SUPPORTED
+ok   plant 0%, 9 episodes, seed 3: NOT SUPPORTED
+ok   plant 0%, 9 episodes, seed 4: NOT SUPPORTED
+ok   plant 3%, 6 episodes, seed 5: INSUFFICIENT
+SELFTEST PASSED
