@@ -1,0 +1,104 @@
+cand_id,outlet,url,first_public
+C001,Nasdaq.com,https://www.nasdaq.com/articles/hedge-funds-deleveraging-amid-aggressive-trade-policies,2025-04-07
+C002,Bloomberg,https://www.bloomberg.com/news/articles/2026-02-09/goldman-says-hedge-funds-add-record-shorts-on-us-stocks-in-rout,2026-02-09
+C003,Reuters (via Yahoo/The Star/ThePrint),https://finance.yahoo.com/news/hedge-funds-flee-techs-stocks-111512101.html,2025-03-31
+C004,Wccftech,https://wccftech.com/hedge-funds-drop-tech-stocks-in-late-2018-claims-goldman-sachs/amp/,2018-11-21
+C005,Reuters (via Investing.com/KFGO/StreetInsider),https://investing.com/news/stock-market-news/goldman-sees-hedge-fund-exposures-close-to-records-ongoing-selloff-risk-after-gamestop-swings-2404504,2021-01-31
+C006,Okonomisk Ugebrev (citing ZeroHedge),https://ugebrev.dk/flashnews/finanshus-hedgefonde-og-institutionber-store-aktienettosaelgere-private-og-corporate-nettokoebere/,2021-04-21
+C007,Hedgeweek (Reuters),https://www.hedgeweek.com/hedge-funds-rotate-out-of-tech-and-into-staples-amid-valuation-concerns/,2025-07-29
+C008,Business Insider,https://businessinsider.in/stock-market/news/goldman-sachs-biggest-short-squeeze-in-25-years-caused-hedge-funds-to-de-gross-at-fastest-rate-since-2009/amp_articleshow/80632405.cms,2021-02-01
+C009,Institutional Investor,https://www.institutionalinvestor.com/article/b1kwkkf7mlp9v2/Hedge-Funds-Slash-Leverage-Amid-Market-Carnage,2020-03-23
+C010,Bloomberg,https://www.bloomberg.com/news/articles/2025-04-07/hedge-funds-log-historic-one-day-stock-selloff-in-market-rout,2025-04-04
+C011,Reuters (via Freedom 96.9),https://www.freedom969.com/?p=443843,2026-03-23
+C012,Wallstreetcn (via Longport),https://longportapp.cn/news/210785126,2024-08-05
+C013,Investing.com,https://investing.com/news/stock-market-news/hedge-funds-sell-us-equities-at-fastest-pace-in-three-months-says-goldman-3738937,2024-11-25
+C014,Bloomberg (BloombergQuint),https://www.bloomberg.com/news/articles/2021-01-27/hedge-fund-favorites-are-telltale-leaders-in-broad-stock-selloff,2021-01-27
+C015,Investing.com (Bloomberg),https://ng.investing.com/news/stock-market-news/hedge-funds-slash-tech-in-pivot-to-other-strategies-goldman-report-says-575316,2022-02-23
+C016,Investing.com (via Yahoo),https://sg.finance.yahoo.com/news/goldman-hedge-funds-sold-global-043309813.html,2024-07-01
+C017,Hellenic Shipping News (Investing.com),https://www.hellenicshippingnews.com/?p=1145345,2026-08-25 (approx)
+C018,InvestmentNews (Bloomberg),https://www.investmentnews.com/equities/news/hedge-funds-have-cut-back-on-magnificent-seven-holdings-249748,2024-02-21
+C019,Reuters (via Kitco),https://www.kitco.com/news/off-the-wire/2025-04-04/hedge-funds-sell-largest-amount-stocks-2010-goldman-sachs-says,2025-04-04
+C020,Investing.com,https://ng.investing.com/news/stock-market-news/hedge-funds-cut-us-big-tech-stocks-bought-china-goldman-1930523,2025-05-21
+C021,Hedgeweek,https://hedgeweek.com/rising-bond-yields-promote-hedge-funds-dump-tech-stocks,2022-01-07
+C022,ROIC.ai,https://www.roic.ai/news/hedge-funds-sell-global-stocks-at-fastest-pace-since-april-2025-amid-ai-driven-volatility-02-23-2026,2026-02-23
+C023,Bloomberg (via Briefs),https://www.briefs.co/?p=26794,2026-10-19
+C024,Viral pulse aggregator,https://pulse.byoviral.com/trend/2026-07-21/goldman-says-hedge-funds-sell-us-tech-stocks-at-record-pace,2026-07-21
+C025,Hedgeweek,https://www.hedgeweek.com/hedge-funds-cut-us-stock-exposure-amid-tech-mega-cap-sell-off/,2024-07-18
+C026,Reuters (via KFGO),https://kfgo.com/?p=895734,2023-09-25
+C027,24/7 Wall St,https://247wallst.com/investing/2026/10/20/hedge-funds-dumped-tech-stocks-at-the-fastest-pace-in-a-decade-goldman-says/,2026-10-20
+C028,StreetBeat,https://news.streetbeat.com/article/33474574,2023-07-31
+C029,Tickmill blog (Goldman positioning),https://www.tickmill.com/blog/institutional-insights-goldman-sachs-sp500-positioning-key-levels-30626,2026-06-30
+C030,Bloomberg (via Hedge Fund Alpha),https://www.bloomberg.com/news/articles/2023-07-31/hedge-funds-throwing-in-towel-on-stocks-as-rally-forces-unwind,2023-07-31
+C031,ZeroHedge,https://www.zerohedge.com/markets/historic-degrossing-hedge-funds-dump-most-tech-stock-sept-2024,2026-10-22 (inferred)
+C032,OnInvest,https://en.oninvest.com/article/hedge-funds-accelerated-the-selloff-to-the-highest-since-april-2025-which-stocks-escaped-the-selloff,2026-02-24
+C033,Hedgeweek,https://www.hedgeweek.com/hedge-funds-execute-record-one-day-equity-sell-off-amid-tariff-turmoil/,2025-04-08
+C034,Okonomisk Ugebrev (citing Goldman note),https://ugebrev.dk/?p=4559830,2025-02-24
+C035,Investing.com,https://ng.investing.com/news/stock-market-news/hedge-funds-cut-european-equity-exposure-amid-october-volatility-93CH-2160044,2025-10-23
+C036,Hedgeweek,https://www.hedgeweek.com/hedge-funds-use-us-equity-rally-to-cut-exposure/,2026-04-28
+C037,Reuters (via WKZO/Duke Country),https://wkzo.com/?p=548026,2023-07-31
+C038,Rallies.ai,https://rallies.ai/news/goldmans-marcus-unit-offers-9-month-cd-at-405-apy-as-hedge-funds-de-leverage,2026-04-27
+C039,ForexLive/InvestingLive,https://investinglive.com/stock-market-update/global-stocks-see-biggest-selling-in-a-year-hedge-funds-ramp-shorts-goldman-sachs-data-20260331,2026-03-31
+C040,Fortune (Reuters/Goldman Prime Services),https://fortune.com/2025/03/31/tech-stocks-hedge-fund-selloff-trump-tariffs-goldman-sachs/,2025-03-31
+C041,Bloomberg,https://www.bloomberg.com/news/articles/2024-07-22/hedge-funds-aggressively-cut-risks-in-stocks-amid-big-tech-rout,2024-07-22
+C042,Yahoo Finance,https://finance.yahoo.com/markets/stocks/articles/hedge-funds-dump-global-stocks-164714243.html,2026-04-03
+C043,BloombergQuint,https://www.bloombergquint.com/markets/hedge-funds-trim-leverage-anew-in-sign-of-caution-on-u-s-stocks,2018-09 (approx)
+C044,Hedgeweek,https://www.hedgeweek.com/hedge-funds-take-big-hit-in-deepseek-tech-sell-off/,2025-01-30
+C045,EdgeX,https://pro.edgex.exchange/en-US/news/article/hedge-fund-vip-list-ai-longs-unwind,2026-08-27
+C046,Institutional Investor,https://www.institutionalinvestor.com/article/b1c1rrqfv1l1b6/Hedge-Funds-Slashed-Market-Exposure-Throughout-the-Year,2018-11-30
+C047,Reuters (via The Wealth Advisor),https://www.thewealthadvisor.com/article/hedge-funds-exit-tech-media-stocks-fastest-pace-six-months-goldman-sachs-says,2025-02-24
+C048,Hedgeweek (Bloomberg),https://hedgeweek.com/news/hedge-funds-accelerate-tech-selling-as-goldman-questions-ai-trade,2026-10-27
+C049,Bloomberg (via Hedgeweek/HFA),https://www.hedgeweek.com/hedge-funds-dump-tech-stocks-after-buying-spree/,2024-02-26
+C050,Opalesque,https://www.opalesque.com/AMW/820/Opalesque_Roundup_Global_hedge_funds_aggressively_selling_tech820.html,2024-07-06
+C051,Hedgeweek,https://hedgeweek.com/news/hedge-funds-slash-tech-exposure-at-fastest-pace-in-a-decade,2026-10-20
+C052,Hedgeweek,https://www.hedgeweek.com/hedge-funds-dump-global-equities-in-june-at-fastest-pace-in-two-years/,2024-07-03
+C053,Reuters (via MarketScreener/Globe and Mail),https://uk.marketscreener.com/quote/stock/APPLE-INC-4849/news/Hedge-fund-party-in-tech-stocks-begins-to-wane-Goldman-Sachs-says-45441619/,2023-11-27
+C054,Parameter.io,https://parameter.io/goldman-sachs-reports-historic-tech-stock-exodus-by-hedge-funds/,2026-07-20
+C055,TipRanks,https://www.tipranks.com/news/hedge-funds-sell-stocks-at-fastest-pace-in-a-year-says-goldman-sachs-gs,2025-02-28 (updated)
+C056,CNBC (via NBC Miami),https://www.nbcmiami.com/news/business/money-report/hedge-funds-that-hunkered-down-after-gamestop-are-now-missing-out-on-market-gains/2388963/?amp=1,2021-02-22
+C057,Reuters (via Investing.com),https://m.investing.com/news/economy/hedge-funds-ghost-tech-stocks-and-sell-consumer-staples--goldman-sachs-3238715?ampMode=1,2023-11-20
+C058,Tradingpedia,https://www.tradingpedia.com/2026/05/04/funds-slash-tech-exposure-in-sharpest-10-year-drop/,2026-05-04
+C059,MarketMinute (Mammoth Times),https://business.mammothtimes.com/mammothtimes/article/marketminute-2026-3-16-the-great-financial-de-leveraging-hedge-funds-pivot-aggressively-against-banks-and-fintech,2026-03-16
+C060,Reuters (via MarketScreener/Yahoo),https://marketscreener.com/news/latest/Hedge-funds-shed-risk-in-tech-megacap-sell-off-Goldman-says-47406331,2024-07-17
+C061,TheStreet Pro,https://pro.thestreet.com/market-commentary/big-funds-are-degrossing-to-manage-this-ugly-market-what-that-means-for-you,2026-03-19
+C062,Fox Business,https://foxbusiness.com/markets/us-hedge-funds-bought-sold-most-stocks-in-10-years-last-week,2021-01-31
+C063,ZeroHedge (via DP Tribune),https://business.dptribune.com/dptribune/news/read/43132656/as_panicked_hedge_funds_covered_tech_shorts_at_a_record_pace,2023-02-06
+C064,Hedgeweek (Investing.com),https://www.hedgeweek.com/goldman-sachs-data-shows-hedge-funds-cut-equity-exposure-at-fastest-rate-in-two-months/,2026-08-25
+C065,Bloomberg (BloombergQuint/Daily Maverick),https://www.bloombergquint.com/markets/heaviest-tech-selling-in-a-decade-fueled-stock-market-rate-rout,2022-01-06
+C066,Opalesque,https://www.opalesque.com/689279/Opalesque_Roundup_Hedge_funds_sold_tech_shares927.html,2022-01-10
+C067,Bloomberg (via IDN Financials),https://www.idnfinancials.com/news/63331/goldman-sachs-hedge-funds-cut-risk-amid-wall-street-rally,2026-04-27
+C068,Hedge Fund Alpha,https://hedgefundalpha.com/news/long-short-hedge-funds-hang-on-for-dear-life/,2025-05-23
+C069,Political Wire (Bloomberg),https://politicalwire.com/2025/08/01/hedge-funds-dump-u-s-stocks/,2025-08-01
+C070,Bloomberg (via Bloomberg Law/BGov),https://news.bloomberglaw.com/international-trade/hedge-funds-sold-most-global-equities-since-april-goldman-says,2026-02-23
+C071,Okonomisk Ugebrev (citing Goldman note),https://ugebrev.dk/?p=4556415,2025-01-07
+C072,GadgetReview,https://www.gadgetreview.com/?p=421994,2026-10-21
+C073,Reuters (via WHTC),https://whtc.com/?p=600256,2023-11-10
+C074,Bloomberg (via BNN),https://bnnbloomberg.ca/hedge-funds-sell-tech-stocks-aggressively-goldman-says-1.2090255,2024-06-27
+C075,Opalesque,https://www.opalesque.com/703991/Opalesque_Roundup_Global_hedge_funds_aggressively_selling_tech399.html,2024-07-08
+C076,BloombergQuint,https://www.bloombergquint.com/amp/markets/hedge-funds-cut-leverage-to-year-low-as-costly-tech-slumps-anew,2021 (undated)
+C077,ForexLive/InvestingLive,https://investinglive.com/news/goldman-sachs-on-the-largest-selling-of-stocks-by-hedge-funds-in-3-months-short-sales-20240409,2024-04-09
+C078,CNBC,https://www.cnbc.com/2022/01/06/hedge-funds-are-selling-tech-shares-at-their-fastest-pace-in-a-decade-as-rates-spike.html/,2022-01-06
+C079,Hedgeweek,https://www.hedgeweek.com/hedge-funds-sell-global-equities-at-fastest-pace-since-april-goldman-reports/,2026-02-24
+C080,Investing.com,https://ca.investing.com/news/stock-market-news/markets-bounced-back-but-hedge-funds-are-fading-the-rally-3567737,2024-08-22
+C081,Investing.com,https://uk.investing.com/news/stock-market-news/hedge-funds-sell-us-stocks-at-fastest-rate-since-january-3516204,2024-05-25
+C082,Bloomberg,https://www.bloomberg.com/news/articles/2022-10-26/hedge-fund-managers-worry-about-another-archegos-blow-up,2022-10-26
+C083,Hedge Fund Alpha,https://hedgefundalpha.com/news/hedge-funds-covered-shorts-en-masse-last-week/,2025-04-30
+C084,Wallstreetcn (via Longport),https://longportapp.cn/news/105595434,2024-01 (approx)
+C085,AllMind,https://allmind.ai/news/97eddd154da2381b7eb082d87947373ee5dca2d3dd655b3b40f28c104d14d6fd,2026-04-27
+C086,TipRanks,https://www.tipranks.com/news/hedge-funds-are-selling-tech-stocks-at-a-record-pace-says-goldman-sachs-gs,2026-07-20
+C087,Bloomberg (BNN/Investing.com),https://www.bnnbloomberg.ca/hedge-funds-cut-risky-bets-at-fastest-pace-in-two-years-1.1880170,2023-02-06
+C088,Bloomberg,https://www.bloomberg.com/news/articles/2024-06-17/hedge-funds-turn-cautious-as-wall-street-strategists-get-bullish,2024-06-17
+C089,Hedgeweek,https://www.hedgeweek.com/hedge-funds-exercise-caution-on-equities-amid-bullish-forecasts/,2024-06-18
+C090,Hedge Fund Alpha,https://hedgefundalpha.com/news/goldman-sachs-hedge-funds-rotated-from-growth-to-value-and-reduced-leverage-in-q1/,2021-05-25
+C091,Hedgeweek,https://www.hedgeweek.com/hedge-funds-unload-tech-and-media-stocks-at-fastest-pace-in-six-months/,2025-02-25
+C092,AllMind,https://allmind.ai/news/7a5481d6574bf891907adfaeded08936e7d3f26fd542ad0d626dae1f53c97123,2026-05-04
+C093,Tiger Brokers (Wallstreetcn),https://www.itiger.com/news/1150649522,2026-10-16
+C094,Parameter.io,https://parameter.io/hedge-funds-dump-tech-stocks-at-fastest-rate-in-a-decade-goldman-sachs-report/,2026-05-04
+C095,Kalkine Media,https://kalkinemedia.com/us/stocks/financial/goldman-sachs-nysegs-notes-sp-500-tech-selling-pace,2026-07-21
+C096,Bloomberg (BNN),https://www.bnnbloomberg.ca/hedge-funds-cut-stock-leverage-at-fastest-pace-since-2020-crash-1.1976104,2023-09-25
+C097,Reuters (via Kitco/Yahoo),https://www.kitco.com/news/off-the-wire/2024-07-01/hedge-flow-hedge-funds-dump-tech-stocks-fastest-pace-2016-bank-shows,2024-07-01
+C098,Seeking Alpha,https://seekingalpha.com/news/4426735-hedge-funds-dump-global-tech-stocks-at-fastest-pace-in-6-months-goldman-sachs,2025-03-31 (inferred)
+C099,Hedgeweek,https://www.hedgeweek.com/hedge-funds-slash-stocks-risk-amid-tech-sector-rout/,2024-07-23
+C100,Okonomisk Ugebrev (citing Goldman Prime),https://ugebrev.dk/?p=4582302,2026-04-27
+C101,Reuters (via Globe and Mail/The Star),https://www.theglobeandmail.com/investing/investment-ideas/article-hedge-funds-dump-tech-consumer-stocks-at-start-of-year-goldman/,2024-01-08
+C102,Okonomisk Ugebrev,https://ugebrev.dk/?p=4561215,2025-03-10
+C103,The Daily Hodl (Reuters),https://dailyhodl.com/2025/08/03/goldman-sachs-says-hedge-funds-are-ditching-tech-stocks-and-jumping-into-one-overlooked-sector-instead-report,2025-08-03
