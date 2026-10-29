@@ -1,0 +1,49 @@
+verify2: bench 2012-01-03 to 2026-10-29, 774 ISO weeks
+
+Class D
+  series          win     n       mean     uncond   p_low    p_up   neg
+  GVIP-QQQ        E0      9   -0.00972   -0.00087  0.0173  0.9828  0.78
+  GVIP-QQQ        E1_4    9   +0.00630   -0.00366  0.9078  0.0923  0.44
+  basket-QQQ      E0      9   -0.00696   -0.00061  0.0409  0.9592  0.67
+  basket-QQQ      E1_4    9   +0.00746   -0.00252  0.9299  0.0702  0.22
+  GVIP-SPY        E0      9   -0.00885   +0.00014  0.0075  0.9926  1.00
+  GVIP-SPY        E1_4    9   +0.00427   +0.00055  0.6936  0.3065  0.44
+  GVIP-resid-QQQ  E0      9   -0.00910   -0.00074  0.0239  0.9762  0.89
+  GVIP-resid-QQQ  E1_4    9   +0.00719   -0.00310  0.9077  0.0924  0.44
+
+Class N
+  series          win     n       mean     uncond   p_low    p_up   neg
+  GVIP-QQQ        E0     12   +0.00285   -0.00087  0.8687  0.1314  0.50
+  GVIP-QQQ        E1_4   11   +0.00041   -0.00366  0.7210  0.2791  0.36
+  basket-QQQ      E0     12   +0.00704   -0.00061  0.9934  0.0067  0.50
+  basket-QQQ      E1_4   11   +0.00675   -0.00252  0.9337  0.0664  0.36
+  GVIP-SPY        E0     12   -0.00694   +0.00014  0.0135  0.9866  0.58
+  GVIP-SPY        E1_4   11   -0.00312   +0.00055  0.2818  0.7183  0.36
+  GVIP-resid-QQQ  E0     12   +0.00107   -0.00074  0.6970  0.3031  0.42
+  GVIP-resid-QQQ  E1_4   11   +0.00047   -0.00310  0.6931  0.3070  0.45
+
+Primary per-episode E0 (Class D, GVIP-QQQ):
+  E01 2021-01-29  -0.00743
+  E03 2023-02-03  -0.01782
+  E05 2023-11-17  +0.00206
+  E07 2024-06-14  -0.03067
+  E08 2024-07-19  +0.00789
+  E12 2025-02-21  -0.01353
+  E14 2025-07-25  -0.00431
+  E17 2026-04-24  -0.01921
+  E20 2026-08-21  -0.00449
+
+Primary: n=9 mean=-0.00972 uncond=-0.00087 p_lower=0.0173
+Verdict H-crowd: SUPPORTED
+
+Leave-one-out (descriptive):
+  without E01: n=8 mean=-0.01001 p_lower=0.0172
+  without E03: n=8 mean=-0.00871 p_lower=0.0326
+  without E05: n=8 mean=-0.01120 p_lower=0.0096
+  without E07: n=8 mean=-0.00711 p_lower=0.0702
+  without E08: n=8 mean=-0.01193 p_lower=0.0079
+  without E12: n=8 mean=-0.00925 p_lower=0.0250
+  without E14: n=8 mean=-0.01040 p_lower=0.0153
+  without E17: n=8 mean=-0.00854 p_lower=0.0350
+  without E20: n=8 mean=-0.01038 p_lower=0.0154
+  largest p_lower 0.0702 on omitting E07

@@ -1,0 +1,86 @@
+Mandated items
+AGREE    primary n                                        frozen=9                          verify=9
+AGREE    primary mean                                     frozen=-0.009723974364456354      verify=-0.009723974364456354
+AGREE    primary unconditional_mean                       frozen=-0.0008716988016405708     verify=-0.0008716988016405708
+AGREE    primary p_lower (exact)                          frozen=0.017298270172982702       verify=0.017298270172982702
+AGREE    verdict_H_crowd                                  frozen='SUPPORTED'                verify='SUPPORTED'
+AGREE    class_D basket-QQQ E0 mean                       frozen=-0.006959531848359414      verify=-0.006959531848359414
+AGREE    class_D GVIP-SPY E0 mean                         frozen=-0.008852957961624072      verify=-0.008852957961624072
+AGREE    class_D GVIP-resid-QQQ E0 mean                   frozen=-0.009102208740026749      verify=-0.009102208740026752
+AGREE    class_N GVIP-QQQ E0 mean                         frozen=0.0028492648490060593      verify=0.0028492648490060593
+AGREE    class_N basket-QQQ E0 mean                       frozen=0.00703933596024194        verify=0.00703933596024194
+AGREE    class_N GVIP-SPY E0 mean                         frozen=-0.006935261613669012      verify=-0.006935261613669012
+AGREE    class_N GVIP-resid-QQQ E0 mean                   frozen=0.0010695304379485123      verify=0.0010695304379485105
+
+Informational items (no effect on the overall line)
+AGREE    class_D GVIP-QQQ E0 p_upper                      frozen=0.9828017198280172         verify=0.9828017198280172
+AGREE    class_D GVIP-QQQ E1_4 n                          frozen=9                          verify=9
+AGREE    class_D GVIP-QQQ E1_4 mean                       frozen=0.006299059317307985       verify=0.006299059317307985
+AGREE    class_D GVIP-QQQ E1_4 unconditional_mean         frozen=-0.003658980929052563      verify=-0.003658980929052563
+AGREE    class_D GVIP-QQQ E1_4 p_lower                    frozen=0.9078092190780922         verify=0.9078092190780922
+AGREE    class_D GVIP-QQQ E1_4 p_upper                    frozen=0.0922907709229077         verify=0.0922907709229077
+AGREE    class_D basket-QQQ E0 n                          frozen=9                          verify=9
+AGREE    class_D basket-QQQ E0 unconditional_mean         frozen=-0.0006075897646687687     verify=-0.0006075897646687687
+AGREE    class_D basket-QQQ E0 p_lower                    frozen=0.0408959104089591         verify=0.0408959104089591
+AGREE    class_D basket-QQQ E0 p_upper                    frozen=0.9592040795920408         verify=0.9592040795920408
+AGREE    class_D basket-QQQ E1_4 n                        frozen=9                          verify=9
+AGREE    class_D basket-QQQ E1_4 mean                     frozen=0.007463147196928372       verify=0.007463147196928372
+AGREE    class_D basket-QQQ E1_4 unconditional_mean       frozen=-0.0025165886644198253     verify=-0.0025165886644198253
+AGREE    class_D basket-QQQ E1_4 p_lower                  frozen=0.9299070092990701         verify=0.9299070092990701
+AGREE    class_D basket-QQQ E1_4 p_upper                  frozen=0.07019298070192981        verify=0.07019298070192981
+AGREE    class_D GVIP-SPY E0 n                            frozen=9                          verify=9
+AGREE    class_D GVIP-SPY E0 unconditional_mean           frozen=0.00014228871837242035     verify=0.00014228871837242035
+AGREE    class_D GVIP-SPY E0 p_lower                      frozen=0.007499250074992501       verify=0.007499250074992501
+AGREE    class_D GVIP-SPY E0 p_upper                      frozen=0.9926007399260074         verify=0.9926007399260074
+AGREE    class_D GVIP-SPY E1_4 n                          frozen=9                          verify=9
+AGREE    class_D GVIP-SPY E1_4 mean                       frozen=0.004268047570429312       verify=0.004268047570429312
+AGREE    class_D GVIP-SPY E1_4 unconditional_mean         frozen=0.0005490574632410487      verify=0.0005490574632410487
+AGREE    class_D GVIP-SPY E1_4 p_lower                    frozen=0.6936306369363063         verify=0.6936306369363063
+AGREE    class_D GVIP-SPY E1_4 p_upper                    frozen=0.30646935306469353        verify=0.30646935306469353
+AGREE    class_D GVIP-resid-QQQ E0 n                      frozen=9                          verify=9
+AGREE    class_D GVIP-resid-QQQ E0 unconditional_mean     frozen=-0.0007430285348947988     verify=-0.0007430285348947983
+AGREE    class_D GVIP-resid-QQQ E0 p_lower                frozen=0.023897610238976102       verify=0.023897610238976102
+AGREE    class_D GVIP-resid-QQQ E0 p_upper                frozen=0.9762023797620238         verify=0.9762023797620238
+AGREE    class_D GVIP-resid-QQQ E1_4 n                    frozen=9                          verify=9
+AGREE    class_D GVIP-resid-QQQ E1_4 mean                 frozen=0.007192341268472144       verify=0.0071923412684721365
+AGREE    class_D GVIP-resid-QQQ E1_4 unconditional_mean   frozen=-0.00309559116898407       verify=-0.0030955911689840693
+AGREE    class_D GVIP-resid-QQQ E1_4 p_lower              frozen=0.9077092290770923         verify=0.9077092290770923
+AGREE    class_D GVIP-resid-QQQ E1_4 p_upper              frozen=0.0923907609239076         verify=0.0923907609239076
+AGREE    class_N GVIP-QQQ E0 n                            frozen=12                         verify=12
+AGREE    class_N GVIP-QQQ E0 unconditional_mean           frozen=-0.0008716988016405708     verify=-0.0008716988016405708
+AGREE    class_N GVIP-QQQ E0 p_lower                      frozen=0.8687131286871312         verify=0.8687131286871312
+AGREE    class_N GVIP-QQQ E0 p_upper                      frozen=0.13138686131386862        verify=0.13138686131386862
+AGREE    class_N GVIP-QQQ E1_4 n                          frozen=11                         verify=11
+AGREE    class_N GVIP-QQQ E1_4 mean                       frozen=0.00040728817293277477     verify=0.00040728817293277477
+AGREE    class_N GVIP-QQQ E1_4 unconditional_mean         frozen=-0.003658980929052563      verify=-0.003658980929052563
+AGREE    class_N GVIP-QQQ E1_4 p_lower                    frozen=0.7210278972102789         verify=0.7210278972102789
+AGREE    class_N GVIP-QQQ E1_4 p_upper                    frozen=0.2790720927907209         verify=0.2790720927907209
+AGREE    class_N basket-QQQ E0 n                          frozen=12                         verify=12
+AGREE    class_N basket-QQQ E0 unconditional_mean         frozen=-0.0006075897646687687     verify=-0.0006075897646687687
+AGREE    class_N basket-QQQ E0 p_lower                    frozen=0.9934006599340066         verify=0.9934006599340066
+AGREE    class_N basket-QQQ E0 p_upper                    frozen=0.0066993300669933005      verify=0.0066993300669933005
+AGREE    class_N basket-QQQ E1_4 n                        frozen=11                         verify=11
+AGREE    class_N basket-QQQ E1_4 mean                     frozen=0.006748224847861447       verify=0.006748224847861447
+AGREE    class_N basket-QQQ E1_4 unconditional_mean       frozen=-0.0025165886644198253     verify=-0.0025165886644198253
+AGREE    class_N basket-QQQ E1_4 p_lower                  frozen=0.9337066293370663         verify=0.9337066293370663
+AGREE    class_N basket-QQQ E1_4 p_upper                  frozen=0.0663933606639336         verify=0.0663933606639336
+AGREE    class_N GVIP-SPY E0 n                            frozen=12                         verify=12
+AGREE    class_N GVIP-SPY E0 unconditional_mean           frozen=0.00014228871837242035     verify=0.00014228871837242035
+AGREE    class_N GVIP-SPY E0 p_lower                      frozen=0.013498650134986502       verify=0.013498650134986502
+AGREE    class_N GVIP-SPY E0 p_upper                      frozen=0.9866013398660134         verify=0.9866013398660134
+AGREE    class_N GVIP-SPY E1_4 n                          frozen=11                         verify=11
+AGREE    class_N GVIP-SPY E1_4 mean                       frozen=-0.0031193378400297222     verify=-0.0031193378400297222
+AGREE    class_N GVIP-SPY E1_4 unconditional_mean         frozen=0.0005490574632410487      verify=0.0005490574632410487
+AGREE    class_N GVIP-SPY E1_4 p_lower                    frozen=0.28177182281771823        verify=0.28177182281771823
+AGREE    class_N GVIP-SPY E1_4 p_upper                    frozen=0.7183281671832816         verify=0.7183281671832816
+AGREE    class_N GVIP-resid-QQQ E0 n                      frozen=12                         verify=12
+AGREE    class_N GVIP-resid-QQQ E0 unconditional_mean     frozen=-0.0007430285348947988     verify=-0.0007430285348947983
+AGREE    class_N GVIP-resid-QQQ E0 p_lower                frozen=0.6970302969703029         verify=0.6970302969703029
+AGREE    class_N GVIP-resid-QQQ E0 p_upper                frozen=0.3030696930306969         verify=0.3030696930306969
+AGREE    class_N GVIP-resid-QQQ E1_4 n                    frozen=11                         verify=11
+AGREE    class_N GVIP-resid-QQQ E1_4 mean                 frozen=0.00046721485565896103     verify=0.00046721485565896277
+AGREE    class_N GVIP-resid-QQQ E1_4 unconditional_mean   frozen=-0.00309559116898407       verify=-0.0030955911689840693
+AGREE    class_N GVIP-resid-QQQ E1_4 p_lower              frozen=0.6931306869313069         verify=0.6931306869313069
+AGREE    class_N GVIP-resid-QQQ E1_4 p_upper              frozen=0.30696930306969306        verify=0.30696930306969306
+
+OVERALL: AGREE (12 of 12 mandated items agree)

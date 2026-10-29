@@ -1,0 +1,532 @@
+[
+ {
+  "period": "2013-06-30",
+  "effective": "2013-08-15",
+  "n_kept_filings": 3051,
+  "n_hf_like": 347,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 50
+ },
+ {
+  "period": "2013-09-30",
+  "effective": "2013-11-15",
+  "n_kept_filings": 3227,
+  "n_hf_like": 373,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 50
+ },
+ {
+  "period": "2013-12-31",
+  "effective": "2014-02-18",
+  "n_kept_filings": 3552,
+  "n_hf_like": 422,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 50
+ },
+ {
+  "period": "2014-03-31",
+  "effective": "2014-05-16",
+  "n_kept_filings": 3594,
+  "n_hf_like": 417,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 49
+ },
+ {
+  "period": "2014-06-30",
+  "effective": "2014-08-15",
+  "n_kept_filings": 3571,
+  "n_hf_like": 431,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 50
+ },
+ {
+  "period": "2014-09-30",
+  "effective": "2014-11-17",
+  "n_kept_filings": 3622,
+  "n_hf_like": 445,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 50
+ },
+ {
+  "period": "2014-12-31",
+  "effective": "2015-02-17",
+  "n_kept_filings": 3029,
+  "n_hf_like": 213,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 49
+ },
+ {
+  "period": "2015-03-31",
+  "effective": "2015-05-18",
+  "n_kept_filings": 3930,
+  "n_hf_like": 474,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 48
+ },
+ {
+  "period": "2015-06-30",
+  "effective": "2015-08-17",
+  "n_kept_filings": 3935,
+  "n_hf_like": 471,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 38
+ },
+ {
+  "period": "2015-09-30",
+  "effective": "2015-11-16",
+  "n_kept_filings": 3035,
+  "n_hf_like": 206,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 39
+ },
+ {
+  "period": "2015-12-31",
+  "effective": "2016-02-16",
+  "n_kept_filings": 3015,
+  "n_hf_like": 201,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 46
+ },
+ {
+  "period": "2016-03-31",
+  "effective": "2016-05-16",
+  "n_kept_filings": 3066,
+  "n_hf_like": 207,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 50
+ },
+ {
+  "period": "2016-06-30",
+  "effective": "2016-08-15",
+  "n_kept_filings": 2993,
+  "n_hf_like": 188,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 47
+ },
+ {
+  "period": "2016-09-30",
+  "effective": "2016-11-15",
+  "n_kept_filings": 3850,
+  "n_hf_like": 426,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 50
+ },
+ {
+  "period": "2016-12-31",
+  "effective": "2017-02-15",
+  "n_kept_filings": 4066,
+  "n_hf_like": 457,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 41
+ },
+ {
+  "period": "2017-03-31",
+  "effective": "2017-05-16",
+  "n_kept_filings": 4184,
+  "n_hf_like": 436,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 50
+ },
+ {
+  "period": "2017-06-30",
+  "effective": "2017-08-15",
+  "n_kept_filings": 4107,
+  "n_hf_like": 453,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 40
+ },
+ {
+  "period": "2017-09-30",
+  "effective": "2017-11-15",
+  "n_kept_filings": 4142,
+  "n_hf_like": 441,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 42
+ },
+ {
+  "period": "2017-12-31",
+  "effective": "2018-02-15",
+  "n_kept_filings": 4418,
+  "n_hf_like": 465,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 47
+ },
+ {
+  "period": "2018-03-31",
+  "effective": "2018-05-16",
+  "n_kept_filings": 4539,
+  "n_hf_like": 468,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 46
+ },
+ {
+  "period": "2018-06-30",
+  "effective": "2018-08-15",
+  "n_kept_filings": 4488,
+  "n_hf_like": 482,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 44
+ },
+ {
+  "period": "2018-09-30",
+  "effective": "2018-11-15",
+  "n_kept_filings": 4513,
+  "n_hf_like": 481,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 42
+ },
+ {
+  "period": "2018-12-31",
+  "effective": "2019-02-15",
+  "n_kept_filings": 4815,
+  "n_hf_like": 480,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 47
+ },
+ {
+  "period": "2019-03-31",
+  "effective": "2019-05-16",
+  "n_kept_filings": 4895,
+  "n_hf_like": 500,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 32
+ },
+ {
+  "period": "2019-06-30",
+  "effective": "2019-08-15",
+  "n_kept_filings": 4804,
+  "n_hf_like": 503,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 40
+ },
+ {
+  "period": "2019-09-30",
+  "effective": "2019-11-15",
+  "n_kept_filings": 4794,
+  "n_hf_like": 495,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 30
+ },
+ {
+  "period": "2019-12-31",
+  "effective": "2020-02-18",
+  "n_kept_filings": 5228,
+  "n_hf_like": 538,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 22
+ },
+ {
+  "period": "2020-03-31",
+  "effective": "2020-05-18",
+  "n_kept_filings": 5216,
+  "n_hf_like": 515,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 31
+ },
+ {
+  "period": "2020-06-30",
+  "effective": "2020-08-17",
+  "n_kept_filings": 5192,
+  "n_hf_like": 545,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 32
+ },
+ {
+  "period": "2020-09-30",
+  "effective": "2020-11-16",
+  "n_kept_filings": 4149,
+  "n_hf_like": 304,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 41
+ },
+ {
+  "period": "2020-12-31",
+  "effective": "2021-02-16",
+  "n_kept_filings": 4111,
+  "n_hf_like": 308,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 37
+ },
+ {
+  "period": "2021-03-31",
+  "effective": "2021-05-17",
+  "n_kept_filings": 4447,
+  "n_hf_like": 321,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 49,
+  "short_n": 38
+ },
+ {
+  "period": "2021-06-30",
+  "effective": "2021-08-16",
+  "n_kept_filings": 4486,
+  "n_hf_like": 318,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 49,
+  "short_n": 28
+ },
+ {
+  "period": "2021-09-30",
+  "effective": "2021-11-15",
+  "n_kept_filings": 4200,
+  "n_hf_like": 303,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 49,
+  "short_n": 46
+ },
+ {
+  "period": "2021-12-31",
+  "effective": "2022-02-15",
+  "n_kept_filings": 6202,
+  "n_hf_like": 575,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 49,
+  "short_n": 18
+ },
+ {
+  "period": "2022-03-31",
+  "effective": "2022-05-16",
+  "n_kept_filings": 4943,
+  "n_hf_like": 307,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 49,
+  "short_n": 39
+ },
+ {
+  "period": "2022-06-30",
+  "effective": "2022-08-15",
+  "n_kept_filings": 4994,
+  "n_hf_like": 290,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 49,
+  "short_n": 25
+ },
+ {
+  "period": "2022-09-30",
+  "effective": "2022-11-15",
+  "n_kept_filings": 6445,
+  "n_hf_like": 537,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 40
+ },
+ {
+  "period": "2022-12-31",
+  "effective": "2023-02-15",
+  "n_kept_filings": 6606,
+  "n_hf_like": 591,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 49,
+  "short_n": 20
+ },
+ {
+  "period": "2023-03-31",
+  "effective": "2023-05-16",
+  "n_kept_filings": 6639,
+  "n_hf_like": 562,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 41
+ },
+ {
+  "period": "2023-06-30",
+  "effective": "2023-08-15",
+  "n_kept_filings": 6654,
+  "n_hf_like": 596,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 38
+ },
+ {
+  "period": "2023-09-30",
+  "effective": "2023-11-15",
+  "n_kept_filings": 6680,
+  "n_hf_like": 602,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 44
+ },
+ {
+  "period": "2023-12-31",
+  "effective": "2024-02-15",
+  "n_kept_filings": 6950,
+  "n_hf_like": 601,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 37
+ },
+ {
+  "period": "2024-03-31",
+  "effective": "2024-05-16",
+  "n_kept_filings": 7091,
+  "n_hf_like": 594,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 48
+ },
+ {
+  "period": "2024-06-30",
+  "effective": "2024-08-15",
+  "n_kept_filings": 7067,
+  "n_hf_like": 589,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 46
+ },
+ {
+  "period": "2024-09-30",
+  "effective": "2024-11-15",
+  "n_kept_filings": 7146,
+  "n_hf_like": 605,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 49,
+  "short_n": 44
+ },
+ {
+  "period": "2024-12-31",
+  "effective": "2025-02-18",
+  "n_kept_filings": 7733,
+  "n_hf_like": 662,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 49,
+  "short_n": 44
+ },
+ {
+  "period": "2025-03-31",
+  "effective": "2025-05-16",
+  "n_kept_filings": 7828,
+  "n_hf_like": 623,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 49,
+  "short_n": 44
+ },
+ {
+  "period": "2025-06-30",
+  "effective": "2025-08-15",
+  "n_kept_filings": 7833,
+  "n_hf_like": 648,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 49,
+  "short_n": 37
+ },
+ {
+  "period": "2025-09-30",
+  "effective": "2025-11-17",
+  "n_kept_filings": 7813,
+  "n_hf_like": 684,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 50,
+  "short_n": 42
+ },
+ {
+  "period": "2025-12-31",
+  "effective": "2026-02-17",
+  "n_kept_filings": 6829,
+  "n_hf_like": 453,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 49,
+  "short_n": 24
+ },
+ {
+  "period": "2026-03-31",
+  "effective": "2026-05-18",
+  "n_kept_filings": 8572,
+  "n_hf_like": 792,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 49,
+  "short_n": 41
+ },
+ {
+  "period": "2026-06-30",
+  "effective": "2026-08-17",
+  "n_kept_filings": 8695,
+  "n_hf_like": 831,
+  "long_cusips": 50,
+  "short_cusips": 50,
+  "long_n": 49,
+  "short_n": 41
+ }
+]
