@@ -1,0 +1,6 @@
+ok   beta -0.1, seed 1, 600 SII months, yyyymm: PASS (n 446, b/sd -0.0209, p 0.0024, R2oos +0.0807, CW 3.85)
+ok   beta -0.1, seed 2, 600 SII months, iso: PASS (n 446, b/sd -0.0167, p 0.0024, R2oos +0.0536, CW 3.98)
+ok   beta 0.0, seed 3, 600 SII months, us: FAIL (n 446, b/sd -0.0008, p 0.3797, R2oos -0.0037, CW -1.87)
+ok   beta 0.0, seed 4, 600 SII months, yyyymm: FAIL (n 446, b/sd +0.0027, p 0.8208, R2oos -0.0056, CW -0.96)
+ok   beta -0.06, seed 5, 300 SII months, yyyymm: INSUFFICIENT (n 146, b/sd +nan, p nan, R2oos +nan, CW nan)
+SELFTEST PASSED

@@ -1,0 +1,5 @@
+ok   clustered True, seed 1: PASS (n_oos 129, alpha t 3.00, Sharpe 0.04 -> 0.61, p 0.0413; mtum PASS)
+ok   clustered True, seed 2: PASS (n_oos 129, alpha t 3.14, Sharpe 0.84 -> 1.53, p 0.0358; mtum PASS)
+ok   clustered False, seed 3: FAIL (n_oos 129, alpha t -0.72, Sharpe 0.59 -> 0.58, p 0.7701; mtum FAIL)
+ok   clustered False, seed 4: FAIL (n_oos 129, alpha t 1.08, Sharpe 1.16 -> 1.17, p 0.2297; mtum FAIL)
+SELFTEST PASSED

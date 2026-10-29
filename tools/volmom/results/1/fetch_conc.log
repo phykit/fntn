@@ -1,0 +1,16 @@
+  df.drop(
+  df.rename(columns={
+  df.drop(
+  df.rename(columns={
+  df.drop(
+  df.rename(columns={
+  df.drop(
+  df.rename(columns={
+  df.drop(
+  df.rename(columns={
+GVIP: 2504 rows, 2016-11-11 to 2026-10-29
+QQQ: 3728 rows, 2012-01-03 to 2026-10-29
+QQQE: 3674 rows, 2012-03-21 to 2026-10-29
+RSP: 3728 rows, 2012-01-03 to 2026-10-29
+SPY: 3728 rows, 2012-01-03 to 2026-10-29
+bench.csv: 3728 days

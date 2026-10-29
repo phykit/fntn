@@ -1,0 +1,4 @@
+job status at commit time: failure
+commit: b6117e0b8428cb61366c031e478d6a601bb7cb3a
+run id: 40959765194
+utc: 2026-10-29T21:41:16Z

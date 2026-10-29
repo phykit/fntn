@@ -1,0 +1,318 @@
+{
+  "n_months": 118,
+  "first_month": "2016-12",
+  "last_month": "2026-09",
+  "a_monthly": -0.0005137724045960078,
+  "a_t": -0.3034900166010925,
+  "b": 0.7138653274340824,
+  "b_t": 7.30385560859456,
+  "r2": 0.3489767978691989,
+  "verdict": "CONCENTRATION EXPLAINS",
+  "gvip_minus_qqqe_annual": 0.011100201379757894,
+  "gvip_minus_qqqe_t": 0.503920119109007,
+  "rsp": {
+    "a_monthly": -0.0019208516245182734,
+    "a_t": -1.2357469944861454,
+    "b": 0.7920130358315343,
+    "b_t": 6.756081809249274,
+    "r2": 0.3511956327323291
+  },
+  "halves": [
+    {
+      "first_month": "2016-12",
+      "last_month": "2021-10",
+      "n_months": 59,
+      "a_monthly": -0.0015160518066939758,
+      "a_t": -0.748718628547084,
+      "b": 0.8099821906131961,
+      "b_t": 4.291571541613301
+    },
+    {
+      "first_month": "2021-11",
+      "last_month": "2026-09",
+      "n_months": 59,
+      "a_monthly": 0.0006085392402390603,
+      "a_t": 0.23972377124663868,
+      "b": 0.6533841795206752,
+      "b_t": 5.699055051091795
+    }
+  ],
+  "choices": [
+    "Units: returns are decimal fractions (0.01 is one per cent), not percentages. a_monthly, b, gvip_minus_qqqe_annual and every half-sample coefficient are in those units.",
+    "Daily return for a row is close / close of the immediately preceding row in the file (rows sorted by DATE), whatever calendar month that preceding row falls in. The PREREG's 'previous month's last close' is read as that preceding row; calendar adjacency of the two months is not separately enforced.",
+    "Monthly return is the product of the daily ratios over the month's rows minus one, computed day by day as stated rather than as the ratio of the two endpoint closes. The two are algebraically equal when every day is present; floating point may differ at the 1e-16 level.",
+    "A month is used only if every row in it has all five closes AND the row immediately before its first row exists and has all five closes. A month that fails is dropped, never imputed; the statistics run on the surviving months as one sequence, so the Newey-West lags are taken over neighbours in that sequence even where a dropped month sits between them. n_months counts survivors; first_month and last_month are the first and last survivors.",
+    "Months before 2016-12 are never used, even where every close is present.",
+    "Last complete month (PREREG section 1): the final calendar month present in the file is kept only if the file's last DATE equals the last Monday-to-Friday day of that month; market holidays are not consulted, because the PREREG says 'weekday'. Every earlier month in the file is complete by the 'file holds a later month's date' limb.",
+    "Missing value tokens: an empty or whitespace-only cell, or (case-insensitive) nan, na, n/a, null, none. A non-finite float is also missing. A non-positive close is an error that aborts the run rather than a missing value, because an adjusted close cannot be zero or negative.",
+    "DATE is parsed as ISO YYYY-MM-DD from the first ten characters of the cell; any time component is ignored. Duplicate dates abort the run. Column names are matched exactly after stripping whitespace and a byte-order mark; extra columns are ignored.",
+    "OLS with intercept by the normal equations. Newey-West: S = sum_t e_t^2 x_t x_t' + sum_{l=1..L} (1 - l/(L+1)) sum_{t>l} e_t e_{t-l} (x_t x_{t-l}' + x_{t-l} x_t'), V = (X'X)^-1 S (X'X)^-1, L = 3, no n/(n-k) or any other small-sample factor. t = coefficient / sqrt(diagonal of V).",
+    "R-squared is the ordinary 1 - SSR/SST with SST about the sample mean of y; not adjusted.",
+    "gvip_minus_qqqe_annual = 12 x arithmetic mean of the monthly (GVIP_m - QQQE_m) differences, no compounding. gvip_minus_qqqe_t is the t of the mean from regressing the differences on a constant alone with the same Newey-West estimator (L = 3); it equals the t of the annualised figure because the factor of 12 cancels.",
+    "The RSP regression keeps y = GVIP_m - QQQ_m and replaces x with RSP_m - SPY_m over the full sample, because the PREREG says 'the same regression with x = RSP - SPY'. It is not GVIP - SPY on RSP - SPY.",
+    "Halves: the first floor(n/2) surviving months, then the remaining n - floor(n/2). Each half is regressed on its own with the same Newey-West estimator; no R-squared is reported for a half because none was asked for.",
+    "Verdict order: INSUFFICIENT when n_months < 96; else CONCENTRATION EXPLAINS when b >= 0.5 and t(b) >= 2.0 and t(a) > -2.0; else RESIDUAL SHORTFALL when t(a) <= -2.0; else INDETERMINATE. The two named outcomes are mutually exclusive through t(a), so the order between them cannot matter. Thresholds are compared exactly, with no tolerance.",
+    "When INSUFFICIENT, the regression and the side statistics are still computed and reported wherever at least three months are available (two parameters plus one degree of freedom); otherwise the affected fields are null. A verdict of INSUFFICIENT is never read as a statement about a or b.",
+    "A regression whose t-statistics are not finite (a zero Newey-West variance) with n_months >= 96 aborts the run rather than being mapped onto a verdict."
+  ],
+  "parameters": {
+    "first_month_allowed": "2016-12",
+    "newey_west_lags": 3,
+    "min_months": 96,
+    "months_per_year": 12
+  },
+  "input": {
+    "n_rows": 3728,
+    "first_date": "2012-01-03",
+    "last_date": "2026-10-29",
+    "last_month_in_file": "2026-10",
+    "last_month_complete": false,
+    "months_in_file": 178,
+    "path": "/home/runner/work/fntn/fntn/data_g/bench.csv"
+  },
+  "excluded_months": [
+    {
+      "month": "2012-01",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2012-02",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2012-03",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2012-04",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2012-05",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2012-06",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2012-07",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2012-08",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2012-09",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2012-10",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2012-11",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2012-12",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2013-01",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2013-02",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2013-03",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2013-04",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2013-05",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2013-06",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2013-07",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2013-08",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2013-09",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2013-10",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2013-11",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2013-12",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2014-01",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2014-02",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2014-03",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2014-04",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2014-05",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2014-06",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2014-07",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2014-08",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2014-09",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2014-10",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2014-11",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2014-12",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2015-01",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2015-02",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2015-03",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2015-04",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2015-05",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2015-06",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2015-07",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2015-08",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2015-09",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2015-10",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2015-11",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2015-12",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2016-01",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2016-02",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2016-03",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2016-04",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2016-05",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2016-06",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2016-07",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2016-08",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2016-09",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2016-10",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2016-11",
+      "reason": "before_2016-12"
+    },
+    {
+      "month": "2026-10",
+      "reason": "last_month_incomplete",
+      "last_date": "2026-10-29",
+      "last_weekday": "2026-10-30"
+    }
+  ],
+  "implementation": "verify.py, written from PREREG.md alone"
+}

@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/home/runner/work/fntn/fntn/tools/short_interest/verify.py", line 588, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/runner/work/fntn/fntn/tools/short_interest/verify.py", line 571, in main
+    result = run(args.data)
+             ^^^^^^^^^^^^^^
+  File "/home/runner/work/fntn/fntn/tools/short_interest/verify.py", line 488, in run
+    ndx_last, ndx_info = read_ndx_month_end(os.path.join(data_dir, "ndx.csv"))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/fntn/fntn/tools/short_interest/verify.py", line 245, in read_ndx_month_end
+    h = _find_header(rows, ["observation_date", "NASDAQ100"])
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/fntn/fntn/tools/short_interest/verify.py", line 192, in _find_header
+    raise ValueError(f"no header row containing {required} found")
+ValueError: no header row containing ['observation_date', 'NASDAQ100'] found

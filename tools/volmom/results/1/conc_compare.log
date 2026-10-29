@@ -1,0 +1,35 @@
+A: out/results_conc.json
+B: out/verify_conc.json
+rules: exact for counts, months, verdict; coefficients and r2 within 1e-09 relative (1e-12 absolute near zero); t within 1e-06 absolute
+
+AGREE     n_months                exact  A=118  B=118
+AGREE     first_month             exact  A=2016-12  B=2016-12
+AGREE     last_month              exact  A=2026-09  B=2026-09
+AGREE     verdict                 exact  A=CONCENTRATION EXPLAINS  B=CONCENTRATION EXPLAINS
+AGREE     a_monthly               coef   A=-0.0005137724045960078  B=-0.0005137724045960078  [diff 0.000e+00 tol 1.000e-12]
+AGREE     a_t                     t      A=-0.3034900166010924  B=-0.3034900166010925  [diff 5.551e-17 tol 1.000e-06]
+AGREE     b                       coef   A=0.7138653274340826  B=0.7138653274340824  [diff 2.220e-16 tol 7.139e-10]
+AGREE     b_t                     t      A=7.303855608594562  B=7.30385560859456  [diff 1.776e-15 tol 1.000e-06]
+AGREE     r2                      coef   A=0.3489767978691989  B=0.3489767978691989  [diff 0.000e+00 tol 3.490e-10]
+AGREE     gvip_minus_qqqe_annual  coef   A=0.01110020137975788  B=0.011100201379757894  [diff 1.388e-17 tol 1.110e-11]
+AGREE     gvip_minus_qqqe_t       t      A=0.5039201191090064  B=0.503920119109007  [diff 6.661e-16 tol 1.000e-06]
+AGREE     rsp.a_monthly           coef   A=-0.0019208516245182731  B=-0.0019208516245182734  [diff 2.168e-19 tol 1.921e-12]
+AGREE     rsp.a_t                 t      A=-1.2357469944861454  B=-1.2357469944861454  [diff 0.000e+00 tol 1.000e-06]
+AGREE     rsp.b                   coef   A=0.7920130358315344  B=0.7920130358315343  [diff 1.110e-16 tol 7.920e-10]
+AGREE     rsp.b_t                 t      A=6.756081809249276  B=6.756081809249274  [diff 1.776e-15 tol 1.000e-06]
+AGREE     rsp.r2                  coef   A=0.3511956327323291  B=0.3511956327323291  [diff 0.000e+00 tol 3.512e-10]
+AGREE     halves.#                count  A=2  B=2
+AGREE     halves.0.first_month    exact  A=2016-12  B=2016-12
+AGREE     halves.0.last_month     exact  A=2021-10  B=2021-10
+AGREE     halves.0.a_monthly      coef   A=-0.0015160518066939762  B=-0.0015160518066939758  [diff 4.337e-19 tol 1.516e-12]
+AGREE     halves.0.a_t            t      A=-0.7487186285470844  B=-0.748718628547084  [diff 3.331e-16 tol 1.000e-06]
+AGREE     halves.0.b              coef   A=0.8099821906131964  B=0.8099821906131961  [diff 3.331e-16 tol 8.100e-10]
+AGREE     halves.0.b_t            t      A=4.291571541613302  B=4.291571541613301  [diff 8.882e-16 tol 1.000e-06]
+AGREE     halves.1.first_month    exact  A=2021-11  B=2021-11
+AGREE     halves.1.last_month     exact  A=2026-09  B=2026-09
+AGREE     halves.1.a_monthly      coef   A=0.0006085392402390604  B=0.0006085392402390603  [diff 1.084e-19 tol 1.000e-12]
+AGREE     halves.1.a_t            t      A=0.23972377124663874  B=0.23972377124663868  [diff 5.551e-17 tol 1.000e-06]
+AGREE     halves.1.b              coef   A=0.6533841795206753  B=0.6533841795206752  [diff 1.110e-16 tol 6.534e-10]
+AGREE     halves.1.b_t            t      A=5.699055051091796  B=5.699055051091795  [diff 8.882e-16 tol 1.000e-06]
+
+OVERALL: AGREE (29 of 29 items agree)
