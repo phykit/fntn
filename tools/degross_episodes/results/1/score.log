@@ -1,0 +1,7 @@
+episodes: 21 (D 9, N 12)
+A_momentum: scored 9, hits 0, rate 0.00, chance 0.040, p 1.0000, DOES NOT SEE
+B_13f: scored 9, hits 2, rate 0.22, chance 0.029, p 0.0257, DOES NOT SEE
+pre10: n 9, mean 0.0265 vs unconditional 0.0069, p_lower 0.9432
+post21_pub: n 9, mean 0.0105 vs unconditional 0.0178, p_lower 0.3353
+post63_pub: n 8, mean 0.0473 vs unconditional 0.0510, p_lower 0.4486
+H-lag: NOT SUPPORTED
