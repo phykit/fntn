@@ -1,0 +1,6 @@
+ok   planted idiosyncratic premium found  (8 of 8)
+ok   no planted premium: false positives  (3 of 40)
+ok   Newey-West at 0 lags equals White
+ok   ATM call hand value  (0.079655674554)
+ok   month with 2 used names is dropped
+SELFTEST PASSED

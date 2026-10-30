@@ -1,0 +1,6 @@
+step: all
+job status at commit time: failure
+commit: 84244a9e40d577c60882bc14aae475e6e228154f
+run id: 41053396172
+run number: 2
+utc: 2026-10-30T12:21:14Z

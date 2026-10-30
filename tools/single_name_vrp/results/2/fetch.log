@@ -1,0 +1,19 @@
+VXAPLCLS: fetching
+  attempt 1 failed: TimeoutError
+  attempt 2 failed: TimeoutError
+  attempt 3 failed: TimeoutError
+  attempt 4 failed: TimeoutError
+  attempt 5 failed: TimeoutError
+Traceback (most recent call last):
+  File "/home/runner/work/fntn/fntn/tools/single_name_vrp/fetch.py", line 91, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/runner/work/fntn/fntn/tools/single_name_vrp/fetch.py", line 83, in main
+    vx = {k: fred(s) for k, s in FRED.items()}
+             ^^^^^^^
+  File "/home/runner/work/fntn/fntn/tools/single_name_vrp/fetch.py", line 38, in fred
+    text = get(url).decode("utf-8")
+           ^^^^^^^^
+  File "/home/runner/work/fntn/fntn/tools/single_name_vrp/fetch.py", line 32, in get
+    raise RuntimeError(f"{url}: no response after {tries} attempts ({type(last).__name__})")
+RuntimeError: https://fred.stlouisfed.org/graph/fredgraph.csv?id=VXAPLCLS: no response after 5 attempts (TimeoutError)
