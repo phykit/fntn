@@ -152,8 +152,9 @@ arm. For each cell, over all path-months (for V2, see the two written-only figur
   series from 1, drawdown measured against its running maximum, the most negative value taken)
   per path, then the median and the 5th percentile across paths (`numpy.percentile`, default
   linear interpolation);
-- V2 only: `frac_written`, and `mean_y_written` with `n_written`, over the written path-months
-  only;
+- V2 only: `frac_written`, and `mean_y_written`, `sd_y_written`, `se_y_written` with
+  `n_written`, over the written path-months only (`se_y_written = sd_y_written /
+  sqrt(n_written)`);
 - jump arm only: `frac_both_jump`, the fraction of path-months in which both legs jump.
 
 ## 9. Checks and verdict, fixed before the run
@@ -169,8 +170,29 @@ somewhere. A no-weight slope, `slope_y`, is the ordinary least-squares slope of 
    leg 2, with `E[y]` the closed form of section 3 at that cell's `m` and `v`, and
    `se_leg = sd_leg / sqrt(n)` for that leg's pooled path-months. Failure in any cell HALTS the
    run: a code defect, not a result. For V2 the check is applied over written path-months.
-2. **Theorem check** (control and Arm A, both m, both variants): `abs(z_D) <= 3`. Failure HALTS:
-   a code defect, because `E[d_k] = 0` exactly under the model.
+2. **Theorem check** (control and Arm A, both m). Under V1: `abs(z_D) <= 3`. Under V2: the
+   pooled difference `D2 = mean_y_written(1.0) - mean_y_written(-0.3)` with
+   `z2 = D2 / sqrt(se_w(1.0)^2 + se_w(-0.3)^2)`, where `se_w = sd_written / sqrt(n_written)` over
+   the cell's written path-months, must satisfy `abs(z2) <= 3` (the common random numbers make
+   this standard error an overstatement, so the check is conservative). Failure HALTS: a code
+   defect, because `E[y | written] = E[y]` exactly under the model.
+
+   *Annotation, 30 October 2026, before the freeze.* As first committed (`dc63086`) this check
+   applied the per-path paired `z_D` to V2 as well, on the claim that `E[d_k] = 0` exactly. That
+   claim is true for V1 and false for V2: the per-path written-month mean is a ratio
+   `sum(W_t y_t) / sum(W_t)` whose denominator counts later months' writing decisions, which
+   depend on this month's return through the equity path, so numerator and denominator are
+   correlated within a path and the ratio's expectation is not `E[y]` at finite `T`. The
+   discrepancy is upward (a month in which the stock falls has a high `y` and a low total
+   return, which triggers the governor and shrinks the denominator) and grows with how often
+   the governor fires, which grows with `rho`; it would have produced a halt on V2 cells that
+   was not a code defect. It was found on a 50-path smoke run made to confirm the code executes,
+   whose figures are not the registered ones and are not carried anywhere; the pooled
+   written-month means in that smoke run were flat in `rho`, as the theorem requires, which is
+   what located the error in the estimator rather than the code. The per-path `z_D` under V2 is
+   still computed and reported, without weight, as a worked instance of the bias: a per-pair
+   backtest statistic of this shape would show a higher written-month mean for more volatile
+   pairs for no economic reason.
 3. **Arm B direction** (both m, V1): `z_D >= 3`. Predicted. Failure is recorded as an
    unexpected result and the run does not halt.
 4. **Variance effect** (control, A and B, both m, V1): `sd_y` strictly increasing along
@@ -183,8 +205,9 @@ somewhere. A no-weight slope, `slope_y`, is the ordinary least-squares slope of 
    no better than at `rho_j = 0` for the same `rho_d`. Predicted. Failure of this second part is
    recorded.
 
-**Verdict on H-CC.** NOT SUPPORTED when checks 1 and 2 pass and no cell in any arm shows
-`z_D <= -3`. SUPPORTED when checks 1 and 2 pass and some cell shows `z_D <= -3`; under the
+**Verdict on H-CC.** A thesis hit is `z_D <= -3` in any V1 base cell or `z2 <= -3` in any V2
+cell. NOT SUPPORTED when checks 1 and 2 pass and there is no thesis hit. SUPPORTED when checks 1
+and 2 pass and there is a thesis hit; under the
 model this cannot occur in the control arm or Arm A (check 2 would halt first) and cannot occur
 in Arm B (its premium rises with `abs(rho)`), so a SUPPORTED verdict would mean the model
 written here is not the model that ran, and would be treated as a defect to diagnose. HALTED
@@ -195,15 +218,16 @@ it cannot be presented afterwards as a finding.
 
 `run.py` writes `results.json` with: `params` (every constant above); `cells`, a list of objects
 each carrying the cell's keys and the statistics of section 8; `paired`, a list of objects with
-`arm`, `m`, `variant`, `D`, `SE_D`, `z_D`, `slope_y` for the base design and one object per `m`
+`arm`, `m`, `variant`, `D`, `SE_D`, `z_D`, `slope_y` for the base design (V2 objects also carry
+`D2`, `SE2`, `z2` as defined in check 2) and one object per `m`
 with `arm = "jump"`, `variant = "V1"`, `D`, `SE_D`, `z_D` (the `z_J` of check 5) for the jump arm;
 `checks`, an object with keys `check1_analytic`, `check2_theorem`, `check3_armB`,
 `check4_variance`, `check5_jump`, each an object with a boolean `pass` and a free-text `detail`;
 `verdict`, one of `"NOT SUPPORTED"`, `"SUPPORTED"`, `"HALTED"`. `verify.py` is a second implementation written by a separate agent from
 this document alone and writes `verify.json` in the same shape. `compare.py` requires every
 `mean_y`, `sd_y`, `mean_y1`, `mean_y2`, `mean_g`, `sd_g`, `assign_*`, `mdd_*`, `frac_written`,
-`mean_y_written` and `worst_g` to agree to 1e-9 absolute, every `z_D` to 1e-6 absolute, and the
-verdict and every check's `pass` to agree exactly. The `(arm, m, variant, rho)` and
+`mean_y_written`, `sd_y_written` and `worst_g` to agree to 1e-9 absolute, every `z_D` and `z2`
+to 1e-6 absolute, and the verdict and every check's `pass` to agree exactly. The `(arm, m, variant, rho)` and
 `(m, rho_d, rho_j)` cells must match one for one.
 
 ## 11. Self-test
@@ -216,7 +240,13 @@ leg mean within 3 SE of the closed form; iv) in that simulation leg 1's returns 
 at `rho = 0.0` and `rho = 0.9`; v) the jump-arm log return has sample variance within 3% of
 `SIGMA^2 * DT` and sample mean of the gross return within 3 SE of `exp(MU * DT)` at
 `rho_d = 0, rho_j = 0`; vi) maximum drawdown of the sequence of total returns
-`[+0.10, -0.20, +0.05, -0.10]` is `-0.28` to 1e-12.
+`[+0.10, -0.20, +0.05, -0.10]` is `-0.244` to 1e-12.
+
+*Annotation, 30 October 2026, before the freeze.* Item vi) as first committed (`dc63086`) read
+`-0.28`, an asserted figure that was wrong: the equity path is 1.10, 0.88, 0.924, 0.8316 against a
+running peak of 1.10, so the deepest drawdown is `0.8316 / 1.10 - 1 = -0.244`. The figure now
+stands computed from the constants. No simulated figure had been produced when this was
+corrected; the correction is recorded here rather than rewritten silently.
 
 ## 12. Disclosures
 
@@ -233,3 +263,10 @@ at `rho = 0.0` and `rho = 0.9`; v) the jump-arm log return has sample variance w
 4. The analyst is a language model; the operator's thesis was stated to it in chat on
    30 October 2026 and the design in sections 2 to 6 was proposed by the analyst and accepted by
    the operator ("register it. and run it") without amendment.
+5. Two corrections were made to this document between its first commit (`dc63086`) and the
+   freeze, each annotated where it stands: the self-test drawdown figure (section 11, an
+   asserted number that was wrong) and the V2 theorem check (section 9, an estimator that does
+   not estimate what the check assumed). The second was located by a 50-path smoke run of the
+   code, whose output was inspected for that purpose and for no other; the registered figures
+   come from the run of record at the registered size and seed, and none of them had been
+   produced when the corrections were made.
