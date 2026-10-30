@@ -1,0 +1,20 @@
+agree    n_months: run=187 verify=187
+agree    first_month: run=2011-02-01 verify=2011-02-01
+agree    last_month: run=2026-09-01 verify=2026-09-01
+agree    verdict: run=NOT SUPPORTED verify=NOT SUPPORTED
+agree    ivrp_mean: run=0.0009932126731738511 verify=0.000993212673173854
+agree    vrp_mean: run=0.010847556995822044 verify=0.010847556995822044
+agree    svrp_mean: run=0.00985434432264819 verify=0.009854344322648187
+agree    expost_ivrp_mean: run=-0.00479056133048511 verify=-0.004790561330485112
+agree    cc_mean_pct: run=-0.6594484215482865 verify=-0.6594484215482865
+agree    ivrp_t: run=0.38849503071256297 verify=0.3884950307125641
+agree    vrp_t: run=2.1386875538264434 verify=2.1386875538264434
+agree    svrp_t: run=1.7324140988580814 verify=1.7324140988580803
+agree    expost_ivrp_t: run=-1.8113085692597022 verify=-1.8113085692597028
+agree    cc_t: run=-3.2508662859029407 verify=-3.250866285902941
+agree    share_ivrp_of_vrp (no weight, not required): run=0.09156095455929743 verify=0.09156095455929769
+agree    implied_idio_mean (no weight, not required): run=0.04568429877077121 verify=0.04568429877077121
+agree    pair_low_mean_pct (no weight, not required): run=-0.43184961502341396 verify=-0.43184961502341396
+agree    pair_high_mean_pct (no weight, not required): run=-0.887047228073159 verify=-0.887047228073159
+agree    pair_n (no weight, not required): run=1870 verify=1870
+COMPARE PASSED

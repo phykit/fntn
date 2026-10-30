@@ -1,0 +1,7 @@
+months used: 187  verdict: NOT SUPPORTED
+name      n    vrp_t   svrp_t   ivrp_t
+AAPL    187     2.55     0.82     1.39
+AMZN    187     2.65     2.33     0.59
+GOOG    187     1.73     1.75    -0.31
+GS      187     1.68     2.35    -0.15
+IBM     187     0.21     1.51    -0.74
