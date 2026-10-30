@@ -257,3 +257,24 @@ do, so that secret is no longer a second operator step.
 (on the free plan this is expected to FAIL on the split check for the history reason above, and
 the failure is the record of what the plan returns), `killtest-smoke`, `killtest`. Nothing
 measured; §13 row 31 unaffected.
+
+---
+
+## 8. 30 October 2026 (evening): both secrets set; the probe confirms the key is the free plan
+
+The operator reported both repository secrets added. `provider-probe` with
+`killtest_provider=eodhd` was dispatched as section 7 orders (run 41104668087). It FAILED, and
+the failure is the record section 7 anticipated:
+
+| Probe question | Answer |
+|---|---|
+| Live names (SPY, IWM, AAPL, KO, NVDA, WMT, BRK.B) | All present, **2025-10-30 to 2026-10-06 only (234 days)** |
+| Delisted names (ATVI, VMW, SPLK, SGEN, HZNP, SIVB, FRC, PXD) | **0 of 8 returned** |
+| NVDA split, 7 June 2024 | Not checkable: `datetime.date(2024, 6, 7) is not in list` (outside the one year returned) |
+| Probe verdict | `pass: false` |
+
+One year of history and no delisted names is the free (Sandbox) plan's footprint, so the key now
+in `EODHD_KEY` is a free-plan key. `killtest-smoke` and `killtest` were **not** dispatched: on this
+key the measurement refuses at the unanswered-ticker rule and, without delisted names, could kill
+but never pass (A6). Nothing measured; section 6's order stands once a Historian-plan key (or any
+plan with full history and delisted names) replaces the secret. §13 row 31 unaffected.
