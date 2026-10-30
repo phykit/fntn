@@ -33,6 +33,16 @@ heavily traded names, not the cross-section in that paper.
   (Amazon), `VXGOGCLS` (Google), `VXGSCLS` (Goldman Sachs), `VXIBMCLS` (IBM), and `VIXCLS` (the
   market). Fetched as CSV from `https://fred.stlouisfed.org/graph/fredgraph.csv?id=<series>`. A
   value recorded by FRED as missing stays missing.
+
+  *Amendment, 30 October 2026, before any input was read.* FRED did not answer the GitHub runner
+  in runs 1 and 2 (run ids 41053140387 and 41053396172; ten attempts in all, each a read
+  timeout), so no input was obtained. The source is replaced by CBOE's own published histories of
+  the same indices, `https://cdn-api.cboe.com/api/global/us_indices/daily_prices/<INDEX>_History.csv`
+  for `VXAPL`, `VXAZN`, `VXGOG`, `VXGS`, `VXIBM` and `VIX`, column `CLOSE`, dates given as
+  `MM/DD/YYYY`. These are the series FRED republishes. CBOE's single-stock files begin in January
+  2011 where FRED's begin in June 2010, so the sample loses about seven months at the start; at
+  roughly 180 remaining months it stays above the 120-month floor. A blank or non-numeric
+  `CLOSE` stays missing. Nothing else in this document changes.
 - **Prices.** Daily adjusted closes (`auto_adjust=True`) from Yahoo Finance via `yfinance`, from
   2009-01-01 to the fetch date, for AAPL, AMZN, GOOG, GS, IBM and SPY. GOOG is the listing matched
   to `VXGOGCLS`.

@@ -10,8 +10,6 @@ import os
 import sys
 import urllib.request
 
-FRED = {"AAPL": "VXAPLCLS", "AMZN": "VXAZNCLS", "GOOG": "VXGOGCLS", "GS": "VXGSCLS",
-        "IBM": "VXIBMCLS", "MKT": "VIXCLS"}
 TICKERS = ["AAPL", "AMZN", "GOOG", "GS", "IBM", "SPY"]
 
 
@@ -32,19 +30,31 @@ def get(url: str, tries: int = 5) -> bytes:
     raise RuntimeError(f"{url}: no response after {tries} attempts ({type(last).__name__})")
 
 
-def fred(series: str) -> dict[str, float]:
-    url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}"
-    print(f"{series}: fetching")
+CBOE = {"AAPL": "VXAPL", "AMZN": "VXAZN", "GOOG": "VXGOG", "GS": "VXGS", "IBM": "VXIBM",
+        "MKT": "VIX"}
+
+
+def cboe(index: str) -> dict[str, float]:
+    """CBOE's published history (PREREG section 2 amendment): column CLOSE, dates MM/DD/YYYY."""
+    url = f"https://cdn-api.cboe.com/api/global/us_indices/daily_prices/{index}_History.csv"
+    print(f"{index}: fetching")
     text = get(url).decode("utf-8")
-    out = {}
     rows = list(csv.reader(io.StringIO(text)))
+    head = [h.strip().upper() for h in rows[0]]
+    if "DATE" not in head or "CLOSE" not in head:
+        raise RuntimeError(f"{index}: unexpected header {head}")
+    di, ci = head.index("DATE"), head.index("CLOSE")
+    out = {}
     for row in rows[1:]:
-        if len(row) < 2:
+        if len(row) <= max(di, ci):
             continue
-        d, v = row[0].strip(), row[1].strip()
-        if v in ("", "."):
-            continue  # FRED's missing marker stays missing (PREREG section 2)
-        out[d] = float(v)
+        d, v = row[di].strip(), row[ci].strip()
+        try:
+            m, dd, y = d.split("/")
+            key = f"{int(y):04d}-{int(m):02d}-{int(dd):02d}"
+            out[key] = float(v)
+        except ValueError:
+            continue  # a blank or non-numeric close stays missing
     return out
 
 
@@ -80,8 +90,8 @@ def main(argv=None) -> int:
     ap.add_argument("--data", required=True)
     a = ap.parse_args(argv)
     os.makedirs(a.data, exist_ok=True)
-    vx = {k: fred(s) for k, s in FRED.items()}
-    write(os.path.join(a.data, "vx.csv"), list(FRED), vx)
+    vx = {k: cboe(s) for k, s in CBOE.items()}
+    write(os.path.join(a.data, "vx.csv"), list(CBOE), vx)
     px = prices()
     write(os.path.join(a.data, "prices.csv"), TICKERS, px)
     return 0
