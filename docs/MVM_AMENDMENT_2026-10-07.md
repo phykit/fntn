@@ -278,3 +278,62 @@ in `EODHD_KEY` is a free-plan key. `killtest-smoke` and `killtest` were **not** 
 key the measurement refuses at the unanswered-ticker rule and, without delisted names, could kill
 but never pass (A6). Nothing measured; section 6's order stands once a Historian-plan key (or any
 plan with full history and delisted names) replaces the secret. §13 row 31 unaffected.
+
+---
+
+## 9. 30 October 2026 (late): paid-plan key; probe and smoke pass; the measurement returns KILL
+
+The operator replaced `EODHD_KEY` with a paid-plan key. Section 6's order was then run in full.
+
+| Step | Run | Result |
+|---|---|---|
+| `provider-probe` | 41106179627 | PASS: history from 2022-07-25, 8 of 8 delisted names returned, NVDA split of 7 June 2024 correct |
+| `killtest-smoke` | 41106267135 | PASS: 149 of 150 tickers priced |
+| `killtest` | 41106568123 | **KILL** (hash `4d9455c43fb49ffb`, code `8549a96e44624d82`); not provisional, not tail-dependent |
+
+### Coverage
+
+14,661 events from 669,110 Form 4 filings; 2,451 of 2,471 tickers priced, 0 provider errors;
+9,284 scored trades across 44 clusters; effective span end 2026-08-27. Survivorship: 76 events
+unpriced, 14 lost on delisted issuers (7 with no prices, 7 truncated). Dropped: liquidity floor
+1,238, overlap 3,505, identity mismatch 232, insufficient history 261.
+
+### The deciding numbers (benchmark-adjusted, block-clustered 95% intervals, basis points per trade)
+
+| Reading | n | SPY mean | SPY 95% CI | IWM mean | IWM 95% CI |
+|---|---|---|---|---|---|
+| Gross, all trades | 9,284 | +0.31 | [-34.56, 35.18] | +13.57 | [-3.92, 31.07] |
+| **G: all trades, flat cost** | 9,284 | **-15.39** | **[-50.26, 19.48]** | -2.13 | [-19.62, 15.37] |
+| T: B1 to B4, tiered midpoint cost | 7,096 | -118.65 | [-153.73, -83.57] | -105.68 | [-122.45, -88.91] |
+| T: B1 to B2, tiered midpoint cost | 1,475 | -24.06 | [-52.28, 4.17] | -11.32 | [-43.32, 20.68] |
+
+The frozen rule takes the lower SPY bound: L_G = -50.26 bp. Under T, both tiers' lower bounds
+(-153.7 and -52.3) sit far below their time hurdles (29.8 and 59.4 bp). Excluding the tail changes
+nothing (0 trades excluded).
+
+### Size buckets, SPY-adjusted, gross
+
+| Bucket | Per year | n | Mean | 95% CI |
+|---|---|---|---|---|
+| B1 >$1bn | 29 | 106 | +56.6 | [-21.3, 134.5] |
+| B2 $100m to $1bn | 375 | 1,369 | -0.4 | [-29.4, 28.6] |
+| B3 $10m to $100m | 762 | 2,784 | +12.6 | [-30.8, 55.9] |
+| B4 $1m to $10m | 777 | 2,837 | -10.7 | [-48.7, 27.3] |
+| B5 <$1m | 599 | 2,188 | -3.3 | [-51.8, 45.2] |
+
+The only positive point estimate of any size is B1, 106 trades over the span, with an interval
+spanning zero. Recorded as an observation; it is not a finding and nothing was registered on it.
+
+### The superseded 19 September reading
+
+Raw return, market included: mean +29.6 bp, CI [-11.1, 70.3], t 1.47, branch (c). Amendment A1
+exists because a rising market passes this reading with no edge; it decides nothing, and it would
+not have passed either.
+
+### Reading
+
+Gross of costs there is no abnormal return to purchases by officers and directors entered after
+disclosure in this span: +0.3 bp against SPY. Costs then make it negative. The idea is killed
+under the frozen rule, on a survivorship-free sample. Arithmetic at the point estimate, sixteen
+slots of GBP 6,250: B1 to B4 GBP -59,800 a year over a tracker, B1 to B2 GBP -6,073. Nothing in
+this section authorises capital; §13 row 31 unaffected.
