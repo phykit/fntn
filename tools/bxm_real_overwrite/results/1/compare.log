@@ -1,0 +1,18 @@
+agree    n: run=294 verify=294
+agree    first_month: run=2002-04 verify=2002-04
+agree    last_month: run=2026-09 verify=2026-09
+agree    verdict: run=NOT SUPPORTED verify=NOT SUPPORTED
+agree    discarded: run=0 verify=0
+agree    Delta: run=-0.029122528738330572 verify=-0.029122528738330572
+agree    lower: run=-0.10572648130345769 verify=-0.10572648130345769
+agree    sh_bxm: run=0.17890474163150183 verify=0.17890474163150183
+agree    sh_spy: run=0.2080272703698324 verify=0.2080272703698324
+agree    boot_mean: run=-0.03354114020461766 verify=-0.03354114020461766 (no weight)
+agree    boot_p95: run=0.014712957044014218 verify=0.014712957044014218 (no weight)
+agree    delta_pre2011: run=0.028338322294910318 verify=0.028338322294910318 (no weight)
+agree    delta_from2011: run=-0.06005053912609298 verify=-0.06005053912609298 (no weight)
+agree    diff_mean_pct: run=-0.3412482035125049 verify=-0.3412482035125049 (no weight)
+agree    diff_t: run=-2.794460648064913 verify=-2.794460648064913 (no weight)
+agree    diff_mean_pct_from2011: run=-0.5398159705598199 verify=-0.5398159705598199 (no weight)
+agree    recon_mean_pct: run=-0.5359598536820298 verify=-0.5359598536820298 (no weight)
+COMPARE PASSED

@@ -1,0 +1,6 @@
+ok   null: SUPPORTED in at most 2 of 40  (1 of 40)
+ok   planted: SUPPORTED in 8 of 8  (8 of 8)
+ok   Sh([1, 2, 3]) = 2
+ok   max drawdown hand value
+ok   same seed, identical Delta*
+SELFTEST PASSED

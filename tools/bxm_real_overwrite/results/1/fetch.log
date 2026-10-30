@@ -1,0 +1,6 @@
+BXM: fetching
+VIX: fetching
+series.csv: 9305 rows
+  BXM: 6189 non-missing, 2002-03-22 to 2026-10-29
+  SPY: 6247 non-missing, 2002-01-02 to 2026-10-29
+  VIX: 9305 non-missing, 1990-01-02 to 2026-10-29
