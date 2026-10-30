@@ -49,3 +49,11 @@ as writing them on the five stocks separately, in the direction the correlation 
 predicts. It is the one result in this series that favours a correlation-based route to better
 risk-adjusted returns from call writing, and it points to the index, not to picking an
 uncorrelated pair. It is weak evidence for the reasons above and is not a basis for capital.
+
+## Annotation, 30 October 2026
+
+Superseded in substance by `docs/BXM_REAL_OVERWRITE_2026-10-30.md`: at traded option prices the
+index overwrite lagged holding by 0.54% a month over 2011-02 to 2026-09, against the 0.22% the
+VIX proxy here implied, and lowered the Sharpe ratio. The proxy's overstatement of the index
+premium (about 0.31% a month) exceeds the margin by which this test passed. The verdict above
+stands as recorded and is read as an artefact of the proxy.
