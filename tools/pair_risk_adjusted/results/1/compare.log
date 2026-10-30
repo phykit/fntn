@@ -1,0 +1,66 @@
+agree    n: run=187 verify=187
+agree    first_month: run=2011-02-01 verify=2011-02-01
+agree    last_month: run=2026-09-01 verify=2026-09-01
+agree    verdict: run=NOT SUPPORTED verify=NOT SUPPORTED
+agree    discarded: run=0 verify=0
+agree    D: run=0.03099232497023091 verify=0.03099232497023091
+agree    lower: run=-0.06061663938796728 verify=-0.06061663938796728
+agree    AAPL-AMZN.ir: run=-0.17353991924974466 verify=-0.17353991924974466
+agree    AAPL-AMZN.delta: run=0.006673447920154091 verify=0.006673447920154091
+agree    AAPL-AMZN.sharpe_held: run=0.3210829321445269 verify=0.3210829321445269
+agree    AAPL-AMZN.sharpe_covered: run=0.436551023921823 verify=0.436551023921823
+agree    AAPL-AMZN.sharpe_diff: run=0.11546809177729611 verify=0.11546809177729611
+agree    AAPL-GOOG.ir: run=-0.2283899261486276 verify=-0.2283899261486276
+agree    AAPL-GOOG.delta: run=-0.06789041535201013 verify=-0.06789041535201013
+agree    AAPL-GOOG.sharpe_held: run=0.3465132932005364 verify=0.3465132932005364
+agree    AAPL-GOOG.sharpe_covered: run=0.42068425288751427 verify=0.42068425288751427
+agree    AAPL-GOOG.sharpe_diff: run=0.07417095968697784 verify=0.07417095968697784
+agree    AAPL-GS.ir: run=-0.1890795037799732 verify=-0.1890795037799732
+agree    AAPL-GS.delta: run=0.05950394779142415 verify=0.05950394779142415
+agree    AAPL-GS.sharpe_held: run=0.29063015917698115 verify=0.29063015917698115
+agree    AAPL-GS.sharpe_covered: run=0.3360346495561953 verify=0.3360346495561953
+agree    AAPL-GS.sharpe_diff: run=0.045404490379214124 verify=0.045404490379214124
+agree    AAPL-IBM.ir: run=-0.17008201145244425 verify=-0.17008201145244425
+agree    AAPL-IBM.delta: run=-0.01974466425433183 verify=-0.01974466425433183
+agree    AAPL-IBM.sharpe_held: run=0.27070949389025617 verify=0.27070949389025617
+agree    AAPL-IBM.sharpe_covered: run=0.322468525308521 verify=0.322468525308521
+agree    AAPL-IBM.sharpe_diff: run=0.05175903141826482 verify=0.05175903141826482
+agree    AMZN-GOOG.ir: run=-0.1578364888785637 verify=-0.1578364888785637
+agree    AMZN-GOOG.delta: run=0.13465227200238125 verify=0.13465227200238125
+agree    AMZN-GOOG.sharpe_held: run=0.2938257596560581 verify=0.2938257596560581
+agree    AMZN-GOOG.sharpe_covered: run=0.4003960137781153 verify=0.4003960137781153
+agree    AMZN-GOOG.sharpe_diff: run=0.10657025412205717 verify=0.10657025412205717
+agree    AMZN-GS.ir: run=-0.13333808429481786 verify=-0.13333808429481786
+agree    AMZN-GS.delta: run=0.014721741180556719 verify=0.014721741180556719
+agree    AMZN-GS.sharpe_held: run=0.2697865318383982 verify=0.2697865318383982
+agree    AMZN-GS.sharpe_covered: run=0.36014354822730477 verify=0.36014354822730477
+agree    AMZN-GS.sharpe_diff: run=0.09035701638890659 verify=0.09035701638890659
+agree    AMZN-IBM.ir: run=-0.11352760089355321 verify=-0.11352760089355321
+agree    AMZN-IBM.delta: run=-0.009485558708018954 verify=-0.009485558708018954
+agree    AMZN-IBM.sharpe_held: run=0.24374087689684235 verify=0.24374087689684235
+agree    AMZN-IBM.sharpe_covered: run=0.32394738964964104 verify=0.32394738964964104
+agree    AMZN-IBM.sharpe_diff: run=0.08020651275279869 verify=0.08020651275279869
+agree    GOOG-GS.ir: run=-0.1710800746223747 verify=-0.1710800746223747
+agree    GOOG-GS.delta: run=0.13129491411293867 verify=0.13129491411293867
+agree    GOOG-GS.sharpe_held: run=0.2701919098311153 verify=0.2701919098311153
+agree    GOOG-GS.sharpe_covered: run=0.3245809205450889 verify=0.3245809205450889
+agree    GOOG-GS.sharpe_diff: run=0.05438901071397362 verify=0.05438901071397362
+agree    GOOG-IBM.ir: run=-0.16201811304205513 verify=-0.16201811304205513
+agree    GOOG-IBM.delta: run=0.014033732152399253 verify=0.014033732152399253
+agree    GOOG-IBM.sharpe_held: run=0.2587193154631384 verify=0.2587193154631384
+agree    GOOG-IBM.sharpe_covered: run=0.3064528492269112 verify=0.3064528492269112
+agree    GOOG-IBM.sharpe_diff: run=0.04773353376377276 verify=0.04773353376377276
+agree    GS-IBM.ir: run=-0.094680423012731 verify=-0.094680423012731
+agree    GS-IBM.delta: run=0.04616383285681594 verify=0.04616383285681594
+agree    GS-IBM.sharpe_held: run=0.17970424436339327 verify=0.17970424436339327
+agree    GS-IBM.sharpe_covered: run=0.23287596405621327 verify=0.23287596405621327
+agree    GS-IBM.sharpe_diff: run=0.05317171969282 verify=0.05317171969282
+agree    boot_mean: run=0.04926348027940701 verify=0.04926348027940701 (no weight)
+agree    boot_p95: run=0.1653912536277607 verify=0.1653912536277607 (no weight)
+agree    spearman_c_ir: run=-0.32121212121212117 verify=-0.3212121212121212 (no weight)
+agree    spearman_c_divratio: run=0.9272727272727272 verify=0.9272727272727272 (no weight)
+agree    decomp_mean_diff: run=0.002186163427329459 verify=0.002186163427329459 (no weight)
+agree    decomp_sd_diff: run=-0.004216268730866965 verify=-0.004216268730866965 (no weight)
+agree    recon_low_pct: run=-0.4318491822741286 verify=-0.43184918227412866 (no weight)
+agree    recon_high_pct: run=-0.887047712379146 verify=-0.8870477123791461 (no weight)
+COMPARE PASSED

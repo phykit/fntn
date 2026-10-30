@@ -1,0 +1,10 @@
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+ok   null: SUPPORTED in at most 4 of 40  (2 of 40)
+ok   planted: SUPPORTED in 8 of 8  (8 of 8)
+ok   IR of [1, 2, 3] is 2
+ok   value equal to median goes to H
+ok   same seed, identical D*
+SELFTEST PASSED
