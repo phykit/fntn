@@ -27,7 +27,10 @@ def main(argv=None) -> int:
             bad.append(label)
 
     for k in EXACT:
-        cmp(k, r.get(k), v.get(k), None)
+        x, y = r.get(k), v.get(k)
+        if k in ("first_month", "last_month") and x and y:
+            x, y = x[:7], y[:7]  # one implementation writes YYYY-MM, the other the full t0 date
+        cmp(k, x, y, None)
     for k in CLOSE:
         cmp(k, r.get(k), v.get(k), 1e-9)
     for k in NOWEIGHT:
