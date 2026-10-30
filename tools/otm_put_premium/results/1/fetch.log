@@ -1,0 +1,8 @@
+PPUT: fetching
+PUT: fetching
+BXM: fetching
+series.csv: 10162 rows
+  PPUT: 10157 non-missing, 1986-06-30 to 2026-10-29
+  SPY: 8497 non-missing, 1993-01-29 to 2026-10-30
+  PUT: 4995 non-missing, 1991-03-04 to 2026-10-29
+  BXM: 6189 non-missing, 2002-03-22 to 2026-10-29

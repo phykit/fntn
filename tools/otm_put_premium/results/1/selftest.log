@@ -1,0 +1,6 @@
+ok   null: SUPPORTED in at most 2 of 40  (0 of 40)
+ok   planted +0.8% a month: SUPPORTED in 8 of 8  (8 of 8)
+ok   Newey-West lag terms vanish only with zero autocovariance (rows agree with nw)
+ok   max drawdown hand value
+ok   same seed, identical bootstrap
+SELFTEST PASSED

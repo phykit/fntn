@@ -1,0 +1,13 @@
+agree    n: run=404 verify=404
+agree    first_month: run=1993-02 verify=1993-02
+agree    last_month: run=2026-09 verify=2026-09
+agree    verdict: run=NOT SUPPORTED verify=NOT SUPPORTED
+agree    mean_y: run=0.0026317795492758226 verify=0.0026317795492758226
+agree    t: run=2.7234072624220604 verify=2.7234072624220604
+agree    t_crit: run=3.0088884164962155 verify=3.0088884164962155
+agree    mean_y_pre: run=0.0026557185129562557 verify=0.0026557185129562557
+agree    mean_y_post: run=0.0025777238248361335 verify=0.0025777238248361335
+agree    t_pre: run=2.212454987692156 verify=2.212454987692156 (no weight)
+agree    t_post: run=1.6097886987462326 verify=1.6097886987462326 (no weight)
+agree    verdict_normal: run=SUPPORTED verify=SUPPORTED (no weight)
+COMPARE PASSED
