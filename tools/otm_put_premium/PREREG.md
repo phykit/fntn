@@ -51,10 +51,27 @@ The analyst predicts SUPPORTED on the full sample and does not predict the unsee
 Mean of `y` with a Newey-West standard error (3 lags, Bartlett `1 - l / 4`, no small-sample
 correction, constant-only regression); `t = mean / se`.
 
-INSUFFICIENT if `n < 120`; SUPPORTED if `mean(y) > 0` and `t >= 2.326`; NOT SUPPORTED otherwise.
+INSUFFICIENT if `n < 120`; SUPPORTED if `mean(y) > 0` and `t >= t_crit`; NOT SUPPORTED otherwise.
+
+**Critical value `t_crit` (block-bootstrap t).** `rng = numpy.random.default_rng(20261106)`;
+`B = 1999` replications drawn together as `starts = rng.integers(0, n - 11, size=(1999,
+ceil(n / 12)))`; replication `b`'s month list is the concatenation of `range(s, s + 12)` over row `b`
+of `starts`, in order, truncated to `n`; `t*_b = (mean(y*_b) - mean(y)) / se_NW(y*_b)` with the same
+Newey-West estimator; `t_crit = numpy.percentile(t*, 99)`.
+
+*Amendment, 30 October 2026, before any input was fetched.* As first committed (`ff4991c`) the
+critical value was the normal 2.326. The self-test showed that on synthetic data shaped like a
+short put's returns (small gains, 8% of months a large loss) with a true mean of zero, `t >= 2.326`
+occurred in 3.75% of 2,000 worlds, nearly four times the nominal 1%; the null `t`'s 99th percentile
+was 3.36. Negative skew inflates the upper tail of the t statistic, so the normal critical value is
+biased towards SUPPORTED on exactly this kind of data. On the same worlds the block-bootstrap t held
+0.75% (400 worlds). Its cost, stated: power against a true premium of +0.3% a month fell to 43%
+(200 worlds), so a premium of that size can be missed. The normal-critical-value verdict is reported
+without weight.
 
 ## 5. Reported without weight
 
+- `t_crit`, and the verdict under the normal critical value 2.326 (`verdict_normal`).
 - `mean(y)` and `t` in two sub-periods: months to 2016-05 (summarised before; not blind) and from
   2016-06 (the unseen sub-period).
 - `y`: annualised mean (`12 * mean`), sd, ratio `mean / sd`, skewness (`mean(e^3) / sd_pop^3`),
@@ -73,13 +90,14 @@ INSUFFICIENT if `n < 120`; SUPPORTED if `mean(y) > 0` and `t >= 2.326`; NOT SUPP
 
 ## 6. Self-test, independent check
 
-1. `selftest.py`: with synthetic monthly `y` (n = 400) of mean 0 and fat-tailed losses, SUPPORTED in
-   no more than 2 of 40 worlds; with mean +0.3% a month and the same shape, SUPPORTED in 8 of 8; the
-   Newey-West standard error at 0 lags equals `sqrt(sum e^2) / n`; maximum drawdown of
-   `[+0.10, -0.20, +0.05, -0.10]` is `-0.244`; same seed gives identical bootstrap draws.
+1. `selftest.py`: with synthetic monthly `y` (n = 400) shaped as above with population mean 0,
+   SUPPORTED in no more than 2 of 40 worlds; with population mean +0.8% a month and the same shape,
+   SUPPORTED in 8 of 8; the Newey-West standard error at 0 lags equals `sqrt(sum e^2) / n`; maximum
+   drawdown of `[+0.10, -0.20, +0.05, -0.10]` is `-0.244`; same seed gives identical bootstrap
+   draws.
 2. `verify.py` is a second implementation by a separate agent from this document alone.
-   `compare.py` requires `n`, the first and last month, the verdict, `mean(y)` (1e-12) and `t`
-   (1e-9), and both sub-period means (1e-12) to agree.
+   `compare.py` requires `n`, the first and last month, the verdict, `mean(y)` (1e-12), `t` and
+   `t_crit` (1e-9), and both sub-period means (1e-12) to agree.
 
 ## 7. Disclosures
 
