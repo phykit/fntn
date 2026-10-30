@@ -1,0 +1,10 @@
+ok   bs_call hand value  (0.079655674554 vs 0.079655674554)
+ok   E[y] = 0 at mu = r, m = 1.00  (7.633e-17)
+ok   E[y] = 0 at mu = r, m = 1.05  (-1.735e-17)
+ok   small simulation leg 1 within 3 SE of closed form  (z = +1.64)
+ok   small simulation leg 2 within 3 SE of closed form  (z = +0.20)
+ok   leg 1 identical across rho
+ok   jump arm variance  (ratio 0.9956)
+ok   jump arm gross mean  (z = -1.88)
+ok   max drawdown hand value  (-0.244000000000)
+SELFTEST PASSED

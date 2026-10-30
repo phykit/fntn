@@ -1,0 +1,24 @@
+agree    984 cell statistics within 1e-9
+agree    z_D ('A', 1.0, 'V1'): run=0.7479432967955106 verify=0.7479432967955106
+agree    z_D ('A', 1.0, 'V2'): run=5.713100542029529 verify=5.713100542029529
+agree    z2 ('A', 1.0, 'V2'): run=-0.33090923368402214 verify=-0.33090923368402214
+agree    z_D ('A', 1.05, 'V1'): run=0.5066193333553634 verify=0.5066193333553634
+agree    z_D ('A', 1.05, 'V2'): run=4.618753685900148 verify=4.618753685900148
+agree    z2 ('A', 1.05, 'V2'): run=-0.9282653321407905 verify=-0.9282653321407905
+agree    z_D ('B', 1.0, 'V1'): run=28.76447052726505 verify=28.76447052726505
+agree    z_D ('B', 1.05, 'V1'): run=38.26037690405953 verify=38.26037690405953
+agree    z_D ('control', 1.0, 'V1'): run=0.7479432967954783 verify=0.7479432967954783
+agree    z_D ('control', 1.0, 'V2'): run=6.259407539472461 verify=6.259407539472461
+agree    z2 ('control', 1.0, 'V2'): run=-0.2566094947380572 verify=-0.2566094947380572
+agree    z_D ('control', 1.05, 'V1'): run=0.5066193333553514 verify=0.5066193333553514
+agree    z_D ('control', 1.05, 'V2'): run=5.243667662442334 verify=5.243667662442334
+agree    z2 ('control', 1.05, 'V2'): run=-0.4422702321815877 verify=-0.4422702321815877
+agree    z_D ('jump', 1.0, 'V1'): run=1.1407554741639319 verify=1.1407554741639319
+agree    z_D ('jump', 1.05, 'V1'): run=1.0465619062917215 verify=1.0465619062917215
+agree    check1_analytic: run=True verify=True
+agree    check2_theorem: run=True verify=True
+agree    check3_armB: run=True verify=True
+agree    check4_variance: run=True verify=True
+agree    check5_jump: run=True verify=True
+agree    verdict: run=NOT SUPPORTED verify=NOT SUPPORTED
+COMPARE PASSED
