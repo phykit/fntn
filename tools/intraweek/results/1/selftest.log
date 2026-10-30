@@ -1,0 +1,7 @@
+ok   planted True, seed 1: SUPPORTED (P1 n_sig 52, d -0.63%, p 0.0023; P2 n_sig 68, d -0.74%, p 0.0016; daily slope1 +0.079 t +4.12; episodes n 8 hit 0.125; trade n 52 mean +0.24%)
+ok   planted True, seed 2: SUPPORTED (P1 n_sig 45, d -0.93%, p 0.0023; P2 n_sig 70, d -0.82%, p 0.0016; daily slope1 +0.054 t +2.51; episodes n 8 hit 0.25; trade n 45 mean +0.29%)
+ok   planted False, seed 3: NOT SUPPORTED (P1 n_sig 46, d +0.09%, p 0.7720; P2 n_sig 59, d -0.11%, p 0.1571; daily slope1 +0.003 t +0.14; episodes n 8 hit 0.125; trade n 46 mean -0.51%)
+ok   planted False, seed 4: NOT SUPPORTED (P1 n_sig 47, d -0.08%, p 0.2719; P2 n_sig 80, d -0.12%, p 0.1230; daily slope1 -0.001 t -0.04; episodes n 8 hit 0.125; trade n 47 mean -0.34%)
+ok   planted False, seed 5: NOT SUPPORTED (P1 n_sig 45, d +0.02%, p 0.5833; P2 n_sig 73, d -0.01%, p 0.4620; daily slope1 -0.025 t -1.38; episodes n 8 hit 0.0; trade n 45 mean -0.44%)
+ok   planted False, seed 6: NOT SUPPORTED (P1 n_sig 46, d +0.19%, p 0.9459; P2 n_sig 76, d +0.08%, p 0.7524; daily slope1 -0.023 t -1.16; episodes n 8 hit 0.0; trade n 46 mean -0.63%)
+SELFTEST PASSED

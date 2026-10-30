@@ -1,0 +1,152 @@
+{
+  "pairs": {
+    "P1": {
+      "legs": [
+        "GVIP",
+        "QQQ"
+      ],
+      "n_admissible": 519,
+      "n_eligible": 446,
+      "first_eligible": "2017-11-17",
+      "last_eligible": "2026-10-23",
+      "n_signal": 66,
+      "mean_R_signal": -0.00258051536116166,
+      "mean_R_other": 0.00040820848173065826,
+      "d": -0.002988723842892318,
+      "p_shift": 0.0136986301369863,
+      "n_shifts": 437,
+      "share_R_negative_signal": 0.5909090909090909,
+      "top": {
+        "n_signal": 57,
+        "d": -0.0007458418528295418,
+        "p_shift": 0.7420091324200914
+      },
+      "one_day": {
+        "n_signal": 53,
+        "d": -0.0029089768996557754,
+        "p_shift": 0.03881278538812785
+      },
+      "daily": {
+        "slope1": -0.03944864405148451,
+        "t1": -1.3143497671881055,
+        "n1": 2501,
+        "slope23": -0.025259229712844895,
+        "t23": -0.7052480152149586,
+        "n23": 2498
+      },
+      "episodes": {
+        "n": 21,
+        "mean_by_day": [
+          0.00027983998494303847,
+          -0.0033929410882711404,
+          4.130333463516661e-05,
+          -0.00015686566774846572,
+          0.0011238606350855423
+        ],
+        "mean_S": -0.0031131011033281018,
+        "mean_R": 0.0007942296095749971,
+        "hit_rate": 0.2857142857142857,
+        "n_with_reference": 21
+      },
+      "trade": {
+        "n": 66,
+        "share_profitable": 0.3787878787878788,
+        "mean": -0.001476302820656522,
+        "median": -0.00239063887115761,
+        "t": -1.14394509521626,
+        "worst": -0.01989245071847791,
+        "net_per_year": -0.01136024950783225,
+        "trade_passes": false
+      }
+    },
+    "P2": {
+      "legs": [
+        "MTUM",
+        "SPY"
+      ],
+      "n_admissible": 705,
+      "n_eligible": 632,
+      "first_eligible": "2014-04-25",
+      "last_eligible": "2026-10-23",
+      "n_signal": 72,
+      "mean_R_signal": 0.002422450067078863,
+      "mean_R_other": -0.00017637396585304228,
+      "d": 0.002598824032931905,
+      "p_shift": 0.9711538461538461,
+      "n_shifts": 623,
+      "share_R_negative_signal": 0.4166666666666667,
+      "top": {
+        "n_signal": 82,
+        "d": -0.002856001589842068,
+        "p_shift": 0.9903846153846154
+      },
+      "one_day": {
+        "n_signal": 69,
+        "d": 0.0040224156436991405,
+        "p_shift": 0.9983974358974359
+      },
+      "daily": {
+        "slope1": 0.022363598549846604,
+        "t1": 0.8831192256521324,
+        "n1": 3402,
+        "slope23": -0.07085792328680819,
+        "t23": -2.2148294647309106,
+        "n23": 3399
+      },
+      "episodes": {
+        "n": 21,
+        "mean_by_day": [
+          0.0005407153657359453,
+          -0.003834434967641972,
+          -0.0050189975326352864,
+          -0.0002813994199754456,
+          -0.0015508995551256816
+        ],
+        "mean_S": -0.003293719601906027,
+        "mean_R": -0.006555887068664855,
+        "hit_rate": 0.19047619047619047,
+        "n_with_reference": 21
+      },
+      "trade": {
+        "n": 72,
+        "share_profitable": 0.4166666666666667,
+        "mean": -0.0034786669982957937,
+        "median": -0.0030783131712752926,
+        "t": -2.8677340243969622,
+        "worst": -0.026324034738120304,
+        "net_per_year": -0.02060779943294217,
+        "trade_passes": false
+      }
+    }
+  },
+  "criteria": {
+    "p1": true,
+    "p2": false
+  },
+  "p1_alone": true,
+  "verdict": "NOT SUPPORTED",
+  "choices": {
+    "spread_definition": "s_t = (first_t/first_{t-1} - 1) - (second_t/second_{t-1} - 1) where t-1 is the preceding ROW of bench.csv whatever the calendar gap; the first row has no s; s is undefined when any of the four closes on rows t or t-1 is blank",
+    "week_grouping": "rows grouped by date.isocalendar() (ISO year, ISO week); days numbered 1..n in date order within the group; week label = the date string of the last row in the group",
+    "admissible": "n >= 4 trading rows in the ISO week and s defined on every one of them (per pair)",
+    "reference_set": "the admissible weeks of the same pair strictly preceding w in date order, the most recent 104 of them; not filtered for episodes; counted over admissible weeks, not eligible ones",
+    "eligible": "admissible, reference set of at least 52 weeks, and the week's (ISO year, ISO week) is not the (ISO year, ISO week) of any of the 21 episode week_end dates (D and N alike)",
+    "signal_rule": "S_w <= numpy.percentile(reference S values, 10) with the default linear method; 'at or below' is <=; top decile is S_w >= numpy.percentile(reference S, 90)",
+    "one_day_reference": "the one-day signal uses S' = s_1 of the same reference set (preceding 104 admissible weeks) and the same eligibility; the 10th percentile is taken over the reference S' values",
+    "mean_R_other": "mean of R over ELIGIBLE weeks that are not signal weeks (all of them)",
+    "d_undefined": "d is null when either group is empty; the shift p is then null too",
+    "shift_p": "k = 5 .. n_eligible - 5 inclusive, I_k = numpy.roll(I, k) over the eligible weeks in date order, d_k = mean R[I_k] - mean R[~I_k]; lower p counts d_k <= d, upper counts d_k >= d; p = (1 + count) / (1 + n_shifts); n_shifts = max(0, n_eligible - 9); p is null when n_shifts == 0",
+    "share_R_negative_signal": "share of signal weeks with R_w < 0 (strict)",
+    "daily_regressions": "OLS with an intercept; observation pairs are consecutive ROWS of bench.csv with every term defined (s_t and s_{t+1} for the first; s_{t-1}, s_t, s_{t+1}, s_{t+2}, s_{t+3} for the second); no week boundaries; overlapping observations kept",
+    "newey_west_t": "t = slope / sqrt(V[1,1]) with V = (X'X)^-1 S (X'X)^-1, S = sum_{l=-5}^{5} (1 - |l|/6) Gamma_l, Gamma_l = sum_t x_t e_t e_{t-l} x_{t-l}'; no n/(n-k) factor (statsmodels HAC maxlags=5 use_correction=False)",
+    "episode_weeks": "a pair's admissible weeks whose (ISO year, ISO week) matches that of an episode week_end; counted as weeks, so two episodes in one ISO week would count once; mean_by_day position k is the mean of s_k over those weeks that have a day k (positions beyond 5 are ignored); mean_S and mean_R are over all those weeks; hit_rate = hits / n_with_reference where n_with_reference counts those weeks whose reference set holds at least 52 weeks and a hit is S_w <= the 10th percentile of that reference set; hit_rate is null when n_with_reference == 0",
+    "trade": "one trade per eligible signal week: net = -R_w - cost - borrow, cost 0.0040 (P1) or 0.0010 (P2), borrow = 0.005 * (n - 2) / 252 with n the week's trading-day count; share_profitable counts net > 0 strictly; t = mean / (std(ddof=1) / sqrt(n)), null when n < 2 or std == 0; worst = min(net); net_per_year = sum(net) / (n_eligible / 52); trade_passes = mean > 0 and t >= 2 and n >= 40",
+    "criteria": "criteria.p1 = (d < 0 and p <= 0.025) for P1 with no count condition, because the 40-signal floor on P1 is the INSUFFICIENT clause; criteria.p2 = (d < 0 and p <= 0.05 and n_signal >= 40) for P2; a null d or p fails the criterion",
+    "verdict": "INSUFFICIENT if P1 n_signal < 40; else SUPPORTED if criteria.p1 and criteria.p2; else NOT SUPPORTED; p1_alone = (verdict == 'NOT SUPPORTED' and criteria.p1)",
+    "legs": "a two-element list [first leg, second leg]",
+    "labels": "week labels are ISO date strings YYYY-MM-DD of the week's last trading row",
+    "nan": "any quantity that cannot be computed is written as JSON null",
+    "ddof": "trade t uses ddof=1; the Newey-West variance uses no degrees-of-freedom factor",
+    "n_episode_iso_weeks": 21
+  }
+}
