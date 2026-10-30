@@ -1,0 +1,123 @@
+name: Pair risk-adjusted covered-call excess (side test)
+
+# NON-EVIDENTIARY side test, not part of the FNTN funnel. See docs/PAIR_RISK_ADJUSTED_2026-10-30.md.
+# Runs when tools/pair_risk_adjusted/DISPATCH changes on this branch. Inputs (CBOE CSV, Yahoo prices)
+# live on the runner's disk under data/ for the length of the job only and are never committed;
+# only derived statistics and logs are committed under tools/single_name_vrp/results/<run>/.
+on:
+  push:
+    branches: [covered-call-pair-mc-2026-10-30]
+    paths: [tools/pair_risk_adjusted/DISPATCH]
+
+concurrency:
+  group: pair-risk-adjusted
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      BRANCH: covered-call-pair-mc-2026-10-30
+      T: tools/pair_risk_adjusted
+      S: tools/single_name_vrp
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 50
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pinned dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --quiet "numpy==2.2.6" "yfinance>=0.2.50"
+      - name: Resolve the step
+        id: step
+        shell: bash
+        run: |
+          set -euo pipefail
+          s="$(head -1 "$T/DISPATCH" | awk '{print $1}')"
+          case "$s" in all) ;; *) echo "DISPATCH names no known step: '$s'"; exit 1 ;; esac
+          echo "step=$s" >> "$GITHUB_OUTPUT"
+          mkdir -p out
+          python -c "import numpy, sys; print('numpy', numpy.__version__); print(sys.version)" | tee out/env.txt
+      - name: Freeze record (this test, and the frozen single-name files it imports and fetches with)
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum "$T/PREREG.md" "$T/run.py" "$T/verify.py" "$T/selftest.py" "$T/compare.py" | tee out/frozen_as_run.sha256.txt
+          cat "$T/FROZEN.sha256" | tee -a out/frozen_as_run.sha256.txt
+          for f in PREREG.md run.py verify.py selftest.py compare.py; do
+            want="$(grep " $T/$f\$" "$T/FROZEN.sha256" | awk '{print $1}')"
+            have="$(sha256sum "$T/$f" | awk '{print $1}')"
+            if [ "$want" != "$have" ]; then echo "::error::$f differs from the freeze record"; exit 1; fi
+          done
+          for f in PREREG.md run.py fetch.py; do
+            want="$(grep " $S/$f\$" "$S/FROZEN.sha256" | awk '{print $1}')"
+            have="$(sha256sum "$S/$f" | awk '{print $1}')"
+            if [ "$want" != "$have" ]; then echo "::error::single_name_vrp $f differs from its freeze record"; exit 1; fi
+          done
+          echo "freeze records verified" | tee -a out/frozen_as_run.sha256.txt
+      - name: Self-test
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$T/selftest.py" 2>&1 | tee out/selftest.log
+      - name: Fetch inputs (structure printed, never a value)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$S/fetch.py" --data data 2>&1 | grep -v -i -e "warning" -e "inplace" -e "^  [a-z_.]*(" -e "pandas.pydata" | tee out/fetch.log
+      - name: Run the frozen test
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$T/run.py" --data data --out out 2>&1 | tee out/run.log
+      - name: Independent reimplementation and comparison
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$T/verify.py" --data data --out out 2>&1 | tee out/verify.log
+          python "$T/compare.py" --out out 2>&1 | tee out/compare.log
+      - name: Remove the inputs
+        if: always()
+        shell: bash
+        run: rm -rf data
+      - name: Commit the result files to this branch
+        if: always()
+        shell: bash
+        env:
+          STEP: ${{ steps.step.outputs.step }}
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          d="$T/results/${GITHUB_RUN_NUMBER}"
+          if [ "${GITHUB_RUN_ATTEMPT}" != "1" ]; then d="${d}_attempt${GITHUB_RUN_ATTEMPT}"; fi
+          mkdir -p "$d" out
+          {
+            echo "step: ${STEP:-unresolved}"
+            echo "job status at commit time: ${JOB_STATUS}"
+            echo "commit: ${GITHUB_SHA}"
+            echo "run id: ${GITHUB_RUN_ID}"
+            echo "run number: ${GITHUB_RUN_NUMBER}"
+            echo "utc: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } > "$d/meta.txt"
+          shopt -s nullglob
+          for f in out/*.log out/*.json out/*.txt; do
+            n=$(stat -c %s "$f")
+            if [ "$n" -gt 3000000 ]; then echo "refused (above 3 MB): $f" | tee -a "$d/meta.txt"; else cp "$f" "$d/"; fi
+          done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$d"
+          git commit -m "pair risk-adjusted: results of ${STEP:-unresolved} run ${GITHUB_RUN_NUMBER} on ${GITHUB_SHA::7} (${JOB_STATUS})"
+          for i in 1 2 3 4; do
+            if git pull --rebase origin "$BRANCH" && git push origin "HEAD:${BRANCH}"; then exit 0; fi
+            sleep $((i * 5))
+          done
+          echo "the result files could not be pushed"; exit 1
