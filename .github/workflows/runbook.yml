@@ -70,7 +70,7 @@ jobs:
       - name: Check SEC is reachable and not rate-limiting this runner
         if: ${{ inputs.step != 'provider-probe' }}
         env:
-          SEC_CONTACT: ${{ secrets.SEC_CONTACT }}
+          SEC_CONTACT: ${{ secrets.SEC_CONTACT || 'Simon Kittson skittson@gmail.com' }}
         run: |
           set -euo pipefail
           if [ -z "${SEC_CONTACT:-}" ]; then
@@ -111,7 +111,7 @@ jobs:
       - name: Step 1 — build the register
         if: ${{ inputs.step == 'register' }}
         env:
-          SEC_CONTACT: ${{ secrets.SEC_CONTACT }}
+          SEC_CONTACT: ${{ secrets.SEC_CONTACT || 'Simon Kittson skittson@gmail.com' }}
         run: |
           mkdir -p out
           python tools/build_register.py \
@@ -123,7 +123,7 @@ jobs:
       - name: Step 2 — paragraph split
         if: ${{ startsWith(inputs.step, 'split') }}
         env:
-          SEC_CONTACT: ${{ secrets.SEC_CONTACT }}
+          SEC_CONTACT: ${{ secrets.SEC_CONTACT || 'Simon Kittson skittson@gmail.com' }}
           DELISTING_REGISTER: ${{ inputs.register_path }}
         run: |
           mkdir -p out
@@ -142,7 +142,7 @@ jobs:
       - name: Step 3 — minimum viable measurement
         if: ${{ startsWith(inputs.step, 'mvm') }}
         env:
-          SEC_CONTACT: ${{ secrets.SEC_CONTACT }}
+          SEC_CONTACT: ${{ secrets.SEC_CONTACT || 'Simon Kittson skittson@gmail.com' }}
           EODHD_KEY: ${{ secrets.EODHD_KEY }}
           DELISTING_REGISTER: ${{ inputs.register_path }}
         run: |
@@ -179,7 +179,7 @@ jobs:
       - name: "Step 4: amended insider-purchase kill test"
         if: ${{ startsWith(inputs.step, 'killtest') }}
         env:
-          SEC_CONTACT: ${{ secrets.SEC_CONTACT }}
+          SEC_CONTACT: ${{ secrets.SEC_CONTACT || 'Simon Kittson skittson@gmail.com' }}
           EODHD_KEY: ${{ secrets.EODHD_KEY }}
         run: |
           set -o pipefail

@@ -224,3 +224,36 @@ the harness.
 
 *NON-EVIDENTIARY throughout. §13 row 31 is unaffected and remains BLOCKED BY
 DECISION.*
+
+---
+
+## 7. 30 October 2026: a free EODHD key offered; why it does not run the measurement
+
+The operator supplied an EODHD key on the vendor's **free (Sandbox) plan** and asked for the
+measurement to run. Two facts, both read from the vendor's own pricing page on 30 October 2026
+and neither assumed, mean the free plan cannot run it:
+
+| Free plan term (vendor's page) | What the measurement needs | Consequence |
+|---|---|---|
+| **One year of end-of-day history** | Prices from 160 days before 1 January 2023 to 40 days after 27 August 2026 (`_window()`), about 3.6 years | Every event before about October 2025 is unpriced; the run refuses at the 2% unanswered-ticker rule, and the probe's split check (NVDA, 7 June 2024) cannot be made because the date is outside the returned history |
+| **20 API calls a day**, plus a 500-call welcome bonus | One call per issuer; the event population over the span runs to thousands of issuers | The probe (15 calls) fits in a day; the smoke (150) needs the bonus; the measurement does not fit in any number of days the bonus allows |
+
+The Historian plan (USD 19.99 for one month, 100,000 calls a day, thirty years of history,
+delisted names kept) covers one full run, as section 6 recorded. **A one-year variant on the free
+plan would be a different test**: a changed span is a protocol change under rule 5, the 500-call
+bonus forces a seeded subsample of issuers, and the registered decision rule's hurdles were set for
+the full span. It is possible to pre-register such a variant; it is not the registered test and it
+would be labelled as such.
+
+Two further facts about the harness, recorded because they bound what this session could do:
+the repository's secrets API is not reachable from the session's proxy, so `EODHD_KEY` has to be
+added by the operator in GitHub (Settings, Secrets and variables, Actions, new repository secret
+named `EODHD_KEY`); and `eodhd.com` is not reachable from the session's container, so no probe
+could be run locally. `runbook.yml` now falls back to the operator's authorised SEC contact string
+when the `SEC_CONTACT` secret is unset, as the branch `degross-proxy-2026-10-29` workflows already
+do, so that secret is no longer a second operator step.
+
+**Then, in order, once the secret exists:** `provider-probe` with `killtest_provider=eodhd`
+(on the free plan this is expected to FAIL on the split check for the history reason above, and
+the failure is the record of what the plan returns), `killtest-smoke`, `killtest`. Nothing
+measured; §13 row 31 unaffected.
