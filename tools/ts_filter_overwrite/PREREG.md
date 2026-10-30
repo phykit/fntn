@@ -65,8 +65,24 @@ recomputes `Delta*` on those months (duplicates count). A replication in which `
 zero standard deviation is discarded and counted. `lower = numpy.percentile(Delta*, 1)` over the
 kept replications.
 
+**Random-skip benchmark.** `rng2 = numpy.random.default_rng(20261103)`; for each of `R = 2000`
+draws, in order, choose `n_back` months without replacement with
+`rng2.choice(n, size=n_back, replace=False)`, set the indicator to 0 in those months and 1
+elsewhere, and compute `Delta_rand = Sh(h + W_rand * y) - Sh(k_A)` on all of U. `rand_p99` is
+`numpy.percentile` of the `Delta_rand` at 99.
+
 Verdict: INSUFFICIENT if `n < 120`; REFUSED if more than 20 replications are discarded; SUPPORTED
-if `Delta > 0` and `lower > 0`; NOT SUPPORTED otherwise. Figures are reported whenever `n >= 12`.
+if `Delta > 0` and `lower > 0` **and `Delta > rand_p99`**; NOT SUPPORTED otherwise. Figures are
+reported whenever `n >= 12`.
+
+*Amendment, 30 October 2026, before any input was fetched.* As first committed (`6761ac1`) the
+verdict needed only `Delta > 0` and `lower > 0`. The self-test showed that rule fires in 18 of 40
+synthetic worlds in which the excess has the same distribution whatever the term structure says:
+skipping any subset of months moves the Sharpe ratio on its own, because the excess has a nonzero
+mean and is correlated with the held return. That rule tested "filtered beats always-written", not
+"the term structure carries information". The random-skip condition makes the verdict about the
+term structure. The first two conditions are kept, so a SUPPORTED filter must also beat writing
+every month.
 
 ## 5. Reported without weight
 
@@ -77,6 +93,8 @@ if `Delta > 0` and `lower > 0`; NOT SUPPORTED otherwise. Figures are reported wh
   Newey-West t (3 lags, Bartlett `1 - l / 4`, no small-sample correction, constant-only).
 - Annualised mean return of `h`, `k_A` and `k_F` (`12 * mean`).
 - The bootstrap mean of `Delta*`, its 5th and 95th percentiles, and the count discarded.
+- The random-skip benchmark's mean, its 99th percentile (`rand_p99`), and the share of
+  `Delta_rand` at or above `Delta` (`rand_share_ge`).
 - **Sensitivity rows.** `Delta` with the threshold moved to `VIX(t0) / VIX3M(t0) < 0.95` (write
   only in steeper contango); and `Delta` with every call priced at `0.9 * VIX(t0) / 100` (the skew
   correction used in the previous test, `recollection`, fitted to nothing).
@@ -89,8 +107,9 @@ if `Delta > 0` and `lower > 0`; NOT SUPPORTED otherwise. Figures are reported wh
    SUPPORTED in 8 of 8; `Sh([1, 2, 3]) = 2`; the at-the-money premium at `s * sqrt(21/252) = 0.2`
    equals `N(0.1) - N(-0.1)`; same seed gives identical `Delta*`.
 2. `verify.py` is a second implementation by a separate agent from this document alone.
-   `compare.py` requires `n`, `n_back`, first and last month, the verdict, `Delta` and `lower`
-   (1e-9), the discard count, and the three Sharpe ratios (1e-9) to agree.
+   `compare.py` requires `n`, `n_back`, first and last month, the verdict, `Delta`, `lower` and
+   `rand_p99` (1e-9), the discard count, and the three Sharpe ratios (1e-9) to agree. The self-test
+   applies the full three-condition rule, with `R = 500` for speed.
 
 ## 7. Disclosures
 
