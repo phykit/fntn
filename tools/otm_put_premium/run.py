@@ -29,8 +29,15 @@ def monthly(path: str):
     ix = {c: head.index(c) for c in ("PPUT", "SPY", "PUT", "BXM")}
 
     def val(r, c):
+        """A blank, non-numeric or non-finite cell stays missing (section 2)."""
         j = ix[c]
-        return float(r[j]) if j < len(r) and r[j].strip() != "" else None
+        if j >= len(r):
+            return None
+        try:
+            v = float(r[j])
+        except ValueError:
+            return None
+        return v if math.isfinite(v) else None
 
     last = {}
     for r in sorted(rows[1:], key=lambda r: r[0]):
