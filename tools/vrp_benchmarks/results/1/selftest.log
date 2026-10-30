@@ -1,0 +1,6 @@
+ok   null: SUPPORTED in at most 2 of 40  (0 of 40)
+ok   planted +2.0% a month: SUPPORTED in 8 of 8  (8 of 8)
+ok   OLS hand values
+ok   Newey-West intercept s.e. matches explicit sandwich  (white 0.10672)
+ok   same seed, identical critical value
+SELFTEST PASSED

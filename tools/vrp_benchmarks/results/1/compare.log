@@ -1,0 +1,33 @@
+agree    n: run=236 verify=236
+agree    first_month: run=2007-02 verify=2007-02
+agree    last_month: run=2026-09 verify=2026-09
+agree    PUT.verdict: run=NOT SUPPORTED verify=NOT SUPPORTED
+agree    PUT.alpha: run=-2.6270522888202467e-05 verify=-2.6270522888200235e-05
+agree    PUT.beta: run=0.6016729674770755 verify=0.6016729674770759
+agree    PUT.t: run=-0.021772126317462778 verify=-0.02177212631746093
+agree    PUT.crit: run=3.016466613852673 verify=3.0164666138526766
+agree    PUT.alpha_ann_p05: run=-0.02070231486760335 verify=-0.020702314867603343 (no weight)
+agree    PUT.alpha_ann_p95: run=0.019683157966047582 verify=0.019683157966047506 (no weight)
+agree    PUT.sharpe_ex: run=0.5578022897396236 verify=0.5578022897396236 (no weight)
+agree    PUT.maxdd: run=-0.3265736313067239 verify=-0.3265736313067239 (no weight)
+agree    WPUT.verdict: run=NOT SUPPORTED verify=NOT SUPPORTED
+agree    WPUT.alpha: run=-0.0017402483737214013 verify=-0.0017402483737214015
+agree    WPUT.beta: run=0.5286907051441719 verify=0.5286907051441725
+agree    WPUT.t: run=-1.5816582081874688 verify=-1.5816582081874686
+agree    WPUT.crit: run=2.833554750004741 verify=2.8335547500047418
+agree    WPUT.alpha_ann_p05: run=-0.043263973372171194 verify=-0.043263973372171194 (no weight)
+agree    WPUT.alpha_ann_p95: run=5.89497203412959e-05 verify=5.8949720341302206e-05 (no weight)
+agree    WPUT.sharpe_ex: run=0.3261339230513218 verify=0.3261339230513218 (no weight)
+agree    WPUT.maxdd: run=-0.24166007905138331 verify=-0.24166007905138331 (no weight)
+agree    CNDR.verdict: run=NOT SUPPORTED verify=NOT SUPPORTED
+agree    CNDR.alpha: run=-0.0011735013234371416 verify=-0.0011735013234371412
+agree    CNDR.beta: run=0.09573951020834617 verify=0.09573951020834617
+agree    CNDR.t: run=-0.8465252864122387 verify=-0.8465252864122385
+agree    CNDR.crit: run=2.4382395313130156 verify=2.438239531313015
+agree    CNDR.alpha_ann_p05: run=-0.036774128445588875 verify=-0.036774128445588875 (no weight)
+agree    CNDR.alpha_ann_p95: run=0.007435318288381046 verify=0.007435318288381051 (no weight)
+agree    CNDR.sharpe_ex: run=-0.06556514771338538 verify=-0.06556514771338538 (no weight)
+agree    CNDR.maxdd: run=-0.18956856545463774 verify=-0.18956856545463774 (no weight)
+agree    sharpe_diff.WPUT_minus_PUT: run=-0.066876896935106 verify=-0.066876896935106 (no weight)
+agree    sharpe_diff.CNDR_minus_PUT: run=-0.17995067890877098 verify=-0.17995067890877098 (no weight)
+COMPARE PASSED

@@ -1,0 +1,9 @@
+PUT: fetching
+WPUT: fetching
+CNDR: fetching
+series.csv: 10167 rows
+  SPY: 5492 non-missing, 2005-01-03 to 2026-10-30
+  IRX: 5487 non-missing, 2005-01-03 to 2026-10-30
+  PUT: 4995 non-missing, 1991-03-04 to 2026-10-29
+  WPUT: 5217 non-missing, 2006-01-31 to 2026-10-29
+  CNDR: 10163 non-missing, 1986-06-20 to 2026-10-29
