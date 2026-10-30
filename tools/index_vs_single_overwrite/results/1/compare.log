@@ -1,0 +1,19 @@
+agree    n: run=187 verify=187
+agree    first_month: run=2011-02-01 verify=2011-02-01
+agree    last_month: run=2026-09-01 verify=2026-09-01
+agree    verdict: run=SUPPORTED verify=SUPPORTED
+agree    discarded: run=0 verify=0
+agree    Delta: run=0.06345492505483458 verify=0.06345492505483458
+agree    lower: run=0.010591696680697338 verify=0.010591696680697338
+agree    sh_hI: run=0.2984211299640992 verify=0.2984211299640992
+agree    sh_kI: run=0.44101224378597587 verify=0.44101224378597587
+agree    sh_hB: run=0.3255142232868154 verify=0.3255142232868154
+agree    sh_kB: run=0.4046504120538575 verify=0.4046504120538575
+agree    boot_mean: run=0.07200403350750652 verify=0.07200403350750652 (no weight)
+agree    boot_p95: run=0.14325414163108716 verify=0.14325414163108716 (no weight)
+agree    yI_mean_pct: run=-0.22138076884334543 verify=-0.22138076884334543 (no weight)
+agree    yB_mean_pct: run=-0.6594486485981498 verify=-0.6594486485981498 (no weight)
+agree    diff_mean_pct: run=0.4380678797548044 verify=0.4380678797548044 (no weight)
+agree    diff_t: run=3.2115518621283976 verify=3.2115518621283976 (no weight)
+agree    Delta_skew: run=0.0347380256783138 verify=0.0347380256783138 (no weight)
+COMPARE PASSED

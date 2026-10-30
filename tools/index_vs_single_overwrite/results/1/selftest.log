@@ -1,0 +1,5 @@
+ok   null: SUPPORTED in at most 4 of 40  (2 of 40)
+ok   planted: SUPPORTED in 8 of 8  (8 of 8)
+ok   Sh([1, 2, 3]) = 2
+ok   same seed, identical Delta*
+SELFTEST PASSED
