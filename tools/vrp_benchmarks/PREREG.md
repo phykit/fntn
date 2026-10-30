@@ -62,14 +62,28 @@ hurdle, WPUT below PUT, and does not predict CNDR.
 one draw `starts = rng.integers(0, n - 11, size=(1999, ceil(n / 12)))` shared by all three
 strategies; replication `b`'s months = concatenation of `range(s, s + 12)` over row `b` in order,
 truncated to `n`; on those months (pairs of `x_S`, `x_SPY` kept together) refit and compute
-`t*_b = (a*_b - a_S) / se(a*_b)`; `c_S = numpy.percentile(t*, 100 - 100/3)` (the 99.667th
-percentile). The bootstrap-t is used because option-selling returns are strongly negatively skewed,
+`t*_b = (a*_b - a_S) / se(a*_b)`; `c_S = numpy.percentile(t*, 100 - 1/3)` (the 99.667th
+percentile).
+
+*Correction, 30 October 2026, before any input was fetched.* As first committed (`05da477`) the
+formula read `numpy.percentile(t*, 100 - 100/3)`, which is the 66.667th percentile, while the text
+named the 99.667th. The self-test caught it: with the formula as written, the test fired in 16 of
+40 synthetic worlds with no alpha (critical values near 0.5). The intent, a one-sided 1/3% test per
+strategy, was always the text's; the formula is corrected to match it. The bootstrap-t is used because option-selling returns are strongly negatively skewed,
 under which the normal critical value over-rejects (`tools/otm_put_premium`, PREREG section 4).
 
 Verdict per strategy: INSUFFICIENT if `n < 120`; SUPPORTED if `a_S > 0` and `t_S >= c_S`; NOT
 SUPPORTED otherwise. There is no combined verdict; each is reported.
 
+**Power, measured before any input was fetched.** On the self-test's synthetic worlds (n = 248,
+short-put-shaped residual), 100 worlds each: true alpha 3% a year, detected 10%; 6% a year, 33%;
+12% a year, 86%; 18% a year, 96%. This test can find only a large alpha. A NOT SUPPORTED verdict
+therefore means "no alpha large enough to detect at this hurdle", not "no alpha"; the estimated
+alphas and their bootstrap intervals (section 5) carry the informative content.
+
 ## 5. Reported without weight
+
+- Per strategy: the 5th and 95th percentiles of the bootstrap alpha `a*` (annualised).
 
 - Per strategy and SPY: annualised mean excess return (`12 * mean`), annualised volatility, excess
   Sharpe (`sqrt(12) * mean(x) / sd(x)`), maximum drawdown of the compounded total-return series,
@@ -84,8 +98,9 @@ SUPPORTED otherwise. There is no combined verdict; each is reported.
 
 1. `selftest.py`, on synthetic monthly data (n = 248): SPY excess with mean 0.6% and sd 4.3%; a
    strategy `x_S = 0.5 * x_SPY + e` with `e` short-put-shaped (8% of months a large loss) and
-   population mean 0: SUPPORTED in no more than 2 of 40 worlds; the same with `e` shifted by +1.0% a
-   month: SUPPORTED in 8 of 8; the OLS slope of `[1, 2, 3, 4]` on `[0, 1, 2, 3]` is 1 and intercept
+   population mean 0: SUPPORTED in no more than 2 of 40 worlds; the same with `e` shifted by +2.0% a
+   month: SUPPORTED in 8 of 8 (raised from +1.0% before the freeze: at +1.0% power is 86%, so 8 of 8
+   is a check of power, not of the machinery); the OLS slope of `[1, 2, 3, 4]` on `[0, 1, 2, 3]` is 1 and intercept
    1; Newey-West at 0 lags equals White's estimator; same seed gives identical `c_S`.
 2. `verify.py` is a second implementation by a separate agent from this document alone.
    `compare.py` requires `n`, first and last month, each strategy's verdict, `a_S`, `b_S` (1e-12),
