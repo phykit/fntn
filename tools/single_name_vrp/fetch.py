@@ -15,11 +15,27 @@ FRED = {"AAPL": "VXAPLCLS", "AMZN": "VXAZNCLS", "GOOG": "VXGOGCLS", "GS": "VXGSC
 TICKERS = ["AAPL", "AMZN", "GOOG", "GS", "IBM", "SPY"]
 
 
+def get(url: str, tries: int = 5) -> bytes:
+    """Fetch with retries. Added after run 1, in which FRED timed out on the runner before any
+    data was read; the precedent is tools/degross_proxy/fetch.py on degross-proxy-2026-10-29."""
+    import time
+    last = None
+    for i in range(tries):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0", "Accept": "*/*"})
+            with urllib.request.urlopen(req, timeout=90) as f:
+                return f.read()
+        except Exception as e:  # noqa: BLE001
+            last = e
+            print(f"  attempt {i + 1} failed: {type(e).__name__}")
+            time.sleep(10 * (i + 1))
+    raise RuntimeError(f"{url}: no response after {tries} attempts ({type(last).__name__})")
+
+
 def fred(series: str) -> dict[str, float]:
     url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}"
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    with urllib.request.urlopen(req, timeout=60) as f:
-        text = f.read().decode("utf-8")
+    print(f"{series}: fetching")
+    text = get(url).decode("utf-8")
     out = {}
     rows = list(csv.reader(io.StringIO(text)))
     for row in rows[1:]:
