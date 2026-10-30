@@ -127,8 +127,8 @@ def spearman(x, y) -> float:
 def analyse(months, Y, G, C, b: int = B) -> dict:
     n = len(months)
     res = {"n": n, "first_month": months[0] if n else None, "last_month": months[-1] if n else None}
-    if n < MIN_N:
-        res["verdict"] = "INSUFFICIENT"
+    if n < BLOCK:
+        res["verdict"] = "INSUFFICIENT"  # too short even to draw one bootstrap block
         return res
     allidx = np.arange(n)
     res["D"] = D_of(Y, C, allidx)
@@ -138,7 +138,10 @@ def analyse(months, Y, G, C, b: int = B) -> dict:
     res["boot_mean"] = float(boot.mean())
     res["boot_p05"] = res["lower"]
     res["boot_p95"] = float(np.percentile(boot, 95))
-    if disc > MAX_DISCARD:
+    # Figures are computed and reported below the 120-month floor too; only the verdict refuses.
+    if n < MIN_N:
+        res["verdict"] = "INSUFFICIENT"
+    elif disc > MAX_DISCARD:
         res["verdict"] = "REFUSED"
     elif res["D"] > 0 and res["lower"] > 0:
         res["verdict"] = "SUPPORTED"
