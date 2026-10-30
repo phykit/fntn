@@ -1,0 +1,87 @@
+name: Intra-week persistence of the crowded-long spread (side test)
+
+# NON-EVIDENTIARY side test outside the FNTN funnel. PREREG under tools/intraweek. Runs when
+# tools/intraweek/DISPATCH changes on this branch. Derived statistics only are committed under
+# tools/intraweek/results/<run>/; the input lives under data/ for the job only.
+on:
+  push:
+    branches: [degross-proxy-2026-10-29]
+    paths: [tools/intraweek/DISPATCH]
+
+concurrency:
+  group: intraweek
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      BRANCH: degross-proxy-2026-10-29
+      T: tools/intraweek
+      E: tools/degross_episodes
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 50
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pinned dependencies
+        run: python -m pip install --quiet "numpy==2.2.6" "pandas" "yfinance>=0.2.50"
+      - name: Freeze records
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          check() { local d="$1"; shift
+            for f in "$@"; do
+              want="$(grep " $d/$f\$" "$d/FROZEN.sha256" | awk '{print $1}')"; have="$(sha256sum "$d/$f" | awk '{print $1}')"
+              if [ -z "$want" ] || [ "$want" != "$have" ]; then echo "::error::$d/$f differs from its freeze record"; exit 1; fi
+              echo "verified $d/$f $have" | tee -a out/frozen_as_run.sha256.txt
+            done; }
+          check "$T" PREREG.md run.py selftest.py fetch.py verify.py compare.py
+          check "$E" episodes.csv
+      - name: Self-test
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$T/selftest.py" 2>&1 | tee out/selftest.log
+      - name: Fetch, run both implementations, compare
+        shell: bash
+        run: |
+          set -euo pipefail
+          python "$T/fetch.py" --data data 2>&1 | grep -v -i -e "warning" -e "inplace" | tee out/fetch.log
+          mkdir -p out/a out/b
+          python "$T/run.py" --data data --episodes "$E/episodes.csv" --out out/a 2>&1 | tee out/run.log
+          python "$T/verify.py" --data data --episodes "$E/episodes.csv" --out out/b 2>&1 | tee out/verify.log
+          cp out/a/results.json out/results.json; cp out/b/verify.json out/verify.json
+          python "$T/compare.py" --a out/results.json --b out/verify.json 2>&1 | tee out/compare.log
+      - name: Remove the input
+        if: always()
+        run: rm -rf data
+      - name: Commit the result files to this branch
+        if: always()
+        shell: bash
+        env:
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          d="$T/results/${GITHUB_RUN_NUMBER}"
+          if [ "${GITHUB_RUN_ATTEMPT}" != "1" ]; then d="${d}_attempt${GITHUB_RUN_ATTEMPT}"; fi
+          mkdir -p "$d" out
+          { echo "job status at commit time: ${JOB_STATUS}"; echo "commit: ${GITHUB_SHA}"; echo "run id: ${GITHUB_RUN_ID}"; echo "utc: $(date -u +%Y-%m-%dT%H:%M:%SZ)"; } > "$d/meta.txt"
+          shopt -s nullglob
+          for f in out/*.log out/*.json out/*.txt; do cp "$f" "$d/"; done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$d"
+          git commit -m "intraweek: results of run ${GITHUB_RUN_NUMBER} on ${GITHUB_SHA::7} (${JOB_STATUS})"
+          for i in 1 2 3 4; do
+            if git pull --rebase origin "$BRANCH" && git push origin "HEAD:${BRANCH}"; then exit 0; fi
+            sleep $((i * 5))
+          done
+          exit 1
