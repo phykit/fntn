@@ -1,0 +1,23 @@
+agree    n: run=204 verify=204
+agree    n_back: run=18 verify=18
+agree    first_month: run=2009-10 verify=2009-10
+agree    last_month: run=2026-09 verify=2026-09
+agree    verdict: run=NOT SUPPORTED verify=NOT SUPPORTED
+agree    discarded: run=0 verify=0
+agree    Delta: run=-0.04480935565430566 verify=-0.04480935565430566
+agree    lower: run=-0.11941555210999734 verify=-0.11941555210999734
+agree    rand_p99: run=0.008514916436845193 verify=0.008514916436845193
+agree    sh_h: run=0.28586981764867714 verify=0.28586981764867714
+agree    sh_kA: run=0.41801781071613836 verify=0.41801781071613836
+agree    sh_kF: run=0.3732084550618327 verify=0.3732084550618327
+agree    boot_mean: run=-0.04320384729244621 verify=-0.04320384729244621 (no weight)
+agree    boot_p95: run=0.0027574222539052447 verify=0.0027574222539052447 (no weight)
+agree    rand_mean: run=-0.027244657899445177 verify=-0.027244657899445177 (no weight)
+agree    rand_share_ge: run=0.855 verify=0.855 (no weight)
+agree    y_con_mean_pct: run=-0.07852552151421098 verify=-0.07852552151421098 (no weight)
+agree    y_back_mean_pct: run=-1.5834386521824075 verify=-1.5834386521824075 (no weight)
+agree    diff_mean_pct: run=0.13971517519256538 verify=0.13971517519256538 (no weight)
+agree    diff_t: run=1.7993258806071024 verify=1.7993258806071026 (no weight)
+agree    Delta_steep: run=-0.06607966200698728 verify=-0.06607966200698728 (no weight)
+agree    Delta_skew: run=-0.01856365963441059 verify=-0.01856365963441059 (no weight)
+COMPARE PASSED

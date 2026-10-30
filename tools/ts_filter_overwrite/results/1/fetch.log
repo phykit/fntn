@@ -1,0 +1,7 @@
+VIX: fetching
+VIX3M: fetching
+vx.csv: 9305 rows
+  MKT: 9305 non-missing, 1990-01-02 to 2026-10-29
+  M3: 4305 non-missing, 2009-09-18 to 2026-10-29
+prices.csv: 4484 rows
+  SPY: 4484 non-missing, 2009-01-02 to 2026-10-29
