@@ -171,6 +171,9 @@ def cell_stats(g1: np.ndarray, g2: np.ndarray, m: float, v: float, written: np.n
     gg2 = (g2 - 1.0) + y2
     g = 0.5 * (gg1 + gg2)
     n = y.size
+    if written is not None:
+        # PREREG section 8: under V2 the pair total return is the governor's realised q_t.
+        g = np.where(written, g, 0.5 * ((g1 - 1.0) + (g2 - 1.0)))
     st = {
         "mean_y": float(y.mean()),
         "sd_y": float(y.std(ddof=1)),
@@ -190,10 +193,8 @@ def cell_stats(g1: np.ndarray, g2: np.ndarray, m: float, v: float, written: np.n
         mdd = max_drawdown_per_path(g)
         ybar = y.mean(axis=1)
     else:
-        # V2: the equity path uses the plain pair stock return in unwritten months.
-        stock_pair = 0.5 * ((g1 - 1.0) + (g2 - 1.0))
-        q = np.where(written, g, stock_pair)
-        mdd = max_drawdown_per_path(q)
+        # V2: g already holds the realised q_t (plain pair stock return in unwritten months).
+        mdd = max_drawdown_per_path(g)
         nw = int(written.sum())
         yw = y[written]
         st["frac_written"] = float(written.mean())

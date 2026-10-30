@@ -152,6 +152,12 @@ arm. For each cell, over all path-months (for V2, see the two written-only figur
   series from 1, drawdown measured against its running maximum, the most negative value taken)
   per path, then the median and the 5th percentile across paths (`numpy.percentile`, default
   linear interpolation);
+- Under V2, `y`, `y_1` and `y_2` in the figures above are the overlay as if written in every
+  path-month, while the pair total return for `mean_g`, `sd_g`, `worst_g` and both drawdown
+  figures is the strategy's realised return `q_t` of section 5 (the plain pair stock return in
+  unwritten months), so that the compounded series is the governor's own equity. *Annotation,
+  30 October 2026, before the freeze: added to settle an ambiguity on which the two
+  implementations had diverged; no figure at the registered size had been produced.*
 - V2 only: `frac_written`, and `mean_y_written`, `sd_y_written`, `se_y_written` with
   `n_written`, over the written path-months only (`se_y_written = sd_y_written /
   sqrt(n_written)`);
